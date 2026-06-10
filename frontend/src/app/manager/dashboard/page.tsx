@@ -23,11 +23,11 @@ export default async function ManagerDashboardPage() {
         <p className="page-head__sub">Сайн байна уу, {me.username}.</p>
       </div>
       {canUsers && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
-          <Link href="/manager/users" className="card" style={{ padding: 20, textDecoration: 'none', display: 'block' }}>
+        <div className="card-grid">
+          <Link href="/manager/users" className="card" style={{ padding: 20, textDecoration: 'none' }}>
             <Users size={22} strokeWidth={2} />
-            <h3 style={{ margin: '10px 0 4px' }}>Хэрэглэгчид</h3>
-            <p className="muted" style={{ margin: 0 }}>Хэрэглэгчдийг хянах, удирдах.</p>
+            <h3>Хэрэглэгчид</h3>
+            <p className="muted">Хэрэглэгчдийг хянах, удирдах.</p>
           </Link>
         </div>
       )}

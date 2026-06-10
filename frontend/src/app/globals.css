@@ -970,9 +970,15 @@ html[lang="en"] .i18n-banner { display: block; }
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  padding: 12px 0;
+  padding: 0 0 12px;
   background: var(--surface);
   border-right: 1px solid var(--border);
+  /* Viewport-д бэхлэх — grid мөрийн өндрөөр сунахгүй тул доод товчнууд
+     (Тусламж/Гарах) контентын урт хамаарахгүйгээр үргэлж доод буланд харагдана. */
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  align-self: start;
 }
 .iconrail__brand { display: flex; align-items: center; justify-content: center; width: 100%; height: var(--topbar-h, 60px); margin-bottom: 6px; }
 .iconrail__brand img { width: 30px; height: 30px; border-radius: 8px; object-fit: contain; }
@@ -998,6 +1004,10 @@ html[lang="en"] .i18n-banner { display: block; }
   background: var(--surface);
   border-right: 1px solid var(--border);
   overflow: hidden;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  align-self: start;
 }
 .is-collapsed .sidepanel { border-right: 0; }
 .sidepanel__head { display: flex; flex-direction: column; justify-content: center; gap: 1px; height: var(--topbar-h, 64px); padding: 0 16px; border-bottom: 1px solid var(--border); }
@@ -1060,6 +1070,15 @@ html[lang="en"] .i18n-banner { display: block; }
 .stat-card__label { color: var(--muted); font-size: 13px; margin-top: 4px; }
 
 .btn--sm { padding: 5px 9px; font-size: 13px; gap: 5px; }
+
+/* Dashboard картын тор — мөр доторх картууд жигд (тэнцүү) өндөртэй. */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; align-items: stretch; }
+.card-grid > .card { height: 100%; display: flex; flex-direction: column; gap: 6px; margin: 0; }
+.card-grid > .card h3 { margin: 4px 0 0; }
+.card-grid > .card p { margin: 0; }
+/* grid-2 (нүүр) картууд мөн тэнцүү өндөртэй. */
+.grid-2 { align-items: stretch; }
+.grid-2 > .card { height: 100%; }
 
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }

@@ -28,14 +28,14 @@ export default async function AdminDashboardPage() {
         <h1>Хяналтын самбар</h1>
         <p className="page-head__sub">Сайн байна уу, {me.username}. Доорх хэсгүүдээс удирдлагаа сонгоно уу.</p>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
+      <div className="card-grid">
         {cards.map((c) => {
           const Icon = c.icon;
           return (
-            <Link key={c.href} href={c.href} className="card" style={{ padding: 20, textDecoration: 'none', display: 'block' }}>
+            <Link key={c.href} href={c.href} className="card" style={{ padding: 20, textDecoration: 'none' }}>
               <Icon size={22} strokeWidth={2} />
-              <h3 style={{ margin: '10px 0 4px' }}>{c.title}</h3>
-              <p className="muted" style={{ margin: 0 }}>{c.desc}</p>
+              <h3>{c.title}</h3>
+              <p className="muted">{c.desc}</p>
             </Link>
           );
         })}
