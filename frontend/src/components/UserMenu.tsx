@@ -83,11 +83,11 @@ export default function UserMenu({ username, email, initials }: Props) {
             <div className="user-menu__sub mono">{email}</div>
           </div>
 
-          <Link className="user-menu__item" role="menuitem" href="/profile" onClick={() => setOpen(false)}>
+          <Link className="user-menu__item" role="menuitem" href="/me/profile" onClick={() => setOpen(false)}>
             <User size={16} strokeWidth={2} />
             <span>{lang === 'en' ? 'Profile' : 'Профайл'}</span>
           </Link>
-          <Link className="user-menu__item" role="menuitem" href="/settings" onClick={() => setOpen(false)}>
+          <Link className="user-menu__item" role="menuitem" href="/me/settings" onClick={() => setOpen(false)}>
             <Settings size={16} strokeWidth={2} />
             <span>{lang === 'en' ? 'Settings' : 'Тохиргоо'}</span>
           </Link>

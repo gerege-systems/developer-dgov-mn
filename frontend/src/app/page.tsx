@@ -1,26 +1,17 @@
 import React from 'react';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { KeyRound, Info, LogIn } from 'lucide-react';
-import AppShell from '@/components/AppShell';
-import HomeView from '@/components/me/HomeView';
 import SigninShell from '@/components/SigninShell';
 import { hasSession } from '@/lib/session';
-import { fetchMe } from '@/lib/api';
-import { initialsOf } from '@/lib/format';
 
 export const dynamic = 'force-dynamic';
 
 export default async function Home() {
-  if (!hasSession()) return <Landing />;
-
-  const me = await fetchMe();
-  if (!me) return <Landing />;
-
-  return (
-    <AppShell user={{ username: me.username, email: me.email, initials: initialsOf(me.username), roleId: me.roleId }}>
-      <HomeView me={me} />
-    </AppShell>
-  );
+  // Нэвтэрсэн хэрэглэгчийг /me домэйн руу (admin/manager-тэй адил) шилжүүлнэ;
+  // нэвтрээгүй зочдод нийтийн Landing.
+  if (hasSession()) redirect('/me/dashboard');
+  return <Landing />;
 }
 
 /** Нийтийн landing — нэвтрээгүй зочдод харагдах нүүр. */

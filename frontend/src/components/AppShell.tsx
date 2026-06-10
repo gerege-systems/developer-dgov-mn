@@ -92,9 +92,9 @@ const SYSTEMS: NavSystem[] = [
         labelKey: 'group.personal',
         // Өөрийн профайл/тохиргоо нь бүх нэвтэрсэн хэрэглэгчид нээлттэй.
         items: [
-          { href: '/', labelKey: 'nav.dashboard', icon: LayoutDashboard },
-          { href: '/profile', labelKey: 'nav.profile', icon: User },
-          { href: '/settings', labelKey: 'nav.security', icon: ShieldCheck },
+          { href: '/me/dashboard', labelKey: 'nav.dashboard', icon: LayoutDashboard },
+          { href: '/me/profile', labelKey: 'nav.profile', icon: User },
+          { href: '/me/settings', labelKey: 'nav.security', icon: ShieldCheck },
         ],
       },
     ],
