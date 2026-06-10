@@ -8,7 +8,7 @@ export const dict = {
     // Систем / цэс
     'sys.admin': 'Админ систем',
     'sys.manager': 'Менежер систем',
-    'sys.user': 'Хэрэглэгч систем',
+    'sys.user': 'Миний систем',
     'group.general': 'Ерөнхий',
     'group.management': 'Удирдлага',
     'group.manager': 'Менежер',
@@ -114,7 +114,7 @@ export const dict = {
   en: {
     'sys.admin': 'Admin system',
     'sys.manager': 'Manager system',
-    'sys.user': 'User system',
+    'sys.user': 'Me System',
     'group.general': 'General',
     'group.management': 'Management',
     'group.manager': 'Manager',
