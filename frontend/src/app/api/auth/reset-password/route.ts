@@ -3,15 +3,21 @@ import { readJson, toClientResponse, checkOrigin } from '@/lib/bff';
 
 export const dynamic = 'force-dynamic';
 
-// POST /api/auth/reset-password — и-мэйлээр ирсэн токен + шинэ нууц үгээр сэргээнэ.
+// POST /api/auth/reset-password — и-мэйлээр ирсэн OTP код + шинэ нууц үгээр
+// сэргээнэ. Нууц үг сэргээх нь GeregeCloud Verify OTP-аар явдаг тул токены
+// оронд email + код шаардана.
 export async function POST(req: Request) {
   const bad = checkOrigin(req);
   if (bad) return bad;
 
-  const { token, new_password } = await readJson<{ token?: string; new_password?: string }>(req);
+  const { email, code, new_password } = await readJson<{
+    email?: string;
+    code?: string;
+    new_password?: string;
+  }>(req);
   const result = await backendFetch('/auth/password/reset', {
     method: 'POST',
-    body: JSON.stringify({ token, new_password }),
+    body: JSON.stringify({ email, code, new_password }),
   });
   return toClientResponse(result);
 }

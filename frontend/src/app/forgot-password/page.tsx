@@ -4,7 +4,7 @@ import ForgotPasswordForm from './ForgotPasswordForm';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Нууц үг сэргээх — Gerege' };
+export const metadata = { title: 'Нууц үг сэргээх — Gerege Template' };
 
 export default function ForgotPasswordPage() {
   return (
@@ -13,7 +13,7 @@ export default function ForgotPasswordPage() {
         <div>
           <h1 id="forgot-title">Нууц үгээ мартсан уу?</h1>
           <p className="signin-card__lede" style={{ marginTop: 8, fontSize: 14 }}>
-            И-мэйл хаягаа оруулбал нууц үг сэргээх холбоосыг илгээнэ.
+            И-мэйл хаягаа оруулбал нууц үг сэргээх нэг удаагийн кодыг илгээнэ.
           </p>
         </div>
         <ForgotPasswordForm />
