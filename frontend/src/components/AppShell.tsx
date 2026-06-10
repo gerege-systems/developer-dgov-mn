@@ -16,6 +16,7 @@ const ROLE_ADMIN = 1; // backend domain.RoleAdmin
 
 export interface AppUser {
   username: string;
+  fullName: string;
   email: string;
   initials: string;
   roleId: number;
@@ -245,7 +246,7 @@ export default function AppShell({ user, children }: Props) {
             <input className="topbar2__search-input" type="search" placeholder={T('shell.search')} aria-label={T('shell.search')} />
           </div>
           <div className="topbar2__actions">
-            <UserMenu username={user.username} email={user.email} initials={user.initials} />
+            <UserMenu username={user.fullName} email={user.email} initials={user.initials} />
           </div>
         </header>
 

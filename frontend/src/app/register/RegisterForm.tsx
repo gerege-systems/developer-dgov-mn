@@ -10,6 +10,8 @@ import { postJSON } from '@/lib/client';
 
 export default function RegisterForm() {
   const router = useRouter();
+  const [lastName, setLastName] = useState('');
+  const [firstName, setFirstName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,7 +25,7 @@ export default function RegisterForm() {
     setError('');
     setFieldErrors({});
 
-    const res = await postJSON('/api/auth/register', { username, email, password });
+    const res = await postJSON('/api/auth/register', { last_name: lastName, first_name: firstName, username, email, password });
 
     if (res.ok) {
       // Бүртгэл идэвхгүй үүссэн — баталгаажуулалт руу шилжиж кодыг автоматаар илгээнэ.
@@ -42,6 +44,42 @@ export default function RegisterForm() {
   return (
     <form className="form-grid" onSubmit={submit} noValidate>
       {error && <Alert kind="danger">{error}</Alert>}
+
+      <div className="field">
+        <label className="field__label" htmlFor="last_name">Овог</label>
+        <input
+          id="last_name"
+          name="last_name"
+          type="text"
+          className="input"
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value)}
+          autoComplete="family-name"
+          placeholder="Цэнддорж"
+          maxLength={50}
+          aria-invalid={fieldErrors.last_name ? true : undefined}
+          required
+        />
+        {fieldErrors.last_name && <span className="field__error">{fieldErrors.last_name}</span>}
+      </div>
+
+      <div className="field">
+        <label className="field__label" htmlFor="first_name">Нэр</label>
+        <input
+          id="first_name"
+          name="first_name"
+          type="text"
+          className="input"
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
+          autoComplete="given-name"
+          placeholder="Эрдэнэбат"
+          maxLength={50}
+          aria-invalid={fieldErrors.first_name ? true : undefined}
+          required
+        />
+        {fieldErrors.first_name && <span className="field__error">{fieldErrors.first_name}</span>}
+      </div>
 
       <div className="field">
         <label className="field__label" htmlFor="username">Нэвтрэх нэр</label>

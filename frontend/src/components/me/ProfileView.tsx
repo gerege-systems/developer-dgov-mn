@@ -24,7 +24,7 @@ export default function ProfileView({ me }: { me: SessionUser }) {
           <div className="profile-card__avatar" aria-hidden="true">{initials}</div>
           <div className="profile-card__body">
             <div className="profile-card__name">
-              <span className="profile-card__name-text">{me.username}</span>
+              <span className="profile-card__name-text">{me.fullName}</span>
               <span className="badge badge--primary">{roleLabel(me.roleId, lang)}</span>
             </div>
             <div className="profile-card__sub">
@@ -47,6 +47,14 @@ export default function ProfileView({ me }: { me: SessionUser }) {
           <div className="defrow">
             <span className="defrow__label"><Hash size={13} style={{ verticalAlign: 'middle', marginRight: 6 }} />{T('me.field.id')}</span>
             <span className="defrow__value mono">{me.id}</span>
+          </div>
+          <div className="defrow">
+            <span className="defrow__label"><User size={13} style={{ verticalAlign: 'middle', marginRight: 6 }} />{T('me.field.lastName')}</span>
+            <span className="defrow__value">{me.lastName || '—'}</span>
+          </div>
+          <div className="defrow">
+            <span className="defrow__label"><User size={13} style={{ verticalAlign: 'middle', marginRight: 6 }} />{T('me.field.firstName')}</span>
+            <span className="defrow__value">{me.firstName || '—'}</span>
           </div>
           <div className="defrow">
             <span className="defrow__label"><User size={13} style={{ verticalAlign: 'middle', marginRight: 6 }} />{T('me.field.username')}</span>

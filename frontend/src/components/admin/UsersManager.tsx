@@ -7,6 +7,7 @@ import { useT } from '@/lib/lang';
 interface AdminUser {
   id: string;
   username: string;
+  full_name?: string;
   email: string;
   role_id: number;
   active: boolean;
@@ -122,8 +123,9 @@ export default function UsersManager({ currentUserId, readOnly = false }: Props)
                 return (
                   <tr key={u.id}>
                     <td>
-                      {u.username}
+                      {u.full_name?.trim() || u.username}
                       {isSelf && <span className="chip chip--neutral" style={{ marginLeft: 8 }}>{T('users.you')}</span>}
+                      {u.full_name?.trim() && <div className="muted mono" style={{ fontSize: 12 }}>@{u.username}</div>}
                     </td>
                     <td className="mono">{u.email}</td>
                     <td>

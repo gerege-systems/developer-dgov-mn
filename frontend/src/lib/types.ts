@@ -13,6 +13,9 @@ export interface Envelope<T = unknown> {
 export interface BackendUser {
   id: string;
   username: string;
+  first_name?: string;
+  last_name?: string;
+  full_name?: string;
   email: string;
   role_id: number;
   token?: string;
@@ -35,16 +38,30 @@ export interface ValidationData {
 export interface SessionUser {
   id: string;
   username: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
   email: string;
   roleId: number;
   createdAt: string;
   updatedAt: string | null;
 }
 
+/** Овог Нэр; хоосон бол username руу fallback. */
+export function fullNameOf(u: { firstName?: string; lastName?: string; full_name?: string; username: string }): string {
+  const composed = `${u.lastName ?? ''} ${u.firstName ?? ''}`.trim();
+  return (u.full_name?.trim() || composed) || u.username;
+}
+
 export function toSessionUser(u: BackendUser): SessionUser {
+  const firstName = u.first_name ?? '';
+  const lastName = u.last_name ?? '';
   return {
     id: u.id,
     username: u.username,
+    firstName,
+    lastName,
+    fullName: fullNameOf({ firstName, lastName, full_name: u.full_name, username: u.username }),
     email: u.email,
     roleId: u.role_id,
     createdAt: u.created_at,

@@ -13,7 +13,7 @@ export default async function AreaShell({ next, children }: { next: string; chil
   const me = await fetchMe();
   if (!me) redirect(`/login?next=${encodeURIComponent(next)}`);
   return (
-    <AppShell user={{ username: me.username, email: me.email, initials: initialsOf(me.username), roleId: me.roleId }}>
+    <AppShell user={{ username: me.username, fullName: me.fullName, email: me.email, initials: initialsOf(me.username), roleId: me.roleId }}>
       {children}
     </AppShell>
   );
