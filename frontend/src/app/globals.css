@@ -996,7 +996,7 @@ html[lang="en"] .i18n-banner { display: block; }
   transition: background .15s, color .15s;
 }
 .iconrail__btn:hover { background: var(--surface-2); color: var(--fg); }
-.iconrail__btn.is-active { background: var(--primary); color: #fff; }
+.iconrail__btn.is-active { background: var(--dan-blue); color: var(--on-dan-blue); }
 .iconrail__signout:hover { background: var(--danger-soft); color: var(--danger); }
 
 .sidepanel {
@@ -1023,7 +1023,7 @@ html[lang="en"] .i18n-banner { display: block; }
   transition: background .15s, color .15s;
 }
 .sidepanel__link:hover { background: var(--surface-2); color: var(--fg); }
-.sidepanel__link.is-active { background: var(--surface-2); color: var(--primary); font-weight: 600; }
+.sidepanel__link.is-active { background: var(--surface-2); color: var(--dan-blue); font-weight: 600; }
 
 .maincol { display: flex; flex-direction: column; min-width: 0; min-height: 100vh; }
 .topbar2 {
@@ -1060,7 +1060,7 @@ html[lang="en"] .i18n-banner { display: block; }
 .rbac-matrix th:first-child, .rbac-matrix td:first-child { text-align: left; }
 .rbac-matrix thead th { color: var(--muted); font-weight: 600; }
 .rbac-matrix tbody tr:hover { background: var(--surface-2); }
-.rbac-matrix input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary); }
+.rbac-matrix input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--dan-blue); }
 .rbac-perm-label { display: flex; flex-direction: column; gap: 1px; align-items: flex-start; }
 .rbac-perm-label small { color: var(--faint); font-size: 11px; }
 
