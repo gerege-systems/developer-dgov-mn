@@ -1,5 +1,5 @@
 import 'server-only';
-import type { Envelope, BackendUser, MeData, ValidationData, SessionUser } from './types';
+import type { Envelope, BackendUser, MeData, SessionUser } from './types';
 import { toSessionUser } from './types';
 import { getAccessToken, getRefreshToken, setSession } from './session';
 
@@ -43,7 +43,19 @@ export async function backendFetch<T>(path: string, init?: RequestInit): Promise
     return { ok: true, status: res.status, message: body?.message, data: body?.data };
   }
 
-  const fieldErrors = (body?.data as ValidationData | undefined)?.errors;
+  // Backend нь талбарын алдааг массив ([{field,tag,message}]) хэлбэрээр
+  // буцаадаг; клиент тал нь талбар→мессеж object хүлээдэг тул хэвийн болгоно.
+  const rawErrors = (body?.data as { errors?: unknown } | undefined)?.errors;
+  let fieldErrors: Record<string, string> | undefined;
+  if (Array.isArray(rawErrors)) {
+    fieldErrors = {};
+    for (const item of rawErrors) {
+      const fe = item as { field?: string; message?: string };
+      if (fe?.field) fieldErrors[fe.field] = fe.message ?? '';
+    }
+  } else if (rawErrors && typeof rawErrors === 'object') {
+    fieldErrors = rawErrors as Record<string, string>;
+  }
   return {
     ok: false,
     status: res.status,
