@@ -239,11 +239,11 @@ export default function AppShell({ user, children }: Props) {
           <button className="topbar2__toggle" type="button" aria-label={T('shell.menu')} onClick={() => setCollapsed((c) => !c)}>
             <Menu size={20} strokeWidth={2} />
           </button>
+          <div className="topbar2__spacer" />
           <div className="topbar2__search">
             <Search size={16} strokeWidth={2} />
             <input className="topbar2__search-input" type="search" placeholder={T('shell.search')} aria-label={T('shell.search')} />
           </div>
-          <div className="topbar2__spacer" />
           <div className="topbar2__actions">
             <UserMenu username={user.username} email={user.email} initials={user.initials} />
           </div>
