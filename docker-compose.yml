@@ -17,8 +17,16 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+      # Least-privilege app role created on first init by deploy/initdb. The api
+      # connects as this NON-superuser so Postgres Row-Level Security actually
+      # enforces (superusers + BYPASSRLS roles skip RLS). migrate keeps using
+      # POSTGRES_USER (needs superuser for CREATE EXTENSION + RLS DDL).
+      APP_DB_USER: ${APP_DB_USER}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD}
     volumes:
       - dbdata:/var/lib/postgresql/data
+      # initdb scripts run once, on an empty data volume, as the superuser.
+      - ./backend/deploy/initdb:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 5s
@@ -55,6 +63,15 @@ services:
       dockerfile: deploy/Dockerfile
     volumes:
       - ./backend.env:/app/.env:ro
+    environment:
+      # RLS enforcement: the api connects as the least-privilege app role, NOT
+      # the superuser the migrate step uses. This env var overrides
+      # DB_POSTGRE_URL from backend.env (viper AutomaticEnv). Set APP_DB_URL in
+      # ./.env to e.g.
+      #   postgres://${APP_DB_USER}:${APP_DB_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable
+      # (use the sslmode your ENVIRONMENT requires — production demands
+      # verify-full/verify-ca; see backend config guard).
+      DB_POSTGRE_URL: ${APP_DB_URL}
     depends_on:
       db:
         condition: service_healthy
