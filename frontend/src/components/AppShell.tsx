@@ -34,11 +34,14 @@ interface NavGroup {
   label?: string;
   items: NavItem[];
 }
-// Систем = icon rail дахь дээд түвшний бүлэг.
+// Систем = icon rail дахь дээд түвшний бүлэг. adminOnly бол зөвхөн admin (role 1)
+// харна — ингэснээр гурван систем (Админ/Менежер/Хэрэглэгч) role бүрд тусдаа
+// үлдэнэ (manager нь users.manage-тай ч Админ системийг харахгүй).
 interface NavSystem {
   key: string;
   label: string;
   icon: typeof User;
+  adminOnly?: boolean;
   groups: NavGroup[];
 }
 
@@ -48,6 +51,7 @@ const SYSTEMS: NavSystem[] = [
     key: 'admin',
     label: 'Админ систем',
     icon: ShieldHalf,
+    adminOnly: true,
     groups: [
       {
         label: 'Ерөнхий',
@@ -86,10 +90,12 @@ const SYSTEMS: NavSystem[] = [
     groups: [
       {
         label: 'Хувийн',
+        // Өөрийн профайл/тохиргоо нь бүх нэвтэрсэн хэрэглэгчид нээлттэй (эрхээс
+        // үл хамаарна) — иймээс manager ч өөрийн хэсэг рүүгээ хүрнэ.
         items: [
-          { href: '/', label: 'Хяналтын самбар', icon: LayoutDashboard, perm: 'personal.view' },
-          { href: '/profile', label: 'Профайл', icon: User, perm: 'personal.view' },
-          { href: '/settings', label: 'Аюулгүй байдал', icon: ShieldCheck, perm: 'personal.view' },
+          { href: '/', label: 'Хяналтын самбар', icon: LayoutDashboard },
+          { href: '/profile', label: 'Профайл', icon: User },
+          { href: '/settings', label: 'Аюулгүй байдал', icon: ShieldCheck },
         ],
       },
     ],
@@ -126,10 +132,17 @@ export default function AppShell({ user, children }: Props) {
     s.groups
       .map((g) => ({ ...g, items: g.items.filter((i) => canSee(i.perm)) }))
       .filter((g) => g.items.length > 0);
-  const systems = SYSTEMS.filter((s) => visibleGroups(s).length > 0);
+  const systems = SYSTEMS.filter((s) => {
+    if (s.adminOnly && !isAdmin) return false;
+    return visibleGroups(s).length > 0;
+  });
 
   const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
-  const systemMatches = (s: NavSystem) => visibleGroups(s).some((g) => g.items.some((i) => isActive(i.href)));
+  // Нүүр '/' нь "me" системд багтдаг ч default панелийг түүгээр сонгохгүй —
+  // ингэснээр admin/manager нэвтрэхдээ нүүрэн дээр өөрийн дээд системээ (Админ/
+  // Менежер) нээлттэй хардаг; гүн холбоос (/admin/*, /manager/*) хэвээр зөв.
+  const systemMatches = (s: NavSystem) =>
+    visibleGroups(s).some((g) => g.items.some((i) => i.href !== '/' && isActive(i.href)));
 
   const activeSystem = systems.find(systemMatches) ?? systems[0];
   const [openKey, setOpenKey] = useState(activeSystem?.key ?? '');

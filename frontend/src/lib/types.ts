@@ -54,7 +54,7 @@ export function toSessionUser(u: BackendUser): SessionUser {
 
 /** role_id → хүний унших нэр. Backend-д 2 = энгийн хэрэглэгч. */
 export function roleLabel(roleId: number, lang: 'mn' | 'en' = 'mn'): string {
-  const mn: Record<number, string> = { 1: 'Админ', 2: 'Хэрэглэгч' };
-  const en: Record<number, string> = { 1: 'Admin', 2: 'User' };
+  const mn: Record<number, string> = { 1: 'Админ', 2: 'Хэрэглэгч', 3: 'Менежер' };
+  const en: Record<number, string> = { 1: 'Admin', 2: 'User', 3: 'Manager' };
   return (lang === 'en' ? en : mn)[roleId] ?? (lang === 'en' ? 'User' : 'Хэрэглэгч');
 }
