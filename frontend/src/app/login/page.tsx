@@ -18,7 +18,6 @@ export default function LoginPage({
     <SigninShell>
       <section className="signin-card signin-card--narrow" aria-labelledby="login-title">
         <div>
-          <div className="page-head__eyebrow" style={{ marginBottom: 6 }}>Хэрэглэгчийн булан</div>
           <h1 id="login-title">Нэвтрэх</h1>
           <p className="signin-card__lede" style={{ marginTop: 8, fontSize: 14 }}>
             И-мэйл болон нууц үгээрээ нэвтэрнэ үү.

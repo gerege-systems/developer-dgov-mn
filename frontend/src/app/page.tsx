@@ -129,17 +129,13 @@ export default async function Home() {
         <span className="trust-strip__dot">·</span>
         <span className="trust-strip__item">bcrypt</span>
         <span className="trust-strip__dot">·</span>
-        <span className="trust-strip__item">Fiber v3 + GORM</span>
+        <span className="trust-strip__item">chi + pgx</span>
         <span className="trust-strip__dot">·</span>
         <span className="trust-strip__item mono">TLS 1.3</span>
       </div>
 
-      <footer className="footer">
-        <span>© 2026 Gerege Systems · <span className="mono">gerege-backend-template-v27</span></span>
-        <span className="footer__links">
-          <a href="https://gerege.mn/privacy">Нууцлал</a>
-          <a href="https://gerege.mn/terms">Нөхцөл</a>
-        </span>
+      <footer className="footer" style={{ justifyContent: 'center', textAlign: 'center' }}>
+        <span>© 2026 Gerege Systems · <span className="mono">Gerege Template</span></span>
       </footer>
     </AppShell>
   );
@@ -154,11 +150,10 @@ function Landing() {
         <img className="signin-card__crest" src="/brand.webp" alt="" aria-hidden="true" />
 
         <div>
-          <div className="page-head__eyebrow" style={{ marginBottom: 6 }}>Хэрэглэгчийн булан</div>
-          <h1 id="landing-title">Gerege</h1>
+          <h1 id="landing-title">Gerege Template</h1>
           <p className="signin-card__lede" style={{ marginTop: 12 }}>
-            <strong style={{ color: 'var(--fg)', fontWeight: 600 }}>gerege-backend-template-v27</strong>{' '}
-            дээр суурилсан хэрэглэгчийн булан. И-мэйл хаягаараа{' '}
+            <strong style={{ color: 'var(--fg)', fontWeight: 600 }}>Gerege Template</strong>{' '}
+            (chi + pgx) дээр суурилсан жишээ апп. И-мэйл хаягаараа{' '}
             <strong style={{ color: 'var(--fg)', fontWeight: 600 }}>бүртгүүлж</strong>,{' '}
             нэг удаагийн кодоор баталгаажуулаад, профайл болон аюулгүй байдлын тохиргоогоо нэг дороос удирдана.
           </p>
@@ -184,7 +179,7 @@ function Landing() {
         <div className="signin-card__trust" aria-label="Аюулгүй байдлын тэмдэг">
           <span className="badge"><KeyRound size={11} strokeWidth={2} /> JWT</span>
           <span className="badge">bcrypt</span>
-          <span className="badge">Fiber v3 + GORM</span>
+          <span className="badge">chi + pgx</span>
           <span className="badge"><span className="mono" style={{ fontSize: 11 }}>TLS 1.3</span></span>
         </div>
       </section>

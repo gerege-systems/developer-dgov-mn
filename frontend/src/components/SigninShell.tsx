@@ -21,8 +21,7 @@ export default function SigninShell({ rightNav, hideFooter, children }: Props) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className="topbar__brand-mark" src="/brand.webp" alt="Gerege" />
           <div className="topbar__brand-text">
-            <span className="topbar__brand-name">Gerege</span>
-            <span className="topbar__brand-tag">Бүртгэлийн булан</span>
+            <span className="topbar__brand-name">Gerege Template</span>
           </div>
         </Link>
         {rightNav ?? <AnonThemeToggle />}
@@ -31,13 +30,8 @@ export default function SigninShell({ rightNav, hideFooter, children }: Props) {
       <main className="signin-shell__body">{children}</main>
 
       {!hideFooter && (
-        <footer className="signin-footer">
-          <span>© 2026 Gerege Systems · <span className="mono">gerege-backend-template-v27</span></span>
-          <span>
-            <a href="https://gerege.mn/privacy" style={{ color: 'var(--muted)' }}>Нууцлал</a>
-            <span style={{ padding: '0 8px', color: 'var(--faint)' }}>·</span>
-            <a href="https://gerege.mn/terms" style={{ color: 'var(--muted)' }}>Үйлчилгээний нөхцөл</a>
-          </span>
+        <footer className="signin-footer" style={{ justifyContent: 'center', textAlign: 'center' }}>
+          <span>© 2026 Gerege Systems · <span className="mono">Gerege Template</span></span>
         </footer>
       )}
     </div>

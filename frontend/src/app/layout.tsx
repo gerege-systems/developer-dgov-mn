@@ -26,9 +26,9 @@ const jbMono = JetBrains_Mono({
 });
 
 export const metadata = {
-  title: 'Gerege — Бүртгэлийн булан',
+  title: 'Gerege Template',
   description:
-    'gerege-backend-template-v27 дээр суурилсан хэрэглэгчийн булан — нэвтрэх, бүртгүүлэх, профайл болон аюулгүй байдлын тохиргоог нэг дороос.',
+    'Gerege Template — chi (net/http) + pgx дээр суурилсан жишээ апп: нэвтрэх, бүртгүүлэх, профайл болон аюулгүй байдлын тохиргоог нэг дороос.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

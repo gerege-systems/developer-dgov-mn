@@ -60,8 +60,7 @@ export default function AppShell({ user, children }: Props) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className="topbar__brand-mark" src="/brand.webp" alt="Gerege" />
           <div className="topbar__brand-text">
-            <span className="topbar__brand-name">Gerege</span>
-            <span className="topbar__brand-tag">Бүртгэлийн булан</span>
+            <span className="topbar__brand-name">Gerege Template</span>
           </div>
         </Link>
         <div className="topbar__divider" aria-hidden="true" />

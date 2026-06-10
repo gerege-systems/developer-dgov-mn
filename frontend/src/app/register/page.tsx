@@ -11,7 +11,6 @@ export default function RegisterPage() {
     <SigninShell>
       <section className="signin-card signin-card--narrow" aria-labelledby="register-title">
         <div>
-          <div className="page-head__eyebrow" style={{ marginBottom: 6 }}>Хэрэглэгчийн булан</div>
           <h1 id="register-title">Шинээр бүртгүүлэх</h1>
           <p className="signin-card__lede" style={{ marginTop: 8, fontSize: 14 }}>
             Бүртгүүлсний дараа и-мэйлээр ирэх 6 оронтой кодоор бүртгэлээ баталгаажуулна.
