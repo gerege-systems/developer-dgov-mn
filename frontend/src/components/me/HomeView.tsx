@@ -47,34 +47,6 @@ export default function HomeView({ me }: { me: SessionUser }) {
         </div>
       </section>
 
-      <div className="section-divider">{T('me.home.sections')}</div>
-
-      <div className="grid-2">
-        {cards.map((c) => {
-          const Icon = c.icon;
-          return (
-            <Link
-              key={c.href}
-              href={c.href}
-              className="card"
-              style={{ textDecoration: 'none', color: 'inherit', display: 'flex', flexDirection: 'column', gap: 10 }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 10, display: 'grid', placeItems: 'center', background: 'var(--dan-blue-soft)', color: 'var(--dan-blue-text)' }}>
-                  <Icon size={18} strokeWidth={2} />
-                </div>
-                <span className="page-head__eyebrow">{c.eyebrow}</span>
-              </div>
-              <h3 style={{ fontSize: 16, fontWeight: 600 }}>{c.title}</h3>
-              <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.55 }}>{c.desc}</p>
-              <span style={{ marginTop: 2, display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 500, color: 'var(--dan-blue-text)' }}>
-                {T('me.home.open')} <ChevronRight size={12} strokeWidth={2} />
-              </span>
-            </Link>
-          );
-        })}
-      </div>
-
       <section className="card" aria-label={T('me.home.accountDetails')} style={{ marginTop: 16 }}>
         <div className="card__head card__head--with-sub">
           <div className="card__title">
@@ -116,7 +88,30 @@ export default function HomeView({ me }: { me: SessionUser }) {
         <span className="trust-strip__item mono">TLS 1.3</span>
       </div>
 
-      <footer className="footer" style={{ justifyContent: 'center', textAlign: 'center' }}>
+      <div className="section-divider">{T('me.home.sections')}</div>
+
+      <div className="card-grid">
+        {cards.map((c) => {
+          const Icon = c.icon;
+          return (
+            <Link key={c.href} href={c.href} className="card" style={{ padding: 20, textDecoration: 'none' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, display: 'grid', placeItems: 'center', background: 'var(--dan-blue-soft)', color: 'var(--dan-blue-text)' }}>
+                  <Icon size={18} strokeWidth={2} />
+                </div>
+                <span className="page-head__eyebrow">{c.eyebrow}</span>
+              </div>
+              <h3 style={{ fontSize: 16, fontWeight: 600 }}>{c.title}</h3>
+              <p className="muted" style={{ fontSize: 13, lineHeight: 1.55 }}>{c.desc}</p>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 500, color: 'var(--dan-blue-text)' }}>
+                {T('me.home.open')} <ChevronRight size={12} strokeWidth={2} />
+              </span>
+            </Link>
+          );
+        })}
+      </div>
+
+      <footer className="footer" style={{ justifyContent: 'center', textAlign: 'center', marginTop: 20 }}>
         <span>© 2026 Gerege Systems · <span className="mono">Gerege Template</span></span>
       </footer>
     </>
