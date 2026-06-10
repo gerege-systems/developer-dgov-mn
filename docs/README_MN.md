@@ -20,8 +20,8 @@ Redis**) backend болон Next.js (**BFF**) frontend-ийг хослуулса
 давхаргыг **sqlx → GORM** болгож хөрвүүлсэн, бүх фичерийг хадгалсан. Fiber v3-ийн
 хэрэглээг [rachmanzz/fiber-starter](https://github.com/rachmanzz/fiber-starter)
 (MIT)-ээс лавласан. Бүх эх төслийн зохиогчийн эрх, лицензийг хүндэтгэн хадгалсан
-([LICENSE](LICENSE), [NOTICE](NOTICE), [AUTHORS](AUTHORS)). Энэ төсөл **MIT
-лицензтэй**.
+эх төслийн attribution-г [AUTHORS](AUTHORS)-д хадгалсан). Энэ төсөл **MIT
+лицензтэй** — [LICENSE](LICENSE).
 
 ## Monorepo бүтэц
 
@@ -80,8 +80,8 @@ npm run dev
 
 ## Лиценз
 
-[MIT](LICENSE) — snykk/go-rest-boilerplate (MIT)-ийн derivative. Эх төслийн
-мэдэгдлийг [LICENSE](LICENSE), [NOTICE](NOTICE)-д хадгалсан.
+[MIT](LICENSE) — snykk/go-rest-boilerplate (MIT)-ийн derivative; эх төслийн
+attribution-г [AUTHORS](AUTHORS)-д хадгалсан.
 
 ---
 
