@@ -1,5 +1,6 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
+import PageHead from '@/components/PageHead';
 import UsersManager from '@/components/admin/UsersManager';
 import { fetchMe, fetchMyPermissions } from '@/lib/api';
 
@@ -14,11 +15,7 @@ export default async function AdminUsersPage() {
 
   return (
     <>
-      <div className="page-head">
-        <span className="page-head__eyebrow">Админ систем</span>
-        <h1>Хэрэглэгчид</h1>
-        <p className="page-head__sub">Хэрэглэгчдийн эрх, төлөвийг удирдана.</p>
-      </div>
+      <PageHead eyebrowKey="sys.admin" titleKey="nav.users" subKey="admin.users.sub" />
       <UsersManager currentUserId={me.id} />
     </>
   );

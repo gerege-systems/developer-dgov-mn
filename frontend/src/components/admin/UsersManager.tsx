@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { Trash2, Loader2, Check, Ban } from 'lucide-react';
+import { useT } from '@/lib/lang';
 
 interface AdminUser {
   id: string;
@@ -19,11 +20,12 @@ interface ApiResponse<T> {
 
 interface Props {
   currentUserId: string;
-  /** readOnly бол зөвхөн харах (role/active/delete товч идэвхгүй) — manager-ийн харах горим. */
+  /** readOnly бол зөвхөн харах горим. */
   readOnly?: boolean;
 }
 
 export default function UsersManager({ currentUserId, readOnly = false }: Props) {
+  const { T, lang } = useT();
   const [items, setItems] = useState<AdminUser[] | null>(null);
   const [roles, setRoles] = useState<{ id: number; name: string }[]>([]);
   const [error, setError] = useState('');
@@ -41,13 +43,13 @@ export default function UsersManager({ currentUserId, readOnly = false }: Props)
       if (body.ok) setItems(body.data ?? []);
       else {
         setItems([]);
-        setError(body.message || 'Хэрэглэгчдийг ачаалж чадсангүй.');
+        setError(body.message || T('users.loadError'));
       }
     } catch {
       setItems([]);
-      setError('Хэрэглэгчдийг ачаалж чадсангүй.');
+      setError(T('users.loadError'));
     }
-  }, []);
+  }, [T]);
 
   useEffect(() => {
     void load();
@@ -63,22 +65,24 @@ export default function UsersManager({ currentUserId, readOnly = false }: Props)
       });
       const b = (await res.json()) as ApiResponse<unknown>;
       if (b.ok) void load();
-      else setError(b.message || 'Үйлдэл амжилтгүй.');
+      else setError(b.message || T('users.actionError'));
     } catch {
-      setError('Үйлдэл амжилтгүй.');
+      setError(T('users.actionError'));
     }
   };
 
   const changeRole = (id: string, roleId: number) => mutate(`/api/admin/users/${id}/role`, 'PUT', { role_id: roleId });
   const toggleActive = (u: AdminUser) => mutate(`/api/admin/users/${u.id}/active`, 'PUT', { active: !u.active });
   const remove = (id: string) => {
-    if (!window.confirm('Энэ хэрэглэгчийг устгах уу?')) return;
+    if (!window.confirm(T('users.deleteConfirm'))) return;
     void mutate(`/api/admin/users/${id}`, 'DELETE');
   };
 
   const fmtDate = (iso: string) => {
     try {
-      return new Date(iso).toLocaleDateString('mn-MN', { year: 'numeric', month: 'short', day: 'numeric' });
+      return new Date(iso).toLocaleDateString(lang === 'en' ? 'en-US' : 'mn-MN', {
+        year: 'numeric', month: 'short', day: 'numeric',
+      });
     } catch {
       return iso;
     }
@@ -91,12 +95,12 @@ export default function UsersManager({ currentUserId, readOnly = false }: Props)
       {items === null && (
         <div className="muted" style={{ display: 'flex', gap: 8, alignItems: 'center', padding: 16 }}>
           <Loader2 size={16} strokeWidth={2} className="spin" />
-          <span>Ачаалж байна…</span>
+          <span>{T('users.loading')}</span>
         </div>
       )}
 
       {items !== null && items.length === 0 && !error && (
-        <div className="card" style={{ padding: 24 }}><p className="muted">Хэрэглэгч алга.</p></div>
+        <div className="card" style={{ padding: 24 }}><p className="muted">{T('users.empty')}</p></div>
       )}
 
       {items !== null && items.length > 0 && (
@@ -104,11 +108,11 @@ export default function UsersManager({ currentUserId, readOnly = false }: Props)
           <table className="users-table">
             <thead>
               <tr>
-                <th>Нэр</th>
-                <th>И-мэйл</th>
-                <th>Эрх</th>
-                <th>Төлөв</th>
-                <th>Үүссэн</th>
+                <th>{T('users.col.name')}</th>
+                <th>{T('users.col.email')}</th>
+                <th>{T('users.col.role')}</th>
+                <th>{T('users.col.status')}</th>
+                <th>{T('users.col.created')}</th>
                 {!readOnly && <th aria-label="actions" />}
               </tr>
             </thead>
@@ -119,7 +123,7 @@ export default function UsersManager({ currentUserId, readOnly = false }: Props)
                   <tr key={u.id}>
                     <td>
                       {u.username}
-                      {isSelf && <span className="chip chip--neutral" style={{ marginLeft: 8 }}>Та</span>}
+                      {isSelf && <span className="chip chip--neutral" style={{ marginLeft: 8 }}>{T('users.you')}</span>}
                     </td>
                     <td className="mono">{u.email}</td>
                     <td>
@@ -138,8 +142,8 @@ export default function UsersManager({ currentUserId, readOnly = false }: Props)
                     </td>
                     <td>
                       {u.active
-                        ? <span className="chip chip--success">Идэвхтэй</span>
-                        : <span className="chip chip--neutral">Идэвхгүй</span>}
+                        ? <span className="chip chip--success">{T('users.active')}</span>
+                        : <span className="chip chip--neutral">{T('users.inactive')}</span>}
                     </td>
                     <td className="mono">{fmtDate(u.created_at)}</td>
                     {!readOnly && (
@@ -150,11 +154,11 @@ export default function UsersManager({ currentUserId, readOnly = false }: Props)
                               className="btn btn--ghost btn--sm"
                               type="button"
                               onClick={() => toggleActive(u)}
-                              title={u.active ? 'Идэвхгүй болгох' : 'Идэвхжүүлэх'}
+                              title={u.active ? T('users.deactivate') : T('users.activate')}
                             >
                               {u.active ? <Ban size={14} strokeWidth={2} /> : <Check size={14} strokeWidth={2} />}
                             </button>
-                            <button className="btn btn--ghost btn--sm" type="button" onClick={() => remove(u.id)} title="Устгах">
+                            <button className="btn btn--ghost btn--sm" type="button" onClick={() => remove(u.id)} title={T('common.delete')}>
                               <Trash2 size={14} strokeWidth={2} />
                             </button>
                           </>

@@ -9,6 +9,8 @@ import {
 } from 'lucide-react';
 import UserMenu from './UserMenu';
 import { signOut } from '@/lib/signout';
+import { useT } from '@/lib/lang';
+import type { DictKey } from '@/lib/i18n';
 
 const ROLE_ADMIN = 1; // backend domain.RoleAdmin
 
@@ -26,20 +28,18 @@ interface Props {
 
 interface NavItem {
   href: string;
-  label: string;
+  labelKey: DictKey;
   icon: typeof User;
   perm?: string; // шаардагдах эрх; байхгүй бол бүх нэвтэрсэн хэрэглэгчид
 }
 interface NavGroup {
-  label?: string;
+  labelKey?: DictKey;
   items: NavItem[];
 }
-// Систем = icon rail дахь дээд түвшний бүлэг. adminOnly бол зөвхөн admin (role 1)
-// харна — ингэснээр гурван систем (Админ/Менежер/Хэрэглэгч) role бүрд тусдаа
-// үлдэнэ (manager нь users.manage-тай ч Админ системийг харахгүй).
+// Систем = icon rail дахь дээд түвшний бүлэг. adminOnly бол зөвхөн admin харна.
 interface NavSystem {
   key: string;
-  label: string;
+  labelKey: DictKey;
   icon: typeof User;
   adminOnly?: boolean;
   groups: NavGroup[];
@@ -49,53 +49,52 @@ interface NavSystem {
 const SYSTEMS: NavSystem[] = [
   {
     key: 'admin',
-    label: 'Админ систем',
+    labelKey: 'sys.admin',
     icon: ShieldHalf,
     adminOnly: true,
     groups: [
       {
-        label: 'Ерөнхий',
+        labelKey: 'group.general',
         items: [
-          { href: '/admin/dashboard', label: 'Хяналтын самбар', icon: LayoutDashboard, perm: 'dashboard.view' },
+          { href: '/admin/dashboard', labelKey: 'nav.dashboard', icon: LayoutDashboard, perm: 'dashboard.view' },
         ],
       },
       {
-        label: 'Удирдлага',
+        labelKey: 'group.management',
         items: [
-          { href: '/admin/users', label: 'Хэрэглэгчид', icon: Users, perm: 'users.manage' },
-          { href: '/admin/roles', label: 'Эрх (RBAC)', icon: ShieldHalf, perm: 'roles.manage' },
-          { href: '/admin/settings', label: 'Тохиргоо', icon: ShieldCheck, perm: 'settings.manage' },
+          { href: '/admin/users', labelKey: 'nav.users', icon: Users, perm: 'users.manage' },
+          { href: '/admin/roles', labelKey: 'nav.roles', icon: ShieldHalf, perm: 'roles.manage' },
+          { href: '/admin/settings', labelKey: 'nav.settings', icon: ShieldCheck, perm: 'settings.manage' },
         ],
       },
     ],
   },
   {
     key: 'manager',
-    label: 'Менежер систем',
+    labelKey: 'sys.manager',
     icon: Briefcase,
     groups: [
       {
-        label: 'Менежер',
+        labelKey: 'group.manager',
         items: [
-          { href: '/manager/dashboard', label: 'Менежерийн самбар', icon: LayoutDashboard, perm: 'manager.view' },
-          { href: '/manager/users', label: 'Хэрэглэгчид', icon: Users, perm: 'users.manage' },
+          { href: '/manager/dashboard', labelKey: 'nav.managerDashboard', icon: LayoutDashboard, perm: 'manager.view' },
+          { href: '/manager/users', labelKey: 'nav.users', icon: Users, perm: 'users.manage' },
         ],
       },
     ],
   },
   {
     key: 'me',
-    label: 'Хэрэглэгч систем',
+    labelKey: 'sys.user',
     icon: UserCircle,
     groups: [
       {
-        label: 'Хувийн',
-        // Өөрийн профайл/тохиргоо нь бүх нэвтэрсэн хэрэглэгчид нээлттэй (эрхээс
-        // үл хамаарна) — иймээс manager ч өөрийн хэсэг рүүгээ хүрнэ.
+        labelKey: 'group.personal',
+        // Өөрийн профайл/тохиргоо нь бүх нэвтэрсэн хэрэглэгчид нээлттэй.
         items: [
-          { href: '/', label: 'Хяналтын самбар', icon: LayoutDashboard },
-          { href: '/profile', label: 'Профайл', icon: User },
-          { href: '/settings', label: 'Аюулгүй байдал', icon: ShieldCheck },
+          { href: '/', labelKey: 'nav.dashboard', icon: LayoutDashboard },
+          { href: '/profile', labelKey: 'nav.profile', icon: User },
+          { href: '/settings', labelKey: 'nav.security', icon: ShieldCheck },
         ],
       },
     ],
@@ -104,12 +103,12 @@ const SYSTEMS: NavSystem[] = [
 
 /**
  * Хоёр түвшний бүрхүүл — icon rail дахь "систем" (Админ / Менежер / Хэрэглэгч)
- * тус бүр өөрийн дэд цэстэй. Хэрэглэгчийн эрхээр (/api/rbac/me) цэсийг шүүнэ:
- * admin (role 1) бүгдийг харна; бусад нь зөвхөн эрх бүхий зүйлээ. Бүх өнгө
- * дизайн системээс (OKLCH).
+ * тус бүр өөрийн дэд цэстэй. Хэрэглэгчийн эрхээр (/api/rbac/me) цэсийг шүүж,
+ * хэлийг useT()-ээр (mn/en) орчуулна.
  */
 export default function AppShell({ user, children }: Props) {
   const pathname = usePathname() ?? '/';
+  const { T } = useT();
   const isAdmin = user.roleId === ROLE_ADMIN;
 
   const [perms, setPerms] = useState<string[] | null>(null);
@@ -139,8 +138,8 @@ export default function AppShell({ user, children }: Props) {
 
   const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
   // Нүүр '/' нь "me" системд багтдаг ч default панелийг түүгээр сонгохгүй —
-  // ингэснээр admin/manager нэвтрэхдээ нүүрэн дээр өөрийн дээд системээ (Админ/
-  // Менежер) нээлттэй хардаг; гүн холбоос (/admin/*, /manager/*) хэвээр зөв.
+  // ингэснээр admin/manager нэвтрэхдээ нүүрэн дээр өөрийн дээд системээ нээлттэй
+  // хардаг; гүн холбоос (/admin/*, /manager/*) хэвээр зөв.
   const systemMatches = (s: NavSystem) =>
     visibleGroups(s).some((g) => g.items.some((i) => i.href !== '/' && isActive(i.href)));
 
@@ -175,7 +174,7 @@ export default function AppShell({ user, children }: Props) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/brand.webp" alt="Gerege" />
         </Link>
-        <nav className="iconrail__nav" aria-label="Системүүд">
+        <nav className="iconrail__nav" aria-label={T('shell.menu')}>
           {systems.map((s) => {
             const Icon = s.icon;
             const active = s.key === activeSystem.key;
@@ -184,8 +183,8 @@ export default function AppShell({ user, children }: Props) {
                 key={s.key}
                 type="button"
                 className={`iconrail__btn${active ? ' is-active' : ''}`}
-                title={s.label}
-                aria-label={s.label}
+                title={T(s.labelKey)}
+                aria-label={T(s.labelKey)}
                 onClick={() => {
                   setOpenKey(s.key);
                   setCollapsed(false);
@@ -197,10 +196,10 @@ export default function AppShell({ user, children }: Props) {
           })}
         </nav>
         <div className="iconrail__bottom">
-          <a className="iconrail__btn" href="https://gerege.mn/help" target="_blank" rel="noreferrer" title="Тусламж" aria-label="Тусламж">
+          <a className="iconrail__btn" href="https://gerege.mn/help" target="_blank" rel="noreferrer" title={T('nav.help')} aria-label={T('nav.help')}>
             <HelpCircle size={20} strokeWidth={2} />
           </a>
-          <button className="iconrail__btn iconrail__signout" type="button" title="Гарах" aria-label="Гарах" onClick={() => signOut()}>
+          <button className="iconrail__btn iconrail__signout" type="button" title={T('nav.signout')} aria-label={T('nav.signout')} onClick={() => signOut()}>
             <LogOut size={20} strokeWidth={2} />
           </button>
         </div>
@@ -209,12 +208,12 @@ export default function AppShell({ user, children }: Props) {
       <aside className="sidepanel">
         <div className="sidepanel__head">
           <span className="sidepanel__brand-name">Gerege Template</span>
-          <span className="sidepanel__title">{panel.label}</span>
+          <span className="sidepanel__title">{T(panel.labelKey)}</span>
         </div>
         <nav className="sidepanel__nav">
           {visibleGroups(panel).map((g, gi) => (
             <div key={gi} className="sidepanel__group">
-              {g.label && <span className="sidepanel__group-label">{g.label}</span>}
+              {g.labelKey && <span className="sidepanel__group-label">{T(g.labelKey)}</span>}
               {g.items.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.href);
@@ -226,7 +225,7 @@ export default function AppShell({ user, children }: Props) {
                     aria-current={active ? 'page' : undefined}
                   >
                     <Icon size={16} strokeWidth={2} />
-                    <span>{item.label}</span>
+                    <span>{T(item.labelKey)}</span>
                   </Link>
                 );
               })}
@@ -237,7 +236,7 @@ export default function AppShell({ user, children }: Props) {
 
       <div className="maincol">
         <header className="topbar2">
-          <button className="topbar2__toggle" type="button" aria-label="Цэс" onClick={() => setCollapsed((c) => !c)}>
+          <button className="topbar2__toggle" type="button" aria-label={T('shell.menu')} onClick={() => setCollapsed((c) => !c)}>
             <Menu size={20} strokeWidth={2} />
           </button>
           <div className="topbar2__spacer" />

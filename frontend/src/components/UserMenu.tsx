@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ChevronDown, User, Settings, Globe, Moon, Sun, Monitor, HelpCircle, LogOut } from 'lucide-react';
 import SegmentedControl from './SegmentedControl';
 import { usePreferences, showToast } from '@/lib/preferences';
+import { useLang } from '@/lib/lang';
 import { signOut } from '@/lib/signout';
 
 interface Props {
@@ -17,7 +18,8 @@ export default function UserMenu({ username, email, initials }: Props) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const { theme, setTheme, lang, setLang } = usePreferences();
+  const { theme, setTheme } = usePreferences();
+  const { lang, setLang } = useLang();
 
   // Гадна дарах + Escape хаах
   useEffect(() => {

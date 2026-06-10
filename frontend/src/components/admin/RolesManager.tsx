@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { Loader2, Save, Plus, Trash2, X } from 'lucide-react';
+import { useT } from '@/lib/lang';
 
 interface Role {
   id: number;
@@ -25,9 +26,9 @@ interface ApiResponse<T> {
 const ADMIN_KEY = 'admin';
 
 export default function RolesManager() {
+  const { T } = useT();
   const [roles, setRoles] = useState<Role[] | null>(null);
   const [perms, setPerms] = useState<Permission[]>([]);
-  // roleId -> Set(permission keys) — засагдсан төлөв.
   const [draft, setDraft] = useState<Record<number, Set<string>>>({});
   const [error, setError] = useState('');
   const [savingId, setSavingId] = useState<number | null>(null);
@@ -52,13 +53,13 @@ export default function RolesManager() {
         setDraft(d);
       } else {
         setRoles([]);
-        setError(rBody.message || 'Эрхүүдийг ачаалж чадсангүй.');
+        setError(rBody.message || T('roles.loadError'));
       }
     } catch {
       setRoles([]);
-      setError('Эрхүүдийг ачаалж чадсангүй.');
+      setError(T('roles.loadError'));
     }
-  }, []);
+  }, [T]);
 
   useEffect(() => {
     void load();
@@ -83,10 +84,10 @@ export default function RolesManager() {
         body: JSON.stringify({ permissions: Array.from(draft[role.id] ?? []) }),
       });
       const b = (await res.json()) as ApiResponse<unknown>;
-      if (!b.ok) setError(b.message || 'Хадгалах амжилтгүй.');
+      if (!b.ok) setError(b.message || T('roles.saveError'));
       else await load();
     } catch {
-      setError('Хадгалах амжилтгүй.');
+      setError(T('roles.saveError'));
     } finally {
       setSavingId(null);
     }
@@ -106,22 +107,22 @@ export default function RolesManager() {
         setAdding(false);
         setForm({ name: '', key: '' });
         await load();
-      } else setError(b.message || 'Эрх үүсгэх амжилтгүй.');
+      } else setError(b.message || T('roles.createError'));
     } catch {
-      setError('Эрх үүсгэх амжилтгүй.');
+      setError(T('roles.createError'));
     }
   };
 
   const remove = async (role: Role) => {
-    if (!window.confirm(`"${role.name}" эрхийг устгах уу?`)) return;
+    if (!window.confirm(`${role.name} — ${T('roles.deleteConfirm')}`)) return;
     setError('');
     try {
       const res = await fetch(`/api/rbac/roles/${role.id}`, { method: 'DELETE' });
       const b = (await res.json()) as ApiResponse<unknown>;
       if (b.ok) await load();
-      else setError(b.message || 'Устгах амжилтгүй.');
+      else setError(b.message || T('roles.deleteError'));
     } catch {
-      setError('Устгах амжилтгүй.');
+      setError(T('roles.deleteError'));
     }
   };
 
@@ -129,7 +130,7 @@ export default function RolesManager() {
     return (
       <div className="muted" style={{ display: 'flex', gap: 8, alignItems: 'center', padding: 16 }}>
         <Loader2 size={16} strokeWidth={2} className="spin" />
-        <span>Ачаалж байна…</span>
+        <span>{T('users.loading')}</span>
       </div>
     );
   }
@@ -142,7 +143,7 @@ export default function RolesManager() {
         {!adding && (
           <button className="btn btn--primary" type="button" onClick={() => { setAdding(true); setError(''); }}>
             <Plus size={16} strokeWidth={2} />
-            <span>Эрх нэмэх</span>
+            <span>{T('roles.add')}</span>
           </button>
         )}
       </div>
@@ -150,16 +151,16 @@ export default function RolesManager() {
       {adding && (
         <div className="card" style={{ padding: 16, marginBottom: 16, display: 'grid', gap: 12 }}>
           <div className="field">
-            <label className="field__label" htmlFor="r-name">Нэр</label>
-            <input id="r-name" className="input" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Жишээ: Борлуулалтын менежер" />
+            <label className="field__label" htmlFor="r-name">{T('roles.name')}</label>
+            <input id="r-name" className="input" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={T('roles.namePh')} />
           </div>
           <div className="field">
-            <label className="field__label" htmlFor="r-key">Түлхүүр (заавал биш)</label>
+            <label className="field__label" htmlFor="r-key">{T('roles.key')}</label>
             <input id="r-key" className="input mono" value={form.key} onChange={(e) => setForm({ ...form, key: e.target.value })} placeholder="sales_manager" />
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
-            <button className="btn btn--primary" type="button" onClick={createRole}><Save size={16} strokeWidth={2} /><span>Үүсгэх</span></button>
-            <button className="btn btn--secondary" type="button" onClick={() => setAdding(false)}><X size={16} strokeWidth={2} /><span>Болих</span></button>
+            <button className="btn btn--primary" type="button" onClick={createRole}><Save size={16} strokeWidth={2} /><span>{T('common.create')}</span></button>
+            <button className="btn btn--secondary" type="button" onClick={() => setAdding(false)}><X size={16} strokeWidth={2} /><span>{T('common.cancel')}</span></button>
           </div>
         </div>
       )}
@@ -168,7 +169,7 @@ export default function RolesManager() {
         <table className="rbac-matrix">
           <thead>
             <tr>
-              <th>Эрх (permission)</th>
+              <th>{T('roles.col.permission')}</th>
               {roles.map((r) => <th key={r.id}>{r.name}</th>)}
             </tr>
           </thead>
@@ -204,11 +205,11 @@ export default function RolesManager() {
                 <td key={r.id}>
                   {r.key !== ADMIN_KEY && (
                     <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
-                      <button className="btn btn--primary btn--sm" type="button" onClick={() => save(r)} disabled={savingId === r.id} title="Хадгалах">
+                      <button className="btn btn--primary btn--sm" type="button" onClick={() => save(r)} disabled={savingId === r.id} title={T('common.save')}>
                         {savingId === r.id ? <Loader2 size={13} strokeWidth={2} className="spin" /> : <Save size={13} strokeWidth={2} />}
                       </button>
                       {!r.is_system && (
-                        <button className="btn btn--ghost btn--sm" type="button" onClick={() => remove(r)} title="Устгах">
+                        <button className="btn btn--ghost btn--sm" type="button" onClick={() => remove(r)} title={T('common.delete')}>
                           <Trash2 size={13} strokeWidth={2} />
                         </button>
                       )}

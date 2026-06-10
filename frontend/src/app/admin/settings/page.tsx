@@ -1,6 +1,7 @@
 import React from 'react';
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import PageHead from '@/components/PageHead';
+import SettingsNote from '@/components/admin/SettingsNote';
 import { fetchMe, fetchMyPermissions } from '@/lib/api';
 
 export const dynamic = 'force-dynamic';
@@ -14,17 +15,8 @@ export default async function AdminSettingsPage() {
 
   return (
     <>
-      <div className="page-head">
-        <span className="page-head__eyebrow">Админ систем</span>
-        <h1>Тохиргоо</h1>
-        <p className="page-head__sub">Системийн тохиргоо. (Энэ template-д суурь тохиргоо орхигдсон — өргөтгөх боломжтой.)</p>
-      </div>
-      <div className="card" style={{ padding: 22 }}>
-        <p className="muted" style={{ marginTop: 0 }}>
-          Өөрийн бүртгэлийн аюулгүй байдал (нууц үг солих)-ийг{' '}
-          <Link href="/settings">Хэрэглэгч → Аюулгүй байдал</Link> хэсгээс хийнэ.
-        </p>
-      </div>
+      <PageHead eyebrowKey="sys.admin" titleKey="nav.settings" subKey="admin.settings.sub" />
+      <SettingsNote />
     </>
   );
 }

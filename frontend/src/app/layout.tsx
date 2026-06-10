@@ -1,6 +1,7 @@
 import React from 'react';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
+import { LangProvider } from '@/lib/lang';
 
 // Фонтыг build үед татаж next/font өөрөө host хийдэг тул CSP-г чанд 'self'-ээр
 // үлдээж болно (гадны фонт host хэрэггүй).
@@ -51,7 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
         <script src="/theme-bootstrap.js" />
       </head>
-      <body>{children}</body>
+      <body><LangProvider>{children}</LangProvider></body>
     </html>
   );
 }
