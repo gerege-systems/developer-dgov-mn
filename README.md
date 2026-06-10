@@ -22,8 +22,8 @@ The **backend** is derived from the open-source
 [snykk/go-rest-boilerplate](https://github.com/snykk/go-rest-boilerplate)
 (MIT, by Najib Fikri); we ported the HTTP layer **Gin → chi (net/http)** and the
 data layer **sqlx → pgx (pgxpool, hand-written SQL)**, keeping the full feature
-set. All upstream copyright and license terms are honored — see [LICENSE](LICENSE),
-[NOTICE](NOTICE), and [AUTHORS](AUTHORS). This project is **MIT-licensed**.
+set. Upstream attribution is retained in [AUTHORS](AUTHORS). This project is
+**MIT-licensed** — see [LICENSE](LICENSE).
 
 ## Monorepo structure
 
@@ -82,8 +82,8 @@ the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## License
 
-[MIT](LICENSE) — derivative of snykk/go-rest-boilerplate (MIT). Upstream notices
-are retained in [LICENSE](LICENSE) and [NOTICE](NOTICE).
+[MIT](LICENSE) — derivative of snykk/go-rest-boilerplate (MIT); upstream
+attribution is retained in [AUTHORS](AUTHORS).
 
 ---
 
