@@ -62,6 +62,14 @@ services:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
+    # /app/healthcheck (distroless) нь /health-руу probe хийнэ. web нь
+    # энэ readiness-ийг хүлээдэг.
+    healthcheck:
+      test: ["CMD", "/app/healthcheck"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 20s
     restart: unless-stopped
 
   web:
@@ -69,15 +77,28 @@ services:
       context: ./frontend
     environment:
       NODE_ENV: production
+      # Next standalone-г 0.0.0.0 дээр bind хийлгэнэ (Docker нь HOSTNAME-г
+      # контейнер ID болгодог тул эс зааваас зөвхөн тэр IP дээр сонсож,
+      # localhost healthcheck refused болдог).
+      HOSTNAME: "0.0.0.0"
       # BFF → backend over the internal network (frontend appends /api/v1).
       BACKEND_URL: http://api:8080
       COOKIE_SECURE: "true"
       APP_ORIGIN: ${APP_ORIGIN}
     depends_on:
-      - api
+      api:
+        condition: service_healthy
     # Bind to loopback only; the public reverse proxy (nginx) forwards here.
     ports:
       - "127.0.0.1:${WEB_PORT:-3007}:3000"
+    # 127.0.0.1 (localhost биш) — контейнерийн /etc/hosts-д ::1 localhost
+    # байгаа тул IPv6 refused-аас сэргийлнэ.
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:3000/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     restart: unless-stopped
 
 volumes:

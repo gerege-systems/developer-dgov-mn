@@ -1,0 +1,13 @@
+Gerege Template
+Copyright (c) 2026 Gerege Systems
+
+This product includes software derived from the following open-source projects:
+
+- snykk/go-rest-boilerplate (MIT License, Copyright (c) Najib Fikri)
+  https://github.com/snykk/go-rest-boilerplate
+  The backend's Clean Architecture layout and feature set originate here.
+  The HTTP layer was ported from Gin to chi (net/http) and the data layer
+  from sqlx to jackc/pgx (pgxpool, hand-written SQL).
+
+All upstream copyright and license terms are honored. See LICENSE for the
+full MIT license text.
