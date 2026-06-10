@@ -26,7 +26,7 @@ interface ApiResponse<T> {
 const ADMIN_KEY = 'admin';
 
 export default function RolesManager() {
-  const { T } = useT();
+  const { T, tRole, tPerm } = useT();
   const [roles, setRoles] = useState<Role[] | null>(null);
   const [perms, setPerms] = useState<Permission[]>([]);
   const [draft, setDraft] = useState<Record<number, Set<string>>>({});
@@ -170,7 +170,7 @@ export default function RolesManager() {
           <thead>
             <tr>
               <th>{T('roles.col.permission')}</th>
-              {roles.map((r) => <th key={r.id}>{r.name}</th>)}
+              {roles.map((r) => <th key={r.id}>{tRole(r.key, r.name)}</th>)}
             </tr>
           </thead>
           <tbody>
@@ -178,7 +178,7 @@ export default function RolesManager() {
               <tr key={p.key}>
                 <td>
                   <span className="rbac-perm-label">
-                    {p.label}
+                    {tPerm(p.key, p.label)}
                     <small className="mono">{p.key}</small>
                   </span>
                 </td>
@@ -192,7 +192,7 @@ export default function RolesManager() {
                         checked={checked}
                         disabled={isAdmin}
                         onChange={() => toggle(r.id, p.key)}
-                        aria-label={`${r.name}: ${p.label}`}
+                        aria-label={`${tRole(r.key, r.name)}: ${tPerm(p.key, p.label)}`}
                       />
                     </td>
                   );

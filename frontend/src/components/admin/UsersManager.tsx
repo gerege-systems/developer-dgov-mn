@@ -25,9 +25,9 @@ interface Props {
 }
 
 export default function UsersManager({ currentUserId, readOnly = false }: Props) {
-  const { T, lang } = useT();
+  const { T, lang, tRole } = useT();
   const [items, setItems] = useState<AdminUser[] | null>(null);
-  const [roles, setRoles] = useState<{ id: number; name: string }[]>([]);
+  const [roles, setRoles] = useState<{ id: number; key: string; name: string }[]>([]);
   const [error, setError] = useState('');
 
   const load = useCallback(async () => {
@@ -38,7 +38,7 @@ export default function UsersManager({ currentUserId, readOnly = false }: Props)
         fetch('/api/rbac/roles', { method: 'GET' }),
       ]);
       const body = (await uRes.json()) as ApiResponse<AdminUser[]>;
-      const rBody = (await rRes.json()) as ApiResponse<{ id: number; name: string }[]>;
+      const rBody = (await rRes.json()) as ApiResponse<{ id: number; key: string; name: string }[]>;
       if (rBody.ok) setRoles(rBody.data ?? []);
       if (body.ok) setItems(body.data ?? []);
       else {
@@ -128,7 +128,10 @@ export default function UsersManager({ currentUserId, readOnly = false }: Props)
                     <td className="mono">{u.email}</td>
                     <td>
                       {readOnly ? (
-                        <span>{roles.find((r) => r.id === u.role_id)?.name ?? u.role_id}</span>
+                        <span>{(() => {
+                          const r = roles.find((x) => x.id === u.role_id);
+                          return r ? tRole(r.key, r.name) : u.role_id;
+                        })()}</span>
                       ) : (
                         <select
                           className="input users-table__role"
@@ -136,7 +139,7 @@ export default function UsersManager({ currentUserId, readOnly = false }: Props)
                           disabled={isSelf}
                           onChange={(e) => changeRole(u.id, Number(e.target.value))}
                         >
-                          {roles.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
+                          {roles.map((r) => <option key={r.id} value={r.id}>{tRole(r.key, r.name)}</option>)}
                         </select>
                       )}
                     </td>

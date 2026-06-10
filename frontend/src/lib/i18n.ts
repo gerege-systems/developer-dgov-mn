@@ -67,6 +67,17 @@ export const dict = {
     'roles.createError': 'Эрх үүсгэх амжилтгүй.',
     'roles.deleteError': 'Устгах амжилтгүй.',
     'roles.deleteConfirm': 'эрхийг устгах уу?',
+    // Системийн role нэрс (backend key-ээр) — custom role нь өөрийн нэрээрээ.
+    'role.admin': 'Админ',
+    'role.user': 'Хэрэглэгч',
+    'role.manager': 'Менежер',
+    // Permission label-ууд (backend key-ээр) — каталог тогтмол.
+    'perm.dashboard.view': 'Хяналтын самбар үзэх',
+    'perm.settings.manage': 'Тохиргоо удирдах',
+    'perm.users.manage': 'Хэрэглэгч удирдах',
+    'perm.roles.manage': 'Эрх (role) удирдах',
+    'perm.manager.view': 'Менежерийн хэсэг',
+    'perm.personal.view': 'Хувийн хэсэг',
   },
   en: {
     'sys.admin': 'Admin system',
@@ -126,6 +137,15 @@ export const dict = {
     'roles.createError': 'Failed to create role.',
     'roles.deleteError': 'Failed to delete.',
     'roles.deleteConfirm': 'Delete role?',
+    'role.admin': 'Admin',
+    'role.user': 'User',
+    'role.manager': 'Manager',
+    'perm.dashboard.view': 'View dashboard',
+    'perm.settings.manage': 'Manage settings',
+    'perm.users.manage': 'Manage users',
+    'perm.roles.manage': 'Manage roles',
+    'perm.manager.view': 'Manager area',
+    'perm.personal.view': 'Personal area',
   },
 } as const;
 
@@ -133,4 +153,22 @@ export type DictKey = keyof (typeof dict)['mn'];
 
 export function t(lang: Lang, key: DictKey): string {
   return dict[lang]?.[key] ?? dict.mn[key] ?? key;
+}
+
+// Backend-ийн динамик нэрсийг key-ээр орчуулна. Каталогт байхгүй бол (custom
+// role, шинэ permission) DB-ийн fallback нэрийг хэвээр буцаана.
+function lookup(lang: Lang, dk: string, fallback: string): string {
+  const table = dict[lang] as Record<string, string>;
+  const mn = dict.mn as Record<string, string>;
+  return table[dk] ?? mn[dk] ?? fallback;
+}
+
+/** Role нэрийг backend key-ээр орчуулна (admin/user/manager); custom бол fallback. */
+export function roleName(lang: Lang, roleKey: string, fallback: string): string {
+  return lookup(lang, `role.${roleKey}`, fallback);
+}
+
+/** Permission label-г backend key-ээр орчуулна; каталогт байхгүй бол fallback. */
+export function permLabel(lang: Lang, permKey: string, fallback: string): string {
+  return lookup(lang, `perm.${permKey}`, fallback);
 }
