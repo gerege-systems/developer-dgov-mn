@@ -65,13 +65,15 @@ services:
       - ./backend.env:/app/.env:ro
     environment:
       # RLS enforcement: the api connects as the least-privilege app role, NOT
-      # the superuser the migrate step uses. This env var overrides
-      # DB_POSTGRE_URL from backend.env (viper AutomaticEnv). Set APP_DB_URL in
-      # ./.env to e.g.
-      #   postgres://${APP_DB_USER}:${APP_DB_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable
-      # (use the sslmode your ENVIRONMENT requires — production demands
-      # verify-full/verify-ca; see backend config guard).
-      DB_POSTGRE_URL: ${APP_DB_URL}
+      # the superuser the migrate step uses, so Row-Level Security is enforced.
+      # The stack runs the backend in development mode (ENVIRONMENT=development in
+      # backend.env — the internal compose DB has no TLS), so the driver reads
+      # DB_POSTGRE_DSN; this env overrides it (viper AutomaticEnv). Set APP_DB_DSN
+      # in ./.env to the app_user keyword DSN, e.g.
+      #   host=db port=5432 user=app_user password=... dbname=gerege_template sslmode=disable
+      # (For a production/TLS deployment override DB_POSTGRE_URL with a
+      # verify-full URL instead — see the backend config guard.)
+      DB_POSTGRE_DSN: ${APP_DB_DSN}
     depends_on:
       db:
         condition: service_healthy
