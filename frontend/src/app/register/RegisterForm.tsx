@@ -12,6 +12,8 @@ export default function RegisterForm() {
   const router = useRouter();
   const [lastName, setLastName] = useState('');
   const [firstName, setFirstName] = useState('');
+  const [lastNameEn, setLastNameEn] = useState('');
+  const [firstNameEn, setFirstNameEn] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -25,7 +27,11 @@ export default function RegisterForm() {
     setError('');
     setFieldErrors({});
 
-    const res = await postJSON('/api/auth/register', { last_name: lastName, first_name: firstName, username, email, password });
+    const res = await postJSON('/api/auth/register', {
+      last_name: lastName, first_name: firstName,
+      last_name_en: lastNameEn, first_name_en: firstNameEn,
+      username, email, password,
+    });
 
     if (res.ok) {
       // Бүртгэл идэвхгүй үүссэн — баталгаажуулалт руу шилжиж кодыг автоматаар илгээнэ.
@@ -79,6 +85,42 @@ export default function RegisterForm() {
           required
         />
         {fieldErrors.first_name && <span className="field__error">{fieldErrors.first_name}</span>}
+      </div>
+
+      <div className="field">
+        <label className="field__label" htmlFor="last_name_en">Овог (англиар)</label>
+        <input
+          id="last_name_en"
+          name="last_name_en"
+          type="text"
+          className="input"
+          value={lastNameEn}
+          onChange={(e) => setLastNameEn(e.target.value)}
+          autoComplete="off"
+          placeholder="Tsenddorj"
+          maxLength={50}
+          aria-invalid={fieldErrors.last_name_en ? true : undefined}
+        />
+        {fieldErrors.last_name_en
+          ? <span className="field__error">{fieldErrors.last_name_en}</span>
+          : <span className="field__help">Заавал биш — хэл солиход англиар харагдана.</span>}
+      </div>
+
+      <div className="field">
+        <label className="field__label" htmlFor="first_name_en">Нэр (англиар)</label>
+        <input
+          id="first_name_en"
+          name="first_name_en"
+          type="text"
+          className="input"
+          value={firstNameEn}
+          onChange={(e) => setFirstNameEn(e.target.value)}
+          autoComplete="off"
+          placeholder="Erdenebat"
+          maxLength={50}
+          aria-invalid={fieldErrors.first_name_en ? true : undefined}
+        />
+        {fieldErrors.first_name_en && <span className="field__error">{fieldErrors.first_name_en}</span>}
       </div>
 
       <div className="field">

@@ -16,6 +16,9 @@ export interface BackendUser {
   first_name?: string;
   last_name?: string;
   full_name?: string;
+  first_name_en?: string;
+  last_name_en?: string;
+  full_name_en?: string;
   email: string;
   role_id: number;
   token?: string;
@@ -40,7 +43,10 @@ export interface SessionUser {
   username: string;
   firstName: string;
   lastName: string;
-  fullName: string;
+  fullName: string;     // монгол "Овог Нэр" (хоосон бол username)
+  firstNameEn: string;
+  lastNameEn: string;
+  fullNameEn: string;   // англи "Lastname Firstname" (хоосон байж болно)
   email: string;
   roleId: number;
   createdAt: string;
@@ -53,15 +59,26 @@ export function fullNameOf(u: { firstName?: string; lastName?: string; full_name
   return (u.full_name?.trim() || composed) || u.username;
 }
 
+/** Одоогийн хэлээр харуулах нэр: en үед англи нэр (байхгүй бол монгол/username). */
+export function displayName(u: { fullName: string; fullNameEn?: string; username: string }, lang: 'mn' | 'en'): string {
+  if (lang === 'en') return u.fullNameEn?.trim() || u.fullName || u.username;
+  return u.fullName || u.username;
+}
+
 export function toSessionUser(u: BackendUser): SessionUser {
   const firstName = u.first_name ?? '';
   const lastName = u.last_name ?? '';
+  const firstNameEn = u.first_name_en ?? '';
+  const lastNameEn = u.last_name_en ?? '';
   return {
     id: u.id,
     username: u.username,
     firstName,
     lastName,
     fullName: fullNameOf({ firstName, lastName, full_name: u.full_name, username: u.username }),
+    firstNameEn,
+    lastNameEn,
+    fullNameEn: (u.full_name_en?.trim() || `${lastNameEn} ${firstNameEn}`.trim()),
     email: u.email,
     roleId: u.role_id,
     createdAt: u.created_at,

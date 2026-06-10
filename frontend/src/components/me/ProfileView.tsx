@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { User, Mail, ShieldCheck, Clock, Hash, RefreshCw } from 'lucide-react';
 import { useT } from '@/lib/lang';
-import { roleLabel, type SessionUser } from '@/lib/types';
+import { roleLabel, displayName, type SessionUser } from '@/lib/types';
 import { formatTS, initialsOf } from '@/lib/format';
 
 export default function ProfileView({ me }: { me: SessionUser }) {
@@ -24,7 +24,7 @@ export default function ProfileView({ me }: { me: SessionUser }) {
           <div className="profile-card__avatar" aria-hidden="true">{initials}</div>
           <div className="profile-card__body">
             <div className="profile-card__name">
-              <span className="profile-card__name-text">{me.fullName}</span>
+              <span className="profile-card__name-text">{displayName(me, lang)}</span>
               <span className="badge badge--primary">{roleLabel(me.roleId, lang)}</span>
             </div>
             <div className="profile-card__sub">
@@ -50,11 +50,11 @@ export default function ProfileView({ me }: { me: SessionUser }) {
           </div>
           <div className="defrow">
             <span className="defrow__label"><User size={13} style={{ verticalAlign: 'middle', marginRight: 6 }} />{T('me.field.lastName')}</span>
-            <span className="defrow__value">{me.lastName || '—'}</span>
+            <span className="defrow__value">{(lang === 'en' ? me.lastNameEn : me.lastName) || '—'}</span>
           </div>
           <div className="defrow">
             <span className="defrow__label"><User size={13} style={{ verticalAlign: 'middle', marginRight: 6 }} />{T('me.field.firstName')}</span>
-            <span className="defrow__value">{me.firstName || '—'}</span>
+            <span className="defrow__value">{(lang === 'en' ? me.firstNameEn : me.firstName) || '—'}</span>
           </div>
           <div className="defrow">
             <span className="defrow__label"><User size={13} style={{ verticalAlign: 'middle', marginRight: 6 }} />{T('me.field.username')}</span>

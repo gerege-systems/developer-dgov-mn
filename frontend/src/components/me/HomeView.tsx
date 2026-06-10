@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { ChevronRight, User, ShieldCheck, KeyRound, Info, Mail, Clock } from 'lucide-react';
 import { useT } from '@/lib/lang';
-import { roleLabel, type SessionUser } from '@/lib/types';
+import { roleLabel, displayName, type SessionUser } from '@/lib/types';
 import { formatDateMN, formatTS, formatWeekdayMN, initialsOf } from '@/lib/format';
 
 export default function HomeView({ me }: { me: SessionUser }) {
@@ -21,7 +21,7 @@ export default function HomeView({ me }: { me: SessionUser }) {
     <>
       <div className="page-head">
         <span className="page-head__eyebrow">{T('me.home.eyebrow')}</span>
-        <h1>{T('me.home.greeting')}, {me.fullName}</h1>
+        <h1>{T('me.home.greeting')}, {displayName(me, lang)}</h1>
         <p className="page-head__sub">
           {formatDateMN(today)}, {formatWeekdayMN(today)} · <span className="mono">UTC+08</span>
         </p>
@@ -32,7 +32,7 @@ export default function HomeView({ me }: { me: SessionUser }) {
           <div className="profile-card__avatar" aria-hidden="true">{initials}</div>
           <div className="profile-card__body">
             <div className="profile-card__name">
-              <span className="profile-card__name-text">{me.fullName}</span>
+              <span className="profile-card__name-text">{displayName(me, lang)}</span>
               <span className="badge badge--primary">{roleLabel(me.roleId, lang)}</span>
             </div>
             <div className="profile-card__sub">

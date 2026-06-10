@@ -10,13 +10,14 @@ export async function POST(req: Request) {
   const bad = checkOrigin(req);
   if (bad) return bad;
 
-  const { last_name, first_name, username, email, password } = await readJson<{
-    last_name?: string; first_name?: string; username?: string; email?: string; password?: string;
+  const { last_name, first_name, last_name_en, first_name_en, username, email, password } = await readJson<{
+    last_name?: string; first_name?: string; last_name_en?: string; first_name_en?: string;
+    username?: string; email?: string; password?: string;
   }>(req);
 
   const result = await backendFetch<BackendUser>('/auth/register', {
     method: 'POST',
-    body: JSON.stringify({ last_name, first_name, username, email, password }),
+    body: JSON.stringify({ last_name, first_name, last_name_en, first_name_en, username, email, password }),
   });
 
   return toClientResponse(result);

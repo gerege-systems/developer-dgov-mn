@@ -11,12 +11,14 @@ import UserMenu from './UserMenu';
 import { signOut } from '@/lib/signout';
 import { useT } from '@/lib/lang';
 import type { DictKey } from '@/lib/i18n';
+import { displayName } from '@/lib/types';
 
 const ROLE_ADMIN = 1; // backend domain.RoleAdmin
 
 export interface AppUser {
   username: string;
   fullName: string;
+  fullNameEn: string;
   email: string;
   initials: string;
   roleId: number;
@@ -109,7 +111,7 @@ const SYSTEMS: NavSystem[] = [
  */
 export default function AppShell({ user, children }: Props) {
   const pathname = usePathname() ?? '/';
-  const { T } = useT();
+  const { T, lang } = useT();
   const isAdmin = user.roleId === ROLE_ADMIN;
 
   const [perms, setPerms] = useState<string[] | null>(null);
@@ -246,7 +248,7 @@ export default function AppShell({ user, children }: Props) {
             <input className="topbar2__search-input" type="search" placeholder={T('shell.search')} aria-label={T('shell.search')} />
           </div>
           <div className="topbar2__actions">
-            <UserMenu username={user.fullName} email={user.email} initials={user.initials} />
+            <UserMenu username={displayName(user, lang)} email={user.email} initials={user.initials} />
           </div>
         </header>
 

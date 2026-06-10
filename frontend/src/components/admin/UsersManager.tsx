@@ -8,6 +8,7 @@ interface AdminUser {
   id: string;
   username: string;
   full_name?: string;
+  full_name_en?: string;
   email: string;
   role_id: number;
   active: boolean;
@@ -123,9 +124,16 @@ export default function UsersManager({ currentUserId, readOnly = false }: Props)
                 return (
                   <tr key={u.id}>
                     <td>
-                      {u.full_name?.trim() || u.username}
-                      {isSelf && <span className="chip chip--neutral" style={{ marginLeft: 8 }}>{T('users.you')}</span>}
-                      {u.full_name?.trim() && <div className="muted mono" style={{ fontSize: 12 }}>@{u.username}</div>}
+                      {(() => {
+                        const name = (lang === 'en' ? (u.full_name_en?.trim() || u.full_name?.trim()) : u.full_name?.trim());
+                        return (
+                          <>
+                            {name || u.username}
+                            {isSelf && <span className="chip chip--neutral" style={{ marginLeft: 8 }}>{T('users.you')}</span>}
+                            {name && <div className="muted mono" style={{ fontSize: 12 }}>@{u.username}</div>}
+                          </>
+                        );
+                      })()}
                     </td>
                     <td className="mono">{u.email}</td>
                     <td>
