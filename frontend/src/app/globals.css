@@ -996,7 +996,7 @@ html[lang="en"] .i18n-banner { display: block; }
   transition: background .15s, color .15s;
 }
 .iconrail__btn:hover { background: var(--surface-2); color: var(--fg); }
-.iconrail__btn.is-active { background: var(--dan-blue); color: var(--on-dan-blue); }
+.iconrail__btn.is-active { background: var(--dan-blue-soft); color: var(--dan-blue-text); }
 .iconrail__signout:hover { background: var(--danger-soft); color: var(--danger); }
 
 .sidepanel {
