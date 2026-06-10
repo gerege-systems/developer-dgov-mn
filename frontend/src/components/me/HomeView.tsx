@@ -75,19 +75,6 @@ export default function HomeView({ me }: { me: SessionUser }) {
         </div>
       </section>
 
-      <div className="trust-strip">
-        <span className="trust-strip__item">
-          <KeyRound size={12} strokeWidth={2.5} style={{ color: 'var(--dan-blue)' }} />
-          JWT access + refresh
-        </span>
-        <span className="trust-strip__dot">·</span>
-        <span className="trust-strip__item">bcrypt</span>
-        <span className="trust-strip__dot">·</span>
-        <span className="trust-strip__item">chi + pgx</span>
-        <span className="trust-strip__dot">·</span>
-        <span className="trust-strip__item mono">TLS 1.3</span>
-      </div>
-
       <div className="section-divider">{T('me.home.sections')}</div>
 
       <div className="card-grid">
@@ -111,7 +98,20 @@ export default function HomeView({ me }: { me: SessionUser }) {
         })}
       </div>
 
-      <footer className="footer" style={{ justifyContent: 'center', textAlign: 'center', marginTop: 20 }}>
+      <div className="trust-strip" style={{ marginTop: 22 }}>
+        <span className="trust-strip__item">
+          <KeyRound size={12} strokeWidth={2.5} style={{ color: 'var(--dan-blue)' }} />
+          JWT access + refresh
+        </span>
+        <span className="trust-strip__dot">·</span>
+        <span className="trust-strip__item">bcrypt</span>
+        <span className="trust-strip__dot">·</span>
+        <span className="trust-strip__item">chi + pgx</span>
+        <span className="trust-strip__dot">·</span>
+        <span className="trust-strip__item mono">TLS 1.3</span>
+      </div>
+
+      <footer className="footer" style={{ justifyContent: 'center', textAlign: 'center', marginTop: 12 }}>
         <span>© 2026 Gerege Systems · <span className="mono">Gerege Template</span></span>
       </footer>
     </>
