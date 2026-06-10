@@ -1,8 +1,12 @@
 # Gerege Template — CI/CD pipeline
 #
-# Backend (Go): golangci-lint + go test -race + integration compile + build.
-# Frontend (Next.js): lint + build. Secrets scan (gitleaks).
-# makefile-ийн `pre-push` (ci-lint/ci-test/ci-build) target-уудтай тохирно.
+# Backend (Go): go vet + gofmt + go test -race + integration compile + build.
+# Frontend (Next.js): lint + build. Secrets scan (gitleaks binary, no license).
+# makefile-ийн `pre-push` target-уудтай ойролцоо.
+#
+# Тэмдэглэл: golangci-lint-action-ийг түр хассан — latest golangci-lint нь Go 1.24-ээр
+# build хийгдсэн бөгөөд go.mod-ийн target Go 1.26-г "lower than targeted" гэж татгалздаг.
+# golangci-lint Go 1.26-г дэмжсэн үед буцааж нэмнэ. Одоохондоо go vet + gofmt-ээр линт.
 name: CI
 
 on:
@@ -21,7 +25,7 @@ env:
 
 jobs:
   backend:
-    name: Backend (lint · test · build)
+    name: Backend (vet · test · build)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -36,11 +40,15 @@ jobs:
           cache: true
           cache-dependency-path: backend/go.sum
 
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
-        with:
-          version: latest
-          working-directory: backend
+      - name: gofmt check
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            echo "gofmt-аар форматлагдаагүй файлууд:"; echo "$unformatted"; exit 1
+          fi
+
+      - name: go vet
+        run: go vet ./...
 
       - name: Unit tests (race + coverage)
         run: go test -race -coverprofile=coverage.out ./...
@@ -53,6 +61,7 @@ jobs:
           go build ./cmd/api
           go build ./cmd/migration
           go build ./cmd/seed
+          go build ./cmd/healthcheck
 
   frontend:
     name: Frontend (lint · build)
@@ -87,6 +96,10 @@ jobs:
         with:
           fetch-depth: 0
       - name: gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: false
+        # gitleaks-action@v2 нь org repo-д license шаарддаг тул binary-г шууд татаж
+        # ажиллуулна (license-гүй).
+        run: |
+          GITLEAKS_VERSION="8.21.2"
+          curl -sSL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
+            | tar -xz -C /tmp gitleaks
+          /tmp/gitleaks detect --source . --no-banner --redact --verbose --exit-code 1
