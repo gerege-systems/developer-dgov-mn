@@ -1,0 +1,17 @@
+# OS / editor junk
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Local env (per-app .gitignore also covers these; keep .env.example tracked)
+.env
+.env.*
+!.env.example
+
+# Build artifacts
+/backend/bin/
+/backend/tmp/
+/frontend/node_modules/
+/frontend/.next/
+/frontend/out/
