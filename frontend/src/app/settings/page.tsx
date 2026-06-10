@@ -18,7 +18,7 @@ export default async function SettingsPage() {
   const initials = initialsOf(me.username);
 
   return (
-    <AppShell user={{ username: me.username, email: me.email, initials }}>
+    <AppShell user={{ username: me.username, email: me.email, initials, roleId: me.roleId }}>
       <div className="page-head">
         <span className="page-head__eyebrow">Аюулгүй байдал</span>
         <h1>Аюулгүй байдлын тохиргоо</h1>

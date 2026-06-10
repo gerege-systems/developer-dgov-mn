@@ -1,0 +1,19 @@
+import { authedFetch } from '@/lib/api';
+import { proxyResult, readJson, checkOrigin } from '@/lib/bff';
+
+export const dynamic = 'force-dynamic';
+
+// PUT /api/rbac/roles/{id} — role-ийн нэр/тайлбар (+ permission) шинэчлэх.
+export async function PUT(req: Request, { params }: { params: { id: string } }) {
+  const bad = checkOrigin(req);
+  if (bad) return bad;
+  const body = await readJson(req);
+  return proxyResult(await authedFetch(`/rbac/roles/${params.id}`, { method: 'PUT', body: JSON.stringify(body) }));
+}
+
+// DELETE /api/rbac/roles/{id} — системийн бус role устгах.
+export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+  const bad = checkOrigin(req);
+  if (bad) return bad;
+  return proxyResult(await authedFetch(`/rbac/roles/${params.id}`, { method: 'DELETE' }));
+}

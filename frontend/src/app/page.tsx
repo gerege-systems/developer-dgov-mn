@@ -36,7 +36,7 @@ export default async function Home() {
   const initials = initialsOf(me.username);
 
   return (
-    <AppShell user={{ username: me.username, email: me.email, initials }}>
+    <AppShell user={{ username: me.username, email: me.email, initials, roleId: me.roleId }}>
       <div className="page-head">
         <span className="page-head__eyebrow">Хяналтын самбар</span>
         <h1>Сайн байна уу, {me.username}</h1>

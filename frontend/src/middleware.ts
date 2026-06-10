@@ -2,7 +2,8 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { REFRESH_COOKIE } from '@/lib/cookies';
 
 // Хамгаалагдсан хуудаснууд — refresh токен (durable session) байхгүй бол /login руу.
-const PROTECTED = ['/profile', '/settings'];
+// /admin, /manager нь нэмэлтээр серверийн талд эрхээр (RBAC) шалгагдана.
+const PROTECTED = ['/profile', '/settings', '/admin', '/manager'];
 // Нэвтэрсэн хэрэглэгчийг буцаалгүй харуулах ёсгүй auth хуудаснууд.
 const AUTH_ONLY = ['/login', '/register'];
 

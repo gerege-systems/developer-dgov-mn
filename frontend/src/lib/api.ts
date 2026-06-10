@@ -111,3 +111,9 @@ export async function fetchMe(): Promise<SessionUser | null> {
   if (r.ok && r.data?.user) return toSessionUser(r.data.user);
   return null;
 }
+
+/** GET /rbac/me — нэвтэрсэн хэрэглэгчийн эрхийн түлхүүрүүд (хоосон массив fallback). */
+export async function fetchMyPermissions(): Promise<string[]> {
+  const r = await authedFetch<string[]>('/rbac/me', { method: 'GET' });
+  return r.ok && Array.isArray(r.data) ? r.data : [];
+}

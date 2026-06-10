@@ -52,3 +52,21 @@ export function toClientResponse(r: ApiResult<unknown>): NextResponse {
     { status: httpStatus },
   );
 }
+
+/**
+ * toClientResponse-тэй адил боловч өгөгдлийг (data) клиент рүү дамжуулна.
+ * Admin/RBAC жагсаалт зэрэг нууц БУС өгөгдлийг буцаах BFF route-уудад ашиглана
+ * (хэзээ ч токен агуулдаггүй).
+ */
+export function proxyResult<T>(r: ApiResult<T>): NextResponse {
+  const httpStatus = r.ok ? 200 : r.status >= 400 && r.status < 600 ? r.status : 502;
+  return NextResponse.json(
+    {
+      ok: r.ok,
+      status: r.status,
+      message: r.message,
+      ...(r.ok ? { data: r.data } : { fieldErrors: r.fieldErrors }),
+    },
+    { status: httpStatus },
+  );
+}
