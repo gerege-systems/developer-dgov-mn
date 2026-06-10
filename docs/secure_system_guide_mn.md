@@ -136,7 +136,7 @@ hash := argon2.IDKey([]byte(password), salt, 3, 64*1024, 2, 32)
 > **Үндсэн жорхны судалгаа:** Account takeover-ийн >40% нь recovery flow-оор болдог. Phishing-аар нэг удаа recovery email авбал бүх зүйл алдагдана.
 
 - Recovery codes (10 ширхэг) — hash-аар хадгал. Хэрэглэгч хуулж бичсэний дараа л хадгал.
-- Password reset link: single-use, **15 минут** валид (NIST 800-63B). Token-ыг URL fragment-д биш query-д тавь, server log-д бүү бичигдэх.
+- Нууц үг сэргээх нь нэг удаагийн OTP код (GeregeCloud Verify)-оор явна: код богино TTL-тэй (≈30 мин), нэг удаа ашиглагдана, серверийн log-д кодыг бүү бич. Reset нь `{email, code, new_password}` хэлбэртэй — reset link/token биш.
 - Email/phone recovery дангаараа AAL1 — AAL2 хэрэглэгчийн нууц үг сэргээхэд нэмэлт challenge заавал.
 
 ### 1.7 OAuth2 / OIDC
@@ -253,11 +253,11 @@ allow {
 **Parameterized queries — заавал. Зэрэг.**
 
 ```go
-// ✅ pgx, database/sql, gorm
-db.Where("email = ?", email).First(&u)
+// ✅ pgx, database/sql — placeholder-аар
+db.QueryRow(ctx, "SELECT id FROM users WHERE email = $1", email)
 
 // ❌ ХЭЗЭЭ Ч
-db.Raw(fmt.Sprintf("SELECT * FROM users WHERE email='%s'", email))
+db.Query(ctx, fmt.Sprintf("SELECT * FROM users WHERE email='%s'", email))
 ```
 
 **Tooling:**
@@ -454,17 +454,33 @@ Cross-Origin-Resource-Policy: same-site
 
 ### 4.8 CORS
 
-```go
-import "github.com/gofiber/fiber/v2/middleware/cors"
+Энэ template-д CORS-ийг Fiber биш, стандарт `net/http` дээр chi-style
+middleware-аар хийдэг (`internal/http/middlewares` доtorх `CORSMiddleware()`,
+`func(http.Handler) http.Handler` хэлбэртэй). Origin allow-list-ийг яг таарах
+эсэхээр шалгаж, зөвшөөрсөн method/header-ийг тодорхой бичнэ:
 
-app.Use(cors.New(cors.Config{
-    AllowOrigins:     "https://app.example.com,https://admin.example.com",
-    AllowMethods:     "GET,POST,PUT,DELETE,PATCH",
-    AllowHeaders:     "Authorization,Content-Type,X-CSRF-Token,X-Tenant-ID",
-    AllowCredentials: true,
-    MaxAge:           300,
-    // CORS spec-ийн дагуу AllowOrigins="*" + AllowCredentials=true ХЭЗЭЭ Ч хослуулахгүй
-}))
+```go
+// internal/http/middlewares — chi-style CORS (товч skeleton)
+func CORSMiddleware() func(http.Handler) http.Handler {
+    return func(next http.Handler) http.Handler {
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+            origin := r.Header.Get("Origin")
+            if allowedOrigins[origin] { // яг таарах allow-list
+                w.Header().Set("Access-Control-Allow-Origin", origin)
+                w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,PATCH")
+                w.Header().Set("Access-Control-Allow-Headers", "Authorization,Content-Type,X-CSRF-Token,X-Tenant-ID")
+                w.Header().Set("Access-Control-Allow-Credentials", "true")
+                w.Header().Set("Access-Control-Max-Age", "300")
+            }
+            // CORS spec-ийн дагуу Allow-Origin="*" + Allow-Credentials=true ХЭЗЭЭ Ч хослуулахгүй
+            if r.Method == http.MethodOptions {
+                w.WriteHeader(http.StatusNoContent)
+                return
+            }
+            next.ServeHTTP(w, r)
+        })
+    }
+}
 ```
 
 ### 4.9 File upload
@@ -537,7 +553,7 @@ POST / PATCH-д `Idempotency-Key` header дэмжих (Stripe / Square pattern).
 
 - `?limit=` max 100. `middleware.PaginationLimit(100)` already wired.
 - Cursor-based pagination preferred (offset-аас өндөр гүйцэтгэлтэй + race-аас бага).
-- Request body size limit (`fiber.Config{ BodyLimit: 4 * 1024 * 1024 }`).
+- Request body size limit — net/http body-size-limit middleware (энэ template-д `BodySizeLimitMiddleware`, `http.MaxBytesReader`-ээр body-г 4 MiB-д хязгаарладаг).
 - Request timeout (`middleware.Timeout(5*time.Second)`).
 
 ### 5.4 GraphQL specific (ашиглавал)

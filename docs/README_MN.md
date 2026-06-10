@@ -3,31 +3,33 @@
 > 🌐 [English](README.md) · **Монгол**
 
 [![Go](https://img.shields.io/badge/Go-1.26-blue.svg)](https://golang.org/)
-[![Fiber](https://img.shields.io/badge/Fiber-v3-00ACD7.svg)](https://gofiber.io/)
+[![chi](https://img.shields.io/badge/chi-v5-00ADD8.svg)](https://github.com/go-chi/chi)
+[![pgx](https://img.shields.io/badge/pgx-v5-336791.svg)](https://github.com/jackc/pgx)
 [![Next.js](https://img.shields.io/badge/Next.js-14-black.svg)](https://nextjs.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 Clean Architecture зарчмаар бүтээгдсэн, аюулгүй байдлыг хатууруулсан,
-production-д бэлэн **full-stack template**. Go (**Fiber v3 + GORM + PostgreSQL +
-Redis**) backend болон Next.js (**BFF**) frontend-ийг хослуулсан — хооронд нь
-холбож, ямар ч систем рүү өргөтгөхөд бэлэн.
+production-д бэлэн **full-stack template**. Go (**chi · net/http + pgx (pgxpool) +
+PostgreSQL + Redis**) backend болон Next.js (**BFF**) frontend-ийг хослуулсан —
+хооронд нь холбож, ямар ч систем рүү өргөтгөхөд бэлэн. Backend нь стандарт сангийн
+`net/http`-ийг [go-chi/chi](https://github.com/go-chi/chi) router болон гар бичмэл
+SQL-тэй [jackc/pgx](https://github.com/jackc/pgx) драйвертэй хослуулдаг — ORM
+ашиглахгүй.
 
 ## 📌 Эх сурвалж ба нээлттэй эх
 
 **Backend** нь нээлттэй эх
 [snykk/go-rest-boilerplate](https://github.com/snykk/go-rest-boilerplate)
-(MIT, Najib Fikri)-аас гаралтай; HTTP давхаргыг **Gin → Fiber v3**, өгөгдлийн
-давхаргыг **sqlx → GORM** болгож хөрвүүлсэн, бүх фичерийг хадгалсан. Fiber v3-ийн
-хэрэглээг [rachmanzz/fiber-starter](https://github.com/rachmanzz/fiber-starter)
-(MIT)-ээс лавласан. Бүх эх төслийн зохиогчийн эрх, лицензийг хүндэтгэн хадгалсан
-эх төслийн attribution-г [AUTHORS](AUTHORS)-д хадгалсан). Энэ төсөл **MIT
+(MIT, Najib Fikri)-аас гаралтай; HTTP давхаргыг **Gin → chi (net/http)**, өгөгдлийн
+давхаргыг **sqlx → pgx (pgxpool, гар бичмэл SQL)** болгож хөрвүүлсэн, бүх фичерийг
+хадгалсан. Эх төслийн attribution-г [AUTHORS](AUTHORS)-д хадгалсан. Энэ төсөл **MIT
 лицензтэй** — [LICENSE](LICENSE).
 
 ## Monorepo бүтэц
 
 ```
 gerege-template/
-├── backend/    # Go · Fiber v3 · GORM · PostgreSQL · Redis · JWT/OTP танилт
+├── backend/    # Go · chi (net/http) · pgx (pgxpool) · PostgreSQL · Redis · JWT/OTP танилт
 │   └── docs/   # ARCHITECTURE · DEVELOPMENT · API_CONTRACT · SECURITY (EN/MN)
 └── frontend/   # Next.js BFF (backend руу server талаас прокси; cookie session)
 ```
