@@ -85,7 +85,7 @@ export default async function Home() {
               </div>
               <h3 style={{ fontSize: 16, fontWeight: 600 }}>{c.title}</h3>
               <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.55 }}>{c.desc}</p>
-              <span style={{ marginTop: 'auto', display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 500, color: 'var(--dan-blue-text)' }}>
+              <span style={{ marginTop: 2, display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 500, color: 'var(--dan-blue-text)' }}>
                 Нээх <ChevronRight size={12} strokeWidth={2} />
               </span>
             </Link>
