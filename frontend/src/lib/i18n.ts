@@ -23,6 +23,7 @@ export const dict = {
     'nav.help': 'Тусламж',
     'nav.signout': 'Гарах',
     'shell.menu': 'Цэс',
+    'shell.search': 'Хайх…',
     // Хуудасны толгой
     'admin.dashboard.sub': 'Доорх хэсгүүдээс удирдлагаа сонгоно уу.',
     'admin.users.sub': 'Хэрэглэгчдийн эрх, төлөвийг удирдана.',
@@ -129,6 +130,7 @@ export const dict = {
     'nav.help': 'Help',
     'nav.signout': 'Sign out',
     'shell.menu': 'Menu',
+    'shell.search': 'Search…',
     'admin.dashboard.sub': 'Choose a management section below.',
     'admin.users.sub': 'Manage user roles and status.',
     'admin.roles.sub': 'Role and permission matrix. Admin gets all permissions automatically.',

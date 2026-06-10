@@ -961,6 +961,8 @@ html[lang="en"] .i18n-banner { display: block; }
   grid-template-columns: 64px 232px 1fr;
   min-height: 100vh;
   background: var(--bg);
+  /* hamburger дарахад sidepanel гулсаж нээгдэх/хаагдана. */
+  transition: grid-template-columns 0.24s ease;
 }
 .shell2.is-collapsed { grid-template-columns: 64px 0 1fr; }
 .shell2--loading { background: var(--bg); }
@@ -1036,6 +1038,22 @@ html[lang="en"] .i18n-banner { display: block; }
 .topbar2__toggle:hover { background: var(--surface-2); color: var(--fg); }
 .topbar2__spacer { flex: 1; }
 .topbar2__actions { display: flex; align-items: center; gap: 10px; }
+.topbar2__search {
+  display: flex; align-items: center; gap: 8px;
+  flex: 0 1 360px; min-width: 0;
+  height: 38px; padding: 0 14px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: 999px; color: var(--muted);
+  transition: border-color .15s;
+}
+.topbar2__search:focus-within { border-color: var(--dan-blue); }
+.topbar2__search svg { flex: 0 0 auto; }
+.topbar2__search-input {
+  flex: 1; min-width: 0; border: 0; outline: none; background: transparent;
+  font-size: 14px; color: var(--fg);
+}
+.topbar2__search-input::placeholder { color: var(--muted); }
+@media (max-width: 640px) { .topbar2__search { display: none; } }
 
 /* Shell2 контентыг өргөн дэлгэцэнд бүтэн ашиглаж, хоёр талын том зайг арилгана
    (нарийн 880px reading-width нь зөвхөн дангаар нэвтрэх хуудсуудад). Хажуугийн
