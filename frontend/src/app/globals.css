@@ -1159,3 +1159,51 @@ html[lang="en"] .i18n-banner { display: block; }
 }
 .aichat__form { display: flex; gap: 8px; margin-top: 12px; }
 .aichat__input { flex: 1; }
+
+/* ---- Voice чат + live орчуулга ---- */
+.aichat__meta { display: inline-flex; align-items: center; gap: 8px; min-height: 18px; }
+.aichat__iconbtn {
+  display: inline-flex;
+  align-items: center;
+  border: none;
+  background: none;
+  padding: 2px;
+  cursor: pointer;
+  color: var(--muted);
+}
+.aichat__iconbtn:hover { color: var(--dan-blue); }
+.aichat__iconbtn:disabled { opacity: 0.5; cursor: default; }
+.aichat__speaking { animation: aichat-pulse 1s ease-in-out infinite; color: var(--dan-blue); }
+.aichat__voice-ico { margin-right: 6px; vertical-align: -2px; opacity: 0.8; }
+.aichat__mic { padding-left: 12px; padding-right: 12px; }
+.aichat__mic.is-recording {
+  color: var(--danger);
+  border-color: var(--danger);
+  animation: aichat-pulse 1.2s ease-in-out infinite;
+}
+.aichat__error { color: var(--danger); font-size: 13px; }
+
+.aichat__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.aichat__toolbar-spacer { flex: 1; }
+.aichat__lang { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
+.aichat__speak { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--muted); cursor: pointer; }
+
+.trrow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-2);
+}
+.trrow__source { font-size: 13px; color: var(--muted); }
+.trrow__translated { font-size: 15px; line-height: 1.55; }

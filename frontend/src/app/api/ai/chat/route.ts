@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server';
 import { authedFetch } from '@/lib/api';
 import { readJson, proxyResult, checkOrigin } from '@/lib/bff';
+import { sanitizeAudio, badRequest } from '@/lib/aiBff';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,21 +9,23 @@ interface ChatTurn {
   text?: unknown;
 }
 
-// POST /api/ai/chat — AI туслахын чат. Backend POST /ai/chat (JWT шаардана)
-// руу прокси; reply/steps/degraded өгөгдлийг клиент рүү дамжуулна (токен
-// агуулдаггүй). Backend дээр нарийн validation бий — энд зөвхөн хэлбэрийг
-// whitelist хийж бөөн/буруу payload-ийг эртхэн таслана.
+// POST /api/ai/chat — AI туслахын чат (текст ба/эсвэл дуут мессеж). Backend
+// POST /ai/chat (JWT шаардана) руу прокси; reply/steps/degraded өгөгдлийг
+// клиент рүү дамжуулна (токен агуулдаггүй).
 export async function POST(req: Request) {
   const bad = checkOrigin(req);
   if (bad) return bad;
 
-  const { message, history } = await readJson<{ message?: unknown; history?: ChatTurn[] }>(req);
+  const { message, audio, history } = await readJson<{
+    message?: unknown;
+    audio?: unknown;
+    history?: ChatTurn[];
+  }>(req);
 
-  if (typeof message !== 'string' || !message.trim() || message.length > 4000) {
-    return NextResponse.json(
-      { ok: false, status: 400, message: 'Мессеж хоосон эсвэл хэт урт байна.' },
-      { status: 400 },
-    );
+  const text = typeof message === 'string' ? message.trim() : '';
+  const safeAudio = sanitizeAudio(audio);
+  if ((!text && !safeAudio) || text.length > 4000) {
+    return badRequest('Мессеж хоосон эсвэл хэт урт байна.');
   }
 
   const safeHistory = (Array.isArray(history) ? history : [])
@@ -34,7 +36,11 @@ export async function POST(req: Request) {
   return proxyResult(
     await authedFetch('/ai/chat', {
       method: 'POST',
-      body: JSON.stringify({ message: message.trim(), history: safeHistory }),
+      body: JSON.stringify({
+        message: text,
+        ...(safeAudio ? { audio: safeAudio } : {}),
+        history: safeHistory,
+      }),
     }),
   );
 }

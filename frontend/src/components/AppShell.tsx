@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, User, ShieldCheck, HelpCircle, LogOut, Menu, Search,
-  Users, ShieldHalf, UserCircle, Briefcase, Bot,
+  Users, ShieldHalf, UserCircle, Briefcase, Bot, Languages,
 } from 'lucide-react';
 import UserMenu from './UserMenu';
 import { signOut } from '@/lib/signout';
@@ -99,6 +99,7 @@ const SYSTEMS: NavSystem[] = [
           { href: '/me/profile', labelKey: 'nav.profile', icon: User },
           { href: '/me/settings', labelKey: 'nav.security', icon: ShieldCheck },
           { href: '/me/ai', labelKey: 'nav.ai', icon: Bot },
+          { href: '/me/translate', labelKey: 'nav.translate', icon: Languages },
         ],
       },
     ],
