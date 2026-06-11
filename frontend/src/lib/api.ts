@@ -1,7 +1,7 @@
 import 'server-only';
 import type { Envelope, BackendUser, MeData, SessionUser } from './types';
 import { toSessionUser } from './types';
-import { getAccessToken, getRefreshToken, setSession } from './session';
+import { getAccessToken, getRefreshToken, setSession, canPersistSession } from './session';
 
 // Серверийн талд gerege-backend-template-v27 рүү хандах цорын ганц цэг.
 // Browser энд хэзээ ч хүрэхгүй — зөвхөн route handler ба server component.
@@ -68,19 +68,18 @@ export async function backendFetch<T>(path: string, init?: RequestInit): Promise
 async function tryRefresh(): Promise<string | null> {
   const refresh = getRefreshToken();
   if (!refresh) return null;
+  // Backend refresh нь rotation хийдэг — хуучин refresh jti нэг удаад
+  // хэрэглэгдээд устдаг. RSC render үед cookie бичих боломжгүй тул шинэ
+  // хосыг хадгалж чадахгүй — тэгвэл хүчинтэй сессиэ шатаах байсан тул
+  // refresh-ийг ОГТ дуудахгүй (дараагийн route handler хүсэлт refresh
+  // хийгээд cookie-г зөв шинэчилнэ).
+  if (!canPersistSession()) return null;
   const r = await backendFetch<BackendUser>('/auth/refresh', {
     method: 'POST',
     body: JSON.stringify({ refresh_token: refresh }),
   });
   if (r.ok && r.data?.token && r.data?.refresh_token) {
-    // Server component-ийн render үед cookie бичих боломжгүй (зөвхөн route
-    // handler / server action). Тэр тохиолдолд алдааг залгиад, шинэ токеныг
-    // зөвхөн энэ хүсэлтэд санах ойд ашиглана.
-    try {
-      setSession(r.data.token, r.data.refresh_token);
-    } catch {
-      /* RSC render — cookie бичих боломжгүй */
-    }
+    setSession(r.data.token, r.data.refresh_token);
     return r.data.token;
   }
   return null;

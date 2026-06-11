@@ -46,6 +46,23 @@ export function checkOrigin(req: Request): NextResponse | null {
   );
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const INT_ID_RE = /^\d{1,10}$/;
+
+function invalidID(): NextResponse {
+  return NextResponse.json({ ok: false, status: 400, message: 'ID буруу байна.' }, { status: 400 });
+}
+
+/** Dynamic route-ийн UUID параметрийг шалгана (хэрэглэгчийн id). Буруу бол 400. */
+export function checkUUID(id: string): NextResponse | null {
+  return UUID_RE.test(id) ? null : invalidID();
+}
+
+/** Dynamic route-ийн бүхэл тоон id-г шалгана (role id г.м.). Буруу бол 400. */
+export function checkIntID(id: string): NextResponse | null {
+  return INT_ID_RE.test(id) ? null : invalidID();
+}
+
 /**
  * backend ApiResult-г browser рүү буцаах client хэлбэрт хувиргана. Токен зэрэг
  * нууц талбарыг хэзээ ч client рүү гаргахгүй — зөвхөн ok/status/message/fieldErrors.

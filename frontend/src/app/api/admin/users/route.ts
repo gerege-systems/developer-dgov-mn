@@ -3,9 +3,24 @@ import { proxyResult } from '@/lib/bff';
 
 export const dynamic = 'force-dynamic';
 
-// GET /api/admin/users — хэрэглэгчдийн жагсаалт (query: offset/limit/role/active).
-// users.manage эрхээр хамгаалагдсан (backend дээр).
+// GET /api/admin/users — хэрэглэгчдийн жагсаалт. Query параметрүүдийг
+// whitelist хийж цэвэр хэлбэрээр backend руу дамжуулна (transparent
+// proxy-гоор дурын query нэвтрүүлэхгүй). users.manage эрхээр хамгаалагдсан
+// (backend дээр).
 export async function GET(req: Request) {
-  const qs = new URL(req.url).search;
-  return proxyResult(await authedFetch(`/admin/users${qs}`, { method: 'GET' }));
+  const url = new URL(req.url);
+  const qs = new URLSearchParams();
+
+  const offset = Number(url.searchParams.get('offset'));
+  const limit = Number(url.searchParams.get('limit'));
+  if (Number.isInteger(offset) && offset > 0) qs.set('offset', String(offset));
+  if (Number.isInteger(limit) && limit > 0) qs.set('limit', String(Math.min(limit, 200)));
+
+  const role = url.searchParams.get('role');
+  if (role && /^\d{1,10}$/.test(role)) qs.set('role', role);
+  const active = url.searchParams.get('active');
+  if (active === 'true' || active === 'false') qs.set('active', active);
+
+  const suffix = qs.size > 0 ? `?${qs.toString()}` : '';
+  return proxyResult(await authedFetch(`/admin/users${suffix}`, { method: 'GET' }));
 }
