@@ -43,6 +43,8 @@ Browser ──(адил origin)──► Next.js (route handlers /api/auth/*) �
 
 🔒 = `src/middleware.ts`-аар хамгаалагдсан (refresh cookie байхгүй бол `/login` руу).
 
+AI боломжуудын дотоод бүтцийг [backend/docs/AI_PIPELINE_MN.md](../backend/docs/AI_PIPELINE_MN.md)-аас үз.
+
 ## Идэвхжүүлэлтийн урсгал
 
 Backend нь бүртгүүлсэн хэрэглэгчийг **идэвхгүй** үүсгэдэг:

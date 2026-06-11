@@ -5,7 +5,7 @@ Thanks for your interest in improving **Gerege Template**! / **Gerege Template**
 ## Getting started · Эхлэх
 
 1. Fork the repo and create a branch from `main`: `git checkout -b feat/short-description`.
-2. Set up the stack — see the [README](README.md) Quick start.
+2. Set up the stack — see the [README](../README.md) Quick start.
 3. Make your change in `backend/` and/or `frontend/`.
 
 ## Before opening a PR · PR нээхээс өмнө
@@ -45,7 +45,7 @@ Use clear, imperative messages (Conventional Commits encouraged):
 ## Reporting bugs / requesting features
 
 Open an issue using the templates under `.github/ISSUE_TEMPLATE/`. For security
-issues, **do not** open a public issue — see [SECURITY.md](SECURITY.md).
+issues, **do not** open a public issue — see [SECURITY.md](../SECURITY.md).
 
 ## Code of Conduct
 

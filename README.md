@@ -1,6 +1,6 @@
 # Gerege Template
 
-> 🌐 **English** · [Монгол](README_MN.md)
+> 🌐 **English** · [Монгол](docs/README_MN.md)
 
 [![Go](https://img.shields.io/badge/Go-1.26-blue.svg)](https://golang.org/)
 [![chi](https://img.shields.io/badge/chi-v5-00ADD8.svg)](https://github.com/go-chi/chi)
@@ -72,14 +72,16 @@ Open **http://localhost:3000** and register / log in.
 | [backend/docs/ARCHITECTURE.md](backend/docs/ARCHITECTURE.md) | Layers, dependency flow, components |
 | [backend/docs/DEVELOPMENT.md](backend/docs/DEVELOPMENT.md) | Add-a-feature guide, testing, code style |
 | [backend/docs/API_CONTRACT.md](backend/docs/API_CONTRACT.md) | REST endpoints, request/response shapes |
+| [backend/docs/AI_PIPELINE.md](backend/docs/AI_PIPELINE.md) | AI assistant internals: flows, prompt layers, tools, voice, how to extend |
 | [backend/docs/SECURITY.md](backend/docs/SECURITY.md) | Implemented controls + ASVS roadmap |
+| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | VPS deployment runbook (compose, env files, nginx, updates, rollback) |
 | [SECURITY.md](SECURITY.md) | How to report a vulnerability |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How to contribute |
 
 ## Contributing
 
 Contributions are welcome — please read [CONTRIBUTING.md](CONTRIBUTING.md) and
-the [Code of Conduct](CODE_OF_CONDUCT.md).
+the [Code of Conduct](docs/CODE_OF_CONDUCT.md).
 
 ## License
 
