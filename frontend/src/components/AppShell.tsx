@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
+import { getJSON } from '@/lib/client';
 import {
   LayoutDashboard, User, ShieldCheck, HelpCircle, LogOut, Menu, Search,
   Users, ShieldHalf, UserCircle, Briefcase, Bot, Languages,
@@ -116,20 +118,13 @@ export default function AppShell({ user, children }: Props) {
   const { T, lang } = useT();
   const isAdmin = user.roleId === ROLE_ADMIN;
 
-  const [perms, setPerms] = useState<string[] | null>(null);
-  useEffect(() => {
-    let alive = true;
-    fetch('/api/rbac/me', { method: 'GET' })
-      .then((r) => r.json())
-      .then((b) => {
-        if (alive && b?.ok && Array.isArray(b.data)) setPerms(b.data as string[]);
-        else if (alive) setPerms([]);
-      })
-      .catch(() => alive && setPerms([]));
-    return () => {
-      alive = false;
-    };
-  }, []);
+  // TanStack Query — олон component зэрэг mount хийгдсэн ч /api/rbac/me-г
+  // нэг л удаа татна (deduplication + кэш).
+  const permsQuery = useQuery({
+    queryKey: ['rbac-me'],
+    queryFn: () => getJSON<string[]>('/api/rbac/me'),
+  });
+  const perms = permsQuery.isPending ? null : (permsQuery.data ?? []);
 
   const canSee = (perm?: string) => !perm || isAdmin || (perms?.includes(perm) ?? false);
   const visibleGroups = (s: NavSystem) =>

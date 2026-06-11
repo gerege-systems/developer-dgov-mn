@@ -1,8 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useState } from 'react';
-import { Trash2, Loader2, Check, Ban } from 'lucide-react';
+import { useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Trash2, Loader2, Check, Ban, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useT } from '@/lib/lang';
+import { getJSON, sendJSON } from '@/lib/client';
 
 interface AdminUser {
   id: string;
@@ -14,10 +16,10 @@ interface AdminUser {
   active: boolean;
   created_at: string;
 }
-interface ApiResponse<T> {
-  ok: boolean;
-  data?: T;
-  message?: string;
+interface RoleItem {
+  id: number;
+  key: string;
+  name: string;
 }
 
 interface Props {
@@ -26,50 +28,38 @@ interface Props {
   readOnly?: boolean;
 }
 
+// Server-side pagination — backend /admin/users нь offset/limit дэмждэг
+// (хамгийн ихдээ 200). total тоо буцаадаггүй тул "дараах" товчийг буцсан
+// мөрийн тоо хуудасны хэмжээнээс бага үед идэвхгүй болгоно.
+const PAGE_SIZE = 50;
+
 export default function UsersManager({ currentUserId, readOnly = false }: Props) {
   const { T, lang, tRole } = useT();
-  const [items, setItems] = useState<AdminUser[] | null>(null);
-  const [roles, setRoles] = useState<{ id: number; key: string; name: string }[]>([]);
-  const [error, setError] = useState('');
+  const queryClient = useQueryClient();
+  const [page, setPage] = useState(0);
+  const [actionError, setActionError] = useState('');
 
-  const load = useCallback(async () => {
-    setError('');
-    try {
-      const [uRes, rRes] = await Promise.all([
-        fetch('/api/admin/users', { method: 'GET' }),
-        fetch('/api/rbac/roles', { method: 'GET' }),
-      ]);
-      const body = (await uRes.json()) as ApiResponse<AdminUser[]>;
-      const rBody = (await rRes.json()) as ApiResponse<{ id: number; key: string; name: string }[]>;
-      if (rBody.ok) setRoles(rBody.data ?? []);
-      if (body.ok) setItems(body.data ?? []);
-      else {
-        setItems([]);
-        setError(body.message || T('users.loadError'));
-      }
-    } catch {
-      setItems([]);
-      setError(T('users.loadError'));
-    }
-  }, [T]);
+  const usersQuery = useQuery({
+    queryKey: ['admin-users', page],
+    queryFn: () => getJSON<AdminUser[]>(`/api/admin/users?offset=${page * PAGE_SIZE}&limit=${PAGE_SIZE}`),
+  });
+  const rolesQuery = useQuery({
+    queryKey: ['rbac-roles'],
+    queryFn: () => getJSON<RoleItem[]>('/api/rbac/roles'),
+  });
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  const items = usersQuery.data ?? null;
+  const roles = rolesQuery.data ?? [];
+  const loadError = usersQuery.isError ? (usersQuery.error as Error).message || T('users.loadError') : '';
+  const error = actionError || loadError;
 
-  const mutate = async (url: string, method: string, body?: unknown) => {
-    setError('');
-    try {
-      const res = await fetch(url, {
-        method,
-        headers: body ? { 'Content-Type': 'application/json' } : undefined,
-        body: body ? JSON.stringify(body) : undefined,
-      });
-      const b = (await res.json()) as ApiResponse<unknown>;
-      if (b.ok) void load();
-      else setError(b.message || T('users.actionError'));
-    } catch {
-      setError(T('users.actionError'));
+  const mutate = async (url: string, method: 'PUT' | 'DELETE', body?: unknown) => {
+    setActionError('');
+    const res = await sendJSON(url, method, body);
+    if (res.ok) {
+      await queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+    } else {
+      setActionError(res.message || T('users.actionError'));
     }
   };
 
@@ -90,11 +80,14 @@ export default function UsersManager({ currentUserId, readOnly = false }: Props)
     }
   };
 
+  const hasPrev = page > 0;
+  const hasNext = (items?.length ?? 0) === PAGE_SIZE;
+
   return (
     <div className="users">
       {error && <div className="alert alert--danger" role="alert">{error}</div>}
 
-      {items === null && (
+      {usersQuery.isPending && (
         <div className="muted" style={{ display: 'flex', gap: 8, alignItems: 'center', padding: 16 }}>
           <Loader2 size={16} strokeWidth={2} className="spin" />
           <span>{T('users.loading')}</span>
@@ -183,6 +176,30 @@ export default function UsersManager({ currentUserId, readOnly = false }: Props)
               })}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {items !== null && (hasPrev || hasNext) && (
+        <div className="pager">
+          <button
+            className="btn btn--secondary btn--sm"
+            type="button"
+            disabled={!hasPrev || usersQuery.isFetching}
+            onClick={() => setPage((p) => Math.max(0, p - 1))}
+          >
+            <ChevronLeft size={14} strokeWidth={2} />
+            <span>{T('common.prev')}</span>
+          </button>
+          <span className="pager__page">{T('common.page')} {page + 1}</span>
+          <button
+            className="btn btn--secondary btn--sm"
+            type="button"
+            disabled={!hasNext || usersQuery.isFetching}
+            onClick={() => setPage((p) => p + 1)}
+          >
+            <span>{T('common.next')}</span>
+            <ChevronRight size={14} strokeWidth={2} />
+          </button>
         </div>
       )}
     </div>

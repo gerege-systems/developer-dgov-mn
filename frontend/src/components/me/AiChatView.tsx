@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Bot, Mic, Send, Square, Volume2, Wrench } from 'lucide-react';
 import PageHead from '@/components/PageHead';
 import { useT } from '@/lib/lang';
+import { postJSON } from '@/lib/client';
 import { recordSegment, playBase64Audio, type RecordedAudio } from '@/lib/audio';
 
 interface ChatMsg {
@@ -65,17 +66,7 @@ export default function AiChatView() {
     setMessages((m) => [...m, userBubble]);
     setBusy(true);
     try {
-      const res = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...payload, history }),
-      });
-      let body: { ok?: boolean; message?: string; data?: ChatData } | null = null;
-      try {
-        body = await res.json();
-      } catch {
-        /* JSON биш хариу — доор нэгдсэн алдаа */
-      }
+      const body = await postJSON<ChatData>('/api/ai/chat', { ...payload, history });
       if (body?.ok && body.data?.reply) {
         const tools = (body.data.steps ?? [])
           .map((s) => s.tool)
@@ -134,13 +125,10 @@ export default function AiChatView() {
     if (speakingIdx !== null) return;
     setSpeakingIdx(idx);
     try {
-      const res = await fetch('/api/ai/tts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: text.slice(0, 2000) }),
+      const body = await postJSON<{ mime?: string; data?: string }>('/api/ai/tts', {
+        text: text.slice(0, 2000),
       });
-      const body = await res.json().catch(() => null);
-      if (body?.ok && body.data?.mime && body.data?.data) {
+      if (body.ok && body.data?.mime && body.data?.data) {
         await playBase64Audio(body.data.mime, body.data.data);
       }
     } catch {

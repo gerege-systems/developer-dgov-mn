@@ -1207,3 +1207,7 @@ html[lang="en"] .i18n-banner { display: block; }
 }
 .trrow__source { font-size: 13px; color: var(--muted); }
 .trrow__translated { font-size: 15px; line-height: 1.55; }
+
+/* ---- Хуудаслалт (admin хүснэгт) ---- */
+.pager { display: flex; align-items: center; gap: 12px; justify-content: flex-end; margin-top: 12px; }
+.pager__page { font-size: 13px; color: var(--muted); }

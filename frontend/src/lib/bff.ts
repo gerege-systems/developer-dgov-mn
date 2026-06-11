@@ -14,18 +14,28 @@ export async function readJson<T = Record<string, unknown>>(req: Request): Promi
 }
 
 /**
- * CSRF-ийн эсрэг хямд хамгаалалт (defense-in-depth). State-changing POST
- * route-ууд дээр `Origin` толгойг аппын өөрийн origin-той тулгана. Browser нь
- * fetch POST-д Origin-г үргэлж тавьдаг тул same-origin хүсэлт асуудалгүй
- * нэвтэрнэ. Зөрвөл 403 буцаах NextResponse-г, тааралцвал `null`-г буцаана.
+ * CSRF-ийн эсрэг хоёр давхар хамгаалалт. State-changing route-ууд дээр:
  *
- * Аппын origin-г `APP_ORIGIN` env-ээс, эсвэл байхгүй бол хүсэлтийн өөрийн
- * URL-ээс гаргана. Origin толгойгүй (зарим non-browser хэрэгсэл) тохиолдолд
- * SameSite=Lax cookie-д найдаж зөвшөөрнө.
+ *  1. Custom header (`x-gerege-csrf: 1`) шаардана — cross-site form POST
+ *     custom header тавьж чаддаггүй, cross-origin fetch нь preflight-д
+ *     CORS-оор хаагддаг тул энэ header нь хүсэлт өөрийн JS-ээс
+ *     (lib/client.ts sendJSON) гарсныг баталдаг. SameSite=Lax-ийн
+ *     top-level navigation цонхыг (form POST) бүрэн хаана.
+ *  2. `Origin` толгой байвал аппын origin-той тулгана (APP_ORIGIN env,
+ *     эсвэл хүсэлтийн өөрийн URL).
+ *
+ * Зөрвөл 403 буцаах NextResponse-г, тааралцвал `null`-г буцаана.
  */
 export function checkOrigin(req: Request): NextResponse | null {
+  if (req.headers.get('x-gerege-csrf') !== '1') {
+    return NextResponse.json(
+      { ok: false, status: 403, message: 'CSRF header дутуу байна.' },
+      { status: 403 },
+    );
+  }
+
   const origin = req.headers.get('origin');
-  if (!origin) return null; // Origin байхгүй — SameSite=Lax cookie хамгаална.
+  if (!origin) return null; // Origin байхгүй (non-browser) — header шалгалт хангалттай.
 
   const expected = process.env.APP_ORIGIN ?? new URL(req.url).origin;
   if (origin === expected) return null;

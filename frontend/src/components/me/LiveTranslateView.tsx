@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Languages, Mic, Square, Volume2 } from 'lucide-react';
 import PageHead from '@/components/PageHead';
 import { useT } from '@/lib/lang';
+import { postJSON } from '@/lib/client';
 import { recordSegment, playBase64Audio } from '@/lib/audio';
 
 interface TranslateRow {
@@ -64,20 +65,18 @@ export default function LiveTranslateView() {
   async function translateChunk(mime: string, data: string, targetLang: string, withSpeak: boolean) {
     setPending((p) => p + 1);
     try {
-      const res = await fetch('/api/ai/translate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ audio: { mime, data }, target_lang: targetLang, speak: withSpeak }),
-      });
-      const body = await res.json().catch(() => null);
-      const d = body?.data as
-        | { source_text?: string; translated?: string; audio?: { mime: string; data: string } }
-        | undefined;
-      if (body?.ok && d?.translated) {
+      const body = await postJSON<{
+        source_text?: string;
+        translated?: string;
+        audio?: { mime: string; data: string };
+      }>('/api/ai/translate', { audio: { mime, data }, target_lang: targetLang, speak: withSpeak });
+      const d = body.data;
+      if (body.ok && d?.translated) {
         setRows((r) => [...r, { source: d.source_text ?? '', translated: d.translated ?? '' }]);
         if (withSpeak && d.audio) void playBase64Audio(d.audio.mime, d.audio.data);
-      } else if (body && !body.ok && res.status !== 200) {
-        // Чимээгүй сегмент (хоосон үр дүн) хэвийн; бодит алдааг л харуулна.
+      } else if (!body.ok) {
+        // Чимээгүй сегмент (хоосон үр дүн) нь ok=true тул энд орохгүй;
+        // зөвхөн бодит алдааг харуулна.
         setError(body.message || T('ai.error'));
       }
     } catch {
