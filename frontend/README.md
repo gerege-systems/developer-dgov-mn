@@ -71,6 +71,8 @@ npm run dev                      # http://localhost:3001
 src/
   app/
     api/auth/*/route.ts   # BFF прокси (login, register, otp, logout, …)
+    api/ai/chat/route.ts  # AI туслахын BFF прокси (Gemini pipeline)
+    me/ai/page.tsx        # AI чат хуудас (/me/ai)
     (pages)/page.tsx      # хуудас бүр server component + client form
     layout.tsx, globals.css
   components/             # AppShell, SigninShell, UserMenu, PasswordField, …
