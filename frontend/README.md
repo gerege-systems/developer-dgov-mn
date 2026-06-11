@@ -16,7 +16,14 @@ Browser ──(адил origin)──► Next.js (route handlers /api/auth/*) �
 - **Browser↔Go хооронд CORS хэрэггүй.** Browser зөвхөн Next.js рүү (адил origin)
   хандана; Go API руу зөвхөн Next.js server прокси хийнэ.
 - **Reactive refresh.** Хамгаалагдсан дуудлага `401` авбал refresh токеноор нэг
-  удаа автоматаар шинэчилж, дахин оролдоно (`src/lib/api.ts`).
+  удаа автоматаар шинэчилж, дахин оролдоно (`src/lib/api.ts`). Refresh нь
+  rotation хийдэг тул cookie бичих боломжгүй (RSC render) контекстод refresh
+  огт хийгдэхгүй — хүчинтэй сесс шатахаас сэргийлнэ.
+- **Давхар CSRF хамгаалалт.** Бүх state-changing BFF route `x-gerege-csrf`
+  custom header + Origin шалгалт шаардана (`src/lib/bff.ts`); header-ийг
+  `src/lib/client.ts`-ийн `sendJSON/postJSON` нэг газраас тавьдаг.
+- **TanStack Query.** GET өгөгдөл (`/api/rbac/me`, admin жагсаалтууд, AI prompt
+  тохиргоо) кэш + deduplication + mutation-ы дараах invalidation-тэй.
 
 ## Хуудаснууд
 
@@ -30,6 +37,9 @@ Browser ──(адил origin)──► Next.js (route handlers /api/auth/*) �
 | `/reset-password` | Токеноор нууц үг шинэчлэх | `POST /auth/password/reset` |
 | `/profile` 🔒 | Профайл (read-only) | `GET /users/me` |
 | `/settings` 🔒 | Нууц үг солих + гарах | `PUT /auth/password/change`, `POST /auth/logout` |
+| `/me/ai` 🔒 | AI туслах — текст/дуут чат (🎤 дуут мессеж, 🔊 TTS) | `POST /ai/chat`, `/ai/tts` |
+| `/me/translate` 🔒 | Шууд орчуулга — микрофоны сегментүүдийг live орчуулна | `POST /ai/translate` |
+| `/admin/*` 🔒 | Хэрэглэгч/RBAC удирдлага + AI prompt тохиргоо | `/admin/users*`, `/rbac/*`, `/admin/ai/prompts*` |
 
 🔒 = `src/middleware.ts`-аар хамгаалагдсан (refresh cookie байхгүй бол `/login` руу).
 
@@ -70,17 +80,21 @@ npm run dev                      # http://localhost:3001
 ```
 src/
   app/
-    api/auth/*/route.ts   # BFF прокси (login, register, otp, logout, …)
-    api/ai/chat/route.ts  # AI туслахын BFF прокси (Gemini pipeline)
-    me/ai/page.tsx        # AI чат хуудас (/me/ai)
-    (pages)/page.tsx      # хуудас бүр server component + client form
+    api/auth/*/route.ts       # BFF прокси (login, register, otp, logout, …)
+    api/ai/{chat,stt,tts,translate}/route.ts  # AI BFF прокси (Gemini pipeline)
+    api/admin/ai/prompts/     # AI prompt давхаргын тохиргоо (settings.manage)
+    me/ai/page.tsx            # AI чат — текст + дуут мессеж + TTS
+    me/translate/page.tsx     # Шууд орчуулга (live, mic сегментүүд)
+    (pages)/page.tsx          # хуудас бүр server component + client form
     layout.tsx, globals.css
-  components/             # AppShell, SigninShell, UserMenu, PasswordField, …
+  components/                 # AppShell, Providers (TanStack Query), admin/*, me/*
   lib/
-    api.ts                # server→Go fetch + reactive refresh
-    session.ts, cookies.ts# httpOnly cookie менежмент
-    client.ts             # browser→BFF fetch
-    password.ts           # нууц үгийн хүч (тохируулж болно)
+    api.ts                    # server→Go fetch + reactive refresh
+    session.ts, cookies.ts    # httpOnly cookie менежмент
+    client.ts                 # browser→BFF fetch (CSRF header нэг газраас)
+    aiBff.ts                  # AI route-уудын audio whitelist/validation
+    audio.ts                  # MediaRecorder сегмент бичлэг + base64 + playback
+    password.ts               # нууц үгийн хүч (тохируулж болно)
     format.ts, preferences.ts, types.ts
-  middleware.ts           # route хамгаалалт
+  middleware.ts               # route хамгаалалт
 ```

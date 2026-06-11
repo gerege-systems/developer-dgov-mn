@@ -40,10 +40,11 @@ gerege-template/
 ## Features
 
 - **Clean Architecture** — `handler → usecase → repository → domain`, no back-imports; the business core never imports the web framework.
-- **Auth** — JWT access + refresh (rotation), OTP-verified registration, bcrypt, login lockout.
-- **Security-hardened** — strict security headers (CSP, HSTS, COOP/COEP/CORP), CORS allow-list, rate limiting, request timeouts, parameterized queries. See [SECURITY.md](SECURITY.md).
+- **Auth** — JWT access + refresh (rotation), OTP-verified registration, bcrypt, login lockout; logout revokes both tokens (refresh + access deny-list).
+- **AI pipeline (Gemini)** — SDK-free REST client with function calling: text/voice chat, speech-to-text, text-to-speech, live translation. Layered system prompt (hardcoded guardrails + admin-configurable scope/instructions in the DB) keeps the assistant inside its configured domain; a `search_knowledge` tool grounds answers in the `ai_knowledge` table.
+- **Security-hardened** — strict security headers (CSP, HSTS, COOP/COEP/CORP), CORS allow-list, rate limiting, full HTTP server timeouts, parameterized queries, Postgres Row-Level Security with a boot-time enforceability guard. See [SECURITY.md](SECURITY.md).
 - **Observability** — OpenTelemetry tracing + Prometheus metrics + structured Zap logs.
-- **Frontend BFF** — the browser talks only to same-origin Next.js routes, which proxy to the backend server-side (tokens never reach client JS).
+- **Frontend BFF** — the browser talks only to same-origin Next.js routes, which proxy to the backend server-side (tokens never reach client JS); double CSRF defense (custom header + origin check), TanStack Query data layer.
 - **Tested** — unit tests + testcontainers integration tests.
 
 ## Quick start
