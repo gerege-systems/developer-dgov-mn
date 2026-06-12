@@ -4,7 +4,7 @@
 > commit хийнэ. Дэлгэрэнгүй баримтууд: [README.md](README.md#documentation).
 
 **Одоогийн байдал:** v27 — бүх суурь систем + AI pipeline ажиллаж байгаа,
-жишиг deployment: https://tempv26.gerege.mn (CI ногоон).
+жишиг deployment: https://template.gerege.mn (CI ногоон).
 
 ---
 
@@ -46,7 +46,7 @@
 - TanStack Query (кэш/dedup/invalidation), admin pagination, CI Node 24
 
 ### Phase 8 — Deploy + баримтжуулалт (2026-06-11)
-- tempv26.gerege.mn дээр шинэчилсэн deploy (migration 11, Gemini key)
+- template.gerege.mn дээр шинэчилсэн deploy (migration 11, Gemini key)
 - Бүх док шинэчлэгдсэн + шинэ: AI_PIPELINE(_MN).md, DEPLOYMENT(_MN).md, CLAUDE.md
 - Бүх relative .md холбоос скриптээр шалгагдаж засагдсан
 
@@ -58,14 +58,14 @@
 - `go build ./...` + бүх unit test локалд ногоон; root CI-д хараахан
   холбогдоогүй (доорх Phase 10-г үз)
 
-### Phase 10 — Wallet интеграц + tempv26 deploy (2026-06-12)
+### Phase 10 — Wallet интеграц + template deploy (2026-06-12)
 - Root CI-д 2 шинэ job: wallet Go (gofmt/vet/race test/5 binary) + admin
   Next.js (lint/build)
 - Admin UI subpath дэмжлэг: Next.js `basePath` build arg
   (`ADMIN_BASE_PATH`), клиент талын fetch-үүд `lib/basepath`-аар prefix-тэй
 - Compose collision-safe: `WALLET_IMAGE`/`WALLET_PG_VOLUME`/`WALLET_NETWORK`
   параметрууд — нэг хост дээр хоёр wallet stack зэрэг ажиллана
-- **tempv26.gerege.mn дээр амьд**: `https://tempv26.gerege.mn/wallet/`
+- **template.gerege.mn дээр амьд**: `https://template.gerege.mn/wallet/`
   (API, prefix хусна) + `/wallet-admin` (super-admin UI); stack =
   `temp-wallet` (порт 8094/8095/3012, өөрийн PG17 volume). OAuth
   client_credentials flow + admin login end-to-end шалгагдсан.

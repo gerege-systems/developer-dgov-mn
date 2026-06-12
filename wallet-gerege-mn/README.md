@@ -158,7 +158,7 @@ docker compose up -d                                  # rolling restart
 Энэ хуулбар нь **template-gerege-mn** репод амьдардаг бөгөөд root CI-д
 шалгагдана (Go: gofmt/vet/race test/binaries; admin: lint/build). Wallet-ийг
 тусдаа субдомэйнгүйгээр, аль хэдийн TLS-тэй vhost-ийн **зам(path)** дор deploy
-хийж болно — жишиг: `https://tempv26.gerege.mn/wallet/` (API) +
+хийж болно — жишиг: `https://template.gerege.mn/wallet/` (API) +
 `/wallet-admin` (UI), `temp-wallet` stack.
 
 `.env`-ийн нэмэлт параметрууд (бүгд default-тай, заавал биш):

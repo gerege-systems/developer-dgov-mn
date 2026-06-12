@@ -110,8 +110,8 @@ docker compose up -d --build   # own postgres + api + admin + worker
   `admin/src/lib/basepath.ts`. Compose image/volume/network names are
   parameterized (`WALLET_IMAGE`, `WALLET_PG_VOLUME`, `WALLET_NETWORK`) so
   two wallet stacks can coexist on one host.
-- Reference deploy: `temp-wallet` stack on tempv26 —
-  `https://tempv26.gerege.mn/wallet/` (API, nginx strips the prefix) and
+- Reference deploy: `temp-wallet` stack on template —
+  `https://template.gerege.mn/wallet/` (API, nginx strips the prefix) and
   `/wallet-admin` (UI). See docs/DEPLOYMENT.md §Wallet.
 
 ## Gotchas
