@@ -1,0 +1,182 @@
+openapi: 3.0.3
+info:
+  title: wallet.gerege.mn — Wallet Ledger API
+  version: "1.0"
+  description: >
+    Бие даасан double-entry хэтэвчийн ledger API. Бүх дүн bigint minor unit (MNT,
+    decimal=0 тул minor = ₮). Хоёр эх сурвалжийн Bearer JWT-ийг хүлээн авна:
+    (1) client_credentials токен (`POST /oauth/token`, issuer wallet.gerege.mn) —
+    бусад систем; (2) auth.gerege.mn-ийн хэрэглэгчийн токен (issuer auth.gerege.mn,
+    AUTH_JWT_SECRET тохируулсан бол) — иргэн. Owner = токены subject (client_id
+    эсвэл иргэний subject); client зөвхөн ӨӨРИЙН хэтэвчээ удирдана. Алдаа: `{"error": "..."}`.
+servers:
+  - url: https://wallet.gerege.mn
+components:
+  securitySchemes:
+    bearerAuth: { type: http, scheme: bearer, bearerFormat: JWT }
+  schemas:
+    Account:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        account_no: { type: string, description: "12 цифр [type][seq][Luhn]" }
+        iban: { type: string, description: "тооцоолсон бүтэн IBAN (config-тэй бол)" }
+        owner_type: { type: string, enum: [person, organization] }
+        currency: { type: string, example: MNT }
+        status: { type: string, enum: [pending, active, frozen, closed] }
+        balance_minor: { type: integer, format: int64 }
+        hold_minor: { type: integer, format: int64 }
+    Txn:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        type: { type: string, enum: [deposit, withdrawal, transfer_in, transfer_out, hold, release, fee, reversal] }
+        amount_minor: { type: integer, format: int64 }
+        running_balance_minor: { type: integer, format: int64 }
+        is_reversed: { type: boolean }
+        created_at: { type: string, format: date-time }
+    PaymentRequest:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        kind: { type: string, enum: [static, dynamic] }
+        payee_account_no: { type: string }
+        amount_minor: { type: integer, format: int64, description: "static-д хоосон (нээлттэй)" }
+        currency: { type: string, example: MNT }
+        reference: { type: string }
+        status: { type: string, enum: [active, pending, paid, expired, canceled] }
+        expires_at: { type: string, format: date-time }
+        paid_txn_id: { type: string, format: uuid }
+        paid_by: { type: string }
+        paid_at: { type: string, format: date-time }
+        paid_amount_minor: { type: integer, format: int64 }
+        created_at: { type: string, format: date-time }
+    Error:
+      type: object
+      properties: { error: { type: string } }
+  parameters:
+    OrgId: { name: orgId, in: path, required: true, schema: { type: string } }
+    HoldId: { name: id, in: path, required: true, schema: { type: string } }
+    TxnId: { name: id, in: path, required: true, schema: { type: string } }
+security:
+  - bearerAuth: []
+paths:
+  /health:
+    get: { summary: Liveness, security: [], responses: { "200": { description: ok } } }
+  /ready:
+    get: { summary: Readiness (DB ping), security: [], responses: { "200": { description: ready }, "503": { description: not ready } } }
+  /metrics:
+    get: { summary: Prometheus metrics, security: [], responses: { "200": { description: exposition } } }
+  /oauth/token:
+    post:
+      summary: OAuth2 client_credentials — токен авах
+      security: []
+      description: "grant_type=client_credentials + client_id/client_secret (form body эсвэл HTTP Basic) → wallet access токен."
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                grant_type: { type: string, enum: [client_credentials] }
+                client_id: { type: string }
+                client_secret: { type: string }
+      responses:
+        "200": { description: token, content: { application/json: { schema: { type: object, properties: { access_token: { type: string }, token_type: { type: string, example: Bearer }, expires_in: { type: integer }, scope: { type: string } } } } } }
+        "401": { description: invalid_client }
+  /api/v1/wallet:
+    get:
+      summary: Хэтэвч авах (байхгүй бол нээх)
+      responses:
+        "200": { description: account, content: { application/json: { schema: { $ref: "#/components/schemas/Account" } } } }
+        "401": { description: unauthorized, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+  /api/v1/wallet/transactions:
+    get:
+      summary: Гүйлгээний түүх
+      parameters:
+        - { name: offset, in: query, schema: { type: integer } }
+        - { name: limit, in: query, schema: { type: integer } }
+      responses:
+        "200": { description: list, content: { application/json: { schema: { type: object, properties: { transactions: { type: array, items: { $ref: "#/components/schemas/Txn" } } } } } } }
+  /api/v1/wallet/withdraw:
+    post:
+      summary: Зарлага (withdrawal)
+      parameters: [{ name: X-Idempotency-Key, in: header, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { amount_minor: { type: integer, format: int64 }, external_ref: { type: string } } } } } }
+      responses:
+        "200": { description: txn, content: { application/json: { schema: { $ref: "#/components/schemas/Txn" } } } }
+        "400": { description: invalid / insufficient funds, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+  /api/v1/wallet/transfer:
+    post:
+      summary: P2P шилжүүлэг (account_no-оор)
+      parameters: [{ name: X-Idempotency-Key, in: header, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { to_account_no: { type: string }, amount_minor: { type: integer, format: int64 }, external_ref: { type: string } } } } } }
+      responses:
+        "200": { description: transfer_out txn, content: { application/json: { schema: { $ref: "#/components/schemas/Txn" } } } }
+  /api/v1/wallet/holds:
+    post:
+      summary: Барьцаа тавих
+      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { amount_minor: { type: integer, format: int64 }, external_ref: { type: string } } } } } }
+      responses: { "201": { description: hold } }
+  /api/v1/wallet/holds/{id}:
+    delete:
+      summary: Барьцаа суллах
+      parameters: [{ $ref: "#/components/parameters/HoldId" }]
+      responses: { "204": { description: released } }
+  /api/v1/wallet/holds/{id}/settle:
+    post:
+      summary: Барьцаа capture (settle)
+      parameters: [{ $ref: "#/components/parameters/HoldId" }]
+      requestBody: { content: { application/json: { schema: { type: object, properties: { capture_minor: { type: integer, format: int64 } } } } } }
+      responses: { "200": { description: withdrawal txn, content: { application/json: { schema: { $ref: "#/components/schemas/Txn" } } } } }
+  /api/v1/wallet/transactions/{id}/reverse:
+    post:
+      summary: Гүйлгээ буцаах (reversal)
+      parameters: [{ $ref: "#/components/parameters/TxnId" }]
+      responses: { "200": { description: reversal txn, content: { application/json: { schema: { $ref: "#/components/schemas/Txn" } } } } }
+  /api/v1/payments/requests:
+    post:
+      summary: QR төлбөр / нэхэмжлэх үүсгэх (static эсвэл dynamic)
+      description: "kind=static (дүнгүй, олон удаа) эсвэл kind=dynamic (тогтсон дүн + хугацаа, нэг удаа). Хариунд гарын үсэгтэй qr_token."
+      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { kind: { type: string, enum: [static, dynamic] }, amount_minor: { type: integer, format: int64 }, reference: { type: string }, expires_in_sec: { type: integer } } } } } }
+      responses: { "201": { description: created, content: { application/json: { schema: { type: object, properties: { request: { $ref: "#/components/schemas/PaymentRequest" }, qr_token: { type: string, description: "Ed25519-signed JWT QR" }, qr_emv: { type: string, description: "EMVCo MPM QR (international)" } } } } } } }
+    get:
+      summary: Өөрийн нэхэмжлэхүүд
+      responses: { "200": { description: list, content: { application/json: { schema: { type: object, properties: { requests: { type: array, items: { $ref: "#/components/schemas/PaymentRequest" } } } } } } } }
+  /api/v1/payments/requests/{id}:
+    get:
+      summary: Нэхэмжлэх (receive polling — RLS-ээр зөвхөн эзэн)
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses: { "200": { description: request, content: { application/json: { schema: { $ref: "#/components/schemas/PaymentRequest" } } } }, "404": { description: not found } }
+    delete:
+      summary: Нэхэмжлэх цуцлах
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses: { "200": { description: canceled } }
+  /api/v1/payments/resolve:
+    post:
+      summary: QR token тайлах (төлөгчид харуулах)
+      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { qr_token: { type: string } } } } } }
+      responses: { "200": { description: decoded }, "400": { description: invalid qr } }
+  /api/v1/payments/pay:
+    post:
+      summary: QR-аар төлөх (settlement = transfer, idempotent)
+      description: "Idempotency-Key header дэмжинэ. static-д amount_minor заавал; dynamic-д сервер дүнг ашиглана."
+      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { qr_token: { type: string }, amount_minor: { type: integer, format: int64 } } } } } }
+      responses: { "200": { description: paid }, "402": { description: insufficient funds }, "403": { description: account frozen }, "409": { description: not payable }, "410": { description: expired } }
+  /api/v1/payments/qr-pubkey:
+    get:
+      summary: QR баталгаажуулах Ed25519 нийтийн түлхүүр
+      responses: { "200": { description: pubkey, content: { application/json: { schema: { type: object, properties: { alg: { type: string }, public_key_b64: { type: string } } } } } } }
+  /api/v1/org/{orgId}/wallet:
+    get:
+      summary: Байгууллагын хэтэвч (membership + role gate)
+      parameters: [{ $ref: "#/components/parameters/OrgId" }]
+      responses: { "200": { description: account, content: { application/json: { schema: { $ref: "#/components/schemas/Account" } } } } }
+  /webhooks/bank/topup:
+    post:
+      summary: Банкны corporate gateway top-up (HMAC, Bearer биш)
+      security: []
+      description: "HMAC-SHA256 гарын үсэг шаардана. account_no-оор, external_ref-ээр idempotent."
+      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { account_no: { type: string }, amount_minor: { type: integer, format: int64 }, external_ref: { type: string }, channel: { type: string } } } } } }
+      responses: { "200": { description: deposit posted }, "401": { description: bad signature } }

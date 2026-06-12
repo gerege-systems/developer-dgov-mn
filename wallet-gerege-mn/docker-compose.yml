@@ -1,0 +1,101 @@
+# wallet.gerege.mn — БИЕ ДААСАН wallet микросервис (өөрийн Postgres + схем + auth).
+# Бусад систем client_id/secret-ээр /oauth/token-оос токен авч /api/v1/wallet/*
+# рүү хандана. gerege-platform / auth-аас ХАМААРАЛГҮЙ.
+#
+#   postgres — өөрийн PG17 (wallet schema, migrate-аар)
+#   migrator — нэг удаагийн goose migrate (profile: migrate)
+#   api      — Fiber wallet HTTP API + OAuth2 token + bank webhook
+#   worker   — in-process scheduler (reconcile/snapshot/holdexpiry)
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-wallet}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-gerege_platform}
+      TZ: ${TZ:-Asia/Ulaanbaatar}
+      PGTZ: ${PGTZ:-Asia/Ulaanbaatar}
+    volumes:
+      - wallet_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-wallet} -d ${POSTGRES_DB:-gerege_platform}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks: [default]
+    restart: unless-stopped
+
+  migrator:
+    build: { context: ., dockerfile: deploy/Dockerfile }
+    image: wallet-gerege-mn
+    pull_policy: never
+    profiles: ["migrate"]
+    env_file: [./.env]
+    entrypoint: ["/app/migrate"]
+    command: ["up"]
+    depends_on:
+      postgres: { condition: service_healthy }
+    networks: [default]
+
+  api:
+    build: { context: ., dockerfile: deploy/Dockerfile }
+    image: wallet-gerege-mn
+    pull_policy: never
+    env_file: [./.env]
+    ports:
+      - "127.0.0.1:${API_PORT:-8092}:8080"
+    depends_on:
+      postgres: { condition: service_healthy }
+    networks: [default]
+    restart: unless-stopped
+
+  worker:
+    image: wallet-gerege-mn
+    pull_policy: never
+    env_file: [./.env]
+    entrypoint: ["/app/worker"]
+    depends_on:
+      postgres: { condition: service_healthy }
+    networks: [default]
+    restart: unless-stopped
+
+  # super-admin API (тусдаа binary, superuser DSN-ээр RLS тойрно). PORT-ийг
+  # env_file-ийн утгаас дарж 8093 дээр сонсоно.
+  admin-api:
+    image: wallet-gerege-mn
+    pull_policy: never
+    env_file: [./.env]
+    environment:
+      PORT: "8093"
+    entrypoint: ["/app/admin"]
+    ports:
+      - "127.0.0.1:${ADMIN_API_PORT:-8093}:8093"
+    depends_on:
+      postgres: { condition: service_healthy }
+    networks: [default]
+    restart: unless-stopped
+
+  # super-admin frontend (Next.js standalone, BFF). Browser зөвхөн энэтэй ярина;
+  # admin API руу контейнер дотроос ADMIN_API_URL-аар хандана.
+  admin-web:
+    build: { context: ./admin, dockerfile: Dockerfile }
+    image: wallet-gerege-mn-admin-web
+    pull_policy: never
+    environment:
+      ADMIN_API_URL: "http://admin-api:8093"
+      COOKIE_SECURE: "${ADMIN_COOKIE_SECURE:-true}"
+      TZ: ${TZ:-Asia/Ulaanbaatar}
+    ports:
+      - "127.0.0.1:${ADMIN_WEB_PORT:-3010}:3010"
+    depends_on: [admin-api]
+    networks: [default]
+    restart: unless-stopped
+
+volumes:
+  wallet_pg_data:
+    name: wallet-gerege-mn-pg-data
+
+networks:
+  default:
+    name: wallet-gerege-mn_default

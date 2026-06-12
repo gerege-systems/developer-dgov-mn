@@ -50,25 +50,39 @@
 - Бүх док шинэчлэгдсэн + шинэ: AI_PIPELINE(_MN).md, DEPLOYMENT(_MN).md, CLAUDE.md
 - Бүх relative .md холбоос скриптээр шалгагдаж засагдсан
 
+### Phase 9 — Wallet микросервис импорт (2026-06-12)
+- gerege-platform repo-оос `wallet-gerege-mn/` сервисийг бүхэлд нь оруулж ирсэн
+  (бие даасан Go module `eidtemplate`, өөрийн Postgres схем + RLS + ledger)
+- Багц: api / admin / worker / migrate / client binaries, Next.js admin UI,
+  EMVCo QR, OAuth2 client_credentials, webhooks, өөрийн docker-compose
+- `go build ./...` + бүх unit test локалд ногоон; root CI-д хараахан
+  холбогдоогүй (доорх Phase 10-г үз)
+
 ---
 
 ## 🔜 Дараагийн phase-ууд (ач холбогдлоор)
 
-### Phase 9 — AI сайжруулалтууд
+### Phase 10 — Wallet интеграц
+- [ ] Root CI-д wallet build/test job нэмэх (`wallet-gerege-mn/` өөрчлөгдөхөд)
+- [ ] Root docker-compose-той зэрэгцэн ажиллуулах заавар (port давхцал шалгах)
+- [ ] Module нэрийг `eidtemplate` → `wallet` болгох эсэхийг шийдэх
+- [ ] Template backend-тэй холбох жишээ (client_credentials flow)
+
+### Phase 11 — AI сайжруулалтууд
 - [ ] Knowledge base хайлтыг tsvector (full-text) болгох; том санд pgvector (semantic)
 - [ ] Чатын streaming хариу (SSE) — урт хариултын UX
 - [ ] Чат түүхийг server талд хадгалах сонголт (одоо stateless)
 - [ ] Нэмэлт tools: хэрэглэгчийн өөрийн профайл асуух (RLS-тэй), системийн статистик (admin)
 - [ ] AI prompt-ийн хувилбарын түүх (audit) — хэн хэзээ юу өөрчилсөн
 
-### Phase 10 — Security (ASVS L2 үлдэгдэл)
+### Phase 12 — Security (ASVS L2 үлдэгдэл)
 - [ ] HIBP k-anonymity leaked-password шалгалт (config-gated, fail-open)
 - [ ] CSP-г nonce-based болгох (одоо 'unsafe-inline' — Next.js-ийн хязгаарлалт)
 - [ ] `govulncheck` + container scan CI-д
 - [ ] golangci-lint-ийг Go 1.26 дэмжмэгц CI-д буцаах (одоо vet+gofmt)
 - [ ] Secrets manager/KMS интеграц (production-д .env-ийн оронд)
 
-### Phase 11 — Ops
+### Phase 13 — Ops
 - [ ] DB автомат backup + restore тест (cron + offsite)
 - [ ] Interactive Swagger UI (одоо зөвхөн /swagger/doc.json)
 - [ ] Staging орчин + deploy-г CI-ээс автоматжуулах (одоо гар runbook)

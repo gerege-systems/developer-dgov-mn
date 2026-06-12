@@ -21,6 +21,10 @@ npm run build             # build + lint + typecheck (CI runs this)
 
 # Full stack
 docker compose up -d --build   # db + redis + migrate (one-off) + api + web
+
+# Wallet microservice (run from wallet-gerege-mn/) — standalone, own compose
+go build ./... && go test ./...
+docker compose up -d --build   # own postgres + api + admin + worker
 ```
 
 ## CI gates (push to main runs .github/workflows/ci.yml)
@@ -88,6 +92,19 @@ docker compose up -d --build   # db + redis + migrate (one-off) + api + web
 - Don't call backend refresh in RSC context — `tryRefresh` probes cookie
   writability first because refresh **rotates** the token (see `lib/api.ts`).
 - UI strings via `useT()` + `lib/i18n.ts` keys (mn + en).
+
+## Wallet microservice (wallet-gerege-mn/)
+
+- Imported from gerege-platform; **standalone** service: own Go module
+  (`eidtemplate`), own Postgres schema/migrations, own JWT secret, own
+  docker-compose — independent of the template backend and auth.
+- Auth: OAuth2 client_credentials (`/oauth/token`); optionally accepts
+  auth.gerege.mn user tokens when `AUTH_JWT_SECRET` is set. RLS keyed on
+  `app.subject` (client_id or citizen subject).
+- Binaries in `cmd/`: api, admin, worker (webhooks), migrate, client.
+  Admin UI is a separate Next.js app in `wallet-gerege-mn/admin/`.
+- Not yet wired into root CI (`.github/workflows/ci.yml`) — see ROADMAP
+  Phase 10.
 
 ## Gotchas
 
