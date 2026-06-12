@@ -18,9 +18,9 @@ export default function LoginPage({
     <SigninShell>
       <section className="signin-card signin-card--narrow" aria-labelledby="login-title">
         <div>
-          <h1 id="login-title">Нэвтрэх</h1>
+          <h1 id="login-title">eID-ээр нэвтрэх</h1>
           <p className="signin-card__lede" style={{ marginTop: 8, fontSize: 14 }}>
-            И-мэйл болон нууц үгээрээ нэвтэрнэ үү.
+            eID апп-аараа QR кодыг уншуулж нэвтэрнэ үү.
           </p>
         </div>
         <LoginForm next={next} notice={searchParams.notice} />

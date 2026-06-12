@@ -5,7 +5,7 @@ import { REFRESH_COOKIE } from '@/lib/cookies';
 // /admin, /manager нь нэмэлтээр серверийн талд эрхээр (RBAC) шалгагдана.
 const PROTECTED = ['/me', '/profile', '/settings', '/admin', '/manager'];
 // Нэвтэрсэн хэрэглэгчийг буцаалгүй харуулах ёсгүй auth хуудаснууд.
-const AUTH_ONLY = ['/login', '/register'];
+const AUTH_ONLY = ['/login'];
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
