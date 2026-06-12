@@ -8,6 +8,7 @@ import { getJSON } from '@/lib/client';
 import {
   LayoutDashboard, User, ShieldCheck, HelpCircle, LogOut, Menu, Search,
   Users, ShieldHalf, UserCircle, Briefcase, Bot, Languages, Building2,
+  ScrollText, ShieldAlert,
 } from 'lucide-react';
 import UserMenu from './UserMenu';
 import { signOut } from '@/lib/signout';
@@ -70,6 +71,13 @@ const SYSTEMS: NavSystem[] = [
           { href: '/admin/users', labelKey: 'nav.users', icon: Users, perm: 'users.manage' },
           { href: '/admin/roles', labelKey: 'nav.roles', icon: ShieldHalf, perm: 'roles.manage' },
           { href: '/admin/settings', labelKey: 'nav.settings', icon: ShieldCheck, perm: 'settings.manage' },
+        ],
+      },
+      {
+        labelKey: 'group.security',
+        items: [
+          { href: '/admin/audit', labelKey: 'nav.audit', icon: ScrollText },
+          { href: '/admin/security', labelKey: 'nav.security', icon: ShieldAlert },
         ],
       },
     ],
