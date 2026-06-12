@@ -103,8 +103,16 @@ docker compose up -d --build   # own postgres + api + admin + worker
   `app.subject` (client_id or citizen subject).
 - Binaries in `cmd/`: api, admin, worker (webhooks), migrate, client.
   Admin UI is a separate Next.js app in `wallet-gerege-mn/admin/`.
-- Not yet wired into root CI (`.github/workflows/ci.yml`) — see ROADMAP
-  Phase 10.
+- In root CI: wallet Go job + wallet-admin lint/build job. `go build
+  ./cmd/admin` collides with the `admin/` dir — always build with `-o`.
+- Subpath deployment: admin UI takes `ADMIN_BASE_PATH` (Next basePath,
+  build-time); client-side fetches must use `BP` from
+  `admin/src/lib/basepath.ts`. Compose image/volume/network names are
+  parameterized (`WALLET_IMAGE`, `WALLET_PG_VOLUME`, `WALLET_NETWORK`) so
+  two wallet stacks can coexist on one host.
+- Reference deploy: `temp-wallet` stack on tempv26 —
+  `https://tempv26.gerege.mn/wallet/` (API, nginx strips the prefix) and
+  `/wallet-admin` (UI). See docs/DEPLOYMENT.md §Wallet.
 
 ## Gotchas
 

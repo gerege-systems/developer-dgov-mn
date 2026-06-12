@@ -117,13 +117,10 @@ jobs:
       - name: Unit tests (race)
         run: go test -race ./...
 
+      # -o заавал: ./cmd/admin-ий binary нэр root-ын admin/ (Next.js) хавтастай
+      # давхцдаг тул output-ийг түр хавтас руу гаргана.
       - name: Build binaries
-        run: |
-          go build ./cmd/api
-          go build ./cmd/admin
-          go build ./cmd/worker
-          go build ./cmd/migrate
-          go build ./cmd/client
+        run: go build -o /tmp/wallet-bin/ ./cmd/api ./cmd/admin ./cmd/worker ./cmd/migrate ./cmd/client
 
   wallet-admin:
     name: Wallet admin (lint · build)
