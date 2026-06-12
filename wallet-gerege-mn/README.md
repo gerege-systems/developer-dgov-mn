@@ -152,3 +152,29 @@ docker compose up -d                                  # rolling restart
 > **NB:** энэ сервер дээр ENVIRONMENT=development (bundled дотоод PG, host port-гүй,
 > зөвхөн docker сүлжээнд). Гадаад/managed PG руу шилжвэл `ENVIRONMENT=production`
 > + `sslmode=verify-full|verify-ca` шаардлагатай (config guard).
+
+## Subpath deploy (тусдаа DNS-гүйгээр, нэг хост дээр давхар stack)
+
+Энэ хуулбар нь **template-gerege-mn** репод амьдардаг бөгөөд root CI-д
+шалгагдана (Go: gofmt/vet/race test/binaries; admin: lint/build). Wallet-ийг
+тусдаа субдомэйнгүйгээр, аль хэдийн TLS-тэй vhost-ийн **зам(path)** дор deploy
+хийж болно — жишиг: `https://tempv26.gerege.mn/wallet/` (API) +
+`/wallet-admin` (UI), `temp-wallet` stack.
+
+`.env`-ийн нэмэлт параметрууд (бүгд default-тай, заавал биш):
+
+| Хувьсагч | Үүрэг |
+|----------|-------|
+| `ADMIN_BASE_PATH` | admin UI-ийн Next.js `basePath` (ж: `/wallet-admin`) — **build-time** тул өөрчилбөл `docker compose build admin-web` дахин хийнэ |
+| `WALLET_IMAGE`, `WALLET_ADMIN_IMAGE` | image нэрс — нэг хост дээр өөр wallet stack байвал давхцуулахгүй |
+| `WALLET_PG_VOLUME`, `WALLET_NETWORK` | volume/network нэрс — давхцвал хоёр stack **нэг Postgres volume** руу бичнэ! |
+| `COMPOSE_PROJECT_NAME` | контейнер нэрийн prefix (ж: `temp-wallet`) |
+
+Nginx локэйшнүүд: [`deploy/nginx-subpath.conf`](deploy/nginx-subpath.conf) —
+`/wallet/` нь prefix-ээ хусаж API руу, `/wallet-admin` нь хусахгүйгээр admin UI
+руу дамжина. Бүрэн runbook: [docs/DEPLOYMENT.md](../docs/DEPLOYMENT.md)
+([MN](../docs/DEPLOYMENT_MN.md)).
+
+Клиент талын код бичихдээ: admin UI доторх гар `fetch`/`window.location`
+дуудлагууд `@/lib/basepath`-ийн `BP`-г заавал prefix болгоно (`next/link` ба
+`router.push` автоматаар basePath нэмдэг тул хэрэггүй).
