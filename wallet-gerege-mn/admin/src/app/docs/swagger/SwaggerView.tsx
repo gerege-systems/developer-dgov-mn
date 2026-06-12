@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
+import { BP } from '@/lib/basepath';
 
 const VER = '5.17.14';
 const BASE = `https://cdn.jsdelivr.net/npm/swagger-ui-dist@${VER}`;
@@ -23,7 +24,7 @@ export default function SwaggerView() {
       const w = window as unknown as { SwaggerUIBundle?: (o: unknown) => void };
       if (!w.SwaggerUIBundle) { setErr('Swagger UI ачаалж чадсангүй.'); return; }
       w.SwaggerUIBundle({
-        url: '/api/openapi',
+        url: `${BP}/api/openapi`,
         dom_id: '#swagger-ui',
         deepLinking: true,
         supportedSubmitMethods: [], // try-it-out унтраах (read-only)

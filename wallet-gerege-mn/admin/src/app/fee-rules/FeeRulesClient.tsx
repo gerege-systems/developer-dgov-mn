@@ -3,6 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useConfirm } from '@/components/Confirm';
+import { BP } from '@/lib/basepath';
 
 export interface FeeRule {
   code: string;
@@ -42,7 +43,7 @@ export default function FeeRulesClient({ rules }: { rules: FeeRule[] }) {
       variant: active ? 'primary' : 'danger',
     });
     if (!ok) return;
-    await fetch(`/api/fee-rules/${encodeURIComponent(code)}`, {
+    await fetch(`${BP}/api/fee-rules/${encodeURIComponent(code)}`, {
       method: 'PATCH', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ active }),
     });

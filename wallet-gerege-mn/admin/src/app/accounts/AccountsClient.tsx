@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { IcoSearch, IcoInbox, IcoClients } from '@/components/icons';
 import { useConfirm } from '@/components/Confirm';
+import { BP } from '@/lib/basepath';
 
 export interface Account {
   account_no: string;
@@ -63,7 +64,7 @@ export default function AccountsClient({
       variant: freeze ? 'danger' : 'primary',
     });
     if (!ok) return;
-    await fetch(`/api/accounts/${encodeURIComponent(no)}`, {
+    await fetch(`${BP}/api/accounts/${encodeURIComponent(no)}`, {
       method: 'PATCH', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: s }),
     });

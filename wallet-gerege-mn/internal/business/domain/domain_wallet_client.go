@@ -21,15 +21,15 @@ var ErrIPNotAllowed = errors.New("client ip not allowed")
 // client_id + client_secret-ээр /oauth/token-оос wallet JWT авна. client_id нь
 // хэтэвчний эзэн (owner) — RLS-ийн app.subject болно (client = өөрийн хэтэвч).
 type WalletClient struct {
-	ClientID   string     `gorm:"column:client_id" json:"client_id"`
-	SecretHash string     `gorm:"column:secret_hash" json:"-"`
-	Name       string     `gorm:"column:name" json:"name"`
-	Active     bool       `gorm:"column:active" json:"active"`
-	AllowedIPs string     `gorm:"column:allowed_ips" json:"allowed_ips"`
-	WebhookURL string     `gorm:"column:webhook_url" json:"webhook_url"`
-	WebhookSecret string  `gorm:"column:webhook_secret" json:"-"`
-	CreatedAt  time.Time  `gorm:"column:created_at" json:"created_at"`
-	LastUsedAt *time.Time `gorm:"column:last_used_at" json:"last_used_at,omitempty"`
+	ClientID      string     `gorm:"column:client_id" json:"client_id"`
+	SecretHash    string     `gorm:"column:secret_hash" json:"-"`
+	Name          string     `gorm:"column:name" json:"name"`
+	Active        bool       `gorm:"column:active" json:"active"`
+	AllowedIPs    string     `gorm:"column:allowed_ips" json:"allowed_ips"`
+	WebhookURL    string     `gorm:"column:webhook_url" json:"webhook_url"`
+	WebhookSecret string     `gorm:"column:webhook_secret" json:"-"`
+	CreatedAt     time.Time  `gorm:"column:created_at" json:"created_at"`
+	LastUsedAt    *time.Time `gorm:"column:last_used_at" json:"last_used_at,omitempty"`
 }
 
 // TableName нь wallet_client хүснэгтийг зааж өгнө.

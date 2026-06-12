@@ -8,6 +8,7 @@ import {
 } from './icons';
 import { useConfirm } from './Confirm';
 import ThemeToggle from './ThemeToggle';
+import { BP } from '@/lib/basepath';
 
 const NAV = [
   { href: '/', label: 'Тойм', Icon: IcoOverview },
@@ -36,7 +37,7 @@ export default function Sidebar() {
       confirmText: 'Гарах',
       variant: 'danger',
     });
-    if (ok) window.location.href = '/api/auth/logout';
+    if (ok) window.location.href = `${BP}/api/auth/logout`;
   };
 
   return (

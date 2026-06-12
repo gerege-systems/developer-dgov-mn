@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { IcoSearch, IcoInbox, IcoReports, IcoCheck, IcoShield } from '@/components/icons';
 import { useConfirm } from '@/components/Confirm';
 import { buildCredsHTML, openPdf } from '@/lib/clientdoc';
+import { BP } from '@/lib/basepath';
 
 export interface Client {
   client_id: string;
@@ -40,7 +41,7 @@ export default function ClientsClient({ clients }: { clients: Client[] }) {
   const saveWebhook = async () => {
     if (!whEdit) return;
     setWhBusy(true); setWhErr(''); setWhSecret('');
-    const res = await fetch(`/api/clients/${encodeURIComponent(whEdit.id)}/webhook`, {
+    const res = await fetch(`${BP}/api/clients/${encodeURIComponent(whEdit.id)}/webhook`, {
       method: 'PUT', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url: whEdit.value.trim() }),
     });
@@ -73,7 +74,7 @@ export default function ClientsClient({ clients }: { clients: Client[] }) {
     });
     if (!ok) return;
     setBusy(true); setErr(''); setCreated(null);
-    const res = await fetch('/api/clients', {
+    const res = await fetch(`${BP}/api/clients`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: nm }),
     });
@@ -100,7 +101,7 @@ export default function ClientsClient({ clients }: { clients: Client[] }) {
     if (!ipEdit) return;
     const list = ipEdit.value.split(/[\s,]+/).map((s) => s.trim()).filter(Boolean);
     setIpBusy(true); setIpErr('');
-    const res = await fetch(`/api/clients/${encodeURIComponent(ipEdit.id)}/ips`, {
+    const res = await fetch(`${BP}/api/clients/${encodeURIComponent(ipEdit.id)}/ips`, {
       method: 'PUT', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ allowed_ips: list }),
     });
@@ -118,7 +119,7 @@ export default function ClientsClient({ clients }: { clients: Client[] }) {
       variant: active ? 'primary' : 'danger',
     });
     if (!ok) return;
-    await fetch(`/api/clients/${encodeURIComponent(clientID)}`, {
+    await fetch(`${BP}/api/clients/${encodeURIComponent(clientID)}`, {
       method: 'PATCH', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ active }),
     });

@@ -17,7 +17,9 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-ENV NEXT_TELEMETRY_DISABLED=1
+# Subpath deployment: basePath нь build-time тохиргоо тул build arg-аар ирнэ.
+ARG NEXT_PUBLIC_BASE_PATH=
+ENV NEXT_TELEMETRY_DISABLED=1 NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH
 RUN npm run build
 
 # ---------- runtime ----------

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import { BP } from '@/lib/basepath';
 
 type Tab = 'trial' | 'turnover' | 'statement';
 
@@ -33,7 +34,7 @@ function useReport<T>() {
   const [err, setErr] = useState('');
   const load = async (url: string, key: string) => {
     setBusy(true); setErr('');
-    const res = await fetch(url);
+    const res = await fetch(BP + url);
     const data = await res.json().catch(() => null);
     setBusy(false);
     if (res.ok) { setRows((data?.[key] ?? data?.rows ?? []) as T[]); return; }

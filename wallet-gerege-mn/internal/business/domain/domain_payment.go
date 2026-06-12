@@ -18,8 +18,9 @@ var (
 )
 
 // PaymentRequest нь QR төлбөрийн хүсэлт / нэхэмжлэх (payment_request).
-//   kind='static'  — байнгын QR (дүнгүй, олон удаа)
-//   kind='dynamic' — нэхэмжлэх (тогтсон дүн + хугацаа, нэг удаа)
+//
+//	kind='static'  — байнгын QR (дүнгүй, олон удаа)
+//	kind='dynamic' — нэхэмжлэх (тогтсон дүн + хугацаа, нэг удаа)
 type PaymentRequest struct {
 	ID              string     `gorm:"column:id" json:"id"`
 	Kind            string     `gorm:"column:kind" json:"kind"`

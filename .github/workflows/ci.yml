@@ -88,6 +88,67 @@ jobs:
       - name: Build
         run: npm run build
 
+  wallet:
+    name: Wallet (vet · test · build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: wallet-gerege-mn
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+          cache-dependency-path: wallet-gerege-mn/go.sum
+
+      - name: gofmt check
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            echo "gofmt-аар форматлагдаагүй файлууд:"; echo "$unformatted"; exit 1
+          fi
+
+      - name: go vet
+        run: go vet ./...
+
+      - name: Unit tests (race)
+        run: go test -race ./...
+
+      - name: Build binaries
+        run: |
+          go build ./cmd/api
+          go build ./cmd/admin
+          go build ./cmd/worker
+          go build ./cmd/migrate
+          go build ./cmd/client
+
+  wallet-admin:
+    name: Wallet admin (lint · build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: wallet-gerege-mn/admin
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      # lockfile байхгүй тул npm install (Dockerfile-тай ижил semantics)
+      - name: Install deps
+        run: npm install --legacy-peer-deps --no-audit --no-fund
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
   secrets-scan:
     name: Secrets scan (gitleaks)
     runs-on: ubuntu-latest

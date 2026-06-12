@@ -3,12 +3,13 @@
 
 // Package paymentsapi нь QR төлбөр / нэхэмжлэх (invoice) HTTP давхарга.
 // Endpoint-ууд (бүгд Bearer токен шаардана):
-//   POST   /payments/requests       — нэхэмжлэх/QR үүсгэх (хүлээн авагч)
-//   GET    /payments/requests       — өөрийн нэхэмжлэхүүд
-//   GET    /payments/requests/:id   — нэг нэхэмжлэх (receive polling — RLS)
-//   DELETE /payments/requests/:id   — цуцлах
-//   POST   /payments/resolve        — QR token тайлах (төлөгчид харуулах)
-//   POST   /payments/pay            — QR-аар төлөх (settlement = transfer)
+//
+//	POST   /payments/requests       — нэхэмжлэх/QR үүсгэх (хүлээн авагч)
+//	GET    /payments/requests       — өөрийн нэхэмжлэхүүд
+//	GET    /payments/requests/:id   — нэг нэхэмжлэх (receive polling — RLS)
+//	DELETE /payments/requests/:id   — цуцлах
+//	POST   /payments/resolve        — QR token тайлах (төлөгчид харуулах)
+//	POST   /payments/pay            — QR-аар төлөх (settlement = transfer)
 package paymentsapi
 
 import (

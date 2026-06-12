@@ -3,6 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useConfirm } from '@/components/Confirm';
+import { BP } from '@/lib/basepath';
 
 export default function AccountActions({ accountNo, status }: { accountNo: string; status: string }) {
   const router = useRouter();
@@ -17,7 +18,7 @@ export default function AccountActions({ accountNo, status }: { accountNo: strin
       variant: freeze ? 'danger' : 'primary',
     });
     if (!ok) return;
-    await fetch(`/api/accounts/${encodeURIComponent(accountNo)}`, {
+    await fetch(`${BP}/api/accounts/${encodeURIComponent(accountNo)}`, {
       method: 'PATCH', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: s }),
     });

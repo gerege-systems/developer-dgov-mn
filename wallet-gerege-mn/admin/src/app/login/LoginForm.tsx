@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { BP } from '@/lib/basepath';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -14,7 +15,7 @@ export default function LoginForm() {
     e.preventDefault();
     setBusy(true);
     setErr('');
-    const res = await fetch('/api/auth/login', {
+    const res = await fetch(`${BP}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),

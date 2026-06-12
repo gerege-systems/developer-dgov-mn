@@ -2,9 +2,11 @@
 // Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 
 // Package payments нь QR төлбөр / нэхэмжлэх (invoice) давхарга. Хоёр QR формат:
-//   (1) Native — Ed25519-гээр гарын үсэглэсэн JWT (tamper-evident, апп нийтийн
-//       түлхүүрээр баталгаажуулна; QR signing key нь auth secret-ээс ТУСДАА).
-//   (2) EMVCo MPM — олон улсын (UPI/QPay/PromptPay) TLV+CRC формат.
+//
+//	(1) Native — Ed25519-гээр гарын үсэглэсэн JWT (tamper-evident, апп нийтийн
+//	    түлхүүрээр баталгаажуулна; QR signing key нь auth secret-ээс ТУСДАА).
+//	(2) EMVCo MPM — олон улсын (UPI/QPay/PromptPay) TLV+CRC формат.
+//
 // Settlement нь wallet_transfer (double-entry, atomic). Receive талд хүлээн авагч
 // GET-ээр poll хийнэ (RLS).
 package payments
