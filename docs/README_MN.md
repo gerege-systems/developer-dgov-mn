@@ -31,15 +31,14 @@ SQL-тэй [jackc/pgx](https://github.com/jackc/pgx) драйвертэй хос
 gerege-template/
 ├── backend/           # Go · chi (net/http) · pgx (pgxpool) · PostgreSQL · Redis · JWT/OTP танилт
 │   └── docs/          # ARCHITECTURE · DEVELOPMENT · API_CONTRACT · SECURITY (EN/MN)
-├── frontend/          # Next.js BFF (backend руу server талаас прокси; cookie session)
-└── wallet-gerege-mn/  # бие даасан wallet ledger микросервис (өөрийн Go module, Postgres,
-                       # OAuth2 client_credentials, EMVCo QR, webhooks, Next.js admin UI)
+└── frontend/          # Next.js BFF (backend руу server талаас прокси; cookie session)
 ```
 
 - **[backend/README_MN.md](../backend/README_MN.md)** — Clean Architecture Go API.
 - **[frontend/README.md](../frontend/README.md)** — Next.js Backend-for-Frontend.
-- **[wallet-gerege-mn/README.md](../wallet-gerege-mn/README.md)** — wallet микросервис
-  (template backend-ээс хамааралгүй; бусад систем client_id/secret-ээр холбогдоно).
+- **[wallet-service-gerege-mn](https://github.com/gerege-systems/wallet-service-gerege-mn)** —
+  wallet ledger микросервис, одоо тусдаа repo (template backend-ээс
+  хамааралгүй; бусад систем client_id/secret-ээр холбогдоно).
 
 ## Онцлог
 
@@ -49,7 +48,7 @@ gerege-template/
 - **Аюулгүй хатууруулсан** — security headers (CSP, HSTS, COOP/COEP/CORP), CORS allow-list, rate limiting, серверийн бүрэн timeout-ууд, parameterized query, Postgres Row-Level Security + boot-үеийн мөрдөлтийн guard. [SECURITY.md](../SECURITY.md)-г үз.
 - **Observability** — OpenTelemetry trace + Prometheus metrics + Zap structured log.
 - **Frontend BFF** — браузер зөвхөн ижил-origin Next.js route рүү залгаж, тэр нь server талаас backend руу проксиолдог (токен client JS-д хүрэхгүй); давхар CSRF хамгаалалт (custom header + origin), TanStack Query өгөгдлийн давхарга.
-- **Wallet микросервис** — бие даасан double-entry ledger (өөрийн Postgres схем + RLS, OAuth2 client_credentials, EMVCo QR төлбөр, шимтгэлийн дүрэм, webhooks, reconcile worker) + тусдаа super-admin UI; нэмэлт DNS шаардлагагүйгээр stack-ийн хажууд URL path дор deploy хийгдэнэ ([deploy runbook](DEPLOYMENT_MN.md)-г үз).
+- **Wallet микросервис** — бие даасан double-entry ledger (өөрийн Postgres схем + RLS, OAuth2 client_credentials, EMVCo QR төлбөр, шимтгэлийн дүрэм, webhooks, reconcile worker) + тусдаа super-admin UI; өөрийн repo-той ([wallet-service-gerege-mn](https://github.com/gerege-systems/wallet-service-gerege-mn)), нэмэлт DNS шаардлагагүйгээр stack-ийн хажууд URL path дор deploy хийгдэнэ ([deploy runbook](DEPLOYMENT_MN.md)-г үз).
 - **Тесттэй** — unit + testcontainers integration тест.
 
 ## Түргэн эхлүүлэх
@@ -80,7 +79,7 @@ npm run dev
 | [backend/docs/AI_PIPELINE_MN.md](../backend/docs/AI_PIPELINE_MN.md) | AI туслахын дотоод бүтэц: урсгал, prompt давхарга, tools, voice, өргөтгөх заавар |
 | [backend/docs/SECURITY.md](../backend/docs/SECURITY.md) | Хэрэгжсэн хяналт + ASVS roadmap |
 | [docs/DEPLOYMENT_MN.md](DEPLOYMENT_MN.md) | VPS deploy runbook (compose, env файлууд, nginx, шинэчлэх, rollback, wallet subpath deploy) |
-| [wallet-gerege-mn/README.md](../wallet-gerege-mn/README.md) | Wallet микросервис: binaries, OAuth2 урсгал, QR төлбөр, admin UI, webhooks |
+| [wallet-service-gerege-mn](https://github.com/gerege-systems/wallet-service-gerege-mn) | Wallet микросервис (тусдаа repo): binaries, OAuth2 урсгал, QR төлбөр, admin UI, webhooks |
 | [SECURITY.md](../SECURITY.md) | Эмзэг байдлыг хэрхэн мэдээлэх |
 | [CONTRIBUTING.md](../CONTRIBUTING.md) | Хэрхэн хувь нэмэр оруулах |
 

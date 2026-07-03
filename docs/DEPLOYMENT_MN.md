@@ -159,7 +159,9 @@ docker compose build && docker compose up -d
 
 ## Wallet микросервисийг мөн адил VPS дээр (path-аар)
 
-Бие даасан wallet (`wallet-gerege-mn/`)-ийг тусдаа DNS бүртгэлгүйгээр,
+Бие даасан wallet-ийг (тусдаа repo:
+[wallet-service-gerege-mn](https://github.com/gerege-systems/wallet-service-gerege-mn))
+тусдаа DNS бүртгэлгүйгээр,
 одоо байгаа TLS vhost-ийн дор template stack-ийн хажууд ажиллуулж болно:
 
 ```
@@ -167,7 +169,9 @@ https://<domain>/wallet/        → wallet API   (nginx /wallet/ prefix-ийг �
 https://<domain>/wallet-admin   → super-admin UI (Next.js basePath)
 ```
 
-1. `cd /srv/template-gerege-mn/wallet-gerege-mn` ороод `.env` үүсгэнэ
+1. Wallet repo-г clone хийж (`git clone
+   https://github.com/gerege-systems/wallet-service-gerege-mn.git
+   /srv/wallet-service-gerege-mn`), дотор нь ороод `.env` үүсгэнэ
    (gitignored). Wallet README-ээс гадна анхаарах гол утгууд:
 
    ```env
@@ -191,7 +195,7 @@ https://<domain>/wallet-admin   → super-admin UI (Next.js basePath)
    docker compose up -d
    ```
 
-3. `wallet-gerege-mn/deploy/nginx-subpath.conf`-ын хоёр location-ийг одоо
+3. Wallet repo-гийн `deploy/nginx-subpath.conf`-ын хоёр location-ийг одоо
    байгаа 443 `server {}` блок дотор (`location /`-аас өмнө) нэмээд
    `nginx -t && systemctl reload nginx`.
 

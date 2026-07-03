@@ -70,14 +70,18 @@
   `temp-wallet` (порт 8094/8095/3012, өөрийн PG17 volume). OAuth
   client_credentials flow + admin login end-to-end шалгагдсан.
 
+### Phase 10.5 — Wallet-ийг тусдаа repo болгож салгав (2026-07-04)
+- `wallet-gerege-mn/`-ийг `git subtree split`-ээр түүхтэй нь
+  [gerege-systems/wallet-service-gerege-mn](https://github.com/gerege-systems/wallet-service-gerege-mn)
+  repo руу салгасан (өөрийн CI: Go gofmt/vet/race test/binaries + admin
+  lint/build + gitleaks)
+- Root CI-ээс wallet/wallet-admin job-ууд хасагдсан; docs шинэчлэгдсэн
+- Wallet-ийн үлдэгдэл ажлууд (module нэр `eidtemplate` → `wallet`,
+  template backend-тэй холбох жишээ) шинэ repo-д хамаарна
+
 ---
 
 ## 🔜 Дараагийн phase-ууд (ач холбогдлоор)
-
-### Wallet үлдэгдэл ажлууд
-- [ ] Module нэрийг `eidtemplate` → `wallet` болгох эсэхийг шийдэх
-- [ ] Template backend-тэй холбох жишээ (client_credentials flow) +
-      `AUTH_JWT_SECRET`-ээр template хэрэглэгчийн токен хүлээн авах туршилт
 
 ### Phase 11 — AI сайжруулалтууд
 - [ ] Knowledge base хайлтыг tsvector (full-text) болгох; том санд pgvector (semantic)

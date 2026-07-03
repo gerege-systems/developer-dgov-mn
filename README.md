@@ -31,15 +31,14 @@ set. Upstream attribution is retained in [AUTHORS](AUTHORS). This project is
 gerege-template/
 ├── backend/           # Go · chi (net/http) · pgx (pgxpool) · PostgreSQL · Redis · JWT/OTP auth
 │   └── docs/          # ARCHITECTURE · DEVELOPMENT · API_CONTRACT · SECURITY (EN/MN)
-├── frontend/          # Next.js BFF (server-side proxy to the backend; cookie sessions)
-└── wallet-gerege-mn/  # standalone wallet ledger microservice (own Go module, Postgres,
-                       # OAuth2 client_credentials, EMVCo QR, webhooks, Next.js admin UI)
+└── frontend/          # Next.js BFF (server-side proxy to the backend; cookie sessions)
 ```
 
 - **[backend/README.md](backend/README.md)** — Clean Architecture Go API.
 - **[frontend/README.md](frontend/README.md)** — Next.js Backend-for-Frontend.
-- **[wallet-gerege-mn/README.md](wallet-gerege-mn/README.md)** — wallet microservice
-  (independent of the template backend; other systems connect via client_id/secret).
+- **[wallet-service-gerege-mn](https://github.com/gerege-systems/wallet-service-gerege-mn)** —
+  wallet ledger microservice, now a separate repo (independent of the template
+  backend; other systems connect via client_id/secret).
 
 ## Features
 
@@ -49,7 +48,7 @@ gerege-template/
 - **Security-hardened** — strict security headers (CSP, HSTS, COOP/COEP/CORP), CORS allow-list, rate limiting, full HTTP server timeouts, parameterized queries, Postgres Row-Level Security with a boot-time enforceability guard. See [SECURITY.md](SECURITY.md).
 - **Observability** — OpenTelemetry tracing + Prometheus metrics + structured Zap logs.
 - **Frontend BFF** — the browser talks only to same-origin Next.js routes, which proxy to the backend server-side (tokens never reach client JS); double CSRF defense (custom header + origin check), TanStack Query data layer.
-- **Wallet microservice** — standalone double-entry ledger (own Postgres schema with RLS, OAuth2 client_credentials, EMVCo QR payments, fee rules, webhooks, reconcile worker) plus a separate super-admin UI; deployable beside the stack under a URL path — no extra DNS needed (see the [deployment runbook](docs/DEPLOYMENT.md)).
+- **Wallet microservice** — standalone double-entry ledger (own Postgres schema with RLS, OAuth2 client_credentials, EMVCo QR payments, fee rules, webhooks, reconcile worker) plus a separate super-admin UI; lives in its own repo ([wallet-service-gerege-mn](https://github.com/gerege-systems/wallet-service-gerege-mn)) and deploys beside the stack under a URL path — no extra DNS needed (see the [deployment runbook](docs/DEPLOYMENT.md)).
 - **Tested** — unit tests + testcontainers integration tests.
 
 ## Quick start
@@ -80,7 +79,7 @@ Open **http://localhost:3000** and register / log in.
 | [backend/docs/AI_PIPELINE.md](backend/docs/AI_PIPELINE.md) | AI assistant internals: flows, prompt layers, tools, voice, how to extend |
 | [backend/docs/SECURITY.md](backend/docs/SECURITY.md) | Implemented controls + ASVS roadmap |
 | [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | VPS deployment runbook (compose, env files, nginx, updates, rollback, wallet subpath deploy) |
-| [wallet-gerege-mn/README.md](wallet-gerege-mn/README.md) | Wallet microservice: binaries, OAuth2 flow, QR payments, admin UI, webhooks |
+| [wallet-service-gerege-mn](https://github.com/gerege-systems/wallet-service-gerege-mn) | Wallet microservice (separate repo): binaries, OAuth2 flow, QR payments, admin UI, webhooks |
 | [SECURITY.md](SECURITY.md) | How to report a vulnerability |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How to contribute |
 

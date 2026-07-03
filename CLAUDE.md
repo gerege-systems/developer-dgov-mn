@@ -21,10 +21,6 @@ npm run build             # build + lint + typecheck (CI runs this)
 
 # Full stack
 docker compose up -d --build   # db + redis + migrate (one-off) + api + web
-
-# Wallet microservice (run from wallet-gerege-mn/) — standalone, own compose
-go build ./... && go test ./...
-docker compose up -d --build   # own postgres + api + admin + worker
 ```
 
 ## CI gates (push to main runs .github/workflows/ci.yml)
@@ -93,26 +89,14 @@ docker compose up -d --build   # own postgres + api + admin + worker
   writability first because refresh **rotates** the token (see `lib/api.ts`).
 - UI strings via `useT()` + `lib/i18n.ts` keys (mn + en).
 
-## Wallet microservice (wallet-gerege-mn/)
+## Wallet microservice
 
-- Imported from gerege-platform; **standalone** service: own Go module
-  (`eidtemplate`), own Postgres schema/migrations, own JWT secret, own
-  docker-compose — independent of the template backend and auth.
-- Auth: OAuth2 client_credentials (`/oauth/token`); optionally accepts
-  auth.gerege.mn user tokens when `AUTH_JWT_SECRET` is set. RLS keyed on
-  `app.subject` (client_id or citizen subject).
-- Binaries in `cmd/`: api, admin, worker (webhooks), migrate, client.
-  Admin UI is a separate Next.js app in `wallet-gerege-mn/admin/`.
-- In root CI: wallet Go job + wallet-admin lint/build job. `go build
-  ./cmd/admin` collides with the `admin/` dir — always build with `-o`.
-- Subpath deployment: admin UI takes `ADMIN_BASE_PATH` (Next basePath,
-  build-time); client-side fetches must use `BP` from
-  `admin/src/lib/basepath.ts`. Compose image/volume/network names are
-  parameterized (`WALLET_IMAGE`, `WALLET_PG_VOLUME`, `WALLET_NETWORK`) so
-  two wallet stacks can coexist on one host.
-- Reference deploy: `temp-wallet` stack on template —
-  `https://template.gerege.mn/wallet/` (API, nginx strips the prefix) and
-  `/wallet-admin` (UI). See docs/DEPLOYMENT.md §Wallet.
+- Extracted to its own repo:
+  [gerege-systems/wallet-service-gerege-mn](https://github.com/gerege-systems/wallet-service-gerege-mn)
+  (standalone Go module, own Postgres/compose/CI — independent of this
+  template). Reference deploy on this host stays at
+  `https://template.gerege.mn/wallet/` + `/wallet-admin`; runbook in
+  docs/DEPLOYMENT.md §Wallet.
 
 ## Gotchas
 

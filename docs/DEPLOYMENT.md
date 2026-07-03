@@ -160,16 +160,19 @@ back past it.
 
 ## Wallet microservice on the same VPS (path-based)
 
-The standalone wallet (`wallet-gerege-mn/`) can run beside the template stack
-on the same host without its own DNS record, served under the existing TLS
-vhost:
+The standalone wallet (separate repo:
+[wallet-service-gerege-mn](https://github.com/gerege-systems/wallet-service-gerege-mn))
+can run beside the template stack on the same host without its own DNS
+record, served under the existing TLS vhost:
 
 ```
 https://<domain>/wallet/        → wallet API   (nginx strips /wallet/)
 https://<domain>/wallet-admin   → super-admin UI (Next.js basePath)
 ```
 
-1. `cd /srv/template-gerege-mn/wallet-gerege-mn` and create `.env`
+1. Clone the wallet repo (`git clone
+   https://github.com/gerege-systems/wallet-service-gerege-mn.git
+   /srv/wallet-service-gerege-mn`), `cd` into it and create `.env`
    (gitignored). Key points beyond the wallet README:
 
    ```env
@@ -193,7 +196,7 @@ https://<domain>/wallet-admin   → super-admin UI (Next.js basePath)
    docker compose up -d
    ```
 
-3. Add the two locations from `wallet-gerege-mn/deploy/nginx-subpath.conf`
+3. Add the two locations from the wallet repo's `deploy/nginx-subpath.conf`
    inside the existing 443 `server {}` block (before `location /`), then
    `nginx -t && systemctl reload nginx`.
 
