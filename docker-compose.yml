@@ -104,6 +104,9 @@ services:
       BACKEND_URL: http://api:8080
       COOKIE_SECURE: "true"
       APP_ORIGIN: ${APP_ORIGIN}
+      # Google OAuth — BFF start route consent URL-д client_id-г хэрэглэнэ
+      # (нууц биш). Хоосон бол Google товч "тохируулаагүй" руу чиглүүлнэ.
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
     depends_on:
       api:
         condition: service_healthy
