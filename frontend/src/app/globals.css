@@ -1212,3 +1212,11 @@ html[lang="en"] .i18n-banner { display: block; }
 /* ---- Хуудаслалт (admin хүснэгт) ---- */
 .pager { display: flex; align-items: center; gap: 12px; justify-content: flex-end; margin-top: 12px; }
 .pager__page { font-size: 13px; color: var(--muted); }
+
+/* Профайл — төлөөлдөг байгууллагын жагсаалт (OrgRepsCard) */
+.org-reps { display: flex; flex-direction: column; gap: 10px; }
+.org-rep { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; }
+.org-rep__icon { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; background: var(--dan-blue-soft); color: var(--dan-blue-text); flex: none; }
+.org-rep__body { min-width: 0; }
+.org-rep__name { font-weight: 600; }
+.org-rep__meta { color: var(--muted); font-size: 0.85em; margin-top: 2px; }

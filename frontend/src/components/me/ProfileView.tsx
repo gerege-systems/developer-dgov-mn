@@ -12,6 +12,7 @@ import { formatTS, initialsOf } from '@/lib/format';
 import { DefRow } from './DefRow';
 import EidCard from './EidCard';
 import CertCard from './CertCard';
+import OrgRepsCard from './OrgRepsCard';
 
 /**
  * ProfileView нь /me/profile хуудсын гол харагдац. Секцүүд:
@@ -75,6 +76,7 @@ export default function ProfileView({ me }: { me: SessionUser }) {
 
       <EidCard eid={me.eid} nameLatin={nameLatin} />
       <CertCard eid={me.eid} />
+      <OrgRepsCard show={!!me.eid} />
     </>
   );
 }
