@@ -25,6 +25,37 @@ export interface BackendUser {
   refresh_token?: string;
   created_at: string;
   updated_at: string | null;
+  eid?: BackendEID;
+}
+
+/** eidmongolia.mn-ээс login үед авсан identity + сертификатын мэдээлэл. */
+export interface BackendEID {
+  civil_id?: string;
+  national_id?: string;
+  kyc_level?: string;
+  document_number?: string;
+  certificate?: {
+    serial?: string;
+    not_before?: string;
+    not_after?: string;
+    issuer?: string;
+    key_type?: string;
+  };
+}
+
+/** SessionUser дээрх eID мэдээлэл (camelCase). */
+export interface EIDInfo {
+  civilId: string;
+  nationalId: string;
+  kycLevel: string;
+  documentNumber: string;
+  certificate?: {
+    serial: string;
+    notBefore: string | null;
+    notAfter: string | null;
+    issuer: string;
+    keyType: string;
+  };
 }
 
 /** GET /users/me нь өгөгдлийг { user: ... } дотор савладаг. */
@@ -51,6 +82,7 @@ export interface SessionUser {
   roleId: number;
   createdAt: string;
   updatedAt: string | null;
+  eid?: EIDInfo;
 }
 
 /** Овог Нэр; хоосон бол username руу fallback. */
@@ -83,6 +115,26 @@ export function toSessionUser(u: BackendUser): SessionUser {
     roleId: u.role_id,
     createdAt: u.created_at,
     updatedAt: u.updated_at,
+    eid: u.eid ? toEIDInfo(u.eid) : undefined,
+  };
+}
+
+/** Backend eID блокийг camelCase SessionUser хэлбэрт буулгана. */
+function toEIDInfo(e: BackendEID): EIDInfo {
+  return {
+    civilId: e.civil_id ?? '',
+    nationalId: e.national_id ?? '',
+    kycLevel: e.kyc_level ?? '',
+    documentNumber: e.document_number ?? '',
+    certificate: e.certificate
+      ? {
+          serial: e.certificate.serial ?? '',
+          notBefore: e.certificate.not_before ?? null,
+          notAfter: e.certificate.not_after ?? null,
+          issuer: e.certificate.issuer ?? '',
+          keyType: e.certificate.key_type ?? '',
+        }
+      : undefined,
   };
 }
 

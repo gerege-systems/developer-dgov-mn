@@ -1,15 +1,31 @@
 "use client";
 
+// Gerege Template Version 27.0
+// Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
+
 import React from 'react';
 import Link from 'next/link';
 import { User, Mail, ShieldCheck, Clock, Hash, RefreshCw } from 'lucide-react';
 import { useT } from '@/lib/lang';
 import { roleLabel, displayName, type SessionUser } from '@/lib/types';
 import { formatTS, initialsOf } from '@/lib/format';
+import { DefRow } from './DefRow';
+import EidCard from './EidCard';
+import CertCard from './CertCard';
 
+/**
+ * ProfileView нь /me/profile хуудсын гол харагдац. Секцүүд:
+ *   1. Профайл карт (аватар + нэр + эрх)
+ *   2. Бүртгэлийн талбарууд (id/нэр/email/огноо)
+ *   3. eID таних мэдээлэл (eidmongolia.mn-ээс)      — EidCard
+ *   4. Тоон гэрчилгээ (X.509)                        — CertCard (cert байвал)
+ * eID-ийн 3, 4-р секц нь eidmongolia.mn-ээс login үед авсан бүх нээлттэй
+ * мэдээллийг харуулна.
+ */
 export default function ProfileView({ me }: { me: SessionUser }) {
   const { T, lang } = useT();
   const initials = initialsOf(me.username);
+  const nameLatin = `${me.lastNameEn} ${me.firstNameEn}`.trim();
 
   return (
     <>
@@ -28,7 +44,7 @@ export default function ProfileView({ me }: { me: SessionUser }) {
               <span className="badge badge--primary">{roleLabel(me.roleId, lang)}</span>
             </div>
             <div className="profile-card__sub">
-              <span className="mono">{me.email}</span>
+              <span className="mono">{me.email || me.username}</span>
             </div>
           </div>
           <div className="profile-card__action">
@@ -44,42 +60,21 @@ export default function ProfileView({ me }: { me: SessionUser }) {
         </div>
 
         <div>
-          <div className="defrow">
-            <span className="defrow__label"><Hash size={13} style={{ verticalAlign: 'middle', marginRight: 6 }} />{T('me.field.id')}</span>
-            <span className="defrow__value mono">{me.id}</span>
-          </div>
-          <div className="defrow">
-            <span className="defrow__label"><User size={13} style={{ verticalAlign: 'middle', marginRight: 6 }} />{T('me.field.lastName')}</span>
-            <span className="defrow__value">{(lang === 'en' ? me.lastNameEn : me.lastName) || '—'}</span>
-          </div>
-          <div className="defrow">
-            <span className="defrow__label"><User size={13} style={{ verticalAlign: 'middle', marginRight: 6 }} />{T('me.field.firstName')}</span>
-            <span className="defrow__value">{(lang === 'en' ? me.firstNameEn : me.firstName) || '—'}</span>
-          </div>
-          <div className="defrow">
-            <span className="defrow__label"><User size={13} style={{ verticalAlign: 'middle', marginRight: 6 }} />{T('me.field.username')}</span>
-            <span className="defrow__value">{me.username}</span>
-          </div>
-          <div className="defrow">
-            <span className="defrow__label"><Mail size={13} style={{ verticalAlign: 'middle', marginRight: 6 }} />{T('me.field.email')}</span>
-            <span className="defrow__value mono">{me.email}</span>
-          </div>
-          <div className="defrow">
-            <span className="defrow__label"><ShieldCheck size={13} style={{ verticalAlign: 'middle', marginRight: 6 }} />{T('me.field.role')}</span>
-            <span className="defrow__value">
-              <span className="chip chip--neutral">role_id {me.roleId}</span> {roleLabel(me.roleId, lang)}
-            </span>
-          </div>
-          <div className="defrow">
-            <span className="defrow__label"><Clock size={13} style={{ verticalAlign: 'middle', marginRight: 6 }} />{T('me.field.created')}</span>
-            <span className="defrow__value mono">{formatTS(me.createdAt)}</span>
-          </div>
-          <div className="defrow">
-            <span className="defrow__label"><RefreshCw size={13} style={{ verticalAlign: 'middle', marginRight: 6 }} />{T('me.field.updated')}</span>
-            <span className="defrow__value mono">{me.updatedAt ? formatTS(me.updatedAt) : '—'}</span>
-          </div>
+          <DefRow icon={Hash} label={T('me.field.id')} mono>{me.id}</DefRow>
+          <DefRow icon={User} label={T('me.field.lastName')}>{(lang === 'en' ? me.lastNameEn : me.lastName) || '—'}</DefRow>
+          <DefRow icon={User} label={T('me.field.firstName')}>{(lang === 'en' ? me.firstNameEn : me.firstName) || '—'}</DefRow>
+          <DefRow icon={User} label={T('me.field.username')}>{me.username}</DefRow>
+          <DefRow icon={Mail} label={T('me.field.email')} mono>{me.email || '—'}</DefRow>
+          <DefRow icon={ShieldCheck} label={T('me.field.role')}>
+            <span className="chip chip--neutral">role_id {me.roleId}</span> {roleLabel(me.roleId, lang)}
+          </DefRow>
+          <DefRow icon={Clock} label={T('me.field.created')} mono>{formatTS(me.createdAt)}</DefRow>
+          <DefRow icon={RefreshCw} label={T('me.field.updated')} mono>{me.updatedAt ? formatTS(me.updatedAt) : '—'}</DefRow>
         </div>
       </section>
+
+      <EidCard eid={me.eid} nameLatin={nameLatin} />
+      <CertCard eid={me.eid} />
     </>
   );
 }

@@ -626,6 +626,7 @@ html[lang="en"] .i18n-banner { display: block; }
 .badge--verified svg { color: var(--gold); }
 .badge--success { background: var(--success-soft); color: var(--success); }
 .badge--danger  { background: var(--danger-soft);  color: var(--danger); }
+.badge--warning { background: var(--gold-soft);    color: var(--gold-text); }
 .badge--primary { background: var(--dan-blue-soft); color: var(--dan-blue-text); }
 
 /* ---------- Profile summary block ---------- */
