@@ -12,17 +12,12 @@ import { formatTS, initialsOf } from '@/lib/format';
 import { DefRow } from './DefRow';
 import EidCard from './EidCard';
 import CertCard from './CertCard';
-import OrgRepsCard from './OrgRepsCard';
-import EidPkiSection from './EidPkiSection';
 
 /**
- * ProfileView нь /me/profile хуудсын гол харагдац. Секцүүд:
- *   1. Профайл карт (аватар + нэр + эрх)
- *   2. Бүртгэлийн талбарууд (id/нэр/email/огноо)
- *   3. eID таних мэдээлэл (eidmongolia.mn-ээс)      — EidCard
- *   4. Тоон гэрчилгээ (X.509)                        — CertCard (cert байвал)
- * eID-ийн 3, 4-р секц нь eidmongolia.mn-ээс login үед авсан бүх нээлттэй
- * мэдээллийг харуулна.
+ * ProfileView нь /me/profile хуудсын гол харагдац. Дээд талд профайл карт
+ * (бүтэн өргөн), доор нь 2 баганат grid-д: бүртгэлийн талбарууд, eID таних
+ * мэдээлэл, тоон гэрчилгээ. Гэрчилгээ/төхөөрөмжийн жагсаалт нь Аюулгүй байдал,
+ * төлөөлдөг байгууллага нь Байгууллага хуудсанд байрлана.
  */
 export default function ProfileView({ me }: { me: SessionUser }) {
   const { T, lang } = useT();
@@ -55,30 +50,30 @@ export default function ProfileView({ me }: { me: SessionUser }) {
         </div>
       </section>
 
-      <section className="card" aria-label={T('me.profile.fields')}>
-        <div className="card__head card__head--with-sub">
-          <div className="card__title"><h2>{T('me.profile.fields')}</h2></div>
-          <span className="card__sub">{T('me.profile.fieldsSub')}</span>
-        </div>
+      <div className="profile-grid">
+        <section className="card" aria-label={T('me.profile.fields')}>
+          <div className="card__head card__head--with-sub">
+            <div className="card__title"><h2>{T('me.profile.fields')}</h2></div>
+            <span className="card__sub">{T('me.profile.fieldsSub')}</span>
+          </div>
 
-        <div>
-          <DefRow icon={Hash} label={T('me.field.id')} mono>{me.id}</DefRow>
-          <DefRow icon={User} label={T('me.field.lastName')}>{(lang === 'en' ? me.lastNameEn : me.lastName) || '—'}</DefRow>
-          <DefRow icon={User} label={T('me.field.firstName')}>{(lang === 'en' ? me.firstNameEn : me.firstName) || '—'}</DefRow>
-          <DefRow icon={User} label={T('me.field.username')}>{me.username}</DefRow>
-          <DefRow icon={Mail} label={T('me.field.email')} mono>{me.email || '—'}</DefRow>
-          <DefRow icon={ShieldCheck} label={T('me.field.role')}>
-            <span className="chip chip--neutral">role_id {me.roleId}</span> {roleLabel(me.roleId, lang)}
-          </DefRow>
-          <DefRow icon={Clock} label={T('me.field.created')} mono>{formatTS(me.createdAt)}</DefRow>
-          <DefRow icon={RefreshCw} label={T('me.field.updated')} mono>{me.updatedAt ? formatTS(me.updatedAt) : '—'}</DefRow>
-        </div>
-      </section>
+          <div>
+            <DefRow icon={Hash} label={T('me.field.id')} mono>{me.id}</DefRow>
+            <DefRow icon={User} label={T('me.field.lastName')}>{(lang === 'en' ? me.lastNameEn : me.lastName) || '—'}</DefRow>
+            <DefRow icon={User} label={T('me.field.firstName')}>{(lang === 'en' ? me.firstNameEn : me.firstName) || '—'}</DefRow>
+            <DefRow icon={User} label={T('me.field.username')}>{me.username}</DefRow>
+            <DefRow icon={Mail} label={T('me.field.email')} mono>{me.email || '—'}</DefRow>
+            <DefRow icon={ShieldCheck} label={T('me.field.role')}>
+              <span className="chip chip--neutral">role_id {me.roleId}</span> {roleLabel(me.roleId, lang)}
+            </DefRow>
+            <DefRow icon={Clock} label={T('me.field.created')} mono>{formatTS(me.createdAt)}</DefRow>
+            <DefRow icon={RefreshCw} label={T('me.field.updated')} mono>{me.updatedAt ? formatTS(me.updatedAt) : '—'}</DefRow>
+          </div>
+        </section>
 
-      <EidCard eid={me.eid} nameLatin={nameLatin} />
-      <CertCard eid={me.eid} />
-      <EidPkiSection show={!!me.eid} />
-      <OrgRepsCard show={!!me.eid} />
+        <EidCard eid={me.eid} nameLatin={nameLatin} />
+        <CertCard eid={me.eid} />
+      </div>
     </>
   );
 }
