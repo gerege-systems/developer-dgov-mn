@@ -137,6 +137,32 @@ docker compose up -d              # өөрчлөгдсөн контейнеру�
 `db`, `redis` хэвээр ажиллана — өгөгдөл хөндөгдөхгүй. Зөвхөн тохиргоо
 өөрчилсөн бол: `backend.env` / `.env`-ээ засаад `docker compose up -d api web`.
 
+### Автомат deploy (CI/CD)
+
+Дээрх алхмуудыг GitHub Actions-д холбосон тул `main`-д push хийхэд автоматаар
+deploy хийгдэнэ. [`.github/workflows/ci.yml`](../.github/workflows/ci.yml)-ийн
+`deploy` job нь `backend`, `frontend`, `secrets-scan` job-ууд **амжилттай
+давсны дараа л** ажиллаж, энэ VPS руу SSH-ээр орж
+[`deploy/deploy.sh`](../deploy/deploy.sh)-ийг ажиллуулна (rebuild → `up -d` →
+эрүүл болтол хүлээх → prune). `db`/`redis` тасрахгүй; migration дахин ажиллаж
+түрхэгдсэн файлуудыг алгасна.
+
+Нэг удаагийн тохиргоо — **Settings → Secrets and variables → Actions** дор
+гурван repo secret нэмнэ:
+
+| Secret | Утга |
+|--------|------|
+| `DEPLOY_HOST` | VPS-ийн IP / hostname |
+| `DEPLOY_USER` | repo + docker эрхтэй SSH хэрэглэгч (жишиг deploy-д `root`) |
+| `DEPLOY_SSH_KEY` | тусгай deploy keypair-ийн **private** түлхүүр; public түлхүүрийг серверийн `~/.ssh/authorized_keys`-д нэмсэн байна |
+| `DEPLOY_PORT` | *(заавал биш)* SSH порт, default нь `22` |
+
+Keypair-ийг `ssh-keygen -t ed25519 -f deploy_key -N ''`-ээр үүсгэж,
+`deploy_key.pub`-ийг серверийн `authorized_keys`-д нэмээд, private `deploy_key`-г
+`DEPLOY_SSH_KEY`-д хийнэ. Код өөрчлөхгүйгээр Actions таб-аас гараар deploy
+дуудаж болно (**Run workflow** — `workflow_dispatch`), эсвэл сервер дээр
+`bash deploy/deploy.sh`-ийг гараар ажиллуулж болно.
+
 ## 6. Баталгаажуулах
 
 ```bash

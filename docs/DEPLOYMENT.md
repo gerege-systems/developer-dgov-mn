@@ -137,6 +137,32 @@ docker compose up -d              # recreates changed containers; migrate
 `db` and `redis` keep running — data is untouched. Config-only change?
 Edit `backend.env` / `.env` and `docker compose up -d api web`.
 
+### Automated deploys (CI/CD)
+
+The steps above are wired into GitHub Actions so a push to `main`
+auto-deploys. The `deploy` job in
+[`.github/workflows/ci.yml`](../.github/workflows/ci.yml) runs **only after**
+the `backend`, `frontend` and `secrets-scan` jobs pass, then SSHes into this
+VPS and runs [`deploy/deploy.sh`](../deploy/deploy.sh) (rebuild → `up -d` →
+wait-for-healthy → prune). `db`/`redis` stay up; migrations re-run and skip
+already-applied files.
+
+One-time setup — add three repo secrets under **Settings → Secrets and
+variables → Actions**:
+
+| Secret | Value |
+|--------|-------|
+| `DEPLOY_HOST` | the VPS IP / hostname |
+| `DEPLOY_USER` | SSH user with the repo + docker (`root` in the reference deploy) |
+| `DEPLOY_SSH_KEY` | **private** key of a dedicated deploy keypair; its public key is appended to the server's `~/.ssh/authorized_keys` |
+| `DEPLOY_PORT` | *(optional)* SSH port, defaults to `22` |
+
+Generate the keypair with `ssh-keygen -t ed25519 -f deploy_key -N ''`, append
+`deploy_key.pub` to the server's `authorized_keys`, and paste the private
+`deploy_key` into `DEPLOY_SSH_KEY`. You can trigger a deploy without a code
+change from the Actions tab (**Run workflow** — `workflow_dispatch`), or run
+`bash deploy/deploy.sh` on the server by hand.
+
 ## 6. Verify
 
 ```bash
