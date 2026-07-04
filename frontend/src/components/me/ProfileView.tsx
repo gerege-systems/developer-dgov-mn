@@ -13,6 +13,7 @@ import { DefRow } from './DefRow';
 import EidCard from './EidCard';
 import CertCard from './CertCard';
 import OrgRepsCard from './OrgRepsCard';
+import EidPkiSection from './EidPkiSection';
 
 /**
  * ProfileView нь /me/profile хуудсын гол харагдац. Секцүүд:
@@ -76,6 +77,7 @@ export default function ProfileView({ me }: { me: SessionUser }) {
 
       <EidCard eid={me.eid} nameLatin={nameLatin} />
       <CertCard eid={me.eid} />
+      <EidPkiSection show={!!me.eid} />
       <OrgRepsCard show={!!me.eid} />
     </>
   );
