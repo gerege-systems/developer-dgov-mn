@@ -19,7 +19,7 @@ export async function POST(req: Request) {
   const bad = checkOrigin(req);
   if (bad) return bad;
 
-  const { national_id } = await readJson<{ national_id?: string }>(req);
+  const { national_id, callbackUrl } = await readJson<{ national_id?: string; callbackUrl?: string }>(req);
 
   if (!national_id) {
     return NextResponse.json(
@@ -28,9 +28,12 @@ export async function POST(req: Request) {
     );
   }
 
+  // callbackUrl (сонголт): SAME-DEVICE (утасны browser) үед клиент <origin>/auth/eid/callback
+  // дамжуулна — push ижил утас руу ирж, approve-ийн дараа browser callback руу буцна. Хоосон бол
+  // CROSS-DEVICE (desktop). Backend force-normalize хийнэ.
   const result = await backendFetch<EidStartIdData>('/auth/eid/start-id', {
     method: 'POST',
-    body: JSON.stringify({ national_id }),
+    body: JSON.stringify({ national_id, callbackUrl: typeof callbackUrl === 'string' ? callbackUrl : '' }),
   });
   return proxyResult(result);
 }

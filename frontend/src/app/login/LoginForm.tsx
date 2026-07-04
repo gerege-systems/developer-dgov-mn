@@ -174,7 +174,11 @@ export default function LoginForm({ next, notice }: { next: string; notice?: str
     lastMethod.current = 'id';
     setPhase('starting');
 
-    const res = await postJSON<StartData>('/api/auth/eid/start-id', { national_id: rd });
+    // SAME-DEVICE (утасны browser): callbackUrl дамжуулна — push ижил утас руу ирж, approve хийсний
+    // дараа eID app browser-ийг /auth/eid/callback руу буцаана. DESKTOP: callbackUrl хоосон, browser poll.
+    const mobile = isMobileBrowser();
+    const callbackUrl = mobile ? sameDeviceCallbackUrl() : '';
+    const res = await postJSON<StartData>('/api/auth/eid/start-id', { national_id: rd, callbackUrl });
     if (!mounted.current) return;
 
     if (!res.ok || !res.data?.session_id) {
