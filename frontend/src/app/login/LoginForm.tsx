@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { QRCodeSVG } from 'qrcode.react';
-import { ShieldCheck, RefreshCw, Fingerprint, QrCode } from 'lucide-react';
+import { ShieldCheck, RefreshCw, HelpCircle } from 'lucide-react';
 import Alert from '@/components/Alert';
 import { postJSON } from '@/lib/client';
 import { safeNext } from '@/lib/navigation';
@@ -222,6 +222,13 @@ export default function LoginForm({ next, notice }: { next: string; notice?: str
 
   return (
     <div className="form-grid" aria-live="polite">
+      <div>
+        <h1 id="login-title">{T('auth.eid.cardTitle')}</h1>
+        <p className="signin-card__lede" style={{ marginTop: 6, fontSize: 14 }}>
+          {T('auth.eid.cardSub')}
+        </p>
+      </div>
+
       {noticeText && <Alert kind="success">{noticeText}</Alert>}
 
       {/* Нэвтрэх аргын сонголт */}
@@ -234,7 +241,6 @@ export default function LoginForm({ next, notice }: { next: string; notice?: str
           style={{ flex: 1 }}
           onClick={() => switchMethod('id')}
         >
-          <Fingerprint size={14} strokeWidth={2} />
           <span>{T('auth.eid.methodId')}</span>
         </button>
         <button
@@ -245,7 +251,6 @@ export default function LoginForm({ next, notice }: { next: string; notice?: str
           style={{ flex: 1 }}
           onClick={() => switchMethod('qr')}
         >
-          <QrCode size={14} strokeWidth={2} />
           <span>{T('auth.eid.methodQr')}</span>
         </button>
       </div>
@@ -270,12 +275,13 @@ export default function LoginForm({ next, notice }: { next: string; notice?: str
             void beginId();
           }}
         >
+          <p className="login-instruction">{T('auth.eid.idInstruction')}</p>
           <label className="field__label" htmlFor="eid-national-id">
             {T('auth.eid.nationalIdLabel')}
           </label>
           <input
             id="eid-national-id"
-            className="input mono"
+            className="input mono input--lg-center"
             value={nationalId}
             onChange={(e) => {
               setNationalId(e.target.value);
@@ -287,8 +293,7 @@ export default function LoginForm({ next, notice }: { next: string; notice?: str
             autoFocus
           />
           {idError && <span className="field__error">{idError}</span>}
-          <button className="btn btn--primary btn--lg btn--block" type="submit" style={{ marginTop: 4 }}>
-            <Fingerprint size={18} strokeWidth={2} />
+          <button className="btn btn--eid btn--lg btn--block" type="submit" style={{ marginTop: 6 }}>
             <span>{T('auth.eid.submit')}</span>
           </button>
         </form>
@@ -401,7 +406,7 @@ export default function LoginForm({ next, notice }: { next: string; notice?: str
 
       {isTerminal && (
         <button
-          className="btn btn--primary btn--lg btn--block"
+          className="btn btn--eid btn--lg btn--block"
           type="button"
           onClick={retry}
           disabled={busy}
@@ -410,6 +415,18 @@ export default function LoginForm({ next, notice }: { next: string; notice?: str
           <span>{T('auth.eid.retry')}</span>
         </button>
       )}
+
+      {/* Footer — шинэ бүртгэл + тусламж (eID app-д бүртгүүлнэ) */}
+      <div className="login-footer">
+        <hr className="login-footer__divider" />
+        <a className="login-footer__register" href="https://eidmongolia.mn" target="_blank" rel="noopener noreferrer">
+          {T('auth.eid.register')}
+        </a>
+        <a className="login-footer__help" href="mailto:support@eidmongolia.mn">
+          <HelpCircle size={14} strokeWidth={2} />
+          <span>{T('auth.eid.help')}</span>
+        </a>
+      </div>
     </div>
   );
 }

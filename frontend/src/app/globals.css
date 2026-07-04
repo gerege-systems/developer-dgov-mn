@@ -1239,3 +1239,46 @@ html[lang="en"] .i18n-banner { display: block; }
 .profile-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; margin-top: 16px; }
 .profile-grid > .card { margin-top: 0; }
 @media (max-width: 860px) { .profile-grid { grid-template-columns: 1fr; } }
+
+/* Login card — target дизайн (Gerege App нэвтрэлт) */
+.login-instruction {
+  text-align: center;
+  color: var(--dan-blue-text);
+  font-size: 13.5px;
+  line-height: 1.55;
+  margin: 0 0 4px;
+}
+.input--lg-center {
+  text-align: center;
+  font-size: 17px;
+  letter-spacing: 2px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+.btn--eid {
+  background: linear-gradient(135deg, var(--dan-blue), #8b7ff0);
+  color: #fff;
+  border: 0;
+  font-weight: 600;
+}
+.btn--eid:hover { filter: brightness(1.05); color: #fff; }
+.btn--eid:active { filter: brightness(0.97); }
+.btn--eid:disabled { opacity: 0.6; }
+.login-footer { margin-top: 4px; text-align: center; }
+.login-footer__divider { border: 0; border-top: 1px solid var(--border); margin: 4px 0 16px; }
+.login-footer__register {
+  display: block;
+  font-weight: 700;
+  color: var(--fg);
+  text-decoration: none;
+  font-size: 14.5px;
+}
+.login-footer__register:hover { color: var(--dan-blue-text); }
+.login-footer__help {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 12px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+}
+.login-footer__help:hover { color: var(--fg); }
