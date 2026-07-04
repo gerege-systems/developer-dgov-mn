@@ -1285,3 +1285,9 @@ html[lang="en"] .i18n-banner { display: block; }
 
 /* Login switch tab — ~50% илүү өндөр */
 .segmented--tall .segmented__item { padding-top: 8px; padding-bottom: 8px; font-size: 12px; }
+
+/* Google login товч + "эсвэл" зураас */
+.btn--google { background: var(--surface); color: var(--fg); border: 1px solid var(--border); font-weight: 600; }
+.btn--google:hover { background: var(--surface-2); color: var(--fg); }
+.login-or { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; margin: 6px 0; }
+.login-or::before, .login-or::after { content: ""; flex: 1; border-top: 1px solid var(--border); }

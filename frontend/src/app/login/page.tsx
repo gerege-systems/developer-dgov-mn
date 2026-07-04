@@ -10,14 +10,19 @@ export const metadata = { title: 'Нэвтрэх — Gerege' };
 export default function LoginPage({
   searchParams,
 }: {
-  searchParams: { next?: string; notice?: string };
+  searchParams: { next?: string; notice?: string; glink?: string; gerror?: string };
 }) {
   const next = safeNext(searchParams.next);
 
   return (
     <SigninShell>
       <section className="signin-card signin-card--narrow" aria-labelledby="login-title">
-        <LoginForm next={next} notice={searchParams.notice} />
+        <LoginForm
+          next={next}
+          notice={searchParams.notice}
+          googleLink={searchParams.glink === '1'}
+          googleError={!!searchParams.gerror}
+        />
       </section>
     </SigninShell>
   );

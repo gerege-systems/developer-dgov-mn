@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { backendFetch } from '@/lib/api';
 import { setSession } from '@/lib/session';
 import { checkOrigin, readJson } from '@/lib/bff';
@@ -31,9 +32,16 @@ export async function POST(req: Request) {
     );
   }
 
+  // Google-ээр эхний удаа нэвтэрч, eID-ээр холбож байгаа бол g_link cookie-д
+  // link_token байна — backend руу дамжуулж COMPLETE үед холбуулна.
+  const googleLink = cookies().get('g_link')?.value;
+
   const result = await backendFetch<EidPollData>('/auth/eid/poll', {
     method: 'POST',
-    body: JSON.stringify({ session_id }),
+    body: JSON.stringify({
+      session_id,
+      ...(googleLink ? { google_link_token: googleLink } : {}),
+    }),
   });
 
   if (!result.ok) {
@@ -48,6 +56,8 @@ export async function POST(req: Request) {
   // COMPLETE бол токен хосыг cookie-д суулгаад, нууц талбарыг хариунаас хасна.
   if (data?.state === 'COMPLETE' && data.token && data.refresh_token) {
     setSession(data.token, data.refresh_token);
+    // Google холболт дуусмагц түр cookie-г арилгана (нэг удаагийн).
+    if (googleLink) cookies().delete('g_link');
   }
 
   // Токен/refresh_token-ийг хасч, бусад нууц БУС талбарыг л клиент рүү гаргана.
