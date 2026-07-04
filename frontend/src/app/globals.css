@@ -1282,3 +1282,6 @@ html[lang="en"] .i18n-banner { display: block; }
   font-size: 13px;
 }
 .login-footer__help:hover { color: var(--fg); }
+
+/* Login switch tab — 2 дахин өндөр */
+.segmented--tall .segmented__item { padding-top: 13px; padding-bottom: 13px; font-size: 13px; }

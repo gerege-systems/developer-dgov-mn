@@ -232,7 +232,7 @@ export default function LoginForm({ next, notice }: { next: string; notice?: str
       {noticeText && <Alert kind="success">{noticeText}</Alert>}
 
       {/* Нэвтрэх аргын сонголт */}
-      <div className="segmented" role="tablist" style={{ display: 'flex', width: '100%' }}>
+      <div className="segmented segmented--tall" role="tablist" style={{ display: 'flex', width: '100%' }}>
         <button
           type="button"
           role="tab"
