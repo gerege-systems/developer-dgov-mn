@@ -17,6 +17,20 @@ export async function POST(req: Request) {
   const bad = checkOrigin(req);
   if (bad) return bad;
 
-  const result = await backendFetch<EidStartData>('/auth/eid/start', { method: 'POST' });
+  // callbackUrl (сонголт): SAME-DEVICE (mobile browser) үед клиент <origin>/auth/eid/callback
+  // дамжуулна — утас approve хийсний дараа browser-ийг тэр рүү буцаана. Байхгүй бол CROSS-DEVICE
+  // (desktop QR — browser өөрөө poll хийнэ). Backend callbackUrl-ийг стандарт зам руу normalize хийнэ.
+  let callbackUrl = '';
+  try {
+    const body = (await req.json()) as { callbackUrl?: unknown };
+    if (typeof body?.callbackUrl === 'string') callbackUrl = body.callbackUrl;
+  } catch {
+    /* body-гүй → cross-device */
+  }
+
+  const result = await backendFetch<EidStartData>('/auth/eid/start', {
+    method: 'POST',
+    body: JSON.stringify({ callbackUrl }),
+  });
   return proxyResult(result);
 }

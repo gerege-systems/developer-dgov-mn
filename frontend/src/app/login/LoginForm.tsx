@@ -9,11 +9,26 @@ import { postJSON } from '@/lib/client';
 import { safeNext } from '@/lib/navigation';
 import { useT } from '@/lib/lang';
 
-// Хоёр нэвтрэх арга: (A) РД-ээр — иргэний апп руу push мэдэгдэл очиж, тэндээ
-// зөвшөөрөхөд desktop browser нэвтэрнэ; (B) QR-ээр — eID апп-аар QR уншуулахад
-// desktop browser нэвтэрнэ. Аль ч тохиолдолд утас redirect хийхгүй — desktop
-// browser нь poll-оор төлвийг хянаж нэвтэрнэ. Тиймээс QR дээр device_link_url
-// руу автоматаар шилжихгүй (зөвхөн гар аргаар дарж болох fallback холбоос).
+// Нэвтрэх арга: (A) РД-ээр — иргэний апп руу push, зөвшөөрөхөд browser нэвтэрнэ (CROSS-DEVICE).
+// (B) device-link — DESKTOP дээр QR (CROSS-DEVICE, тусдаа утсаар уншуулна, browser poll хийнэ);
+// MOBILE browser дээр SAME-DEVICE (App2App): eID app-ийг deep-link-ээр нээж, утас approve хийсний
+// дараа browser-ийг /auth/eid/callback руу буцаана. Same-device үед л callbackUrl дамжуулна;
+// cross-device (desktop/push) үед callbackUrl хоосон — browser өөрөө session poll хийж нэвтэрнэ.
+
+// isMobileBrowser — утас=browser нэг төхөөрөмж (same-device App2App боломжтой) эсэх.
+function isMobileBrowser(): boolean {
+  return typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+// sameDeviceCallbackUrl — платформ стандарт буцах зам <origin>/auth/eid/callback. iOS дээрх custom
+// browser (Chrome/Edge)-ыг зөв буцаах retScheme query-г нэмнэ (eID app https-ийг тэр browser-аар нээнэ).
+function sameDeviceCallbackUrl(): string {
+  const ua = navigator.userAgent;
+  let retScheme = '';
+  if (/CriOS/i.test(ua)) retScheme = 'googlechromes'; // Chrome on iOS
+  else if (/EdgiOS/i.test(ua)) retScheme = 'microsoft-edge-https'; // Edge on iOS
+  return window.location.origin + '/auth/eid/callback' + (retScheme ? '?retScheme=' + retScheme : '');
+}
 
 interface StartData {
   session_id: string;
@@ -118,7 +133,9 @@ export default function LoginForm({ next, notice }: { next: string; notice?: str
     [poll, stopTimers],
   );
 
-  // QR арга — backend-ээс device_link_url-тэй start авна.
+  // device-link арга. MOBILE (same-device): callbackUrl дамжуулж, eID app-ийг deep-link-ээр нээнэ —
+  // утас approve хийгээд browser-ийг /auth/eid/callback руу буцаана (тэнд poll хийж дуусна).
+  // DESKTOP (cross-device): callbackUrl хоосон, QR харагдана, эх browser өөрөө poll хийж нэвтэрнэ.
   const beginQr = useCallback(async () => {
     stopTimers();
     setStart(null);
@@ -126,7 +143,9 @@ export default function LoginForm({ next, notice }: { next: string; notice?: str
     lastMethod.current = 'qr';
     setPhase('starting');
 
-    const res = await postJSON<StartData>('/api/auth/eid/start', {});
+    const mobile = isMobileBrowser();
+    const callbackUrl = mobile ? sameDeviceCallbackUrl() : '';
+    const res = await postJSON<StartData>('/api/auth/eid/start', { callbackUrl });
     if (!mounted.current) return;
 
     if (!res.ok || !res.data?.session_id) {
@@ -134,6 +153,11 @@ export default function LoginForm({ next, notice }: { next: string; notice?: str
       return;
     }
     armSession(res.data);
+
+    // SAME-DEVICE: eID app-ийг deep-link-ээр шууд нээнэ (утас approve хийгээд callback руу буцна).
+    if (mobile) {
+      window.location.href = 'geregesmartid://approve?sessionId=' + encodeURIComponent(res.data.session_id);
+    }
   }, [armSession, stopTimers]);
 
   // РД арга — backend иргэний апп руу push мэдэгдэл илгээнэ (device_link_url алга).
