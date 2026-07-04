@@ -73,7 +73,13 @@ REDIS_HOST=redis:6379
 REDIS_PASS=<.env-тэй ижил>
 REDIS_EXPIRED=5                   # минут (OTP request_id-ийн TTL)
 ALLOWED_ORIGINS=https://your.domain.mn
-TRUSTED_PROXIES=172.16.0.0/12,127.0.0.1   # XFF-д зөвхөн docker сүлжээ + nginx-ээс итгэнэ
+TRUSTED_PROXIES=172.16.0.0/12,127.0.0.1   # XFF-д зөвхөн docker сүлжээ + nginx-ээс итгэнэ.
+                                  # Proxy-гийн ард ЗААВАЛ: api нийтийн порт-гүй
+                                  # тул бүх хүсэлт web/nginx peer-ээс ирнэ. BFF нь
+                                  # жинхэнэ клиент IP-г X-Forwarded-For-оор
+                                  # дамжуулдаг; итгэмжит proxy жагсаалтгүй бол api
+                                  # түүнийг үл тоож, per-IP rate-limit бүгд нэг
+                                  # bucket-д уначихна.
 VERIFY_API_BASE=https://verify.gecloud.mn/v1
 VERIFY_API_KEY=<gck_live_…>       # имэйл/SMS OTP — үгүй бол бүртгэл ажиллахгүй
 VERIFY_CHANNEL=email

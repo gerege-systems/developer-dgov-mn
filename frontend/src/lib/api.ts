@@ -1,4 +1,5 @@
 import 'server-only';
+import { headers } from 'next/headers';
 import type { Envelope, BackendUser, MeData, SessionUser } from './types';
 import { toSessionUser } from './types';
 import { getAccessToken, getRefreshToken, setSession, canPersistSession } from './session';
@@ -7,6 +8,26 @@ import { getAccessToken, getRefreshToken, setSession, canPersistSession } from '
 // Browser энд хэзээ ч хүрэхгүй — зөвхөн route handler ба server component.
 
 const BASE = (process.env.BACKEND_URL ?? 'http://localhost:8080').replace(/\/$/, '') + '/api/v1';
+
+// forwardedForHeaders нь ирж буй хүсэлтээс жинхэнэ клиентийн IP-г (nginx
+// тавьсан x-forwarded-for, эс бөгөөс x-real-ip) уншиж backend руу дамжуулах
+// header болгоно. api нь нийтийн порт-гүй, зөвхөн энэ BFF-ээр дамждаг тул
+// үүнгүйгээр бүх хүсэлт web контейнерийн IP дор орж, api-ийн per-IP rate-limit
+// нэг bucket-д уначихна. api-ийн clientIP() нь TRUSTED_PROXIES-ийн дор XFF-г
+// баруунаас нь (сүүлийн итгэмжгүй hop) уншдаг тул spoofing-д тэсвэртэй хэвээр —
+// nginx client-ийн жинхэнэ RemoteAddr-г мөрийн төгсгөлд залгасан байдаг.
+function forwardedForHeaders(): Record<string, string> {
+  try {
+    const h = headers();
+    const xff = h.get('x-forwarded-for');
+    if (xff) return { 'x-forwarded-for': xff };
+    const xrip = h.get('x-real-ip');
+    if (xrip) return { 'x-forwarded-for': xrip };
+  } catch {
+    // headers() зарим статик контекстэд байхгүй байж болно — чимээгүй алгасна.
+  }
+  return {};
+}
 
 export type ApiOk<T> = { ok: true; status: number; message?: string; data?: T };
 export type ApiErr = { ok: false; status: number; message: string; fieldErrors?: Record<string, string> };
@@ -19,7 +40,7 @@ export async function backendFetch<T>(path: string, init?: RequestInit): Promise
     res = await fetch(BASE + path, {
       ...init,
       cache: 'no-store',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...init?.headers },
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...forwardedForHeaders(), ...init?.headers },
     });
   } catch {
     return {

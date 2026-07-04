@@ -73,7 +73,13 @@ REDIS_HOST=redis:6379
 REDIS_PASS=<same as .env>
 REDIS_EXPIRED=5                   # minutes (OTP request_id TTL)
 ALLOWED_ORIGINS=https://your.domain.mn
-TRUSTED_PROXIES=172.16.0.0/12,127.0.0.1   # trust XFF only from docker net + nginx
+TRUSTED_PROXIES=172.16.0.0/12,127.0.0.1   # trust XFF only from docker net + nginx.
+                                  # REQUIRED behind the proxy: the api has no
+                                  # public port, so every request arrives from
+                                  # the web/nginx peer. The BFF forwards the real
+                                  # client IP as X-Forwarded-For; without a
+                                  # trusted-proxy list the api ignores it and all
+                                  # per-IP rate limits collapse into one bucket.
 VERIFY_API_BASE=https://verify.gecloud.mn/v1
 VERIFY_API_KEY=<gck_live_…>       # email/SMS OTP — registration won't work without it
 VERIFY_CHANNEL=email
