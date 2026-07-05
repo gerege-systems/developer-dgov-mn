@@ -103,12 +103,10 @@ const SYSTEMS: NavSystem[] = [
     groups: [
       {
         labelKey: 'group.personal',
-        // Өөрийн профайл/тохиргоо нь бүх нэвтэрсэн хэрэглэгчид нээлттэй.
+        // Профайл, Тохиргоо нь баруун дээд dropdown-д байгаа тул зүүн цэсэнд давхардуулахгүй.
         items: [
           { href: '/me/dashboard', labelKey: 'nav.dashboard', icon: LayoutDashboard },
-          { href: '/me/profile', labelKey: 'nav.profile', icon: User },
           { href: '/me/organizations', labelKey: 'nav.org', icon: Building2 },
-          { href: '/me/settings', labelKey: 'nav.security', icon: ShieldCheck },
           { href: '/me/ai', labelKey: 'nav.ai', icon: Bot },
           { href: '/me/translate', labelKey: 'nav.translate', icon: Languages },
         ],
