@@ -5,8 +5,9 @@ import SwiftUI
 
 // Нэвтрэх эхлэл — eID эсвэл Gerege SSO сонголт.
 struct LoginView: View {
+    @EnvironmentObject var state: AppState
+    @StateObject private var sso = SSOAuth()
     @State private var showEID = false
-    @State private var showSSO = false
 
     var body: some View {
         NavigationStack {
@@ -36,19 +37,26 @@ struct LoginView: View {
                     .controlSize(.large)
 
                     Button {
-                        showSSO = true
+                        sso.start { Task { await state.onAuthenticated() } }
                     } label: {
-                        Label("Gerege SSO-гоор нэвтрэх", systemImage: "globe")
-                            .frame(maxWidth: .infinity)
+                        HStack {
+                            if sso.busy { ProgressView().tint(.primary) }
+                            Label("Gerege SSO-гоор нэвтрэх", systemImage: "globe")
+                        }
+                        .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.bordered)
                     .controlSize(.large)
+                    .disabled(sso.busy)
+
+                    if let e = sso.error {
+                        Text(e).font(.footnote).foregroundStyle(.red)
+                    }
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 40)
             }
             .navigationDestination(isPresented: $showEID) { EIDLoginView() }
-            .sheet(isPresented: $showSSO) { SSOWebLoginView() }
         }
     }
 }

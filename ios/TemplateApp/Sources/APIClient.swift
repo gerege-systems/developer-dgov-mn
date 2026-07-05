@@ -121,6 +121,17 @@ final class APIClient {
         return res.state
     }
 
+    // Native SSO (OIDC + PKCE) код солилцоо. App2App AS session-аас авсан
+    // authorization code + PKCE verifier-ийг BFF руу илгээж, cookie session авна.
+    func ssoNativeExchange(code: String, codeVerifier: String, redirectURI: String) async throws {
+        let (data, http) = try await request("/api/auth/sso/native", method: "POST",
+            body: ["code": code, "code_verifier": codeVerifier, "redirect_uri": redirectURI])
+        if http.statusCode >= 400 {
+            let msg = (try? JSONDecoder().decode(Envelope<EmptyPayload>.self, from: data))?.message ?? ""
+            throw APIError.http(http.statusCode, msg)
+        }
+    }
+
     func logout() async {
         _ = try? await request("/api/auth/logout", method: "POST", body: [:])
         // Локал cookie-г цэвэрлэнэ.
