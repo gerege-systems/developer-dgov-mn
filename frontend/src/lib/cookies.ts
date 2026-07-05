@@ -3,6 +3,9 @@
 
 export const ACCESS_COOKIE = 'gerege_access';
 export const REFRESH_COOKIE = 'gerege_refresh';
+// SSO-ээр нэвтэрсэн session-ий RP-initiated logout URL (id_token_hint-тэй).
+// Гарах үед энэ байвал browser-ийг тийш чиглүүлж SSO дээр session-ийг дуусгана.
+export const SSO_LOGOUT_COOKIE = 'gerege_sso_logout';
 
 // Cookie-ийн насжилт. Backend-ийн анхдагч: JWT_EXPIRED=5 цаг, JWT_REFRESH_EXPIRED=7 хоног.
 // Эдгээрийг backend-ийн тохиргоотой ойролцоо барина — хэтэрсэн access cookie-г
