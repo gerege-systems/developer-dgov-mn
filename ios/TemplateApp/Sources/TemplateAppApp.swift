@@ -2,6 +2,7 @@
 // Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 
 import SwiftUI
+import WebKit
 
 @main
 struct TemplateAppApp: App {
@@ -58,8 +59,26 @@ final class AppState: ObservableObject {
 
     func signOut() async {
         await APIClient.shared.logout()
+        // WKWebView (SSO)-ийн cookie-г цэвэрлэнэ — эс бөгөөс sso.gerege.mn-ий
+        // Hydra session cookie үлдэж, дараагийн SSO login дахин баталгаажуулалгүй
+        // шууд ордог. Цэвэр logout → дараагийн SSO login дахин eID шаардана.
+        await Self.clearWebData()
         user = nil
         summary = nil
+    }
+
+    // WKWebView-ийн бүх cookie/storage-ыг устгана (SSO session-ыг таслах).
+    static func clearWebData() async {
+        let types: Set<String> = [
+            WKWebsiteDataTypeCookies,
+            WKWebsiteDataTypeLocalStorage,
+            WKWebsiteDataTypeSessionStorage,
+        ]
+        await withCheckedContinuation { (cont: CheckedContinuation<Void, Never>) in
+            WKWebsiteDataStore.default().removeData(ofTypes: types, modifiedSince: .distantPast) {
+                cont.resume()
+            }
+        }
     }
 }
 
