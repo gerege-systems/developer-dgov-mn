@@ -55,18 +55,24 @@ private struct SSOWebView: UIViewRepresentable {
         private var finished = false
         init(onDone: @escaping (Bool) -> Void) { self.onDone = onDone }
 
-        // template.gerege.mn/me* руу буцах = SSO амжилттай (cookie суусан).
-        func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
-            guard !finished, let url = webView.url, url.host?.hasSuffix("template.gerege.mn") == true,
-                  url.path.hasPrefix("/me") else { return }
-            finished = true
-            // WKWebView-ийн cookie-г URLSession-ий HTTPCookieStorage руу хуулна.
-            webView.configuration.websiteDataStore.httpCookieStore.getAllCookies { cookies in
-                for c in cookies where c.domain.contains("gerege.mn") {
-                    HTTPCookieStorage.shared.setCookie(c)
+        // template.gerege.mn/me* руу шилжих гэж байна = SSO амжилттай (cookie
+        // /sso/callback дээр суусан). Web dashboard-ыг рендэрлэхгүйн тулд энэ
+        // navigation-ыг ТАСЛАЖ, cookie-г URLSession руу хуулаад апп руу дуусгана.
+        func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
+                     decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+            if !finished, let url = navigationAction.request.url,
+               url.host?.hasSuffix("template.gerege.mn") == true, url.path.hasPrefix("/me") {
+                finished = true
+                decisionHandler(.cancel) // web dashboard-ыг ачаалахгүй
+                webView.configuration.websiteDataStore.httpCookieStore.getAllCookies { cookies in
+                    for c in cookies where c.domain.contains("gerege.mn") {
+                        HTTPCookieStorage.shared.setCookie(c)
+                    }
+                    DispatchQueue.main.async { self.onDone(true) }
                 }
-                DispatchQueue.main.async { self.onDone(true) }
+                return
             }
+            decisionHandler(.allow)
         }
     }
 }
