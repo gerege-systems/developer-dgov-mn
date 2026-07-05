@@ -17,6 +17,7 @@ import { signOut } from '@/lib/signout';
 import { useT } from '@/lib/lang';
 import type { DictKey } from '@/lib/i18n';
 import { displayName, isAdminLevel, isSuperAdmin } from '@/lib/types';
+import { initialsOf } from '@/lib/format';
 
 export interface AppUser {
   username: string;
@@ -24,6 +25,7 @@ export interface AppUser {
   fullNameEn: string;
   email: string;
   initials: string;
+  picture?: string; // Google профайл зураг (холбогдсон бол)
   roleId: number;
 }
 
@@ -299,7 +301,7 @@ export default function AppShell({ user, children }: Props) {
             <input className="topbar2__search-input" type="search" placeholder={T('shell.search')} aria-label={T('shell.search')} />
           </div>
           <div className="topbar2__actions">
-            <UserMenu username={displayName(user, lang)} email={user.email} initials={user.initials} />
+            <UserMenu username={displayName(user, lang)} email={user.email} initials={initialsOf(displayName(user, lang))} picture={user.picture} />
           </div>
         </header>
 

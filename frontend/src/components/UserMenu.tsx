@@ -12,9 +12,10 @@ interface Props {
   username: string;
   email: string;
   initials: string;
+  picture?: string; // Google профайл зураг (холбогдсон бол initials-ийн оронд)
 }
 
-export default function UserMenu({ username, email, initials }: Props) {
+export default function UserMenu({ username, email, initials, picture }: Props) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -71,7 +72,12 @@ export default function UserMenu({ username, email, initials }: Props) {
           if (e.key === 'ArrowDown') { e.preventDefault(); setOpen(true); }
         }}
       >
-        <span className="topbar__avatar">{initials}</span>
+        {picture ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img className="topbar__avatar" src={picture} alt="" width={28} height={28} style={{ objectFit: 'cover', padding: 0 }} referrerPolicy="no-referrer" />
+        ) : (
+          <span className="topbar__avatar">{initials}</span>
+        )}
         <span>{username}</span>
         <ChevronDown size={14} className="topbar__user-chevron" strokeWidth={2} />
       </button>
