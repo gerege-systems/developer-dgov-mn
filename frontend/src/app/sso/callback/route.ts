@@ -7,15 +7,15 @@ export const dynamic = 'force-dynamic';
 // Relative Location-оор redirect — nginx-ийн ард Next.js-ийн req.url нь дотоод
 // хаягийг (0.0.0.0:3000) хардаг тул origin-д тулгуурлавал browser буруу хаяг руу
 // очно. Relative зам ("/me/dashboard") нь browser-ийн нийтийн хаягаар шийдэгдэнэ.
-function redirectTo(path: string, session?: { token: string; refresh: string; ssoLogoutURL?: string }): NextResponse {
+function redirectTo(path: string, session?: { token: string; refresh: string; ssoLogoutRef?: string }): NextResponse {
   const res = new NextResponse(null, { status: 303, headers: { Location: path } });
   if (session) {
     res.cookies.set(ACCESS_COOKIE, session.token, cookieOptions(ACCESS_MAX_AGE));
     res.cookies.set(REFRESH_COOKIE, session.refresh, cookieOptions(REFRESH_MAX_AGE));
-    // SSO logout URL-ийг session хугацаагаар хадгална — гарах үед SSO дээр
-    // session-ийг мөн дуусгахад ашиглана (byte-limit-д багтахуйц бол).
-    if (session.ssoLogoutURL && session.ssoLogoutURL.length < 3500) {
-      res.cookies.set(SSO_LOGOUT_COOKIE, session.ssoLogoutURL, cookieOptions(REFRESH_MAX_AGE));
+    // SSO logout ref (богино түлхүүр) — гарах үед энэ ref-ээр backend-ээс SSO
+    // дээр session дуусгах logout URL-ийг авна (том header-ээс зайлсхийнэ).
+    if (session.ssoLogoutRef) {
+      res.cookies.set(SSO_LOGOUT_COOKIE, session.ssoLogoutRef, cookieOptions(REFRESH_MAX_AGE));
     }
   }
   return res;
@@ -40,13 +40,13 @@ export async function GET(req: Request) {
     return redirectTo('/login?error=sso');
   }
 
-  const r = await backendFetch<{ token?: string; refresh_token?: string; sso_logout_url?: string }>('/sso/callback', {
+  const r = await backendFetch<{ token?: string; refresh_token?: string; sso_logout_ref?: string }>('/sso/callback', {
     method: 'POST',
     body: JSON.stringify({ code, state }),
   });
 
   if (r.ok && r.data?.token && r.data?.refresh_token) {
-    return redirectTo('/me/dashboard', { token: r.data.token, refresh: r.data.refresh_token, ssoLogoutURL: r.data.sso_logout_url });
+    return redirectTo('/me/dashboard', { token: r.data.token, refresh: r.data.refresh_token, ssoLogoutRef: r.data.sso_logout_ref });
   }
   return redirectTo('/login?error=sso');
 }

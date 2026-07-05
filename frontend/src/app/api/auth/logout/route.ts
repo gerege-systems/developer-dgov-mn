@@ -24,7 +24,17 @@ export async function POST(req: Request) {
     });
   }
 
-  const ssoLogoutURL = cookies().get(SSO_LOGOUT_COOKIE)?.value;
+  // SSO-ээр нэвтэрсэн бол (logout ref cookie байвал) backend-ээс SSO дээр session
+  // дуусгах RP-initiated logout URL-ийг авна. Ref нэг удаагийн (Redis GetDel).
+  let ssoLogoutURL: string | undefined;
+  const ref = cookies().get(SSO_LOGOUT_COOKIE)?.value;
+  if (ref) {
+    const lr = await backendFetch<{ sso_logout_url?: string }>('/sso/logout', {
+      method: 'POST',
+      body: JSON.stringify({ ref }),
+    });
+    if (lr.ok && lr.data?.sso_logout_url) ssoLogoutURL = lr.data.sso_logout_url;
+  }
 
   const res = NextResponse.json({
     ok: true,
