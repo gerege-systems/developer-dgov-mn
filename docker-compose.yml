@@ -107,6 +107,15 @@ services:
       # Google OAuth — BFF start route consent URL-д client_id-г хэрэглэнэ
       # (нууц биш). Хоосон бол Google товч "тохируулаагүй" руу чиглүүлнэ.
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      # Гуравдагч интеграцийн OAuth (BFF талд token exchange хийдэг тул client
+      # secret ч энд орно). Хоосон бол тухайн карт "Удахгүй" төлөвтэй inert.
+      # redirect_uri = ${APP_ORIGIN}/api/integrations/<provider>/callback
+      GOOGLE_DRIVE_CLIENT_ID: ${GOOGLE_DRIVE_CLIENT_ID:-}
+      GOOGLE_DRIVE_CLIENT_SECRET: ${GOOGLE_DRIVE_CLIENT_SECRET:-}
+      DROPBOX_CLIENT_ID: ${DROPBOX_CLIENT_ID:-}
+      DROPBOX_CLIENT_SECRET: ${DROPBOX_CLIENT_SECRET:-}
+      GOOGLE_MEET_CLIENT_ID: ${GOOGLE_MEET_CLIENT_ID:-}
+      GOOGLE_MEET_CLIENT_SECRET: ${GOOGLE_MEET_CLIENT_SECRET:-}
     depends_on:
       api:
         condition: service_healthy
