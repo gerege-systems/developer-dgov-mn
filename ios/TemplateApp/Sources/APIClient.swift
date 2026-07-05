@@ -76,9 +76,12 @@ final class APIClient {
 
     // MARK: - Auth / profile
 
+    // Backend /users/me нь data-г { "user": {…} } гэж боож буцаадаг.
+    private struct MeWrapper: Decodable { let user: MeUser }
     func me() async throws -> MeUser {
         let (data, http) = try await request("/api/me", method: "GET")
-        return try decodeData(data, http)
+        let wrapped: MeWrapper = try decodeData(data, http)
+        return wrapped.user
     }
 
     func eidSummary() async throws -> EidSummary? {
