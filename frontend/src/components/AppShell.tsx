@@ -126,7 +126,7 @@ const SYSTEMS: NavSystem[] = [
         // Профайл, Тохиргоо нь баруун дээд dropdown-д байгаа тул зүүн цэсэнд давхардуулахгүй.
         items: [
           { href: '/me/dashboard', labelKey: 'nav.dashboard', icon: LayoutDashboard },
-          { href: '/me/organizations', labelKey: 'nav.org', icon: Building2 },
+          { href: '/me/integrations', labelKey: 'nav.integrations', icon: Plug },
           { href: '/me/ai', labelKey: 'nav.ai', icon: Bot },
           { href: '/me/translate', labelKey: 'nav.translate', icon: Languages },
         ],
@@ -140,7 +140,7 @@ const SYSTEMS: NavSystem[] = [
           { href: '/me/eid/logs', labelKey: 'nav.eidLogs', icon: ScrollText },
           { href: '/me/eid/security', labelKey: 'nav.eidSecurity', icon: ShieldCheck },
           { href: '/me/eid/sign', labelKey: 'nav.eidSign', icon: FileSignature },
-          { href: '/me/integrations', labelKey: 'nav.integrations', icon: Plug },
+          { href: '/me/organizations', labelKey: 'nav.org', icon: Building2 },
         ],
       },
       {
