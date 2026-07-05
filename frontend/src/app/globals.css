@@ -1341,3 +1341,40 @@ html[lang="en"] .i18n-banner { display: block; }
 .btn--google:hover { background: var(--surface-2); color: var(--fg); }
 .login-or { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; margin: 6px 0; }
 .login-or::before, .login-or::after { content: ""; flex: 1; border-top: 1px solid var(--border); }
+
+/* ---------- Дээд талын цэс хайлт (NavSearch dropdown) ---------- */
+.navsearch { position: relative; }
+.navsearch__results {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: var(--card, #fff);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(16, 24, 40, 0.12);
+  padding: 6px;
+  max-height: 340px;
+  overflow-y: auto;
+}
+.navsearch__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 9px 12px;
+  border: 0;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: var(--fg, #111827);
+}
+.navsearch__item:hover,
+.navsearch__item.is-active { background: var(--dan-blue-soft, #eef2ff); }
+.navsearch__label { font-size: 14px; font-weight: 500; }
+.navsearch__group { font-size: 11.5px; color: var(--muted, #6b7280); white-space: nowrap; }
+.navsearch__empty { padding: 12px; font-size: 13px; color: var(--muted, #6b7280); text-align: center; }

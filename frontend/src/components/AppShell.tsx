@@ -13,6 +13,7 @@ import {
   FileSignature, Gauge, Server, Route, Crown,
 } from 'lucide-react';
 import UserMenu from './UserMenu';
+import NavSearch, { type SearchItem } from './NavSearch';
 import { signOut } from '@/lib/signout';
 import { useT } from '@/lib/lang';
 import type { DictKey } from '@/lib/i18n';
@@ -192,6 +193,16 @@ export default function AppShell({ user, children }: Props) {
     return visibleGroups(s).length > 0;
   });
 
+  // Дээд талын хайлтын каталог — харагдах бүх цэсний зүйл (эрхийн дагуу) +
+  // dropdown-д байдаг Профайл/Тохиргоо. Бичихэд шүүж, сонгоход шилжинэ.
+  const searchItems: SearchItem[] = [
+    ...systems.flatMap((s) =>
+      visibleGroups(s).flatMap((g) => g.items.map((i) => ({ label: T(i.labelKey), href: i.href, group: T(s.labelKey) }))),
+    ),
+    { label: T('nav.profile'), href: '/me/profile', group: T('sys.user') },
+    { label: T('nav.settings'), href: '/me/settings', group: T('sys.user') },
+  ];
+
   const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
   // Нүүр '/' нь "me" системд багтдаг ч default панелийг түүгээр сонгохгүй —
   // ингэснээр admin/manager нэвтрэхдээ нүүрэн дээр өөрийн дээд системээ нээлттэй
@@ -296,10 +307,7 @@ export default function AppShell({ user, children }: Props) {
             <Menu size={20} strokeWidth={2} />
           </button>
           <div className="topbar2__spacer" />
-          <div className="topbar2__search">
-            <Search size={16} strokeWidth={2} />
-            <input className="topbar2__search-input" type="search" placeholder={T('shell.search')} aria-label={T('shell.search')} />
-          </div>
+          <NavSearch items={searchItems} placeholder={T('shell.search')} emptyText={lang === 'en' ? 'No results' : 'Илэрц алга'} />
           <div className="topbar2__actions">
             <UserMenu username={displayName(user, lang)} email={user.email} initials={initialsOf(displayName(user, lang))} picture={user.picture} />
           </div>
