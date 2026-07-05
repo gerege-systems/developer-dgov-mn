@@ -10,22 +10,16 @@ import { useT } from '@/lib/lang';
 import { roleLabel, displayName, type SessionUser } from '@/lib/types';
 import { formatTS, initialsOf } from '@/lib/format';
 import { DefRow } from './DefRow';
-import EidCard from './EidCard';
-import CertCard from './CertCard';
-import EidSummaryCard from './EidSummaryCard';
-import EidPkiSection from './EidPkiSection';
 
 /**
  * ProfileView нь /me/profile хуудсын гол харагдац. Дээд талд профайл карт
- * (бүтэн өргөн), дараа нь eID PKI-ийн нэгдсэн хураангуй (EidSummaryCard),
- * дараа нь 2 баганат grid-д: бүртгэлийн талбарууд, eID таних мэдээлэл, тоон
- * гэрчилгээ. Хамгийн доор eID гэрчилгээ/төхөөрөмж/үйл ажиллагааны дэлгэрэнгүй
- * жагсаалт (EidPkiSection). Төлөөлдөг байгууллага нь Байгууллага хуудсанд.
+ * (бүтэн өргөн), доор нь бүртгэлийн талбарууд. eID-тэй холбоотой бүх зүйл
+ * (таних мэдээлэл, гэрчилгээ, төхөөрөмж, PKI) тусдаа eID хэсэгт (/me/eid/*)
+ * байрлана.
  */
 export default function ProfileView({ me }: { me: SessionUser }) {
   const { T, lang } = useT();
   const initials = initialsOf(me.username);
-  const nameLatin = `${me.lastNameEn} ${me.firstNameEn}`.trim();
 
   return (
     <>
@@ -53,34 +47,25 @@ export default function ProfileView({ me }: { me: SessionUser }) {
         </div>
       </section>
 
-      <EidSummaryCard show={!!me.eid} />
+      <section className="card" aria-label={T('me.profile.fields')} style={{ marginTop: 16 }}>
+        <div className="card__head card__head--with-sub">
+          <div className="card__title"><h2>{T('me.profile.fields')}</h2></div>
+          <span className="card__sub">{T('me.profile.fieldsSub')}</span>
+        </div>
 
-      <div className="profile-grid">
-        <section className="card" aria-label={T('me.profile.fields')}>
-          <div className="card__head card__head--with-sub">
-            <div className="card__title"><h2>{T('me.profile.fields')}</h2></div>
-            <span className="card__sub">{T('me.profile.fieldsSub')}</span>
-          </div>
-
-          <div>
-            <DefRow icon={Hash} label={T('me.field.id')} mono>{me.id}</DefRow>
-            <DefRow icon={User} label={T('me.field.lastName')}>{(lang === 'en' ? me.lastNameEn : me.lastName) || '—'}</DefRow>
-            <DefRow icon={User} label={T('me.field.firstName')}>{(lang === 'en' ? me.firstNameEn : me.firstName) || '—'}</DefRow>
-            <DefRow icon={User} label={T('me.field.username')}>{me.username}</DefRow>
-            <DefRow icon={Mail} label={T('me.field.email')} mono>{me.email || '—'}</DefRow>
-            <DefRow icon={ShieldCheck} label={T('me.field.role')}>
-              <span className="chip chip--neutral">role_id {me.roleId}</span> {roleLabel(me.roleId, lang)}
-            </DefRow>
-            <DefRow icon={Clock} label={T('me.field.created')} mono>{formatTS(me.createdAt)}</DefRow>
-            <DefRow icon={RefreshCw} label={T('me.field.updated')} mono>{me.updatedAt ? formatTS(me.updatedAt) : '—'}</DefRow>
-          </div>
-        </section>
-
-        <EidCard eid={me.eid} nameLatin={nameLatin} />
-        <CertCard eid={me.eid} />
-      </div>
-
-      <EidPkiSection show={!!me.eid} />
+        <div>
+          <DefRow icon={Hash} label={T('me.field.id')} mono>{me.id}</DefRow>
+          <DefRow icon={User} label={T('me.field.lastName')}>{(lang === 'en' ? me.lastNameEn : me.lastName) || '—'}</DefRow>
+          <DefRow icon={User} label={T('me.field.firstName')}>{(lang === 'en' ? me.firstNameEn : me.firstName) || '—'}</DefRow>
+          <DefRow icon={User} label={T('me.field.username')}>{me.username}</DefRow>
+          <DefRow icon={Mail} label={T('me.field.email')} mono>{me.email || '—'}</DefRow>
+          <DefRow icon={ShieldCheck} label={T('me.field.role')}>
+            <span className="chip chip--neutral">role_id {me.roleId}</span> {roleLabel(me.roleId, lang)}
+          </DefRow>
+          <DefRow icon={Clock} label={T('me.field.created')} mono>{formatTS(me.createdAt)}</DefRow>
+          <DefRow icon={RefreshCw} label={T('me.field.updated')} mono>{me.updatedAt ? formatTS(me.updatedAt) : '—'}</DefRow>
+        </div>
+      </section>
     </>
   );
 }
