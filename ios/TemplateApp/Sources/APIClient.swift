@@ -90,12 +90,12 @@ final class APIClient {
         return try? decodeData(data, http)
     }
 
-    // App2App буцах URL. eID платформ callback-ыг өөрийн стандарт зам
-    // (/auth/eid/callback) руу албадан normalize хийж, Safari-д UIApplication.open-
-    // ээр нээдэг тул iOS Universal Link (AASA) энэ зам дээр ажиллаж, апп суусан
-    // үед browser-гүйгээр шууд TemplateApp руу route хийнэ. Host заавал allowlist
-    // (template.gerege.mn).
-    static let callbackURL = "https://template.gerege.mn/auth/eid/callback"
+    // App2App буцах URL — TemplateApp-ын өөрийн custom-scheme deeplink. eID платформ
+    // (NormalizeCallback) энэ callback-ийг RP-ийн callback_hosts allowlist-аар шалгаад
+    // (geregetemp:// бүртгэлтэй байх ёстой) ХЭВЭЭР дамжуулна; eIDMongolia апп approve-ийн
+    // дараа ШУУД энэ deeplink-ийг нээж TemplateApp-ыг идэвхжүүлнэ (Universal Links / AASA
+    // шаардахгүй). Ирэхэд onOpenURL нь .eidReturn илгээж, хүлээж буй eID poll шууд дуусна.
+    static let callbackURL = "geregetemp://eid/callback"
 
     // eID device-link session эхлүүлэх. callbackUrl дамжуулбал (App2App) eID апп
     // approve-ийн дараа тэр рүү буцна; хоосон бол QR-аар өөр төхөөрөмжөөс уншуулна.
