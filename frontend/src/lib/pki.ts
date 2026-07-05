@@ -19,7 +19,9 @@ export interface PkiCertItem {
   serial_number: string;
   certificate_level: string;
   status: string;
+  not_before?: string;
   not_after?: string;
+  issuer_dn?: string;
 }
 
 export interface PkiDeviceItem {
@@ -27,11 +29,14 @@ export interface PkiDeviceItem {
   platform?: string;
   active: boolean;
   enrolled_at?: string;
+  deactivated_at?: string;
 }
 
 export interface PkiActItem {
+  session_id?: string;
   flow: string;
   outcome: string;
+  doc_text?: string;
   timestamp?: string;
 }
 

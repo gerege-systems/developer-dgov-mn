@@ -8,7 +8,7 @@ import { getJSON } from '@/lib/client';
 import {
   LayoutDashboard, User, ShieldCheck, HelpCircle, LogOut, Menu, Search,
   Users, ShieldHalf, UserCircle, Briefcase, Bot, Languages, Building2,
-  ScrollText, ShieldAlert,
+  ScrollText, ShieldAlert, CreditCard, KeyRound, Smartphone,
 } from 'lucide-react';
 import UserMenu from './UserMenu';
 import { signOut } from '@/lib/signout';
@@ -109,6 +109,16 @@ const SYSTEMS: NavSystem[] = [
           { href: '/me/organizations', labelKey: 'nav.org', icon: Building2 },
           { href: '/me/ai', labelKey: 'nav.ai', icon: Bot },
           { href: '/me/translate', labelKey: 'nav.translate', icon: Languages },
+        ],
+      },
+      {
+        labelKey: 'group.eid',
+        items: [
+          { href: '/me/eid/id', labelKey: 'nav.eidId', icon: CreditCard },
+          { href: '/me/eid/certificates', labelKey: 'nav.eidCerts', icon: KeyRound },
+          { href: '/me/eid/devices', labelKey: 'nav.eidDevices', icon: Smartphone },
+          { href: '/me/eid/logs', labelKey: 'nav.eidLogs', icon: ScrollText },
+          { href: '/me/eid/security', labelKey: 'nav.eidSecurity', icon: ShieldCheck },
         ],
       },
     ],
