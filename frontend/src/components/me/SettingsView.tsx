@@ -3,12 +3,10 @@
 import React from 'react';
 import { KeyRound, LogOut } from 'lucide-react';
 import { useT } from '@/lib/lang';
-import type { SessionUser } from '@/lib/types';
 import ChangePasswordForm from '@/app/settings/ChangePasswordForm';
 import SignOutButton from '@/components/SignOutButton';
-import EidPkiSection from '@/components/me/EidPkiSection';
 
-export default function SettingsView({ me }: { me?: SessionUser }) {
+export default function SettingsView() {
   const { T } = useT();
   return (
     <>
@@ -39,9 +37,6 @@ export default function SettingsView({ me }: { me?: SessionUser }) {
         </div>
         <SignOutButton />
       </section>
-
-      {/* eID гэрчилгээ + холбоотой төхөөрөмж + үйл ажиллагаа (eidmongolia.mn) */}
-      <EidPkiSection show={!!me?.eid} />
     </>
   );
 }

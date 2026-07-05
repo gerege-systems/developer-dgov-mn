@@ -13,13 +13,14 @@ import { DefRow } from './DefRow';
 import EidCard from './EidCard';
 import CertCard from './CertCard';
 import EidSummaryCard from './EidSummaryCard';
+import EidPkiSection from './EidPkiSection';
 
 /**
  * ProfileView нь /me/profile хуудсын гол харагдац. Дээд талд профайл карт
  * (бүтэн өргөн), дараа нь eID PKI-ийн нэгдсэн хураангуй (EidSummaryCard),
- * доор нь 2 баганат grid-д: бүртгэлийн талбарууд, eID таних мэдээлэл, тоон
- * гэрчилгээ. Гэрчилгээ/төхөөрөмжийн жагсаалт нь Аюулгүй байдал, төлөөлдөг
- * байгууллага нь Байгууллага хуудсанд байрлана.
+ * дараа нь 2 баганат grid-д: бүртгэлийн талбарууд, eID таних мэдээлэл, тоон
+ * гэрчилгээ. Хамгийн доор eID гэрчилгээ/төхөөрөмж/үйл ажиллагааны дэлгэрэнгүй
+ * жагсаалт (EidPkiSection). Төлөөлдөг байгууллага нь Байгууллага хуудсанд.
  */
 export default function ProfileView({ me }: { me: SessionUser }) {
   const { T, lang } = useT();
@@ -78,6 +79,8 @@ export default function ProfileView({ me }: { me: SessionUser }) {
         <EidCard eid={me.eid} nameLatin={nameLatin} />
         <CertCard eid={me.eid} />
       </div>
+
+      <EidPkiSection show={!!me.eid} />
     </>
   );
 }
