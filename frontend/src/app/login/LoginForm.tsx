@@ -223,13 +223,17 @@ export default function LoginForm({ next, notice, googleLink, googleError }: { n
   return (
     <div className="form-grid" aria-live="polite">
       <div>
-        <h1 id="login-title">{T('auth.eid.cardTitle')}</h1>
+        <h1 id="login-title">{googleLink ? T('auth.google.linkTitle') : T('auth.eid.cardTitle')}</h1>
         <p className="signin-card__lede" style={{ marginTop: 6, fontSize: 14 }}>
-          {T('auth.eid.cardSub')}
+          {googleLink ? T('auth.google.linkSub') : T('auth.eid.cardSub')}
         </p>
       </div>
 
       {noticeText && <Alert kind="success">{noticeText}</Alert>}
+
+      {/* Google эхний удаа — eID-ээр баталгаажуулах анхааруулгыг дээр тод харуулна */}
+      {googleLink && <Alert kind="info">{T('auth.google.linkNotice')}</Alert>}
+      {googleError && <Alert kind="danger">{T('auth.google.error')}</Alert>}
 
       {/* Нэвтрэх аргын сонголт */}
       <div className="segmented segmented--tall" role="tablist" style={{ display: 'flex', width: '100%' }}>
@@ -416,16 +420,19 @@ export default function LoginForm({ next, notice, googleLink, googleError }: { n
         </button>
       )}
 
-      {/* Google-ээр нэвтрэх — эхний удаа eID-ээр холбоно */}
-      {googleError && <Alert kind="danger">{T('auth.google.error')}</Alert>}
-      {googleLink && <Alert kind="info">{T('auth.google.linkNotice')}</Alert>}
+      {/* Google-ээр нэвтрэх — эхний удаа eID-ээр холбоно. glink горимд (эхний удаа
+          Google-ээс буцаж ирсэн) энэ товчийг НУУНА: хэрэглэгч одоо eID-ээр
+          баталгаажуулах ёстой тул дахин Google руу оруулах нь ойлгомжгүй болно. */}
+      {!googleLink && (
+        <>
+          <div className="login-or"><span>{T('auth.eid.or')}</span></div>
 
-      <div className="login-or"><span>{T('auth.eid.or')}</span></div>
-
-      <a className="btn btn--google btn--lg btn--block" href="/api/auth/google/start">
-        <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.8 6.1C12.2 13.3 17.6 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9.1h12.4c-.5 2.9-2.1 5.3-4.6 7l7.1 5.5c4.2-3.9 6.6-9.6 6.6-17z"/><path fill="#FBBC05" d="M10.4 28.3a14.5 14.5 0 0 1 0-8.6l-7.8-6.1a24 24 0 0 0 0 20.8l7.8-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.1-5.5c-2 1.4-4.6 2.2-8.8 2.2-6.4 0-11.8-3.8-13.6-9.3l-7.8 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
-        <span>{T('auth.google.button')}</span>
-      </a>
+          <a className="btn btn--google btn--lg btn--block" href="/api/auth/google/start">
+            <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.8 6.1C12.2 13.3 17.6 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9.1h12.4c-.5 2.9-2.1 5.3-4.6 7l7.1 5.5c4.2-3.9 6.6-9.6 6.6-17z"/><path fill="#FBBC05" d="M10.4 28.3a14.5 14.5 0 0 1 0-8.6l-7.8-6.1a24 24 0 0 0 0 20.8l7.8-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.1-5.5c-2 1.4-4.6 2.2-8.8 2.2-6.4 0-11.8-3.8-13.6-9.3l-7.8 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
+            <span>{T('auth.google.button')}</span>
+          </a>
+        </>
+      )}
 
       {/* Footer — шинэ бүртгэл + тусламж (eID app-д бүртгүүлнэ) */}
       <div className="login-footer">
