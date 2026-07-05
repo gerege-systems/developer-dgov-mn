@@ -32,6 +32,9 @@ targets:
         CFBundleDisplayName: Gerege Template
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        # Portrait-only апп — iPad multitasking-д бүх orientation шаардахгүйн тулд
+        # full screen гэж зарлана (Xcode "All interface orientations..." warning-ыг арилгана).
+        UIRequiresFullScreen: true
         ITSAppUsesNonExemptEncryption: false
         CFBundleURLTypes:
           - CFBundleURLName: mn.gerege.temp
