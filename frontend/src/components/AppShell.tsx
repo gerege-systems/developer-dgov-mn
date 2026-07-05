@@ -47,6 +47,7 @@ interface NavGroup {
 interface NavSystem {
   key: string;
   labelKey: DictKey;
+  brand: string; // sidepanel-ийн дээд мөр — идэвхтэй систем бүрээр солигдоно (English)
   icon: typeof User;
   adminOnly?: boolean;
   groups: NavGroup[];
@@ -57,6 +58,7 @@ const SYSTEMS: NavSystem[] = [
   {
     key: 'admin',
     labelKey: 'sys.admin',
+    brand: 'Admin System',
     icon: ShieldHalf,
     adminOnly: true,
     groups: [
@@ -99,6 +101,7 @@ const SYSTEMS: NavSystem[] = [
   {
     key: 'manager',
     labelKey: 'sys.manager',
+    brand: 'Manager System',
     icon: Briefcase,
     groups: [
       {
@@ -113,6 +116,7 @@ const SYSTEMS: NavSystem[] = [
   {
     key: 'me',
     labelKey: 'sys.user',
+    brand: 'Me System',
     icon: UserCircle,
     groups: [
       {
@@ -257,7 +261,7 @@ export default function AppShell({ user, children }: Props) {
 
       <aside className="sidepanel">
         <div className="sidepanel__head">
-          <span className="sidepanel__brand-name">Gerege Template</span>
+          <span className="sidepanel__brand-name">{panel.brand}</span>
           <span className="sidepanel__title">{T(panel.labelKey)}</span>
         </div>
         <nav className="sidepanel__nav">
