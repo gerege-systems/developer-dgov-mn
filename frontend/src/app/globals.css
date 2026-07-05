@@ -1308,7 +1308,9 @@ html[lang="en"] .i18n-banner { display: block; }
 .btn--eid {
   background: linear-gradient(135deg, var(--dan-blue), #8b7ff0);
   color: #fff;
-  border: 0;
+  /* border-box өндрийг btn--google (1px border)-тэй тэнцүүлэхийн тулд ил
+     transparent border үлдээнэ (border:0 нь 2px намхан болгодог байсан). */
+  border: 1px solid transparent;
   font-weight: 600;
 }
 .btn--eid:hover { filter: brightness(1.05); color: #fff; }
@@ -1333,8 +1335,15 @@ html[lang="en"] .i18n-banner { display: block; }
 }
 .login-footer__help:hover { color: var(--fg); }
 
-/* Login switch tab — ~50% илүү өндөр */
-.segmented--tall .segmented__item { padding-top: 8px; padding-bottom: 8px; font-size: 12px; }
+/* Login switch tab — Google/Нэвтрэх товчтой (btn--lg) ижил өндөр.
+   padding 2px (container) + item 44px + border 2px ≈ btn--lg-ийн өндөр. */
+.segmented--tall .segmented__item {
+  padding-top: 0;
+  padding-bottom: 0;
+  min-height: 44px;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+}
 
 /* Google login товч + "эсвэл" зураас */
 .btn--google { background: var(--surface); color: var(--fg); border: 1px solid var(--border); font-weight: 600; }
