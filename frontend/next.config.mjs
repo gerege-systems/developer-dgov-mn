@@ -13,9 +13,16 @@ const CSP = [
   "style-src 'self' 'unsafe-inline'",
   // Google профайл зураг (dashboard-д холбогдсон Google account) нь
   // lh3.googleusercontent.com зэрэг Google CDN-ээс ирдэг тул зөвшөөрнө.
-  "img-src 'self' data: https://*.googleusercontent.com",
+  // gstatic — Google Drive интеграцийн файлын icon (iconLink) ба browser-т
+  // шууд ачаалагддаг тул зөвшөөрнө.
+  "img-src 'self' data: https://*.googleusercontent.com https://*.gstatic.com",
   "font-src 'self' data:",
   "connect-src 'self'",
+  // frame-src: Google Drive + Dropbox файлын урьдчилан харах (preview) iframe —
+  // эдгээр нь провайдерын интерактив preview хуудас тул BFF-ээр дамжуулах
+  // боломжгүй (провайдер proxied origin-оос framing-ийг татгалздаг). Интеграцийн
+  // OAuth тохируулаагүй үед эдгээр хост руу хэзээ ч хандахгүй (feature inert).
+  "frame-src 'self' https://drive.google.com https://docs.google.com https://*.dropboxusercontent.com https://www.dropbox.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",

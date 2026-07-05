@@ -510,6 +510,56 @@ html[lang="en"] .i18n-banner { display: block; }
 .defrow:last-child { border-bottom: 0; }
 .defrow__label { color: var(--muted); }
 .defrow__value { color: var(--fg); }
+/* Файлын мөр (интеграцийн browser) — нэр зүүн, үйлдэл баруун. */
+.defrow.defrow--wide { grid-template-columns: 1fr auto; align-items: start; }
+.defrow.defrow--wide .defrow__value { text-align: right; white-space: nowrap; }
+
+/* ---------- Dialog (modal) ---------- */
+
+.dlg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: color-mix(in oklch, black 55%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  overflow-y: auto;
+}
+.dlg-content {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  background: var(--surface);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 24px 60px color-mix(in oklch, black 30%, transparent);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.dlg-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.dlg-close:hover { background: var(--surface-2); color: var(--fg); }
+.dlg-header { display: flex; flex-direction: column; gap: 6px; padding-right: 32px; }
+.dlg-title { font-size: 17px; font-weight: 700; color: var(--fg); margin: 0; }
+.dlg-desc { font-size: 13px; color: var(--muted); margin: 0; }
 
 /* ---------- Form ---------- */
 

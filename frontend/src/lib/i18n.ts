@@ -239,6 +239,9 @@ export const dict = {
     'nav.eidDevices': 'Төхөөрөмж',
     'nav.eidLogs': 'Үйл ажиллагаа',
     'nav.eidSecurity': 'eID аюулгүй байдал',
+    'nav.integrations': 'Интеграци',
+    'integrations.title': 'Интеграци',
+    'integrations.sub': 'Гадны үйлчилгээг профайлдаа холбож, баримт болон уулзалтаа нэг дороос удирдана.',
     // Иргэний төрийн үйлчилгээ
     'group.govServices': 'Төрийн үйлчилгээ',
     'nav.govServices': 'Үйлчилгээ',
@@ -592,6 +595,9 @@ export const dict = {
     'nav.eidDevices': 'Devices',
     'nav.eidLogs': 'Activity',
     'nav.eidSecurity': 'eID security',
+    'nav.integrations': 'Integrations',
+    'integrations.title': 'Integrations',
+    'integrations.sub': 'Connect third-party services to your profile and manage your documents and meetings in one place.',
     // Citizen government services
     'group.govServices': 'Gov services',
     'nav.govServices': 'Services',

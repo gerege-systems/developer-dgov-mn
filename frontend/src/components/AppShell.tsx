@@ -9,7 +9,7 @@ import {
   LayoutDashboard, User, ShieldCheck, HelpCircle, LogOut, Menu, Search,
   Users, ShieldHalf, UserCircle, Briefcase, Bot, Languages, Building2,
   ScrollText, ShieldAlert, CreditCard, KeyRound, Smartphone,
-  Landmark, FileText, FileCheck, CalendarClock, Wallet, Bell,
+  Landmark, FileText, FileCheck, CalendarClock, Wallet, Bell, Plug,
 } from 'lucide-react';
 import UserMenu from './UserMenu';
 import { signOut } from '@/lib/signout';
@@ -120,6 +120,7 @@ const SYSTEMS: NavSystem[] = [
           { href: '/me/eid/devices', labelKey: 'nav.eidDevices', icon: Smartphone },
           { href: '/me/eid/logs', labelKey: 'nav.eidLogs', icon: ScrollText },
           { href: '/me/eid/security', labelKey: 'nav.eidSecurity', icon: ShieldCheck },
+          { href: '/me/integrations', labelKey: 'nav.integrations', icon: Plug },
         ],
       },
       {
