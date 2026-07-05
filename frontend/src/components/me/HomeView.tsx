@@ -15,7 +15,7 @@ const GoogleG = () => (
 export default function HomeView({ me }: { me: SessionUser }) {
   const { T, lang } = useT();
   const today = new Date();
-  const initials = initialsOf(me.username);
+  const initials = initialsOf(me.fullName || me.username);
 
   return (
     <>
