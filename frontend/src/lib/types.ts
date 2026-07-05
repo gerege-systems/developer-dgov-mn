@@ -26,6 +26,16 @@ export interface BackendUser {
   created_at: string;
   updated_at: string | null;
   eid?: BackendEID;
+  google?: BackendGoogle;
+}
+
+/** Холбогдсон Google account-аас хадгалсан профайл (backend JSON). */
+export interface BackendGoogle {
+  email?: string;
+  email_verified?: boolean;
+  name?: string;
+  picture?: string;
+  linked_at?: string | null;
 }
 
 /** eidmongolia.mn-ээс login үед авсан identity + сертификатын мэдээлэл. */
@@ -41,6 +51,15 @@ export interface BackendEID {
     issuer?: string;
     key_type?: string;
   };
+}
+
+/** SessionUser дээрх Google профайл (camelCase). */
+export interface GoogleInfo {
+  email: string;
+  emailVerified: boolean;
+  name: string;
+  picture: string;
+  linkedAt: string | null;
 }
 
 /** SessionUser дээрх eID мэдээлэл (camelCase). */
@@ -83,6 +102,7 @@ export interface SessionUser {
   createdAt: string;
   updatedAt: string | null;
   eid?: EIDInfo;
+  google?: GoogleInfo;
 }
 
 /** Овог Нэр; хоосон бол username руу fallback. */
@@ -116,6 +136,18 @@ export function toSessionUser(u: BackendUser): SessionUser {
     createdAt: u.created_at,
     updatedAt: u.updated_at,
     eid: u.eid ? toEIDInfo(u.eid) : undefined,
+    google: u.google ? toGoogleInfo(u.google) : undefined,
+  };
+}
+
+/** Backend google блокийг camelCase SessionUser хэлбэрт буулгана. */
+function toGoogleInfo(g: BackendGoogle): GoogleInfo {
+  return {
+    email: g.email ?? '',
+    emailVerified: g.email_verified ?? false,
+    name: g.name ?? '',
+    picture: g.picture ?? '',
+    linkedAt: g.linked_at ?? null,
   };
 }
 

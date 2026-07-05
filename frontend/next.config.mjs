@@ -11,7 +11,9 @@ const CSP = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data:",
+  // Google профайл зураг (dashboard-д холбогдсон Google account) нь
+  // lh3.googleusercontent.com зэрэг Google CDN-ээс ирдэг тул зөвшөөрнө.
+  "img-src 'self' data: https://*.googleusercontent.com",
   "font-src 'self' data:",
   "connect-src 'self'",
   "frame-ancestors 'none'",
