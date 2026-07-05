@@ -90,16 +90,24 @@ final class APIClient {
         return try? decodeData(data, http)
     }
 
-    // eID QR нэвтрэлт эхлүүлэх (cross-device).
-    func eidStartQR() async throws -> EidStart {
-        let (data, http) = try await request("/api/auth/eid/start", method: "POST", body: [:])
+    // App2App-ийн буцах deeplink — Gerege eID апп approve хийсний дараа яг энэ рүү
+    // буцна. eID start-д callbackUrl болгож дамжуулна (ерөнхий App2App загвар:
+    // RP апп өөрийн scheme-ээ өгдөг). Info.plist-д бүртгэлтэй байх ёстой.
+    static let callbackURL = "geregetemp://eid/callback"
+
+    // eID device-link session эхлүүлэх. callbackUrl дамжуулбал (App2App) eID апп
+    // approve-ийн дараа тэр рүү буцна; хоосон бол QR-аар өөр төхөөрөмжөөс уншуулна.
+    func eidStartQR(callbackUrl: String = "") async throws -> EidStart {
+        let (data, http) = try await request("/api/auth/eid/start", method: "POST",
+                                             body: ["callbackUrl": callbackUrl])
         return try decodeData(data, http)
     }
 
-    // eID РД-аар нэвтрэлт эхлүүлэх (утас руу push).
-    func eidStartID(nationalID: String) async throws -> EidStart {
+    // eID РД-аар нэвтрэлт (утас руу push). callbackUrl дамжуулбал approve-ийн
+    // дараа eID апп RP апп руу буцна.
+    func eidStartID(nationalID: String, callbackUrl: String = "") async throws -> EidStart {
         let (data, http) = try await request("/api/auth/eid/start-id", method: "POST",
-                                             body: ["national_id": nationalID, "callbackUrl": ""])
+                                             body: ["national_id": nationalID, "callbackUrl": callbackUrl])
         return try decodeData(data, http)
     }
 

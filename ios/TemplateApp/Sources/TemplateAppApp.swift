@@ -8,7 +8,16 @@ struct TemplateAppApp: App {
     @StateObject private var state = AppState()
     var body: some Scene {
         WindowGroup {
-            RootView().environmentObject(state)
+            RootView()
+                .environmentObject(state)
+                // App2App буцах deeplink (geregetemp://eid/callback) — Gerege eID
+                // апп approve хийгээд RP апп руу буцахад ирнэ. Хүлээж буй eID
+                // урсгалд мэдэгдэж, session-ыг шууд шалгуулна.
+                .onOpenURL { url in
+                    if url.scheme == "geregetemp" {
+                        NotificationCenter.default.post(name: .eidReturn, object: nil)
+                    }
+                }
         }
     }
 }

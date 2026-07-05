@@ -13,6 +13,19 @@ targets:
     platform: iOS
     sources:
       - path: Sources
+    # Info.plist — xcodegen үүсгэнэ. App2App-д geregetemp:// scheme бүртгэж,
+    # geregesmartid:// (Gerege eID апп)-ыг canOpenURL-д зөвшөөрнө.
+    info:
+      path: Sources/Info.plist
+      properties:
+        CFBundleDisplayName: Gerege Template
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        ITSAppUsesNonExemptEncryption: false
+        CFBundleURLTypes:
+          - CFBundleURLName: mn.gerege.temp
+            CFBundleURLSchemes: [geregetemp]
+        LSApplicationQueriesSchemes: [geregesmartid]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: mn.gerege.temp
@@ -20,9 +33,3 @@ targets:
         CURRENT_PROJECT_VERSION: "1"
         SWIFT_VERSION: "5.0"
         TARGETED_DEVICE_FAMILY: "1,2"
-        GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_CFBundleDisplayName: Gerege Template
-        INFOPLIST_KEY_UILaunchScreen_Generation: YES
-        INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
-        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
-        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
