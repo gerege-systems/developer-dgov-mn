@@ -19,7 +19,12 @@ targets:
         com.apple.developer.associated-domains:
           - applinks:template.gerege.mn
           - applinks:sso.gerege.mn
-    # Info.plist — xcodegen үүсгэнэ. App2App-д geregetemp:// scheme бүртгэж,
+    # Info.plist — xcodegen үүсгэнэ. Scheme-ууд:
+    #  • geregetemp    — SSO OAuth callback (ASWebAuthenticationSession) + eID App2App
+    #                    (geregetemp://eid/callback) шууд нэвтрэлт.
+    #  • geregetempeid — SSO-ийн eID SIBLING scheme: native SSO үед eID апп approve-ийн
+    #                    дараа энэ scheme-ийг нээж апп+AS session-ыг foreground болгож poll
+    #                    сэргээнэ (OAuth scheme-ийг дахин ашиглавал AS session эрт хаагдана).
     # geregesmartid:// (Gerege eID апп)-ыг canOpenURL-д зөвшөөрнө.
     info:
       path: Sources/Info.plist
@@ -30,7 +35,7 @@ targets:
         ITSAppUsesNonExemptEncryption: false
         CFBundleURLTypes:
           - CFBundleURLName: mn.gerege.temp
-            CFBundleURLSchemes: [geregetemp]
+            CFBundleURLSchemes: [geregetemp, geregetempeid]
         LSApplicationQueriesSchemes: [geregesmartid]
     settings:
       base:
