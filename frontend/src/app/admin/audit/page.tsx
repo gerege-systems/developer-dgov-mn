@@ -3,16 +3,15 @@ import { redirect } from 'next/navigation';
 import PageHead from '@/components/PageHead';
 import AuditViewer from '@/components/admin/AuditViewer';
 import { fetchMe } from '@/lib/api';
+import { isAdminLevel } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Аудит лог — Админ' };
 
-const ROLE_ADMIN = 1; // backend domain.RoleAdmin
-
 export default async function AdminAuditPage() {
   const me = await fetchMe();
   if (!me) redirect('/login?next=/admin/audit');
-  if (me.roleId !== ROLE_ADMIN) redirect('/');
+  if (!isAdminLevel(me.roleId)) redirect('/');
 
   return (
     <>

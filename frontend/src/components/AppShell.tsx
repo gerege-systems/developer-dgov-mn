@@ -10,15 +10,13 @@ import {
   Users, ShieldHalf, UserCircle, Briefcase, Bot, Languages, Building2,
   ScrollText, ShieldAlert, CreditCard, KeyRound, Smartphone,
   Landmark, FileText, FileCheck, CalendarClock, Wallet, Bell, Plug,
-  FileSignature, Gauge, Server, Route,
+  FileSignature, Gauge, Server, Route, Crown,
 } from 'lucide-react';
 import UserMenu from './UserMenu';
 import { signOut } from '@/lib/signout';
 import { useT } from '@/lib/lang';
 import type { DictKey } from '@/lib/i18n';
-import { displayName } from '@/lib/types';
-
-const ROLE_ADMIN = 1; // backend domain.RoleAdmin
+import { displayName, isAdminLevel, isSuperAdmin } from '@/lib/types';
 
 export interface AppUser {
   username: string;
@@ -39,6 +37,7 @@ interface NavItem {
   labelKey: DictKey;
   icon: typeof User;
   perm?: string; // шаардагдах эрх; байхгүй бол бүх нэвтэрсэн хэрэглэгчид
+  superAdminOnly?: boolean; // зөвхөн super admin (perm bypass-д хамаарахгүй)
 }
 interface NavGroup {
   labelKey?: DictKey;
@@ -70,6 +69,7 @@ const SYSTEMS: NavSystem[] = [
       {
         labelKey: 'group.management',
         items: [
+          { href: '/admin/superadmin', labelKey: 'nav.superadmin', icon: Crown, superAdminOnly: true },
           { href: '/admin/users', labelKey: 'nav.users', icon: Users, perm: 'users.manage' },
           { href: '/admin/core', labelKey: 'nav.coreSearch', icon: Search, perm: 'users.manage' },
           { href: '/admin/roles', labelKey: 'nav.roles', icon: ShieldHalf, perm: 'roles.manage' },
@@ -160,7 +160,8 @@ const SYSTEMS: NavSystem[] = [
 export default function AppShell({ user, children }: Props) {
   const pathname = usePathname() ?? '/';
   const { T, lang } = useT();
-  const isAdmin = user.roleId === ROLE_ADMIN;
+  const isAdmin = isAdminLevel(user.roleId); // super admin + admin
+  const isSuper = isSuperAdmin(user.roleId);
 
   // TanStack Query — олон component зэрэг mount хийгдсэн ч /api/rbac/me-г
   // нэг л удаа татна (deduplication + кэш).
@@ -170,10 +171,15 @@ export default function AppShell({ user, children }: Props) {
   });
   const perms = permsQuery.isPending ? null : (permsQuery.data ?? []);
 
-  const canSee = (perm?: string) => !perm || isAdmin || (perms?.includes(perm) ?? false);
+  // superAdminOnly item нь perm bypass-д хамаарахгүй — зөвхөн super admin харна
+  // (энгийн admin ч харахгүй).
+  const canSeeItem = (i: NavItem) => {
+    if (i.superAdminOnly) return isSuper;
+    return !i.perm || isAdmin || (perms?.includes(i.perm) ?? false);
+  };
   const visibleGroups = (s: NavSystem) =>
     s.groups
-      .map((g) => ({ ...g, items: g.items.filter((i) => canSee(i.perm)) }))
+      .map((g) => ({ ...g, items: g.items.filter(canSeeItem) }))
       .filter((g) => g.items.length > 0);
   const systems = SYSTEMS.filter((s) => {
     if (s.adminOnly && !isAdmin) return false;

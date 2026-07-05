@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Trash2, Loader2, Check, Ban, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useT } from '@/lib/lang';
 import { getJSON, sendJSON } from '@/lib/client';
+import { ROLE_SUPERADMIN } from '@/lib/types';
 
 interface AdminUser {
   id: string;
@@ -114,6 +115,9 @@ export default function UsersManager({ currentUserId, readOnly = false }: Props)
             <tbody>
               {items.map((u) => {
                 const isSelf = u.id === currentUserId;
+                // Super admin бүртгэлийг энэ хуудаснаас өөрчлөхгүй (backend ч
+                // хаадаг) — зөвхөн /admin/superadmin-аар удирдана.
+                const isProtected = isSelf || u.role_id === ROLE_SUPERADMIN;
                 return (
                   <tr key={u.id}>
                     <td>
@@ -130,7 +134,7 @@ export default function UsersManager({ currentUserId, readOnly = false }: Props)
                     </td>
                     <td className="mono">{u.email}</td>
                     <td>
-                      {readOnly ? (
+                      {readOnly || isProtected ? (
                         <span>{(() => {
                           const r = roles.find((x) => x.id === u.role_id);
                           return r ? tRole(r.key, r.name) : u.role_id;
@@ -139,10 +143,11 @@ export default function UsersManager({ currentUserId, readOnly = false }: Props)
                         <select
                           className="input users-table__role"
                           value={u.role_id}
-                          disabled={isSelf}
                           onChange={(e) => changeRole(u.id, Number(e.target.value))}
                         >
-                          {roles.map((r) => <option key={r.id} value={r.id}>{tRole(r.key, r.name)}</option>)}
+                          {roles
+                            .filter((r) => r.id !== ROLE_SUPERADMIN)
+                            .map((r) => <option key={r.id} value={r.id}>{tRole(r.key, r.name)}</option>)}
                         </select>
                       )}
                     </td>
@@ -154,7 +159,7 @@ export default function UsersManager({ currentUserId, readOnly = false }: Props)
                     <td className="mono">{fmtDate(u.created_at)}</td>
                     {!readOnly && (
                       <td className="users-table__actions">
-                        {!isSelf && (
+                        {!isProtected && (
                           <>
                             <button
                               className="btn btn--ghost btn--sm"

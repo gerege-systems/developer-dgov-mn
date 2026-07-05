@@ -170,9 +170,28 @@ function toEIDInfo(e: BackendEID): EIDInfo {
   };
 }
 
-/** role_id → хүний унших нэр. Backend-д 2 = энгийн хэрэглэгч. */
+/**
+ * Role ID тогтмолууд — backend-ийн domain.Role* -тэй таарна (id 1 = хамгийн
+ * дээд эрх): superadmin=1, admin=2, manager=3, user=4.
+ */
+export const ROLE_SUPERADMIN = 1;
+export const ROLE_ADMIN = 2;
+export const ROLE_MANAGER = 3;
+export const ROLE_USER = 4;
+
+/** Хэрэглэгч super admin эсэх (админуудыг удирдах дээд эрх). */
+export function isSuperAdmin(roleId: number): boolean {
+  return roleId === ROLE_SUPERADMIN;
+}
+
+/** Хэрэглэгч админ түвшний эсэх (super admin эсвэл admin). */
+export function isAdminLevel(roleId: number): boolean {
+  return roleId === ROLE_SUPERADMIN || roleId === ROLE_ADMIN;
+}
+
+/** role_id → хүний унших нэр. */
 export function roleLabel(roleId: number, lang: 'mn' | 'en' = 'mn'): string {
-  const mn: Record<number, string> = { 1: 'Админ', 2: 'Хэрэглэгч', 3: 'Менежер' };
-  const en: Record<number, string> = { 1: 'Admin', 2: 'User', 3: 'Manager' };
+  const mn: Record<number, string> = { 1: 'Супер админ', 2: 'Админ', 3: 'Менежер', 4: 'Хэрэглэгч' };
+  const en: Record<number, string> = { 1: 'Superadmin', 2: 'Admin', 3: 'Manager', 4: 'User' };
   return (lang === 'en' ? en : mn)[roleId] ?? (lang === 'en' ? 'User' : 'Хэрэглэгч');
 }
