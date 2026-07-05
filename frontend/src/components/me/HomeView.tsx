@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ChevronRight, User, ShieldCheck, KeyRound, Info, Mail, Clock } from 'lucide-react';
+import { ChevronRight, User, ShieldCheck, KeyRound } from 'lucide-react';
 import { useT } from '@/lib/lang';
 import { roleLabel, displayName, type SessionUser } from '@/lib/types';
 import { formatDateMN, formatTS, formatWeekdayMN, initialsOf } from '@/lib/format';
@@ -44,34 +44,6 @@ export default function HomeView({ me }: { me: SessionUser }) {
           </div>
           <div className="profile-card__action">
             <Link className="btn btn--secondary" href="/profile">{T('me.home.viewProfile')}</Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="card" aria-label={T('me.home.accountDetails')} style={{ marginTop: 16 }}>
-        <div className="card__head card__head--with-sub">
-          <div className="card__title">
-            <Info size={18} strokeWidth={2} style={{ color: 'var(--dan-blue-text)' }} />
-            <h2>{T('me.home.accountDetails')}</h2>
-          </div>
-          <span className="card__sub">gerege-backend-template-v27 · GET /users/me</span>
-        </div>
-        <div>
-          <div className="defrow">
-            <span className="defrow__label"><User size={13} style={{ verticalAlign: 'middle', marginRight: 6 }} />{T('me.field.username')}</span>
-            <span className="defrow__value">{me.username}</span>
-          </div>
-          <div className="defrow">
-            <span className="defrow__label"><Mail size={13} style={{ verticalAlign: 'middle', marginRight: 6 }} />{T('me.field.email')}</span>
-            <span className="defrow__value mono">{me.email}</span>
-          </div>
-          <div className="defrow">
-            <span className="defrow__label"><ShieldCheck size={13} style={{ verticalAlign: 'middle', marginRight: 6 }} />{T('me.field.role')}</span>
-            <span className="defrow__value"><span className="chip chip--neutral">role_id {me.roleId}</span> {roleLabel(me.roleId, lang)}</span>
-          </div>
-          <div className="defrow">
-            <span className="defrow__label"><Clock size={13} style={{ verticalAlign: 'middle', marginRight: 6 }} />{T('me.field.created')}</span>
-            <span className="defrow__value mono">{formatTS(me.createdAt)}</span>
           </div>
         </div>
       </section>
