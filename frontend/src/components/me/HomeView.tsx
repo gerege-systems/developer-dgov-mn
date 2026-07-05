@@ -92,11 +92,6 @@ export default function HomeView({ me }: { me: SessionUser }) {
                 {T('me.google.linkPrompt')}
               </p>
             </div>
-            <div className="profile-card__action">
-              <a className="btn btn--secondary" href="/api/integrations/google-login/connect">
-                <GoogleG /> <span style={{ marginLeft: 8 }}>{T('me.google.connect')}</span>
-              </a>
-            </div>
           </div>
         )}
       </section>

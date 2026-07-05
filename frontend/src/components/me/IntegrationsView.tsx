@@ -109,36 +109,26 @@ export default function EidIntegrationsView({ items, google }: { items: Integrat
                 <div translate="no" style={{ fontWeight: 700, fontSize: 15, color: 'var(--fg)' }}>Google</div>
                 <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 2 }}>Нэвтрэлт</div>
               </div>
-              {/* Үйлдлийн товч: холбогдсон → салгах (✓), тохируулсан → холбох (+), эс бөгөөс удахгүй */}
-              {google.connected ? (
+              {/* Google холболтыг зөвхөн login-оос хийнэ. Энд зөвхөн САЛГАНА
+                  (холбогдсон бол ✓). Холбоогүй үед үйлдлийн товчгүй. */}
+              {google.connected && (
                 <button type="button" onClick={disconnectGoogle} disabled={googleBusy} title="Салгах" aria-label="Салгах"
                   className="int-card__action int-card__action--connected"
                   style={{ flex: '0 0 auto', width: 32, height: 32, borderRadius: 8, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--success, #16a34a)', background: 'var(--card, #fff)', color: 'var(--success, #16a34a)', cursor: 'pointer', opacity: googleBusy ? 0.5 : 1 }}>
                   {googleBusy ? <Clock size={16} /> : <Check size={16} strokeWidth={2.5} />}
                 </button>
-              ) : google.configured ? (
-                <a href="/api/integrations/google-login/connect" title="Холбох" aria-label="Холбох" className="int-card__action"
-                  style={{ flex: '0 0 auto', width: 32, height: 32, borderRadius: 8, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--dan-blue-text, #2563eb)', background: 'var(--card, #fff)', color: 'var(--dan-blue-text, #2563eb)', textDecoration: 'none' }}>
-                  <Plus size={18} strokeWidth={2.5} />
-                </a>
-              ) : (
-                <span title="Удахгүй" aria-label="Удахгүй" style={{ flex: '0 0 auto', width: 32, height: 32, borderRadius: 8, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border, #e5e7eb)', background: 'var(--card, #fff)', color: 'var(--muted)', opacity: 0.6, cursor: 'not-allowed' }}>
-                  <Plus size={18} strokeWidth={2} />
-                </span>
               )}
             </div>
 
             <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.5, margin: 0 }}>
-              Google бүртгэлээ холбож, дараа нь Google-ээр шууд нэвтэрнэ.
+              {google.connected
+                ? 'Google бүртгэл холбогдсон. Салгахыг хүсвэл баруун дээд ✓-г дарна уу.'
+                : 'Google холболтыг нэвтрэх хуудсанд Google-ээр нэвтрэх үедээ хийнэ.'}
             </p>
 
             {google.connected ? (
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--success, #16a34a)', fontWeight: 600 }}>
                 <CheckCircle2 size={13} /> Холбогдсон{google.email ? <span className="mono" style={{ color: 'var(--muted)', fontWeight: 400 }}>· {google.email}</span> : null}
-              </span>
-            ) : !google.configured ? (
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--muted)' }}>
-                <Clock size={13} /> Удахгүй
               </span>
             ) : null}
           </div>
