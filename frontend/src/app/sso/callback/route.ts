@@ -4,6 +4,18 @@ import { ACCESS_COOKIE, REFRESH_COOKIE, ACCESS_MAX_AGE, REFRESH_MAX_AGE, cookieO
 
 export const dynamic = 'force-dynamic';
 
+// Relative Location-оор redirect — nginx-ийн ард Next.js-ийн req.url нь дотоод
+// хаягийг (0.0.0.0:3000) хардаг тул origin-д тулгуурлавал browser буруу хаяг руу
+// очно. Relative зам ("/me/dashboard") нь browser-ийн нийтийн хаягаар шийдэгдэнэ.
+function redirectTo(path: string, session?: { token: string; refresh: string }): NextResponse {
+  const res = new NextResponse(null, { status: 303, headers: { Location: path } });
+  if (session) {
+    res.cookies.set(ACCESS_COOKIE, session.token, cookieOptions(ACCESS_MAX_AGE));
+    res.cookies.set(REFRESH_COOKIE, session.refresh, cookieOptions(REFRESH_MAX_AGE));
+  }
+  return res;
+}
+
 // GET /sso/callback — Gerege SSO-д бүртгэгдсэн redirect_uri. sso.gerege.mn
 // нэвтрэлтийн дараа browser-ийг ?code&state-тэй энд буцаана. Backend /sso/callback
 // нь state-ийг шалгаж, code-ийг токен болгож солин, иргэнийг upsert хийж JWT хос
@@ -14,13 +26,13 @@ export async function GET(req: Request) {
 
   // Хэрэглэгч цуцалсан / SSO алдаа → нэвтрэх хуудас руу тайлбартай буцаана.
   if (url.searchParams.get('error')) {
-    return NextResponse.redirect(new URL('/login?error=sso', url.origin));
+    return redirectTo('/login?error=sso');
   }
 
   const code = url.searchParams.get('code');
   const state = url.searchParams.get('state');
   if (!code || !state) {
-    return NextResponse.redirect(new URL('/login?error=sso', url.origin));
+    return redirectTo('/login?error=sso');
   }
 
   const r = await backendFetch<{ token?: string; refresh_token?: string }>('/sso/callback', {
@@ -29,12 +41,7 @@ export async function GET(req: Request) {
   });
 
   if (r.ok && r.data?.token && r.data?.refresh_token) {
-    // Cookie-г redirect хариун дээр шууд суулгана — ингэснээр top-level
-    // навигацид (lax) найдвартай хадгалагдана.
-    const res = NextResponse.redirect(new URL('/me/dashboard', url.origin));
-    res.cookies.set(ACCESS_COOKIE, r.data.token, cookieOptions(ACCESS_MAX_AGE));
-    res.cookies.set(REFRESH_COOKIE, r.data.refresh_token, cookieOptions(REFRESH_MAX_AGE));
-    return res;
+    return redirectTo('/me/dashboard', { token: r.data.token, refresh: r.data.refresh_token });
   }
-  return NextResponse.redirect(new URL('/login?error=sso', url.origin));
+  return redirectTo('/login?error=sso');
 }

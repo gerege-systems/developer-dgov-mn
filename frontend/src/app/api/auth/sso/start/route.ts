@@ -6,11 +6,13 @@ export const dynamic = 'force-dynamic';
 // GET /api/auth/sso/start — Gerege SSO (sso.gerege.mn, OIDC) нэвтрэлт эхлүүлэх.
 // Backend /sso/start нь state үүсгэж (Redis), authorize URL буцаана; browser-ийг
 // тийш чиглүүлнэ. Landing дээрх "Gerege SSO-гоор нэвтрэх" товч энд заана.
-export async function GET(req: Request) {
+export async function GET() {
   const r = await backendFetch<{ auth_url?: string }>('/sso/start', { method: 'POST' });
   const authURL = r.ok ? r.data?.auth_url : undefined;
   if (!authURL) {
-    return NextResponse.redirect(new URL('/login?error=sso', req.url));
+    // Relative Location — nginx-ийн ард origin буруу гарахаас сэргийлнэ.
+    return new NextResponse(null, { status: 303, headers: { Location: '/login?error=sso' } });
   }
+  // authURL нь sso.gerege.mn-ий абсолют URL — шууд redirect.
   return NextResponse.redirect(authURL);
 }
