@@ -10,7 +10,7 @@ import {
   Users, ShieldHalf, UserCircle, Briefcase, Bot, Languages, Building2,
   ScrollText, ShieldAlert, CreditCard, KeyRound, Smartphone,
   Landmark, FileText, FileCheck, CalendarClock, Wallet, Bell, Plug,
-  FileSignature,
+  FileSignature, Gauge, Server, Route,
 } from 'lucide-react';
 import UserMenu from './UserMenu';
 import { signOut } from '@/lib/signout';
@@ -71,8 +71,20 @@ const SYSTEMS: NavSystem[] = [
         labelKey: 'group.management',
         items: [
           { href: '/admin/users', labelKey: 'nav.users', icon: Users, perm: 'users.manage' },
+          { href: '/admin/core', labelKey: 'nav.coreSearch', icon: Search, perm: 'users.manage' },
           { href: '/admin/roles', labelKey: 'nav.roles', icon: ShieldHalf, perm: 'roles.manage' },
           { href: '/admin/settings', labelKey: 'nav.settings', icon: ShieldCheck, perm: 'settings.manage' },
+        ],
+      },
+      {
+        labelKey: 'group.gateway',
+        items: [
+          { href: '/admin/gateway/overview', labelKey: 'nav.gwOverview', icon: Gauge, perm: 'gateway.manage' },
+          { href: '/admin/gateway/services', labelKey: 'nav.gwServices', icon: Server, perm: 'gateway.manage' },
+          { href: '/admin/gateway/routes', labelKey: 'nav.gwRoutes', icon: Route, perm: 'gateway.manage' },
+          { href: '/admin/gateway/consumers', labelKey: 'nav.gwConsumers', icon: KeyRound, perm: 'gateway.manage' },
+          { href: '/admin/gateway/policies', labelKey: 'nav.gwPolicies', icon: ShieldAlert, perm: 'gateway.manage' },
+          { href: '/admin/gateway/logs', labelKey: 'nav.gwLogs', icon: ScrollText, perm: 'gateway.manage' },
         ],
       },
       {
