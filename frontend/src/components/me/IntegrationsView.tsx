@@ -29,13 +29,16 @@ const DESCRIPTIONS: Record<IntegrationID, string> = {
   'google-meet': 'eID хуралд Google Meet-ийн видео уулзалтыг шууд үүсгэнэ.',
 };
 
-export default function EidIntegrationsView({ items }: { items: IntegrationStatus[] }) {
+type GoogleLoginStatus = { configured: boolean; connected: boolean; email: string; name: string; picture: string };
+
+export default function EidIntegrationsView({ items, google }: { items: IntegrationStatus[]; google?: GoogleLoginStatus }) {
   const router = useRouter();
   const params = useSearchParams();
   const connectedParam = params.get('connected');
   const error = params.get('error');
   const errorProvider = params.get('provider');
   const [pending, setPending] = React.useState<IntegrationID | null>(null);
+  const [googleBusy, setGoogleBusy] = React.useState(false);
   const [actionErr, setActionErr] = React.useState('');
 
   async function disconnect(id: IntegrationID) {
@@ -48,12 +51,23 @@ export default function EidIntegrationsView({ items }: { items: IntegrationStatu
     else setActionErr(res.message || 'Салгахад алдаа гарлаа. Дахин оролдоно уу.');
   }
 
+  async function disconnectGoogle() {
+    if (!window.confirm('Google холболтыг салгах уу? Дараа нь Google-ээр нэвтрэх боломжгүй болно.')) return;
+    setGoogleBusy(true);
+    setActionErr('');
+    const res = await postJSON('/api/integrations/google-login/disconnect', {});
+    setGoogleBusy(false);
+    if (res.ok) router.refresh();
+    else setActionErr(res.message || 'Салгахад алдаа гарлаа. Дахин оролдоно уу.');
+  }
+
   const errorText = (e: string) =>
     e === 'not_configured' ? 'Энэ үйлчилгээ хараахан тохируулагдаагүй байна.'
       : e === 'denied' ? 'Та зөвшөөрлийг цуцалсан байна.'
       : e === 'invalid_state' ? 'Аюулгүй байдлын шалгалт амжилтгүй. Дахин оролдоно уу.'
       : e === 'exchange_failed' ? 'Токен солилцоо амжилтгүй. Дахин оролдоно уу.'
       : e === 'store_failed' ? 'Токен хадгалахад алдаа гарлаа. Дахин оролдоно уу.'
+      : e === 'conflict' ? 'Энэ Google бүртгэл өөр хэрэглэгчид холбогдсон байна.'
       : 'Тодорхойгүй алдаа гарлаа.';
 
   return (
@@ -83,6 +97,53 @@ export default function EidIntegrationsView({ items }: { items: IntegrationStatu
           gap: 16,
         }}
       >
+        {/* Google Login — бусад интеграцтай ижил карт, гэхдээ token биш identity
+            холболт (users.google_sub). Холбох = OAuth → одоогийн хэрэглэгчид уях. */}
+        {google && (
+          <div className="card int-card" style={{ padding: 18, display: 'flex', flexDirection: 'column', gap: 12, margin: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+              <span aria-hidden style={{ flex: '0 0 auto', width: 40, height: 40, borderRadius: 10, background: 'var(--surface-2, #f3f4f6)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.8 6.1C12.2 13.3 17.6 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9.1h12.4c-.5 2.9-2.1 5.3-4.6 7l7.1 5.5c4.2-3.9 6.6-9.6 6.6-17z"/><path fill="#FBBC05" d="M10.4 28.3a14.5 14.5 0 0 1 0-8.6l-7.8-6.1a24 24 0 0 0 0 20.8l7.8-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.1-5.5c-2 1.4-4.6 2.2-8.8 2.2-6.4 0-11.8-3.8-13.6-9.3l-7.8 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
+              </span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div translate="no" style={{ fontWeight: 700, fontSize: 15, color: 'var(--fg)' }}>Google</div>
+                <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 2 }}>Нэвтрэлт</div>
+              </div>
+              {/* Үйлдлийн товч: холбогдсон → салгах (✓), тохируулсан → холбох (+), эс бөгөөс удахгүй */}
+              {google.connected ? (
+                <button type="button" onClick={disconnectGoogle} disabled={googleBusy} title="Салгах" aria-label="Салгах"
+                  className="int-card__action int-card__action--connected"
+                  style={{ flex: '0 0 auto', width: 32, height: 32, borderRadius: 8, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--success, #16a34a)', background: 'var(--card, #fff)', color: 'var(--success, #16a34a)', cursor: 'pointer', opacity: googleBusy ? 0.5 : 1 }}>
+                  {googleBusy ? <Clock size={16} /> : <Check size={16} strokeWidth={2.5} />}
+                </button>
+              ) : google.configured ? (
+                <a href="/api/integrations/google-login/connect" title="Холбох" aria-label="Холбох" className="int-card__action"
+                  style={{ flex: '0 0 auto', width: 32, height: 32, borderRadius: 8, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--dan-blue-text, #2563eb)', background: 'var(--card, #fff)', color: 'var(--dan-blue-text, #2563eb)', textDecoration: 'none' }}>
+                  <Plus size={18} strokeWidth={2.5} />
+                </a>
+              ) : (
+                <span title="Удахгүй" aria-label="Удахгүй" style={{ flex: '0 0 auto', width: 32, height: 32, borderRadius: 8, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border, #e5e7eb)', background: 'var(--card, #fff)', color: 'var(--muted)', opacity: 0.6, cursor: 'not-allowed' }}>
+                  <Plus size={18} strokeWidth={2} />
+                </span>
+              )}
+            </div>
+
+            <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.5, margin: 0 }}>
+              Google бүртгэлээ холбож, дараа нь Google-ээр шууд нэвтэрнэ.
+            </p>
+
+            {google.connected ? (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--success, #16a34a)', fontWeight: 600 }}>
+                <CheckCircle2 size={13} /> Холбогдсон{google.email ? <span className="mono" style={{ color: 'var(--muted)', fontWeight: 400 }}>· {google.email}</span> : null}
+              </span>
+            ) : !google.configured ? (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--muted)' }}>
+                <Clock size={13} /> Удахгүй
+              </span>
+            ) : null}
+          </div>
+        )}
+
         {items.map((it) => {
           const Icon = ICONS[it.id];
           const busy = pending === it.id;
