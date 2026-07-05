@@ -19,7 +19,7 @@ import { DefRow } from './DefRow';
  */
 export default function ProfileView({ me }: { me: SessionUser }) {
   const { T, lang } = useT();
-  const initials = initialsOf(me.username);
+  const initials = initialsOf(me.fullName || me.username);
 
   return (
     <>
