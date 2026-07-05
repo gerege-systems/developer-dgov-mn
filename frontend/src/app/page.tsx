@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { KeyRound, Info, LogIn } from 'lucide-react';
+import { KeyRound, Info, LogIn, ShieldCheck } from 'lucide-react';
 import SigninShell from '@/components/SigninShell';
 import { hasSession } from '@/lib/session';
 
@@ -36,6 +36,13 @@ function Landing() {
           <LogIn size={18} strokeWidth={2} />
           <span>eID-ээр нэвтрэх</span>
         </Link>
+
+        {/* 2 дахь нэвтрэлт — Gerege SSO (sso.gerege.mn, OIDC). BFF route handler
+            руу шууд заана (redirect эхлүүлэх тул Link биш <a>). */}
+        <a className="btn btn--secondary btn--lg btn--block" href="/api/auth/sso/start" aria-label="Gerege SSO-гоор нэвтрэх" style={{ marginTop: 10 }}>
+          <ShieldCheck size={18} strokeWidth={2} />
+          <span>Gerege SSO-гоор нэвтрэх</span>
+        </a>
 
         <p className="signin-card__helper">
           <Info size={14} strokeWidth={2} />
