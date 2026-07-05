@@ -90,10 +90,11 @@ final class APIClient {
         return try? decodeData(data, http)
     }
 
-    // App2App-ийн буцах deeplink — Gerege eID апп approve хийсний дараа яг энэ рүү
-    // буцна. eID start-д callbackUrl болгож дамжуулна (ерөнхий App2App загвар:
-    // RP апп өөрийн scheme-ээ өгдөг). Info.plist-д бүртгэлтэй байх ёстой.
-    static let callbackURL = "geregetemp://eid/callback"
+    // App2App буцах URL. eID платформ callback-ийг ЗААВАЛ https + allowlist host
+    // (template.gerege.mn) байхыг шаарддаг — custom scheme-ийг чимээгүй хаядаг.
+    // Тийм учир https "bridge" хуудас руу буцаж, тэр хуудас нь native апп руу
+    // (geregetemp://eid/callback) үсэрдэг. (Хуудас: /app/eid/callback)
+    static let callbackURL = "https://template.gerege.mn/app/eid/callback"
 
     // eID device-link session эхлүүлэх. callbackUrl дамжуулбал (App2App) eID апп
     // approve-ийн дараа тэр рүү буцна; хоосон бол QR-аар өөр төхөөрөмжөөс уншуулна.
