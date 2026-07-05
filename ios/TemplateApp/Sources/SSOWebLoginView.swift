@@ -41,10 +41,6 @@ private struct SSOWebView: UIViewRepresentable {
     func makeUIView(context: Context) -> WKWebView {
         let cfg = WKWebViewConfiguration()
         cfg.websiteDataStore = .default()
-        // UA-д marker залгана (default UA + " GeregeTemplateApp") — sso.gerege.mn
-        // үүнийг харвал eID App2App return хийхгүй (webview-ээс Safari руу гаргахгүй),
-        // зөвхөн push+poll хийж webview дотроо дуусгана.
-        cfg.applicationNameForUserAgent = "GeregeTemplateApp"
         let web = WKWebView(frame: .zero, configuration: cfg)
         web.navigationDelegate = context.coordinator
         let url = APIClient.baseURL.appendingPathComponent("/api/auth/sso/start")
