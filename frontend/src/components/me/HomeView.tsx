@@ -6,7 +6,6 @@ import { ChevronRight, User, ShieldCheck, KeyRound, Info, Mail, Clock } from 'lu
 import { useT } from '@/lib/lang';
 import { roleLabel, displayName, type SessionUser } from '@/lib/types';
 import { formatDateMN, formatTS, formatWeekdayMN, initialsOf } from '@/lib/format';
-import EidSummaryCard from './EidSummaryCard';
 
 export default function HomeView({ me }: { me: SessionUser }) {
   const { T, lang } = useT();
@@ -115,8 +114,6 @@ export default function HomeView({ me }: { me: SessionUser }) {
           </div>
         </section>
       )}
-
-      <EidSummaryCard show={!!me.eid} />
 
       <div className="section-divider">{T('me.home.sections')}</div>
 

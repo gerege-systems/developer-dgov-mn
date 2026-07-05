@@ -13,7 +13,7 @@ import { pkiGet, type PkiCertItem, type PkiDeviceItem, type PkiActItem } from '@
 /**
  * EidPkiSection нь Profile хуудсанд иргэний eID PKI-ийн ДЭЛГЭРЭНГҮЙ жагсаалтыг
  * харуулна: гэрчилгээ, холбоотой төхөөрөмж, RP-scoped activity. Нэгдсэн тоо
- * (tiles) нь Dashboard дахь EidSummaryCard-д. PKI_READ эрхгүй (403) бол
+ * (tiles) нь Профайл дахь EidSummaryCard-д. PKI_READ эрхгүй (403) бол
  * "эрх хүлээгдэж байна"; eID хэрэглэгч биш бол render хийхгүй.
  */
 export default function EidPkiSection({ show }: { show: boolean }) {

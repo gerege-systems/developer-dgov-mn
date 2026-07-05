@@ -12,12 +12,14 @@ import { formatTS, initialsOf } from '@/lib/format';
 import { DefRow } from './DefRow';
 import EidCard from './EidCard';
 import CertCard from './CertCard';
+import EidSummaryCard from './EidSummaryCard';
 
 /**
  * ProfileView нь /me/profile хуудсын гол харагдац. Дээд талд профайл карт
- * (бүтэн өргөн), доор нь 2 баганат grid-д: бүртгэлийн талбарууд, eID таних
- * мэдээлэл, тоон гэрчилгээ. Гэрчилгээ/төхөөрөмжийн жагсаалт нь Аюулгүй байдал,
- * төлөөлдөг байгууллага нь Байгууллага хуудсанд байрлана.
+ * (бүтэн өргөн), дараа нь eID PKI-ийн нэгдсэн хураангуй (EidSummaryCard),
+ * доор нь 2 баганат grid-д: бүртгэлийн талбарууд, eID таних мэдээлэл, тоон
+ * гэрчилгээ. Гэрчилгээ/төхөөрөмжийн жагсаалт нь Аюулгүй байдал, төлөөлдөг
+ * байгууллага нь Байгууллага хуудсанд байрлана.
  */
 export default function ProfileView({ me }: { me: SessionUser }) {
   const { T, lang } = useT();
@@ -49,6 +51,8 @@ export default function ProfileView({ me }: { me: SessionUser }) {
           </div>
         </div>
       </section>
+
+      <EidSummaryCard show={!!me.eid} />
 
       <div className="profile-grid">
         <section className="card" aria-label={T('me.profile.fields')}>

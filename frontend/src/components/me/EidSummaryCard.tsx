@@ -20,7 +20,7 @@ function Tile({ icon, label, value, tone }: { icon: React.ReactNode; label: stri
 }
 
 /**
- * EidSummaryCard нь Хяналтын самбарт (Dashboard) иргэний eID PKI-ийн нэгдсэн
+ * EidSummaryCard нь Профайл хуудсанд иргэний eID PKI-ийн нэгдсэн
  * тоог tile-аар харуулна: хүчинтэй/нийт гэрчилгээ, нэвтрэлт/гарын үсгийн тоо,
  * идэвхтэй/нийт төхөөрөмж, төлөөлдөг байгууллагын тоо. PKI_READ эрхгүй (403)
  * бол тайлбар мессеж; eID хэрэглэгч биш бол огт render хийхгүй.
