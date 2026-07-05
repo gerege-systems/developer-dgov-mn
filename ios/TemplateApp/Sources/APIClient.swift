@@ -90,13 +90,12 @@ final class APIClient {
         return try? decodeData(data, http)
     }
 
-    // App2App буцах URL. eID платформ callback-ийг ЗААВАЛ https + allowlist host
-    // (template.gerege.mn) байхыг шаарддаг. iOS custom-browser механизмаар
-    // (retScheme) eID апп буцахдаа callback-ийн scheme-ийг retScheme-ээр солин
-    // нээдэг — retScheme=geregetemp өгвөл geregetemp://… -ээр native апп-ыг шууд
-    // нээнэ. Хэрэв ажиллахгүй бол /app/eid/callback bridge хуудас руу буцна
-    // (JS-ээр geregetemp:// руу үсэрнэ — fallback).
-    static let callbackURL = "https://template.gerege.mn/app/eid/callback?retScheme=geregetemp"
+    // App2App буцах URL. eID платформ callback-ыг өөрийн стандарт зам
+    // (/auth/eid/callback) руу албадан normalize хийж, Safari-д UIApplication.open-
+    // ээр нээдэг тул iOS Universal Link (AASA) энэ зам дээр ажиллаж, апп суусан
+    // үед browser-гүйгээр шууд TemplateApp руу route хийнэ. Host заавал allowlist
+    // (template.gerege.mn).
+    static let callbackURL = "https://template.gerege.mn/auth/eid/callback"
 
     // eID device-link session эхлүүлэх. callbackUrl дамжуулбал (App2App) eID апп
     // approve-ийн дараа тэр рүү буцна; хоосон бол QR-аар өөр төхөөрөмжөөс уншуулна.

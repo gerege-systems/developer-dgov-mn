@@ -13,6 +13,8 @@ targets:
     platform: iOS
     sources:
       - path: Sources
+    entitlements:
+      path: Sources/TemplateApp.entitlements
     # Info.plist — xcodegen үүсгэнэ. App2App-д geregetemp:// scheme бүртгэж,
     # geregesmartid:// (Gerege eID апп)-ыг canOpenURL-д зөвшөөрнө.
     info:

@@ -33,6 +33,13 @@ const nextConfig = {
   // Standalone output → slim production Docker image (server.js + minimal
   // node_modules) instead of shipping the whole tree. See frontend/Dockerfile.
   output: 'standalone',
+  // iOS Universal Links — Apple нь /.well-known/apple-app-site-association-ыг
+  // татдаг. Next.js dot-folder route-ыг найдваргүй тул /api/aasa руу rewrite хийнэ.
+  async rewrites() {
+    return [
+      { source: '/.well-known/apple-app-site-association', destination: '/api/aasa' },
+    ];
+  },
   // Security headers applied to every response.
   async headers() {
     const securityHeaders = [
