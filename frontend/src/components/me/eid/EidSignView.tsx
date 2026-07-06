@@ -4,36 +4,59 @@
 // Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 
 import React, { useEffect, useRef, useState } from 'react';
-import { PenLine, Upload, FileText, ShieldCheck, Download, RotateCcw, Clock, Smartphone } from 'lucide-react';
-import { CSRF_HEADER } from '@/lib/client';
+import { useQuery } from '@tanstack/react-query';
+import { PenLine, Upload, FileText, ShieldCheck, Download, RotateCcw, Clock, Smartphone, Building2 } from 'lucide-react';
+import { CSRF_HEADER, getJSON } from '@/lib/client';
+import { useT } from '@/lib/lang';
 
 type Phase =
   | { kind: 'idle' }
-  | { kind: 'uploading'; filename: string }
-  | { kind: 'waiting'; sessionID: string; filename: string; documentHash: string; verificationCode: string }
-  | { kind: 'completed'; sessionID: string; filename: string }
+  | { kind: 'uploading'; filename: string; orgName?: string }
+  | { kind: 'waiting'; sessionID: string; filename: string; documentHash: string; verificationCode: string; orgName?: string }
+  | { kind: 'completed'; sessionID: string; filename: string; orgName?: string }
   | { kind: 'error'; msg: string };
 
-// Иргэний хувийн PDF гарын үсэг (PIN2): файл сонгох → баталгаажуулах код →
-// Gerege App-аас PIN2 → poll → гарын үсэгтэй PDF татах. Байгууллагын тамга
-// (org seal) энэ template-д байхгүй — зөвхөн хувь хүний урсгал.
+// Нэвтэрсэн иргэний eidmongolia.mn төлөөлдөг байгууллагууд (OrgRepsCard-тай ижил хэлбэр).
+interface OrgRep {
+  org_etsi: string;
+  org_name: string;
+  org_name_en?: string;
+  right_type?: string;
+}
+
+// Иргэний PDF гарын үсэг (PIN2): файл сонгох → (сонголтоор) байгууллага сонгох →
+// баталгаажуулах код → Gerege App-аас PIN2 → poll → гарын үсэгтэй PDF татах.
+// Байгууллагын нэрийн өмнөөс зурвал (onBehalfOf) гарын үсэг иргэний PIN2 cert-ээр
+// зурагдах ба eidmongolia төлөөллийн эрхийг шалгана (тамга биш).
 export default function EidSignView() {
+  const { T, lang } = useT();
   const [phase, setPhase] = useState<Phase>({ kind: 'idle' });
+  const [orgEtsi, setOrgEtsi] = useState<string>(''); // '' = хувь хүнийхээрээ
   const fileRef = useRef<HTMLInputElement | null>(null);
   const pollTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Төлөөлдөг байгууллагууд — байгаа бол "нэрийн өмнөөс зурах" сонголт харуулна.
+  const orgsQ = useQuery({
+    queryKey: ['eid-organizations'],
+    queryFn: () => getJSON<OrgRep[]>('/api/me/eid/organizations'),
+  });
+  const orgs = orgsQ.data ?? [];
+  const orgLabel = (o: OrgRep) => (lang === 'en' && o.org_name_en ? o.org_name_en : o.org_name);
+  const selectedOrg = orgs.find((o) => o.org_etsi === orgEtsi);
 
   // Poll /api/sign/[id] until completed.
   useEffect(() => {
     if (phase.kind !== 'waiting') return;
     const sid = phase.sessionID;
     const fname = phase.filename;
+    const orgName = phase.orgName;
     pollTimer.current = setInterval(async () => {
       try {
         const r = await fetch(`/api/sign/${encodeURIComponent(sid)}`, { cache: 'no-store' });
         const data = await r.json();
         if (data.state === 'completed') {
           if (pollTimer.current) clearInterval(pollTimer.current);
-          setPhase({ kind: 'completed', sessionID: sid, filename: fname });
+          setPhase({ kind: 'completed', sessionID: sid, filename: fname, orgName });
         } else if (data.state === 'failed' || data.state === 'expired' || data.state === 'rejected') {
           if (pollTimer.current) clearInterval(pollTimer.current);
           setPhase({ kind: 'error', msg: data.state === 'expired' ? 'Хугацаа дууссан' : 'Гарын үсэг зурахаас татгалзлаа' });
@@ -53,10 +76,13 @@ export default function EidSignView() {
       setPhase({ kind: 'error', msg: 'PDF файл оруулна уу' });
       return;
     }
-    setPhase({ kind: 'uploading', filename: f.name });
+    // Сонгосон байгууллагын нэрийн өмнөөс зурах бол etsi/нэрийг phase дундуур зөөнө.
+    const orgName = selectedOrg ? orgLabel(selectedOrg) : undefined;
+    setPhase({ kind: 'uploading', filename: f.name, orgName });
     try {
       const fd = new FormData();
       fd.set('file', f, f.name);
+      if (orgEtsi) fd.set('onBehalfOf', orgEtsi);
       // Multipart body postJSON-оор явуулж болохгүй тул CSRF header-г шууд тавина
       // (lib/bff.ts checkOrigin шаарддаг; lib/client.ts-тэй ижил header).
       const r = await fetch('/api/sign/init', { method: 'POST', headers: { [CSRF_HEADER]: '1' }, body: fd });
@@ -71,6 +97,7 @@ export default function EidSignView() {
         filename: data.filename ?? f.name,
         documentHash: data.document_hash ?? '',
         verificationCode: data.verification_code ?? '',
+        orgName,
       });
     } catch (err) {
       setPhase({ kind: 'error', msg: String(err) });
@@ -92,7 +119,34 @@ export default function EidSignView() {
           <div className="card__head card__head--with-sub">
             <div className="card__title"><PenLine size={18} strokeWidth={2} style={{ color: 'var(--dan-blue-text)' }} /><h2>Баримт сонгох</h2></div>
           </div>
-          <div style={{ textAlign: 'center', padding: '28px 16px' }}>
+          <div style={{ padding: '20px 16px 28px', textAlign: 'center' }}>
+            {/* Хэний нэрийн өмнөөс зурах: хувь хүн эсвэл төлөөлдөг байгууллага.
+                Байгууллага байхгүй ч сонголтыг үргэлж card дээр харуулна. */}
+            <div style={{ maxWidth: 380, margin: '0 auto 20px', textAlign: 'left' }}>
+              <label htmlFor="sign-onbehalf" style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--muted)' }}>
+                <Building2 size={13} /> {T('eid.sign.as.label')}
+              </label>
+              <select
+                id="sign-onbehalf"
+                className="input"
+                style={{ width: '100%', marginTop: 6 }}
+                value={orgEtsi}
+                onChange={(e) => setOrgEtsi(e.target.value)}
+                disabled={orgsQ.isPending}
+              >
+                <option value="">{T('eid.sign.as.self')}</option>
+                {orgs.map((o) => (
+                  <option key={o.org_etsi} value={o.org_etsi}>
+                    {orgLabel(o)}{o.right_type ? ` (${o.right_type})` : ''}
+                  </option>
+                ))}
+              </select>
+              {orgEtsi ? (
+                <p style={{ fontSize: 12, color: 'var(--muted)', marginTop: 6 }}>{T('eid.sign.as.orgHint')}</p>
+              ) : !orgsQ.isPending && orgs.length === 0 ? (
+                <p style={{ fontSize: 12, color: 'var(--muted)', marginTop: 6 }}>{T('eid.sign.as.none')}</p>
+              ) : null}
+            </div>
             <button type="button" className="btn btn--primary" onClick={() => fileRef.current?.click()}>
               <Upload size={16} style={{ marginRight: 8 }} /> PDF файл сонгох
             </button>
@@ -118,6 +172,9 @@ export default function EidSignView() {
           </div>
           <h2 style={{ fontSize: 18, fontWeight: 700, color: 'var(--fg)', marginTop: 14 }}>Утсаараа баталгаажуулна уу</h2>
           <p style={{ fontSize: 13, color: 'var(--muted)', marginTop: 4, display: 'inline-flex', alignItems: 'center', gap: 6 }}><FileText size={14} /> {phase.filename}</p>
+          {phase.orgName && (
+            <p style={{ fontSize: 13, color: 'var(--dan-blue-text)', marginTop: 4, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6 }}><Building2 size={14} /> {phase.orgName} {T('eid.sign.onBehalfOf')}</p>
+          )}
           {phase.verificationCode && (
             <>
               <p style={{ fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--muted)', marginTop: 18 }}>Баталгаажуулах код</p>
@@ -145,6 +202,9 @@ export default function EidSignView() {
           </div>
           <h2 style={{ fontSize: 18, fontWeight: 700, color: 'var(--fg)', marginTop: 14 }}>Гарын үсэг амжилттай зурлаа</h2>
           <p style={{ fontSize: 13, color: 'var(--muted)', marginTop: 4 }}>{phase.filename}</p>
+          {phase.orgName && (
+            <p style={{ fontSize: 13, color: 'var(--dan-blue-text)', marginTop: 4, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6 }}><Building2 size={14} /> {phase.orgName} {T('eid.sign.onBehalfOf')}</p>
+          )}
           <div style={{ marginTop: 20, display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
             <a className="btn btn--primary" href={`/api/sign/${encodeURIComponent(phase.sessionID)}/download`}>
               <Download size={16} style={{ marginRight: 8 }} /> Татаж авах
