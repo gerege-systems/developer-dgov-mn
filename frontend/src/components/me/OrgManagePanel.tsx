@@ -37,7 +37,6 @@ export default function OrgManagePanel({
   const qc = useQueryClient();
   const [signerReg, setSignerReg] = useState('');
   const [role, setRole] = useState('');
-  const [right, setRight] = useState('JOINT');
   const [okMsg, setOkMsg] = useState('');
 
   const base = `/api/me/eid/organizations/${encodeURIComponent(regNo)}`;
@@ -53,7 +52,6 @@ export default function OrgManagePanel({
       const res = await postJSON<Signer[]>(`${base}/signers`, {
         signer_reg_no: signerReg.trim(),
         role: role.trim(),
-        right_type: right,
       });
       if (!res.ok) throw new Error(res.message || T('me.orgs.signers.add.error'));
       return res.data ?? [];
@@ -149,10 +147,6 @@ export default function OrgManagePanel({
             disabled={add.isPending}
             maxLength={100}
           />
-          <select className="select" value={right} onChange={(e) => setRight(e.target.value)} disabled={add.isPending} style={{ flex: '0 0 auto' }}>
-            <option value="JOINT">{T('me.orgs.signers.add.right.joint')}</option>
-            <option value="SOLE">{T('me.orgs.signers.add.right.sole')}</option>
-          </select>
           <button type="submit" className="btn btn--primary" disabled={add.isPending || signerReg.trim().length < 8}>
             <UserPlus size={16} strokeWidth={2} />
             <span>{add.isPending ? T('me.orgs.signers.add.submitting') : T('me.orgs.signers.add.button')}</span>

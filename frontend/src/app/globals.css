@@ -1270,9 +1270,13 @@ html[lang="en"] .i18n-banner { display: block; }
 .org-reps { display: flex; flex-direction: column; gap: 10px; }
 .org-rep { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; }
 .org-rep__icon { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; background: var(--dan-blue-soft); color: var(--dan-blue-text); flex: none; }
-.org-rep__body { min-width: 0; }
+.org-rep__body { min-width: 0; flex: 1; }
 .org-rep__name { font-weight: 600; }
 .org-rep__meta { color: var(--muted); font-size: 0.85em; margin-top: 2px; }
+/* Дарж болох карт (жагсаалт → удирдах дэлгэц). */
+.org-rep--link { text-decoration: none; color: inherit; cursor: pointer; transition: border-color .12s, background .12s; }
+.org-rep--link:hover { border-color: var(--border-strong); background: var(--surface-2, rgba(127,127,127,.05)); }
+.org-rep__chevron { color: var(--muted); flex: none; }
 
 /* Профайл — eID PKI самбар (EidPkiSection) */
 .pki-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 4px; }

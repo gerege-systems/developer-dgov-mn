@@ -4,13 +4,13 @@
 // Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Building2, Plus, Settings2 } from 'lucide-react';
+import { Building2, Plus, ChevronRight } from 'lucide-react';
 import { useT } from '@/lib/lang';
 import { getJSON, postJSON } from '@/lib/client';
 import { formatTS } from '@/lib/format';
 import Alert from '@/components/Alert';
-import OrgManagePanel from '@/components/me/OrgManagePanel';
 
 interface OrgRep {
   org_etsi: string;
@@ -25,17 +25,15 @@ interface OrgRep {
 
 /**
  * OrgRepsCard нь нэвтэрсэн иргэний eidmongolia.mn-д бүртгэлтэй, төлөөлж чадах
- * байгууллагуудыг харуулна (GET /api/me/eid/organizations) ба регистрийн
- * дугаараар шинэ байгууллага холбох форм (POST — улсын бүртгэлээс XYP-ээр
- * баталгаажуулж eidmongolia-д төлөөлөл нэмнэ). Зөвхөн eID-ээр нэвтэрсэн
- * хэрэглэгчид өгөгдөлтэй.
+ * байгууллагуудыг ЖАГСААЛТААР харуулна. Карт тус бүрийг дарахад тухайн байгууллагын
+ * удирдах дэлгэц рүү (гарын үсэг зурагч нэмэх/хасах, салгах) шилжинэ. Мөн регистрийн
+ * дугаараар шинэ байгууллага холбох форм. Зөвхөн eID-ээр нэвтэрсэн хэрэглэгчид.
  */
 export default function OrgRepsCard({ show }: { show: boolean }) {
   const { T, lang } = useT();
   const qc = useQueryClient();
   const [regNo, setRegNo] = useState('');
   const [okMsg, setOkMsg] = useState('');
-  const [openOrg, setOpenOrg] = useState<string | null>(null);
 
   const q = useQuery({
     queryKey: ['eid-organizations'],
@@ -81,40 +79,26 @@ export default function OrgRepsCard({ show }: { show: boolean }) {
       ) : (
         <div className="org-reps">
           {q.data.map((o) => (
-            <div key={o.org_etsi} className="org-rep-wrap">
-              <div className="org-rep">
-                <div className="org-rep__icon" aria-hidden="true"><Building2 size={18} /></div>
-                <div className="org-rep__body">
-                  <div className="org-rep__name">
-                    {(lang === 'en' && o.org_name_en) ? o.org_name_en : o.org_name}
-                    {o.right_type && <span className="chip chip--neutral" style={{ marginLeft: 8 }}>{o.right_type}</span>}
-                  </div>
-                  <div className="org-rep__meta mono">
-                    {o.org_register}
-                    {o.role ? ` · ${o.role}` : ''}
-                    {o.valid_to ? ` · ${T('me.orgs.until')} ${formatTS(o.valid_to)}` : ''}
-                  </div>
+            <Link
+              key={o.org_etsi}
+              href={`/me/organizations/eid/${encodeURIComponent(o.org_register)}`}
+              className="org-rep org-rep--link"
+              aria-label={`${o.org_name} — ${T('me.orgs.manage')}`}
+            >
+              <div className="org-rep__icon" aria-hidden="true"><Building2 size={18} /></div>
+              <div className="org-rep__body">
+                <div className="org-rep__name">
+                  {(lang === 'en' && o.org_name_en) ? o.org_name_en : o.org_name}
+                  {o.right_type && <span className="chip chip--neutral" style={{ marginLeft: 8 }}>{o.right_type}</span>}
                 </div>
-                <button
-                  type="button"
-                  className="btn btn--ghost btn--sm"
-                  aria-expanded={openOrg === o.org_register}
-                  onClick={() => setOpenOrg(openOrg === o.org_register ? null : o.org_register)}
-                >
-                  <Settings2 size={15} strokeWidth={2} />
-                  <span>{T('me.orgs.manage')}</span>
-                </button>
+                <div className="org-rep__meta mono">
+                  {o.org_register}
+                  {o.role ? ` · ${o.role}` : ''}
+                  {o.valid_to ? ` · ${T('me.orgs.until')} ${formatTS(o.valid_to)}` : ''}
+                </div>
               </div>
-              {openOrg === o.org_register && (
-                <OrgManagePanel
-                  regNo={o.org_register}
-                  onUnlinked={() => {
-                    setOpenOrg(null);
-                    void qc.invalidateQueries({ queryKey: ['eid-organizations'] });
-                  }}
-                />
-              )}
-            </div>
+              <ChevronRight size={18} className="org-rep__chevron" aria-hidden="true" />
+            </Link>
           ))}
         </div>
       )}
