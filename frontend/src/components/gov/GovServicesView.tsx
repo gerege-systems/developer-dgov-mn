@@ -74,8 +74,8 @@ export default function GovServicesView() {
               <span className="chip chip--neutral">{s.processing_days > 0 ? `${s.processing_days} хоног` : 'Шуурхай'}</span>
               {s.online && <span className="chip chip--success" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><Globe size={11} /> Онлайн</span>}
             </div>
-            <button className="btn btn--primary btn--sm" type="button" onClick={() => apply(s)} disabled={applying === s.id}>
-              {applying === s.id ? <><Loader2 size={14} className="spin" /> Илгээж буй…</> : 'Хүсэлт гаргах'}
+            <button className="btn btn--primary" type="button" onClick={() => apply(s)} disabled={applying === s.id}>
+              {applying === s.id ? <><Loader2 size={16} className="spin" /> Илгээж буй…</> : 'Хүсэлт гаргах'}
             </button>
           </div>
         ))}

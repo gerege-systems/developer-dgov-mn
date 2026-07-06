@@ -45,8 +45,8 @@ export default function GovReferencesView() {
               {REF_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
             </select>
           </label>
-          <button className="btn btn--primary btn--sm" type="button" onClick={request} disabled={busy}>
-            {busy ? <><Loader2 size={14} className="spin" /> Захиалж буй…</> : <><Plus size={14} /> Захиалах</>}
+          <button className="btn btn--primary" type="button" onClick={request} disabled={busy}>
+            {busy ? <><Loader2 size={16} className="spin" /> Захиалж буй…</> : <><Plus size={16} /> Захиалах</>}
           </button>
         </div>
       </section>

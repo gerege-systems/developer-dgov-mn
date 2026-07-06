@@ -53,8 +53,8 @@ export default function GovAppointmentsView() {
       {err && <div className="alert alert--danger" role="alert" style={{ marginBottom: 14 }}>{err}</div>}
 
       <div style={{ marginBottom: 14, display: 'flex', justifyContent: 'flex-end' }}>
-        <button className="btn btn--primary btn--sm" type="button" onClick={() => setAdding((a) => !a)}>
-          {adding ? <><X size={14} /> Болих</> : <><Plus size={14} /> Цаг захиалах</>}
+        <button className="btn btn--primary" type="button" onClick={() => setAdding((a) => !a)}>
+          {adding ? <><X size={16} /> Болих</> : <><Plus size={16} /> Цаг захиалах</>}
         </button>
       </div>
 
@@ -72,8 +72,8 @@ export default function GovAppointmentsView() {
             <label>Байршил<input className="input" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Дүүрэг, хороо" /></label>
           </div>
           <div style={{ marginTop: 12 }}>
-            <button className="btn btn--primary btn--sm" type="button" onClick={book} disabled={busy || !when}>
-              {busy ? <><Loader2 size={14} className="spin" /> Захиалж буй…</> : 'Захиалах'}
+            <button className="btn btn--primary" type="button" onClick={book} disabled={busy || !when}>
+              {busy ? <><Loader2 size={16} className="spin" /> Захиалж буй…</> : 'Захиалах'}
             </button>
           </div>
         </section>

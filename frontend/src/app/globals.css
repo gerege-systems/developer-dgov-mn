@@ -1115,6 +1115,9 @@ html[lang="en"] .i18n-banner { display: block; }
 /* ---------- Admin tables / RBAC matrix ---------- */
 
 .users__head { display: flex; justify-content: flex-end; margin-bottom: 14px; }
+/* OrgList нь card биш тул дээрх card-тай (OrgRepsCard) .card + .card дүрэмд
+   баригдахгүй — үүсгэх товч дээрх карттай наалдахаас сэргийлж дээд зай өгнө. */
+.orgs { margin-top: 16px; }
 .users-table-wrap { padding: 0; overflow-x: auto; }
 .users-table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .users-table th { text-align: left; padding: 11px 14px; color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .03em; border-bottom: 1px solid var(--border); }
