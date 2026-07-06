@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Trash2, UserPlus, Unlink, User } from 'lucide-react';
+import { Trash2, UserPlus, Unlink, User, Send } from 'lucide-react';
 import { useT } from '@/lib/lang';
 import { getJSON, postJSON, sendJSON } from '@/lib/client';
 import Alert from '@/components/Alert';
@@ -87,6 +87,18 @@ export default function OrgManagePanel({
     onSuccess: (data) => qc.setQueryData(signersKey, data),
   });
 
+  const resend = useMutation({
+    mutationFn: async (reg: string) => {
+      const res = await sendJSON<AddSignerResult>(`${base}/signers/resend?signer=${encodeURIComponent(reg)}`, 'POST');
+      if (!res.ok) throw new Error(res.message || T('me.orgs.signers.resend.error'));
+      return res.data ?? { signers: [] };
+    },
+    onSuccess: (data) => {
+      qc.setQueryData(signersKey, data.signers ?? []);
+      setOkMsg(T('me.orgs.signers.resend.success'));
+    },
+  });
+
   const unlink = useMutation({
     mutationFn: async () => {
       const res = await sendJSON(`${base}`, 'DELETE');
@@ -137,6 +149,18 @@ export default function OrgManagePanel({
                   {s.reg_no}{s.role ? ` · ${s.role}` : ''}
                 </div>
               </div>
+              {isAdmin && s.status === 'PENDING' && s.reg_no && (
+                <button
+                  type="button"
+                  className="btn btn--ghost btn--icon"
+                  aria-label={T('me.orgs.signers.resend.button')}
+                  title={T('me.orgs.signers.resend.button')}
+                  disabled={resend.isPending}
+                  onClick={() => resend.mutate(s.reg_no as string)}
+                >
+                  <Send size={15} />
+                </button>
+              )}
               {isAdmin && !s.self && s.reg_no && (
                 <button
                   type="button"
@@ -153,6 +177,7 @@ export default function OrgManagePanel({
         </div>
       )}
       {remove.isError && <div style={{ marginTop: 6 }}><Alert kind="danger">{(remove.error as Error).message}</Alert></div>}
+      {resend.isError && <div style={{ marginTop: 6 }}><Alert kind="danger">{(resend.error as Error).message}</Alert></div>}
 
       {/* Байгууллага салгах — зөвхөн ADMIN (MANAGER өөрийгөө салгаж чадахгүй). */}
       {isAdmin && (
