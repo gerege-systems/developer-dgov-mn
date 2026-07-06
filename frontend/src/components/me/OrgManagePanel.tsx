@@ -18,8 +18,14 @@ interface Signer {
   name_en?: string;
   role?: string;
   right_type: string;
+  status: string; // ACTIVE | PENDING
   source: string;
   self: boolean;
+}
+
+interface AddSignerResult {
+  signers: Signer[];
+  pending_confirmation?: { signer_etsi: string; signer_reg_no?: string; session_id: string };
 }
 
 /**
@@ -55,19 +61,20 @@ export default function OrgManagePanel({
 
   const add = useMutation({
     mutationFn: async () => {
-      const res = await postJSON<Signer[]>(`${base}/signers`, {
+      const res = await postJSON<AddSignerResult>(`${base}/signers`, {
         signer_reg_no: signerReg.trim(),
         role: role.trim(),
       });
       if (!res.ok) throw new Error(res.message || T('me.orgs.signers.add.error'));
-      return res.data ?? [];
+      return res.data ?? { signers: [] };
     },
     onSuccess: (data) => {
-      qc.setQueryData(signersKey, data);
+      qc.setQueryData(signersKey, data.signers ?? []);
       setSignerReg('');
       setRole('');
       setAddOpen(false);
-      setOkMsg(T('me.orgs.signers.add.success'));
+      // Sign-push илгээгдсэн бол тэр хүн PIN-ээрээ баталгаажуулах хүртэл PENDING.
+      setOkMsg(data.pending_confirmation ? T('me.orgs.signers.add.pushSent') : T('me.orgs.signers.add.success'));
     },
   });
 
@@ -124,6 +131,7 @@ export default function OrgManagePanel({
                   <span className="org-signer__nm">{(lang === 'en' && s.name_en) ? s.name_en : (s.name || s.reg_no)}</span>
                   {s.self && <span className="chip chip--neutral">{T('me.orgs.signers.you')}</span>}
                   <span className={`chip ${s.right_type === 'ADMIN' ? 'chip--admin' : 'chip--neutral'}`}>{s.right_type}</span>
+                  {s.status === 'PENDING' && <span className="chip chip--pending">{T('me.orgs.signers.pending')}</span>}
                 </div>
                 <div className="org-signer__meta mono">
                   {s.reg_no}{s.role ? ` · ${s.role}` : ''}

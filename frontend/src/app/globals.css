@@ -1288,6 +1288,7 @@ html[lang="en"] .i18n-banner { display: block; }
 .org-signer__nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
 .org-signer__meta { color: var(--muted); font-size: 0.82em; margin-top: 3px; }
 .chip--admin { background: var(--dan-blue-soft); color: var(--dan-blue-text); }
+.chip--pending { background: var(--warning-soft, #fef3c7); color: var(--warning, #b45309); }
 .btn--icon { padding: 6px; flex: none; }
 
 /* Профайл — eID PKI самбар (EidPkiSection) */
