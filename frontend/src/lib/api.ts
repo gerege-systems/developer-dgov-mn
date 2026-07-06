@@ -125,11 +125,26 @@ export async function authedFetch<T>(path: string, init?: RequestInit): Promise<
   return withAuth(newToken);
 }
 
+export type MeResult =
+  | { ok: true; user: SessionUser }
+  | { ok: false; status: number };
+
+/**
+ * GET /users/me — бүтэлгүйтлийн ШАЛТГААНЫГ ялгаж буцаана. 401/403 бол сесси
+ * үнэхээр үхсэн (refresh дууссан/rotation-д хэрэглэгдсэн) — cookie цэвэрлэж
+ * дахин нэвтрүүлнэ; бусад статус (503/5xx) бол backend түр унтарсан — session-г
+ * хадгална. AreaShell энэ ялгааг ашиглан redirect давталтаас сэргийлдэг.
+ */
+export async function getMe(): Promise<MeResult> {
+  const r = await authedFetch<MeData>('/users/me', { method: 'GET' });
+  if (r.ok && r.data?.user) return { ok: true, user: toSessionUser(r.data.user) };
+  return { ok: false, status: r.status };
+}
+
 /** GET /users/me — нэвтэрсэн хэрэглэгчийн профайл, эсвэл null. */
 export async function fetchMe(): Promise<SessionUser | null> {
-  const r = await authedFetch<MeData>('/users/me', { method: 'GET' });
-  if (r.ok && r.data?.user) return toSessionUser(r.data.user);
-  return null;
+  const r = await getMe();
+  return r.ok ? r.user : null;
 }
 
 /** GET /rbac/me — нэвтэрсэн хэрэглэгчийн эрхийн түлхүүрүүд (хоосон массив fallback). */

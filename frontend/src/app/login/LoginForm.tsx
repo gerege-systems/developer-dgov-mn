@@ -63,7 +63,10 @@ export default function LoginForm({ next, notice, googleLink, googleError }: { n
     notice === 'verified' ? 'Бүртгэл баталгаажлаа. Одоо нэвтэрнэ үү.'
     : notice === 'registered' ? 'Бүртгэл үүслээ.'
     : notice === 'reset' ? 'Нууц үг шинэчлэгдлээ.'
+    : notice === 'expired' ? 'Таны сесси дууссан тул дахин нэвтэрнэ үү.'
     : '';
+  // Сесси дуусах нь мэдээллийн (амжилтын биш) шинжтэй тул info өнгө.
+  const noticeKind = notice === 'expired' ? 'info' : 'success';
 
   const stopTimers = useCallback(() => {
     if (pollTimer.current) {
@@ -229,7 +232,7 @@ export default function LoginForm({ next, notice, googleLink, googleError }: { n
         </p>
       </div>
 
-      {noticeText && <Alert kind="success">{noticeText}</Alert>}
+      {noticeText && <Alert kind={noticeKind}>{noticeText}</Alert>}
 
       {/* Google эхний удаа — eID-ээр баталгаажуулах анхааруулгыг дээр тод харуулна */}
       {googleLink && <Alert kind="info">{T('auth.google.linkNotice')}</Alert>}
