@@ -105,7 +105,9 @@ html, body {
 }
 
 a { color: var(--dan-blue-text); text-decoration: none; }
-a:hover { text-decoration: underline; }
+/* Hover үед доогуур зураас гаргахгүй (nav/карт/block-link-үүдэд эвгүй харагддаг);
+   холбоосууд өнгөөрөө (--dan-blue-text) ялгагдана. */
+a:hover { text-decoration: none; }
 
 button { font-family: inherit; cursor: pointer; }
 
