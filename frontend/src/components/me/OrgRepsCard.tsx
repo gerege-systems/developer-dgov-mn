@@ -5,11 +5,12 @@
 
 import React, { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Building2, Plus } from 'lucide-react';
+import { Building2, Plus, Settings2 } from 'lucide-react';
 import { useT } from '@/lib/lang';
 import { getJSON, postJSON } from '@/lib/client';
 import { formatTS } from '@/lib/format';
 import Alert from '@/components/Alert';
+import OrgManagePanel from '@/components/me/OrgManagePanel';
 
 interface OrgRep {
   org_etsi: string;
@@ -34,6 +35,7 @@ export default function OrgRepsCard({ show }: { show: boolean }) {
   const qc = useQueryClient();
   const [regNo, setRegNo] = useState('');
   const [okMsg, setOkMsg] = useState('');
+  const [openOrg, setOpenOrg] = useState<string | null>(null);
 
   const q = useQuery({
     queryKey: ['eid-organizations'],
@@ -79,19 +81,39 @@ export default function OrgRepsCard({ show }: { show: boolean }) {
       ) : (
         <div className="org-reps">
           {q.data.map((o) => (
-            <div key={o.org_etsi} className="org-rep">
-              <div className="org-rep__icon" aria-hidden="true"><Building2 size={18} /></div>
-              <div className="org-rep__body">
-                <div className="org-rep__name">
-                  {(lang === 'en' && o.org_name_en) ? o.org_name_en : o.org_name}
-                  {o.right_type && <span className="chip chip--neutral" style={{ marginLeft: 8 }}>{o.right_type}</span>}
+            <div key={o.org_etsi} className="org-rep-wrap">
+              <div className="org-rep">
+                <div className="org-rep__icon" aria-hidden="true"><Building2 size={18} /></div>
+                <div className="org-rep__body">
+                  <div className="org-rep__name">
+                    {(lang === 'en' && o.org_name_en) ? o.org_name_en : o.org_name}
+                    {o.right_type && <span className="chip chip--neutral" style={{ marginLeft: 8 }}>{o.right_type}</span>}
+                  </div>
+                  <div className="org-rep__meta mono">
+                    {o.org_register}
+                    {o.role ? ` · ${o.role}` : ''}
+                    {o.valid_to ? ` · ${T('me.orgs.until')} ${formatTS(o.valid_to)}` : ''}
+                  </div>
                 </div>
-                <div className="org-rep__meta mono">
-                  {o.org_register}
-                  {o.role ? ` · ${o.role}` : ''}
-                  {o.valid_to ? ` · ${T('me.orgs.until')} ${formatTS(o.valid_to)}` : ''}
-                </div>
+                <button
+                  type="button"
+                  className="btn btn--ghost btn--sm"
+                  aria-expanded={openOrg === o.org_register}
+                  onClick={() => setOpenOrg(openOrg === o.org_register ? null : o.org_register)}
+                >
+                  <Settings2 size={15} strokeWidth={2} />
+                  <span>{T('me.orgs.manage')}</span>
+                </button>
               </div>
+              {openOrg === o.org_register && (
+                <OrgManagePanel
+                  regNo={o.org_register}
+                  onUnlinked={() => {
+                    setOpenOrg(null);
+                    void qc.invalidateQueries({ queryKey: ['eid-organizations'] });
+                  }}
+                />
+              )}
             </div>
           ))}
         </div>
