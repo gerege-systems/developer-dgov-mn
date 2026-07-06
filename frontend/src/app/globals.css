@@ -1279,6 +1279,16 @@ html[lang="en"] .i18n-banner { display: block; }
 .org-rep--link { text-decoration: none; color: inherit; cursor: pointer; transition: border-color .12s, background .12s; }
 .org-rep--link:hover { border-color: var(--border-strong); background: var(--surface-2, rgba(127,127,127,.05)); }
 .org-rep__chevron { color: var(--muted); flex: none; }
+/* Байгууллагын гарын үсэг зурагчид — картан жагсаалт (аватар + нэр + эрх). */
+.org-signers { display: flex; flex-direction: column; gap: 8px; }
+.org-signer { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; }
+.org-signer__avatar { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; background: var(--dan-blue-soft); color: var(--dan-blue-text); flex: none; }
+.org-signer__body { min-width: 0; flex: 1; }
+.org-signer__name { font-weight: 600; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-width: 0; }
+.org-signer__nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.org-signer__meta { color: var(--muted); font-size: 0.82em; margin-top: 3px; }
+.chip--admin { background: var(--dan-blue-soft); color: var(--dan-blue-text); }
+.btn--icon { padding: 6px; flex: none; }
 
 /* Профайл — eID PKI самбар (EidPkiSection) */
 .pki-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 4px; }

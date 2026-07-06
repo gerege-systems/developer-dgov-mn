@@ -72,8 +72,8 @@ export default function OrgRepsCard({ show }: { show: boolean }) {
           <div className="card__title"><h2>{T('me.orgs.title')}</h2></div>
           <span className="card__sub">{T('me.orgs.sub')} <span className="mono">eidmongolia.mn/v3</span></span>
         </div>
-        <button type="button" className="btn btn--primary btn--sm" style={{ flex: 'none' }} onClick={() => { setOkMsg(''); add.reset(); setAddOpen(true); }}>
-          <Plus size={15} strokeWidth={2} />
+        <button type="button" className="btn btn--primary" style={{ flex: 'none' }} onClick={() => { setOkMsg(''); add.reset(); setAddOpen(true); }}>
+          <Plus size={16} strokeWidth={2} />
           <span>{T('me.orgs.add.label')}</span>
         </button>
       </div>
