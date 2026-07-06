@@ -9,6 +9,7 @@ import { Trash2, UserPlus, Unlink } from 'lucide-react';
 import { useT } from '@/lib/lang';
 import { getJSON, postJSON, sendJSON } from '@/lib/client';
 import Alert from '@/components/Alert';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 interface Signer {
   person_etsi: string;
@@ -24,7 +25,8 @@ interface Signer {
 /**
  * OrgManagePanel нь нэвтэрсэн иргэний төлөөлдөг НЭГ байгууллагын гарын үсэг зурах
  * эрхтэй хүмүүсийг удирдах (жагсаах / РД-гээр нэмэх / хасах) ба тухайн байгууллагаас
- * өөрийгөө салгах (unlink) UI. Бүх дуудлага eidmongolia талд эрхийг шалгана.
+ * өөрийгөө салгах (unlink) UI. Гарын үсэг зурагч нэмэх/хасах нь баруун дээд товч →
+ * pop-up-аар; зөвхөн ADMIN эрхтэй хэрэглэгчид (eidmongolia талд бас шалгагдана).
  */
 export default function OrgManagePanel({
   regNo,
@@ -38,6 +40,7 @@ export default function OrgManagePanel({
   const [signerReg, setSignerReg] = useState('');
   const [role, setRole] = useState('');
   const [okMsg, setOkMsg] = useState('');
+  const [addOpen, setAddOpen] = useState(false);
 
   const base = `/api/me/eid/organizations/${encodeURIComponent(regNo)}`;
   const signersKey = ['eid-org-signers', regNo];
@@ -46,6 +49,9 @@ export default function OrgManagePanel({
     queryKey: signersKey,
     queryFn: () => getJSON<Signer[]>(`${base}/signers`),
   });
+
+  // Зөвхөн ADMIN эрхтэй хэрэглэгч гарын үсэг зурагч нэмж/хасаж чадна.
+  const isAdmin = !!q.data?.some((s) => s.self && s.right_type === 'ADMIN');
 
   const add = useMutation({
     mutationFn: async () => {
@@ -60,6 +66,7 @@ export default function OrgManagePanel({
       qc.setQueryData(signersKey, data);
       setSignerReg('');
       setRole('');
+      setAddOpen(false);
       setOkMsg(T('me.orgs.signers.add.success'));
     },
   });
@@ -84,13 +91,22 @@ export default function OrgManagePanel({
 
   const submitAdd = (e: React.FormEvent) => {
     e.preventDefault();
-    setOkMsg('');
     if (signerReg.trim().length >= 8) add.mutate();
   };
 
   return (
     <div className="org-manage" style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--border)' }}>
-      <h3 style={{ fontSize: '0.9rem', margin: '0 0 8px' }}>{T('me.orgs.signers.title')}</h3>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 8 }}>
+        <h3 style={{ fontSize: '0.9rem', margin: 0 }}>{T('me.orgs.signers.title')}</h3>
+        {isAdmin && (
+          <button type="button" className="btn btn--primary btn--sm" style={{ flex: 'none' }} onClick={() => { setOkMsg(''); add.reset(); setAddOpen(true); }}>
+            <UserPlus size={15} strokeWidth={2} />
+            <span>{T('me.orgs.signers.add.button')}</span>
+          </button>
+        )}
+      </div>
+
+      {okMsg && <div style={{ marginBottom: 8 }}><Alert kind="success">{okMsg}</Alert></div>}
 
       {q.isPending ? (
         <p className="muted" style={{ fontSize: 13 }}>{T('me.orgs.signers.loading')}</p>
@@ -102,7 +118,7 @@ export default function OrgManagePanel({
         <div className="org-signers" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           {q.data.map((s) => (
             <div key={s.person_etsi} className="org-signer" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
                 <span>{(lang === 'en' && s.name_en) ? s.name_en : (s.name || s.reg_no)}</span>
                 {s.self && <span className="chip chip--neutral" style={{ marginLeft: 6 }}>{T('me.orgs.signers.you')}</span>}
                 <span className="chip chip--neutral" style={{ marginLeft: 6 }}>{s.right_type}</span>
@@ -110,7 +126,7 @@ export default function OrgManagePanel({
                   {s.reg_no}{s.role ? ` · ${s.role}` : ''}
                 </div>
               </div>
-              {!s.self && s.reg_no && (
+              {isAdmin && !s.self && s.reg_no && (
                 <button
                   type="button"
                   className="btn btn--ghost btn--sm"
@@ -125,39 +141,10 @@ export default function OrgManagePanel({
           ))}
         </div>
       )}
+      {remove.isError && <div style={{ marginTop: 6 }}><Alert kind="danger">{(remove.error as Error).message}</Alert></div>}
 
-      {/* Гарын үсэг зурагч нэмэх */}
-      <form onSubmit={submitAdd} style={{ marginTop: 10 }}>
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-          <input
-            className="input mono"
-            style={{ flex: '1 1 140px' }}
-            placeholder={T('me.orgs.signers.add.regno')}
-            value={signerReg}
-            onChange={(e) => { setSignerReg(e.target.value); setOkMsg(''); if (add.isError) add.reset(); }}
-            disabled={add.isPending}
-            maxLength={20}
-          />
-          <input
-            className="input"
-            style={{ flex: '1 1 140px' }}
-            placeholder={T('me.orgs.signers.add.role')}
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            disabled={add.isPending}
-            maxLength={100}
-          />
-          <button type="submit" className="btn btn--primary" disabled={add.isPending || signerReg.trim().length < 8}>
-            <UserPlus size={16} strokeWidth={2} />
-            <span>{add.isPending ? T('me.orgs.signers.add.submitting') : T('me.orgs.signers.add.button')}</span>
-          </button>
-        </div>
-        {add.isError && <div style={{ marginTop: 6 }}><Alert kind="danger">{(add.error as Error).message}</Alert></div>}
-        {okMsg && <div style={{ marginTop: 6 }}><Alert kind="success">{okMsg}</Alert></div>}
-      </form>
-
-      {/* Байгууллага салгах */}
-      <div style={{ marginTop: 12 }}>
+      {/* Байгууллага салгах — аль ч эрхтэй хэрэглэгч өөрийгөө салгаж болно. */}
+      <div style={{ marginTop: 14 }}>
         <button
           type="button"
           className="btn btn--ghost btn--sm"
@@ -170,6 +157,48 @@ export default function OrgManagePanel({
         </button>
         {unlink.isError && <div style={{ marginTop: 6 }}><Alert kind="danger">{(unlink.error as Error).message}</Alert></div>}
       </div>
+
+      {/* Гарын үсэг зурагч нэмэх — pop-up */}
+      <Dialog open={addOpen} onOpenChange={(o) => { setAddOpen(o); if (!o) add.reset(); }}>
+        <DialogContent className="dlg-content--narrow">
+          <DialogHeader>
+            <DialogTitle>{T('me.orgs.signers.add.title')}</DialogTitle>
+            <DialogDescription>{T('me.orgs.signers.add.hint')}</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={submitAdd}>
+            <label className="org-add__label">{T('me.orgs.signers.add.regno')}</label>
+            <input
+              className="input mono"
+              style={{ marginTop: 6 }}
+              autoFocus
+              autoComplete="off"
+              placeholder={T('me.orgs.signers.add.regno')}
+              value={signerReg}
+              onChange={(e) => { setSignerReg(e.target.value); if (add.isError) add.reset(); }}
+              disabled={add.isPending}
+              maxLength={20}
+            />
+            <label className="org-add__label" style={{ marginTop: 10, display: 'block' }}>{T('me.orgs.signers.add.role')}</label>
+            <input
+              className="input"
+              style={{ marginTop: 6 }}
+              placeholder={T('me.orgs.signers.add.role')}
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              disabled={add.isPending}
+              maxLength={100}
+            />
+            {add.isError && <div style={{ marginTop: 10 }}><Alert kind="danger">{(add.error as Error).message}</Alert></div>}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 14 }}>
+              <button type="button" className="btn btn--ghost" onClick={() => setAddOpen(false)} disabled={add.isPending}>{T('common.cancel')}</button>
+              <button type="submit" className="btn btn--primary" disabled={add.isPending || signerReg.trim().length < 8}>
+                <UserPlus size={16} strokeWidth={2} />
+                <span>{add.isPending ? T('me.orgs.signers.add.submitting') : T('me.orgs.signers.add.button')}</span>
+              </button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

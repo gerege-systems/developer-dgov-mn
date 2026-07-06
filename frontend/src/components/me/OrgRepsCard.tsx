@@ -11,6 +11,7 @@ import { useT } from '@/lib/lang';
 import { getJSON, postJSON } from '@/lib/client';
 import { formatTS } from '@/lib/format';
 import Alert from '@/components/Alert';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 interface OrgRep {
   org_etsi: string;
@@ -26,14 +27,15 @@ interface OrgRep {
 /**
  * OrgRepsCard нь нэвтэрсэн иргэний eidmongolia.mn-д бүртгэлтэй, төлөөлж чадах
  * байгууллагуудыг ЖАГСААЛТААР харуулна. Карт тус бүрийг дарахад тухайн байгууллагын
- * удирдах дэлгэц рүү (гарын үсэг зурагч нэмэх/хасах, салгах) шилжинэ. Мөн регистрийн
- * дугаараар шинэ байгууллага холбох форм. Зөвхөн eID-ээр нэвтэрсэн хэрэглэгчид.
+ * удирдах дэлгэц рүү шилжинэ. Баруун дээд "Байгууллага холбох" товч нь регистрийн
+ * дугаараар шинэ байгууллага холбох pop-up гаргана. Зөвхөн eID-ээр нэвтэрсэн хэрэглэгчид.
  */
 export default function OrgRepsCard({ show }: { show: boolean }) {
   const { T, lang } = useT();
   const qc = useQueryClient();
   const [regNo, setRegNo] = useState('');
   const [okMsg, setOkMsg] = useState('');
+  const [addOpen, setAddOpen] = useState(false);
 
   const q = useQuery({
     queryKey: ['eid-organizations'],
@@ -50,6 +52,7 @@ export default function OrgRepsCard({ show }: { show: boolean }) {
     onSuccess: (data) => {
       qc.setQueryData(['eid-organizations'], data);
       setRegNo('');
+      setAddOpen(false);
       setOkMsg(T('me.orgs.add.success'));
     },
   });
@@ -59,16 +62,23 @@ export default function OrgRepsCard({ show }: { show: boolean }) {
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const reg = regNo.trim();
-    setOkMsg('');
     if (reg) add.mutate(reg);
   };
 
   return (
     <section className="card" aria-label={T('me.orgs.title')}>
-      <div className="card__head card__head--with-sub">
-        <div className="card__title"><h2>{T('me.orgs.title')}</h2></div>
-        <span className="card__sub">{T('me.orgs.sub')} <span className="mono">eidmongolia.mn/v3</span></span>
+      <div className="card__head card__head--with-sub" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+        <div style={{ minWidth: 0 }}>
+          <div className="card__title"><h2>{T('me.orgs.title')}</h2></div>
+          <span className="card__sub">{T('me.orgs.sub')} <span className="mono">eidmongolia.mn/v3</span></span>
+        </div>
+        <button type="button" className="btn btn--primary btn--sm" style={{ flex: 'none' }} onClick={() => { setOkMsg(''); add.reset(); setAddOpen(true); }}>
+          <Plus size={15} strokeWidth={2} />
+          <span>{T('me.orgs.add.label')}</span>
+        </button>
       </div>
+
+      {okMsg && <div style={{ marginBottom: 10 }}><Alert kind="success">{okMsg}</Alert></div>}
 
       {q.isPending ? (
         <p className="muted" style={{ padding: '4px 2px' }}>{T('me.orgs.loading')}</p>
@@ -103,31 +113,39 @@ export default function OrgRepsCard({ show }: { show: boolean }) {
         </div>
       )}
 
-      {/* Регистрийн дугаараар байгууллага холбох */}
-      <form className="org-add" onSubmit={submit} style={{ marginTop: 16 }}>
-        <label htmlFor="org-reg-no" className="org-add__label">{T('me.orgs.add.label')}</label>
-        <div className="org-add__row" style={{ display: 'flex', gap: 8, marginTop: 6 }}>
-          <input
-            id="org-reg-no"
-            className="input mono"
-            style={{ flex: 1 }}
-            inputMode="numeric"
-            autoComplete="off"
-            placeholder={T('me.orgs.add.placeholder')}
-            value={regNo}
-            onChange={(e) => { setRegNo(e.target.value); setOkMsg(''); if (add.isError) add.reset(); }}
-            disabled={add.isPending}
-            maxLength={16}
-          />
-          <button type="submit" className="btn btn--primary" disabled={add.isPending || regNo.trim().length < 4}>
-            <Plus size={16} strokeWidth={2} />
-            <span>{add.isPending ? T('me.orgs.add.submitting') : T('me.orgs.add.button')}</span>
-          </button>
-        </div>
-        <p className="muted" style={{ marginTop: 6, fontSize: 13 }}>{T('me.orgs.add.hint')}</p>
-        {add.isError && <div style={{ marginTop: 8 }}><Alert kind="danger">{(add.error as Error).message}</Alert></div>}
-        {okMsg && <div style={{ marginTop: 8 }}><Alert kind="success">{okMsg}</Alert></div>}
-      </form>
+      {/* Байгууллага холбох — pop-up */}
+      <Dialog open={addOpen} onOpenChange={(o) => { setAddOpen(o); if (!o) add.reset(); }}>
+        <DialogContent className="dlg-content--narrow">
+          <DialogHeader>
+            <DialogTitle>{T('me.orgs.add.label')}</DialogTitle>
+            <DialogDescription>{T('me.orgs.add.hint')}</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={submit}>
+            <label htmlFor="org-reg-no" className="org-add__label">{T('me.orgs.add.placeholder')}</label>
+            <input
+              id="org-reg-no"
+              className="input mono"
+              style={{ marginTop: 6 }}
+              inputMode="numeric"
+              autoComplete="off"
+              autoFocus
+              placeholder={T('me.orgs.add.placeholder')}
+              value={regNo}
+              onChange={(e) => { setRegNo(e.target.value); if (add.isError) add.reset(); }}
+              disabled={add.isPending}
+              maxLength={16}
+            />
+            {add.isError && <div style={{ marginTop: 10 }}><Alert kind="danger">{(add.error as Error).message}</Alert></div>}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 14 }}>
+              <button type="button" className="btn btn--ghost" onClick={() => setAddOpen(false)} disabled={add.isPending}>{T('common.cancel')}</button>
+              <button type="submit" className="btn btn--primary" disabled={add.isPending || regNo.trim().length < 4}>
+                <Plus size={16} strokeWidth={2} />
+                <span>{add.isPending ? T('me.orgs.add.submitting') : T('me.orgs.add.button')}</span>
+              </button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }
