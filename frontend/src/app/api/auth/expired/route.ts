@@ -15,11 +15,11 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const next = safeNext(url.searchParams.get('next'));
 
-  const dest = new URL('/login', req.url);
-  dest.searchParams.set('next', next);
-  dest.searchParams.set('notice', 'expired');
-
-  const res = NextResponse.redirect(dest);
+  // Relative Location — nginx-ийн ард req.url нь Next-ийн дотоод HOSTNAME
+  // (0.0.0.0:3000)-г агуулдаг тул абсолют URL үүсгэвэл browser холбогдож
+  // чадахгүй хаяг руу чиглэнэ. Харьцангуй зам ашиглаж жинхэнэ origin-г хадгална.
+  const loc = `/login?next=${encodeURIComponent(next)}&notice=expired`;
+  const res = new NextResponse(null, { status: 307, headers: { Location: loc } });
   res.cookies.delete(ACCESS_COOKIE);
   res.cookies.delete(REFRESH_COOKIE);
   res.cookies.delete(SSO_LOGOUT_COOKIE);
