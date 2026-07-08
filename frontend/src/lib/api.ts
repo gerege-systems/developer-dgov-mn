@@ -125,6 +125,25 @@ export async function authedFetch<T>(path: string, init?: RequestInit): Promise<
   return withAuth(newToken);
 }
 
+/**
+ * Bearer токеноор backend руу хандаж, ТҮҮХИЙ Response-г буцаана (JSON тайлахгүй).
+ * Файл татах зэрэг binary хариунд ашиглана. 401 ирвэл нэг удаа refresh оролдоно.
+ */
+export async function authedRaw(path: string, init?: RequestInit): Promise<Response> {
+  const withAuth = (token?: string) =>
+    fetch(BASE + path, {
+      ...init,
+      cache: 'no-store',
+      headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}), ...forwardedForHeaders(), ...init?.headers },
+    });
+
+  const res = await withAuth(getAccessToken());
+  if (res.status !== 401) return res;
+  const newToken = await tryRefresh();
+  if (!newToken) return res;
+  return withAuth(newToken);
+}
+
 export type MeResult =
   | { ok: true; user: SessionUser }
   | { ok: false; status: number };

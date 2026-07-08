@@ -9,6 +9,7 @@ import type { IntegrationStatus, IntegrationID } from '@/lib/integrations';
 import DriveFiles from './DriveFiles';
 import DropboxFiles from './DropboxFiles';
 import MeetSpace from './MeetSpace';
+import GSpaceCard from './GSpaceCard';
 
 const ICONS: Record<IntegrationID, LucideIcon> = {
   'google-drive': HardDrive,
@@ -97,6 +98,10 @@ export default function EidIntegrationsView({ items, google }: { items: Integrat
           gap: 16,
         }}
       >
+        {/* Gerege Space — апп-ын өөрийн SFTP хадгалалт. OAuth-гүй, үргэлж холбогдсон;
+            хэрэглэгч бүрт 2MB зай. Хамгийн эхэнд байрлана. */}
+        <GSpaceCard />
+
         {/* Google Login — бусад интеграцтай ижил карт, гэхдээ token биш identity
             холболт (users.google_sub). Холбох = OAuth → одоогийн хэрэглэгчид уях. */}
         {google && (
