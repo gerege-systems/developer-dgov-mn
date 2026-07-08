@@ -2,6 +2,7 @@ import React from 'react';
 import { redirect } from 'next/navigation';
 import PageHead from '@/components/PageHead';
 import OrgRepsCard from '@/components/me/OrgRepsCard';
+import ImageUploadCard from '@/components/me/ImageUploadCard';
 import { fetchMe } from '@/lib/api';
 
 export const dynamic = 'force-dynamic';
@@ -16,6 +17,14 @@ export default async function MeOrganizationsPage() {
       <PageHead eyebrowKey="sys.user" titleKey="org.title" subKey="org.sub" />
       {/* eID-д бүртгэлтэй, төлөөлдөг байгууллагууд (eidmongolia.mn) */}
       <OrgRepsCard show={!!me.eid} />
+      {/* Хувь хүний гарын үсгийн зураг (Google Drive-д хадгална). */}
+      <ImageUploadCard
+        titleKey="me.assets.signatureTitle"
+        hintKey="me.assets.signatureHint"
+        path="/api/me/signature"
+        queryKey={['my-signature']}
+        canEdit
+      />
     </>
   );
 }

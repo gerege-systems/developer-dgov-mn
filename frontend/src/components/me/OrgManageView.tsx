@@ -11,6 +11,7 @@ import { ArrowLeft, Building2 } from 'lucide-react';
 import { useT } from '@/lib/lang';
 import { getJSON } from '@/lib/client';
 import OrgManagePanel from '@/components/me/OrgManagePanel';
+import ImageUploadCard from '@/components/me/ImageUploadCard';
 
 interface OrgRep {
   org_etsi: string;
@@ -74,6 +75,18 @@ export default function OrgManageView({ regNo }: { regNo: string }) {
           </>
         )}
       </section>
+
+      {/* Байгууллагын тамганы дардас (зөвхөн ADMIN оруулна). */}
+      {rep && (
+        <ImageUploadCard
+          titleKey="me.assets.stampTitle"
+          hintKey="me.assets.stampHint"
+          path={`/api/me/eid/organizations/${encodeURIComponent(regNo)}/stamp`}
+          queryKey={['org-stamp', regNo]}
+          canEdit={rep.right_type === 'ADMIN'}
+          aspect="1 / 1"
+        />
+      )}
     </>
   );
 }

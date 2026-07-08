@@ -63,6 +63,44 @@ export async function findOrCreateGeregeFolder(token: string): Promise<string | 
   return cj.id ?? null;
 }
 
+// uploadImageToDrive нь зургийг хэрэглэгчийн "Gerege" хавтаст байршуулж, "холбоос
+// бүхий хэн ч харах" эрх тавьж, <img>-д харагдах URL буцаана. drive.file scope тул
+// зөвхөн апп-ын үүсгэсэн файлыг л удирдана.
+export async function uploadImageToDrive(
+  token: string,
+  name: string,
+  mime: string,
+  data: Buffer,
+): Promise<string | null> {
+  const folderId = await findOrCreateGeregeFolder(token);
+  const boundary = 'gerege' + Math.random().toString(16).slice(2);
+  const meta: Record<string, unknown> = { name, mimeType: mime };
+  if (folderId) meta.parents = [folderId];
+  const pre = `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(meta)}\r\n--${boundary}\r\nContent-Type: ${mime}\r\n\r\n`;
+  const post = `\r\n--${boundary}--`;
+  const body = Buffer.concat([Buffer.from(pre, 'utf-8'), data, Buffer.from(post, 'utf-8')]);
+
+  const upRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': `multipart/related; boundary=${boundary}` },
+    body,
+    cache: 'no-store',
+  });
+  if (!upRes.ok) return null;
+  const uj = (await upRes.json()) as { id?: string };
+  const id = uj.id;
+  if (!id) return null;
+
+  // Харагдахуйц болгохын тулд "anyone with link: reader" эрх тавина.
+  await fetch(`https://www.googleapis.com/drive/v3/files/${id}/permissions`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ role: 'reader', type: 'anyone' }),
+    cache: 'no-store',
+  });
+  return `https://drive.google.com/uc?export=view&id=${id}`;
+}
+
 async function refreshAccessToken(provider: IntegrationID, refreshToken: string) {
   const p = getIntegration(provider);
   if (!p) return null;
