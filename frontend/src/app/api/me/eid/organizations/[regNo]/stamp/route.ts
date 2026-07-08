@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 
 // GET /api/me/eid/organizations/{regNo}/stamp — байгууллагын тамганы зургийн URL.
 export async function GET(_req: Request, { params }: { params: { regNo: string } }) {
-  return proxyResult(await authedFetch(`/users/me/eid/organizations/${encodeURIComponent(params.regNo)}/stamp`, { method: 'GET' }));
+  return proxyResult(await authedFetch(`/me/orgstamp/${encodeURIComponent(params.regNo)}`, { method: 'GET' }));
 }
 
 // POST — тамганы зургийг Drive-д байршуулж URL хадгална (backend талд ADMIN шалгана).
@@ -27,7 +27,7 @@ export async function POST(req: Request, { params }: { params: { regNo: string }
     return NextResponse.json({ ok: false, status: 502, message: 'Google Drive-д байршуулж чадсангүй' }, { status: 502 });
   }
   return proxyResult(
-    await authedFetch(`/users/me/eid/organizations/${encodeURIComponent(params.regNo)}/stamp`, { method: 'PUT', body: JSON.stringify({ url }) }),
+    await authedFetch(`/me/orgstamp/${encodeURIComponent(params.regNo)}`, { method: 'PUT', body: JSON.stringify({ url }) }),
   );
 }
 
@@ -35,5 +35,5 @@ export async function POST(req: Request, { params }: { params: { regNo: string }
 export async function DELETE(req: Request, { params }: { params: { regNo: string } }) {
   const bad = checkOrigin(req);
   if (bad) return bad;
-  return proxyResult(await authedFetch(`/users/me/eid/organizations/${encodeURIComponent(params.regNo)}/stamp`, { method: 'DELETE' }));
+  return proxyResult(await authedFetch(`/me/orgstamp/${encodeURIComponent(params.regNo)}`, { method: 'DELETE' }));
 }

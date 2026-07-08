@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 
 // GET /api/me/signature — хадгалсан гарын үсгийн зургийн URL.
 export async function GET() {
-  return proxyResult(await authedFetch('/users/me/signature', { method: 'GET' }));
+  return proxyResult(await authedFetch('/me/signature', { method: 'GET' }));
 }
 
 // POST /api/me/signature — зургийг (base64) хэрэглэгчийн Google Drive-д байршуулж,
@@ -27,12 +27,12 @@ export async function POST(req: Request) {
   if (!url) {
     return NextResponse.json({ ok: false, status: 502, message: 'Google Drive-д байршуулж чадсангүй' }, { status: 502 });
   }
-  return proxyResult(await authedFetch('/users/me/signature', { method: 'PUT', body: JSON.stringify({ url }) }));
+  return proxyResult(await authedFetch('/me/signature', { method: 'PUT', body: JSON.stringify({ url }) }));
 }
 
 // DELETE /api/me/signature — гарын үсгийг устгах (DB-ээс URL хасна).
 export async function DELETE(req: Request) {
   const bad = checkOrigin(req);
   if (bad) return bad;
-  return proxyResult(await authedFetch('/users/me/signature', { method: 'DELETE' }));
+  return proxyResult(await authedFetch('/me/signature', { method: 'DELETE' }));
 }
