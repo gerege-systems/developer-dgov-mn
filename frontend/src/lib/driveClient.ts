@@ -98,7 +98,9 @@ export async function uploadImageToDrive(
     body: JSON.stringify({ role: 'reader', type: 'anyone' }),
     cache: 'no-store',
   });
-  return `https://drive.google.com/uc?export=view&id=${id}`;
+  // lh3.googleusercontent.com/d/<id> нь <img>-д найдвартай (drive.google.com/uc нь
+  // сүүлийн үед embed-д зогсдог болсон). Файл "anyone with link" тул нээлттэй.
+  return `https://lh3.googleusercontent.com/d/${id}`;
 }
 
 async function refreshAccessToken(provider: IntegrationID, refreshToken: string) {

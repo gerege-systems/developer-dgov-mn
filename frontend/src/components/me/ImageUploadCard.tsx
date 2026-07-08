@@ -11,6 +11,18 @@ import type { DictKey } from '@/lib/i18n';
 import { getJSON, postJSON, sendJSON } from '@/lib/client';
 import Alert from '@/components/Alert';
 
+// driveImgSrc нь хадгалсан Google Drive URL-ийг <img>-д найдвартай харагдах
+// lh3.googleusercontent.com/d/<id> хэлбэрт хөрвүүлнэ (хуучин drive.google.com/uc
+// хэлбэрийг ч зөв харуулна). Drive-ийн бус URL-ийг хэвээр буцаана.
+function driveImgSrc(url: string): string {
+  if (!url) return url;
+  const byParam = url.match(/[?&]id=([^&]+)/);
+  if (byParam) return `https://lh3.googleusercontent.com/d/${byParam[1]}`;
+  const byPath = url.match(/\/d\/([^/?]+)/);
+  if (byPath) return `https://lh3.googleusercontent.com/d/${byPath[1]}`;
+  return url;
+}
+
 // file → base64 (data: угтварыг хассан).
 function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -108,7 +120,7 @@ export default function ImageUploadCard({
         <div className="asset-preview" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{ flex: 1, aspectRatio: aspect, maxWidth: 320, border: '1px solid var(--border)', borderRadius: 10, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={url} alt={title} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+            <img src={driveImgSrc(url)} alt={title} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
           </div>
           {canEdit && (
             <button type="button" className="btn btn--ghost btn--icon" aria-label={T('me.assets.delete')} disabled={remove.isPending}
