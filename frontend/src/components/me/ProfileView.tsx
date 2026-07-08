@@ -10,6 +10,7 @@ import { useT } from '@/lib/lang';
 import { roleLabel, displayName, type SessionUser } from '@/lib/types';
 import { formatTS, initialsOf } from '@/lib/format';
 import { DefRow } from './DefRow';
+import EditLatinNameCard from './EditLatinNameCard';
 
 /**
  * ProfileView нь /me/profile хуудсын гол харагдац. Дээд талд профайл карт
@@ -66,6 +67,9 @@ export default function ProfileView({ me }: { me: SessionUser }) {
           <DefRow icon={RefreshCw} label={T('me.field.updated')} mono>{me.updatedAt ? formatTS(me.updatedAt) : '—'}</DefRow>
         </div>
       </section>
+
+      {/* Латин нэрийг гараар засах (галиглалт заримдаа буруу). */}
+      <EditLatinNameCard firstNameEn={me.firstNameEn} lastNameEn={me.lastNameEn} />
     </>
   );
 }

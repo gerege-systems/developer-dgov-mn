@@ -12,6 +12,7 @@ import { useT } from '@/lib/lang';
 import { getJSON } from '@/lib/client';
 import OrgManagePanel from '@/components/me/OrgManagePanel';
 import ImageUploadCard from '@/components/me/ImageUploadCard';
+import EditOrgNameLatin from '@/components/me/EditOrgNameLatin';
 
 interface OrgRep {
   org_etsi: string;
@@ -75,6 +76,11 @@ export default function OrgManageView({ regNo }: { regNo: string }) {
           </>
         )}
       </section>
+
+      {/* Байгууллагын латин нэрийг засах (зөвхөн ADMIN). */}
+      {rep && rep.right_type === 'ADMIN' && (
+        <EditOrgNameLatin regNo={regNo} current={rep.org_name_en || ''} />
+      )}
 
       {/* Байгууллагын тамганы дардас (зөвхөн ADMIN оруулна). */}
       {rep && (
