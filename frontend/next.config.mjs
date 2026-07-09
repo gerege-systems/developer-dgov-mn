@@ -1,3 +1,8 @@
+import { fileURLToPath } from 'node:url';
+import { dirname } from 'node:path';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
 /** @type {import('next').NextConfig} */
 
 // Content-Security-Policy: бодит, ажиллах боломжтой бодлого.
@@ -33,6 +38,11 @@ const nextConfig = {
   // Standalone output → slim production Docker image (server.js + minimal
   // node_modules) instead of shipping the whole tree. See frontend/Dockerfile.
   output: 'standalone',
+  // Next 15 нь workspace root-ыг эцэг директор дахь lockfile-аар автоматаар
+  // тааварлаж, standalone/server.js-ийг гүн (Enigma/…/frontend) үүрлүүлдэг тул
+  // Dockerfile-ийн `node server.js` (WORKDIR /app) эвдэрнэ. Root-ыг энэ хавтаст
+  // тогтоож standalone бүтцийг детерминист болгоно.
+  outputFileTracingRoot: __dirname,
   // iOS Universal Links — Apple нь /.well-known/apple-app-site-association-ыг
   // татдаг. Next.js dot-folder route-ыг найдваргүй тул /api/aasa руу rewrite хийнэ.
   async rewrites() {
