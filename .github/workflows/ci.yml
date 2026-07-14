@@ -111,7 +111,8 @@ jobs:
   # л ажиллана. VPS руу SSH-ээр орж тухайн commit-ийг татаж, docker compose stack-ийг
   # дахин build/restart хийгээд эрүүл болтол хүлээнэ (deploy/deploy.sh). Runbook:
   # docs/DEPLOYMENT.md. Шаардлагатай repo secrets: DEPLOY_HOST, DEPLOY_USER,
-  # DEPLOY_SSH_KEY (мөн заавал биш DEPLOY_PORT).
+  # DEPLOY_SSH_KEY, DEPLOY_PATH (host дээрх checkout зам; хоосон бол
+  # /srv/template-gerege-mn) — мөн заавал биш DEPLOY_PORT.
   deploy:
     name: Deploy (ssh · docker compose)
     needs: [backend, frontend, secrets-scan]
@@ -132,7 +133,7 @@ jobs:
           command_timeout: 20m
           script: |
             set -euo pipefail
-            cd /srv/template-gerege-mn
+            cd "${{ secrets.DEPLOY_PATH || '/srv/template-gerege-mn' }}"
             git fetch --prune origin
             git reset --hard ${{ github.sha }}
             bash deploy/deploy.sh
