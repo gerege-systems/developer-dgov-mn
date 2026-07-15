@@ -132,5 +132,59 @@ services:
       start_period: 30s
     restart: unless-stopped
 
+  # --- OIDC provider (энэ апп-ыг Ory Hydra-г урдаа тавьж SSO болгоно) ---
+  # Opt-in: `profiles: [provider]` тул default `docker compose up -d`-д ЭНД
+  # эхлэхгүй (амьд stack хэвээр). Идэвхжүүлэхэд .env-д HYDRA_* нууцуудыг тавиад
+  # `docker compose --profile provider up -d`. Backend тал нь HYDRA_ADMIN_URL +
+  # HYDRA_PUBLIC_URL + SSO_STATE_KEY(>=32B) бүрдсэн үед л provider route-уудыг
+  # бүртгэнэ (ProviderConfigured) — эс бөгөөс inert. Hydra тусдаа `hydra` DB
+  # ашиглана (initdb 20-create-hydra-db.sh, зөвхөн шинэ volume дээр). Public
+  # :4444-ийг nginx урдаас проксилно; admin :4445 нь ЗӨВХӨН loopback.
+  hydra-migrate:
+    image: oryd/hydra:v2.2.0
+    profiles: ["provider"]
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DSN: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/hydra?sslmode=disable
+    command: migrate sql -e --yes
+    restart: "no"
+
+  hydra:
+    image: oryd/hydra:v2.2.0
+    profiles: ["provider"]
+    depends_on:
+      db:
+        condition: service_healthy
+      hydra-migrate:
+        condition: service_completed_successfully
+    ports:
+      - "127.0.0.1:${HYDRA_PUBLIC_PORT:-4444}:4444"   # public — nginx reverse-proxies
+      - "127.0.0.1:${HYDRA_ADMIN_PORT:-4445}:4445"    # admin — internal only
+    environment:
+      DSN: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/hydra?sslmode=disable
+      URLS_SELF_ISSUER: ${HYDRA_PUBLIC_URL:-http://localhost:4444}
+      URLS_SELF_PUBLIC: ${HYDRA_PUBLIC_URL:-http://localhost:4444}
+      # Тусдаа /oauth/* зам — апп-ын өөрийн /login хуудастай мөргөлдөхгүй.
+      URLS_LOGIN: ${HYDRA_PUBLIC_URL:-http://localhost:4444}/oauth/login
+      URLS_CONSENT: ${HYDRA_PUBLIC_URL:-http://localhost:4444}/oauth/consent
+      URLS_LOGOUT: ${HYDRA_PUBLIC_URL:-http://localhost:4444}/oauth/logout
+      URLS_ERROR: ${HYDRA_PUBLIC_URL:-http://localhost:4444}/oauth/error
+      URLS_POST_LOGOUT_REDIRECT: ${HYDRA_POST_LOGOUT_REDIRECT:-${HYDRA_PUBLIC_URL:-http://localhost:4444}/}
+      SECRETS_SYSTEM: ${HYDRA_SYSTEM_SECRET:-dev-hydra-system-secret-change-me-0123456789}
+      SECRETS_COOKIE: ${HYDRA_COOKIE_SECRET:-dev-hydra-cookie-secret-change-me-0123456789}
+      OIDC_SUBJECT_IDENTIFIERS_SUPPORTED_TYPES: "public,pairwise"
+      OIDC_SUBJECT_IDENTIFIERS_PAIRWISE_SALT: ${HYDRA_PAIRWISE_SALT:-dev-hydra-pairwise-salt-change-me}
+      # SameSite=None нь eID App2App cross-context буцалтад cookie амьд үлдэхэд
+      # шаардлагатай (Secure заавал — nginx TLS-ыг урдаас барина).
+      SERVE_COOKIES_SAME_SITE_MODE: None
+      SERVE_TLS_ALLOW_TERMINATION_FROM: "127.0.0.0/8,172.16.0.0/12,10.0.0.0/8"
+      LOG_LEVEL: info
+      LOG_FORMAT: json
+      LOG_LEAK_SENSITIVE_VALUES: "false"
+    command: serve all
+    restart: unless-stopped
+
 volumes:
   dbdata:
