@@ -1,0 +1,16 @@
+# Root-level secrets (compose interpolation + mounted backend config).
+# Keep the *.example files tracked.
+/.env
+/.env.*
+!/.env.example
+/backend.env
+!/backend.env.example
+
+# OS / editor junk
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Logs
+*.log
