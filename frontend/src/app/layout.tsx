@@ -30,7 +30,7 @@ const jbMono = JetBrains_Mono({
 export const metadata = {
   title: 'DGOV-Developer Portal',
   description:
-    'eID based, AI enabled. DGOV-Developer Portal — chi (net/http) + pgx дээр суурилсан төрийн нэгдсэн нэвтрэлт (SSO): eID-ээр нэвтрэх, профайл болон аюулгүй байдлын тохиргоог нэг дороос.',
+    'eID based, AI enabled. DGOV-Developer Portal — аппликейшндээ үндэсний цахим үнэмлэг (eID)-ийн нэвтрэлтийг OAuth2 / OpenID Connect-ээр нэмэх хөгжүүлэгчийн портал: апп бүртгэх, client_id/secret, баталгаажсан claim.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -8,9 +8,10 @@ import LandingPage from '@/components/landing/LandingPage';
 
 export const dynamic = 'force-dynamic';
 
-// dan.dgov.mn нь өөрөө SSO үйлчилгээ. Нүүр хуудас нь DAN-ий чадваруудыг харуулсан
-// landing бөгөөд нэвтрэх картыг (LoginForm) hero дотроо шигтгэсэн. Нэвтэрсэн
-// хэрэглэгчийг /me домэйн руу шилжүүлнэ.
+// developer.dgov.mn нь хөгжүүлэгчийн портал — аппликейшндээ eID нэвтрэлтийг OAuth2 /
+// OIDC-ээр нэмэх. Нүүр хуудас нь порталын чадваруудыг харуулсан landing бөгөөд
+// нэвтрэх картыг (LoginForm) hero дотроо шигтгэсэн. Нэвтэрсэн хэрэглэгчийг /me
+// домэйн (консол) руу шилжүүлнэ.
 export default async function Home(props: {
   searchParams: Promise<{ next?: string; notice?: string; glink?: string; gerror?: string }>;
 }) {
