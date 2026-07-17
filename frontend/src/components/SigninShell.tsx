@@ -1,8 +1,12 @@
 import React from 'react';
-import Link from 'next/link';
-import AnonThemeToggle from './AnonThemeToggle';
+import SigninHeader from './landing/SigninHeader';
+import SigninFooter from './landing/SigninFooter';
+import { DEFAULT_LANDING_CONFIG, themeCss, type LandingConfig } from '@/lib/landing';
 
 interface Props {
+  /** Нүүрний тохируулдаг харагдац (өнгө/фонт/текст/цэс). Өгөгдөөгүй бол
+   *  өгөгдмөл (одоогийн харагдац) — жишээ нь backend унасан client контекст. */
+  config?: LandingConfig;
   /** topbar баруун талын нэмэлт навигаци (анхдагч: загвар солигч). */
   rightNav?: React.ReactNode;
   hideFooter?: boolean;
@@ -10,30 +14,20 @@ interface Props {
 }
 
 /**
- * Анонимос бүрхүүл — landing (/) болон auth хуудаснуудад. Rail / UserMenu / session
- * байхгүй. Брэнд topbar + төвлөрсөн агуулга + footer.
+ * Анонимос бүрхүүл — landing (/) болон auth хуудаснуудад. Rail / UserMenu /
+ * session байхгүй. Брэнд topbar + төвлөрсөн агуулга + footer. Админаас
+ * тохируулсан харагдацыг (өнгө/фонт/хэмжээ CSS хувьсагчид + advanced CSS)
+ * .signin-shell-д шахаж, landing болон login хоёуланд нэгэн адил үйлчилнэ.
  */
-export default function SigninShell({ rightNav, hideFooter, children }: Props) {
+export default function SigninShell({ config, rightNav, hideFooter, children }: Props) {
+  const cfg = config ?? DEFAULT_LANDING_CONFIG;
+  const css = themeCss(cfg);
   return (
     <div className="signin-shell">
-      <header className="signin-shell__nav">
-        <Link className="topbar__brand" href="/">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="topbar__brand-mark" src="/brand.webp" alt="Gerege" />
-          <div className="topbar__brand-text">
-            <span className="topbar__brand-name">Gerege Template</span>
-          </div>
-        </Link>
-        {rightNav ?? <AnonThemeToggle />}
-      </header>
-
+      {css && <style dangerouslySetInnerHTML={{ __html: css }} />}
+      <SigninHeader config={cfg} rightNav={rightNav} />
       <main className="signin-shell__body">{children}</main>
-
-      {!hideFooter && (
-        <footer className="signin-footer" style={{ justifyContent: 'center', textAlign: 'center' }}>
-          <span>© 2026 Gerege Systems · <span className="mono">Gerege Template</span></span>
-        </footer>
-      )}
+      {!hideFooter && <SigninFooter config={cfg} />}
     </div>
   );
 }

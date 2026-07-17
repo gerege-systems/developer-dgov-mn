@@ -10,7 +10,7 @@ import {
   Users, ShieldHalf, UserCircle, Briefcase, Bot, Languages, Building2,
   ScrollText, ShieldAlert, CreditCard, KeyRound, Smartphone,
   Landmark, FileText, FileCheck, CalendarClock, Wallet, Bell, Plug,
-  FileSignature, Gauge, Server, Route, Crown,
+  FileSignature, Gauge, Server, Route, Crown, Palette,
 } from 'lucide-react';
 import UserMenu from './UserMenu';
 import NavSearch, { type SearchItem } from './NavSearch';
@@ -79,6 +79,7 @@ const SYSTEMS: NavSystem[] = [
           { href: '/admin/core', labelKey: 'nav.coreSearch', icon: Search, perm: 'users.manage' },
           { href: '/admin/roles', labelKey: 'nav.roles', icon: ShieldHalf, perm: 'roles.manage' },
           { href: '/admin/settings', labelKey: 'nav.settings', icon: ShieldCheck, perm: 'settings.manage' },
+          { href: '/admin/landing', labelKey: 'nav.landing', icon: Palette, perm: 'settings.manage' },
         ],
       },
       {

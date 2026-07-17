@@ -2,6 +2,7 @@ import React from 'react';
 import { redirect } from 'next/navigation';
 import SigninShell from '@/components/SigninShell';
 import { safeNext } from '@/lib/navigation';
+import { fetchLandingConfig } from '@/lib/api';
 import EidVerify from './EidVerify';
 
 export const dynamic = 'force-dynamic';
@@ -21,9 +22,10 @@ export default async function EidVerifyPage(
   if (!sessionId) redirect('/login');
 
   const next = safeNext(searchParams.next);
+  const config = await fetchLandingConfig();
 
   return (
-    <SigninShell>
+    <SigninShell config={config}>
       <section className="signin-card signin-card--narrow" aria-labelledby="eid-verify-title">
         <div>
           <h1 id="eid-verify-title">eID-ээр нэвтрэх</h1>

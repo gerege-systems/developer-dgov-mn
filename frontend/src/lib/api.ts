@@ -3,6 +3,7 @@ import { headers } from 'next/headers';
 import type { Envelope, BackendUser, MeData, SessionUser } from './types';
 import { toSessionUser } from './types';
 import { getAccessToken, getRefreshToken, setSession, canPersistSession } from './session';
+import { normalizeConfig, type LandingConfig } from './landing';
 
 // Серверийн талд gerege-backend-template-v27 рүү хандах цорын ганц цэг.
 // Browser энд хэзээ ч хүрэхгүй — зөвхөн route handler ба server component.
@@ -170,4 +171,14 @@ export async function fetchMe(): Promise<SessionUser | null> {
 export async function fetchMyPermissions(): Promise<string[]> {
   const r = await authedFetch<string[]>('/rbac/me', { method: 'GET' });
   return r.ok && Array.isArray(r.data) ? r.data : [];
+}
+
+/**
+ * GET /landing/config — нүүр хуудасны тохируулдаг харагдац (нийтийн, нэвтрэлтгүй).
+ * SigninShell/Landing нь RSC-д энэ функцээр татна. Backend унасан/дутуу баримт
+ * ирсэн ч normalizeConfig өгөгдмөлөөр дүүргэдэг тул нүүр хэзээ ч эвдрэхгүй.
+ */
+export async function fetchLandingConfig(): Promise<LandingConfig> {
+  const r = await backendFetch<Partial<LandingConfig>>('/landing/config', { method: 'GET' });
+  return normalizeConfig(r.ok ? r.data ?? null : null);
 }

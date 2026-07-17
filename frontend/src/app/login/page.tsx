@@ -1,6 +1,7 @@
 import React from 'react';
 import SigninShell from '@/components/SigninShell';
 import { safeNext } from '@/lib/navigation';
+import { fetchLandingConfig } from '@/lib/api';
 import LoginForm from './LoginForm';
 
 export const dynamic = 'force-dynamic';
@@ -14,9 +15,10 @@ export default async function LoginPage(
 ) {
   const searchParams = await props.searchParams;
   const next = safeNext(searchParams.next);
+  const config = await fetchLandingConfig();
 
   return (
-    <SigninShell>
+    <SigninShell config={config}>
       <section className="signin-card" aria-labelledby="login-title">
         <LoginForm
           next={next}
