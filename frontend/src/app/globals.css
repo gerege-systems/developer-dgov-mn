@@ -791,6 +791,17 @@ html[lang="en"] .i18n-banner { display: block; }
 .signin-shell__nav .topbar__brand { color: var(--fg); }
 .signin-shell__nav .topbar__brand-name { color: var(--fg); }
 .signin-shell__nav .topbar__brand-mark { background: transparent; }
+/* Тохируулж болох дээд цэс (config.nav) — брэнд ба баруун навигацийн хооронд. */
+.signin-shell__links {
+  display: flex; align-items: center; gap: 20px;
+  font-size: 14px;
+}
+.signin-shell__links a {
+  color: var(--muted); text-decoration: none; white-space: nowrap;
+  transition: color .15s ease;
+}
+.signin-shell__links a:hover { color: var(--fg); }
+@media (max-width: 560px) { .signin-shell__links { display: none; } }
 .signin-shell__body {
   flex: 1;
   display: grid;
