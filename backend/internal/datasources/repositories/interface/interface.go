@@ -252,6 +252,23 @@ type OrgRepository interface {
 	RemoveMember(ctx context.Context, orgID, userID string) error
 }
 
+// GovDecisionInput нь менежерийн approve/reject шийдвэрийн параметрүүд.
+// OutputRef нь зөвшөөрөгдсөн тохиолдолд олгогдох лавлагаа (байхгүй байж болно —
+// жишээ нь биет үнэмлэх захиалахад лавлагаа үүсэхгүй).
+type GovDecisionInput struct {
+	ApplicationID string
+	OfficerID     string
+	Approve       bool
+	// Target нь шилжих ЭЦСИЙН төлөв. Зөвшөөрсөн үед гаралт тэр дороо
+	// олгогдож байвал 'completed', биет зүйл хүргэгдэх шаардлагатай бол
+	// 'approved' (домэйн давхарга шийднэ).
+	Target    string
+	Note      string
+	Result    string
+	OutputRef *domain.GovReference
+	Notify    *domain.GovNotification
+}
+
 // GovRepository нь иргэний "Төрийн үйлчилгээ" порталын өгөгдлийг хариуцна.
 // Каталог (ListServices) нь нийтийн; бусад нь хэрэглэгч-тус-бүрийн тул query
 // бүр userID-гаар scope хийгдэхээс гадна per-user хүснэгтүүд RLS-тэй (repo нь
@@ -260,17 +277,60 @@ type GovRepository interface {
 	// Каталог
 	ListServices(ctx context.Context) ([]domain.GovService, error)
 	GetService(ctx context.Context, id string) (domain.GovService, error)
+	// ListLifeEvents нь CPSV-AP Event каталогийг буцаана.
+	ListLifeEvents(ctx context.Context) ([]domain.GovLifeEvent, error)
 
-	// Хүсэлт
+	// Хүсэлт (иргэн)
 	ListApplications(ctx context.Context, userID string) ([]domain.GovApplication, error)
+	GetApplication(ctx context.Context, userID, id string) (domain.GovApplication, error)
 	CreateApplication(ctx context.Context, in *domain.GovApplication) (domain.GovApplication, error)
 	SetApplicationStatus(ctx context.Context, userID, id, status string) error
+
+	// CreateApplicationWithOutput нь AUTO горимын үйлчилгээг НЭГ ТРАНЗАКЦИД
+	// биелүүлнэ: хүсэлт (completed) + лавлагаа + мэдэгдэл + timeline. Аль нэг нь
+	// бүтэлгүйтвэл бүгд буцна — иргэнд "олгогдсон" гэж харагдаад лавлагаа нь
+	// байхгүй байх завсрын төлөв үүсэхээс сэргийлнэ.
+	CreateApplicationWithOutput(ctx context.Context, app *domain.GovApplication, ref *domain.GovReference, notify *domain.GovNotification) (domain.GovApplication, domain.GovReference, error)
+
+	// Хүсэлт (менежер — officer RLS үүргээр)
+	QueueStats(ctx context.Context, officerID string) (domain.GovQueueStats, error)
+	ListQueue(ctx context.Context, f domain.GovQueueFilter) ([]domain.GovApplication, error)
+	GetApplicationAny(ctx context.Context, id string) (domain.GovApplication, error)
+	// AssignApplication нь хүсэлтийг менежерт оноож in_review болгоно. Зэрэг
+	// ирсэн хоёр дахь оролдлого 0 мөр хөндөнө → apperror.Conflict.
+	AssignApplication(ctx context.Context, id, officerID string) (domain.GovApplication, error)
+	// DecideApplication нь approve/reject шийдвэрийг бичнэ (SQL WHERE guard-аар
+	// зөвшөөрөгдсөн эх төлвөөс л шилжинэ).
+	DecideApplication(ctx context.Context, in GovDecisionInput) (domain.GovApplication, error)
+	// CompleteApplication нь 'approved' (биет гаралт хүлээгдэж буй) хүсэлтийг
+	// хүргэгдсэн гэж хааж 'completed' болгоно.
+	CompleteApplication(ctx context.Context, id, officerID string, notify *domain.GovNotification) (domain.GovApplication, error)
+	// RequestMoreInfo нь info_required руу шилжүүлж SLA цагийг ЗОГСООНО.
+	RequestMoreInfo(ctx context.Context, id, officerID, note string) (domain.GovApplication, error)
+	// ResumeFromInfo нь иргэн баримт нэмсний дараа цагийг ҮРГЭЛЖЛҮҮЛЖ, due_at-г
+	// зогссон хугацаагаар хойшлуулна.
+	ResumeFromInfo(ctx context.Context, userID, id string) (domain.GovApplication, error)
+
+	// Timeline
+	AppendApplicationEvent(ctx context.Context, in *domain.GovApplicationEvent) error
+	ListApplicationEvents(ctx context.Context, applicationID string) ([]domain.GovApplicationEvent, error)
+
+	// SLA sweep (background worker)
+	// SLAOverdue нь хугацаа хэтэрсэн ч хараахан тэмдэглэгдээгүй хүсэлтүүдийг
+	// буцаана (breach_notified маягийн latch — нэг хүсэлтэд нэг л удаа).
+	MarkSLABreached(ctx context.Context) ([]domain.GovApplication, error)
+	// TacitApprovals нь чимээгүй зөвшөөрөл идэвхтэй үйлчилгээний хугацаа
+	// хэтэрсэн хүсэлтүүдийг зөвшөөрөгдсөн төлөвт шилжүүлнэ.
+	TacitApprovals(ctx context.Context) ([]domain.GovApplication, error)
 
 	// Лавлагаа
 	ListReferences(ctx context.Context, userID string) ([]domain.GovReference, error)
 	CreateReference(ctx context.Context, in *domain.GovReference) (domain.GovReference, error)
 
 	// Мэдэгдэл
+	// CreateNotification нь иргэнд мэдэгдэл бичнэ. Менежер өөрийнх нь биш
+	// хэрэглэгчид бичих тул officer/service RLS үүрэг шаардана.
+	CreateNotification(ctx context.Context, in *domain.GovNotification) error
 	ListNotifications(ctx context.Context, userID string) ([]domain.GovNotification, error)
 	MarkNotificationRead(ctx context.Context, userID, id string) error
 	MarkAllNotificationsRead(ctx context.Context, userID string) error

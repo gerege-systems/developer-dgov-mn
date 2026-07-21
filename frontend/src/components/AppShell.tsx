@@ -12,7 +12,7 @@ import {
   Plug,
   Gauge, Server, Crown, Palette,
   Landmark, Inbox, FileCheck, CalendarClock, Wallet, Bell,
-  CreditCard, Smartphone, FileSignature, BookOpen,
+  CreditCard, Smartphone, FileSignature, BookOpen, ClipboardCheck,
 } from 'lucide-react';
 import UserMenu from './UserMenu';
 import NavSearch, { type SearchItem } from './NavSearch';
@@ -137,6 +137,7 @@ const SYSTEMS: NavSystem[] = [
         labelKey: 'group.manager',
         items: [
           { href: '/manager/dashboard', labelKey: 'nav.managerDashboard', icon: LayoutDashboard, perm: 'manager.view' },
+          { href: '/manager/requests', labelKey: 'nav.govQueue', icon: ClipboardCheck, perm: 'gov.review' },
           { href: '/manager/users', labelKey: 'nav.users', icon: Users, perm: 'users.manage' },
         ],
       },

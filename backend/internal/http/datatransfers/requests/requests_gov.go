@@ -3,12 +3,30 @@
 
 package requests
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
-// GovApplyRequest нь үйлчилгээнд хүсэлт гаргах body.
+// GovApplyRequest нь үйлчилгээнд хүсэлт гаргах body. Payload нь үйлчилгээ тус
+// бүрийн маягтын өгөгдөл (cpsv:hasInput-д тохирох) — чөлөөт бүтэцтэй.
 type GovApplyRequest struct {
-	ServiceID string `json:"service_id" validate:"required,uuid"`
-	Note      string `json:"note" validate:"omitempty,max=500"`
+	ServiceID string          `json:"service_id" validate:"required,uuid"`
+	Note      string          `json:"note" validate:"omitempty,max=500"`
+	Payload   json.RawMessage `json:"payload" validate:"omitempty"`
+}
+
+// GovDecideRequest нь менежерийн шийдвэрийн body. Татгалзах үед note-г
+// usecase давхарга заавал шаардана (иргэн үндэслэлийг мэдэх эрхтэй).
+type GovDecideRequest struct {
+	Approve bool   `json:"approve"`
+	Note    string `json:"note" validate:"omitempty,max=1000"`
+	Result  string `json:"result" validate:"omitempty,oneof=granted refused withdrawn not_admissible processed"`
+}
+
+// GovInfoRequest нь нэмэлт мэдээлэл хүсэх/өгөх body.
+type GovInfoRequest struct {
+	Note string `json:"note" validate:"required,max=1000"`
 }
 
 // GovReferenceRequest нь лавлагаа захиалах body.

@@ -32,19 +32,36 @@ export function money(n: number, currency = 'MNT'): string {
 
 const STATUS_LABEL: Record<GovStatus, string> = {
   submitted: 'Илгээсэн',
+  registered: 'Бүртгэгдсэн',
   in_review: 'Хянагдаж буй',
+  info_required: 'Мэдээлэл дутуу',
   approved: 'Зөвшөөрсөн',
   rejected: 'Татгалзсан',
   completed: 'Дууссан',
   cancelled: 'Цуцалсан',
+  expired: 'Хугацаа дууссан',
 };
 
 export function ApplicationStatus({ status }: { status: GovStatus }) {
   const klass =
     status === 'approved' || status === 'completed' ? 'chip--success'
-      : status === 'rejected' || status === 'cancelled' ? 'chip--danger'
-        : 'chip--neutral';
+      : status === 'rejected' || status === 'cancelled' || status === 'expired' ? 'chip--danger'
+        : status === 'info_required' ? 'chip--warning'
+          : 'chip--neutral';
   return <span className={`chip ${klass}`}>{STATUS_LABEL[status] ?? status}</span>;
+}
+
+// Хугацааны үлдэгдлийг харуулна. Хэтэрсэн бол улаанаар, 24 цагаас бага бол
+// шаргалаар — менежер юуг эхлүүлэхээ шууд харна.
+export function DueChip({ dueAt, suspended }: { dueAt: string | null; suspended?: boolean }) {
+  if (suspended) return <span className="chip chip--warning">Хугацаа зогссон</span>;
+  if (!dueAt) return <span className="muted">—</span>;
+
+  const ms = new Date(dueAt).getTime() - Date.now();
+  const hours = Math.round(ms / 3_600_000);
+  if (ms < 0) return <span className="chip chip--danger">{Math.abs(hours)}ц хэтэрсэн</span>;
+  if (hours < 24) return <span className="chip chip--warning">{hours}ц үлдсэн</span>;
+  return <span className="chip chip--neutral">{Math.round(hours / 24)} хоног</span>;
 }
 
 export function Loading({ label = 'Ачаалж байна…' }: { label?: string }) {

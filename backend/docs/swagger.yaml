@@ -350,6 +350,10 @@ definitions:
       note:
         maxLength: 500
         type: string
+      payload:
+        items:
+          type: integer
+        type: array
       service_id:
         type: string
     required:
@@ -369,6 +373,30 @@ definitions:
         type: string
     required:
     - scheduled_at
+    type: object
+  template_internal_http_datatransfers_requests.GovDecideRequest:
+    properties:
+      approve:
+        type: boolean
+      note:
+        maxLength: 1000
+        type: string
+      result:
+        enum:
+        - granted
+        - refused
+        - withdrawn
+        - not_admissible
+        - processed
+        type: string
+    type: object
+  template_internal_http_datatransfers_requests.GovInfoRequest:
+    properties:
+      note:
+        maxLength: 1000
+        type: string
+    required:
+    - note
     type: object
   template_internal_http_datatransfers_requests.GovReferenceRequest:
     properties:
@@ -2791,6 +2819,50 @@ paths:
       summary: Хүсэлт цуцлах
       tags:
       - gov
+  /gov/applications/{id}/provide-info:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Application ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Info
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/template_internal_http_datatransfers_requests.GovInfoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Нэмэлт мэдээлэл ирүүлэх (SLA цаг үргэлжилнэ)
+      tags:
+      - gov
+  /gov/applications/{id}/timeline:
+    get:
+      parameters:
+      - description: Application ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Хүсэлтийн явцын түүх
+      tags:
+      - gov
   /gov/appointments:
     get:
       produces:
@@ -2841,6 +2913,18 @@ paths:
       summary: Цаг захиалга цуцлах
       tags:
       - gov
+  /gov/life-events:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Амьдралын үйл явдлын каталог (CPSV-AP Event)
+      tags:
+      - gov
   /gov/notifications:
     get:
       produces:
@@ -2883,6 +2967,149 @@ paths:
       summary: Бүх мэдэгдлийг уншсан болгох
       tags:
       - gov
+  /gov/officer/queue:
+    get:
+      parameters:
+      - description: Төлөв
+        in: query
+        name: status
+        type: string
+      - description: '''me'' бол зөвхөн өөрийн'
+        in: query
+        name: assigned_to
+        type: string
+      - description: Зөвхөн хугацаа хэтэрсэн
+        in: query
+        name: overdue
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Хянах хүсэлтийн дараалал
+      tags:
+      - gov-officer
+  /gov/officer/queue/{id}:
+    get:
+      parameters:
+      - description: Application ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Хүсэлтийн дэлгэрэнгүй (менежер)
+      tags:
+      - gov-officer
+  /gov/officer/queue/{id}/assign:
+    post:
+      parameters:
+      - description: Application ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Хүсэлтийг хянахаар авах
+      tags:
+      - gov-officer
+  /gov/officer/queue/{id}/complete:
+    post:
+      parameters:
+      - description: Application ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Биет гаралт хүргэгдсэнийг бүртгэх
+      tags:
+      - gov-officer
+  /gov/officer/queue/{id}/decide:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Application ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Decision
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/template_internal_http_datatransfers_requests.GovDecideRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Хүсэлтийг зөвшөөрөх/татгалзах
+      tags:
+      - gov-officer
+  /gov/officer/queue/{id}/request-info:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Application ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Info request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/template_internal_http_datatransfers_requests.GovInfoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Иргэнээс нэмэлт мэдээлэл хүсэх (SLA цаг зогсоно)
+      tags:
+      - gov-officer
+  /gov/officer/stats:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Менежерийн дарааллын нэгтгэл
+      tags:
+      - gov-officer
   /gov/overview:
     get:
       produces:

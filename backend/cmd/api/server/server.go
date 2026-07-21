@@ -107,6 +107,7 @@ type App struct {
 	govWriteRateLimiter *middlewares.RateLimiter
 	relayUC             relayuc.Usecase // SLA worker + demo simulator (background)
 	relayDemo           bool
+	govUC               gov.Usecase // gov SLA sweep (background)
 }
 
 func NewApp() (*App, error) {
@@ -512,7 +513,7 @@ func NewApp() (*App, error) {
 		routes.NewEIDProfileRoute(api, authUC, authMiddleware, govWriteRateLimiter).Routes()
 		routes.NewRBACRoute(api, rbacUC, auditUC, authMiddleware).Routes()
 		routes.NewOrgRoute(api, orgUC, auditUC, authMiddleware).Routes()
-		routes.NewGovRoute(api, govUC, authMiddleware, govWriteRateLimiter).Routes()
+		routes.NewGovRoute(api, govUC, rbacUC, authMiddleware, govWriteRateLimiter).Routes()
 		routes.NewIntegrationsRoute(api, integrationsUC, authMiddleware).Routes()
 		routes.NewAssetsRoute(api, assetsUC, authMiddleware, govWriteRateLimiter).Routes()
 		routes.NewGSpaceRoute(api, gspaceUC, authMiddleware, govWriteRateLimiter).Routes()
@@ -596,16 +597,18 @@ func NewApp() (*App, error) {
 		govWriteRateLimiter: govWriteRateLimiter,
 		relayUC:             relayUC,
 		relayDemo:           config.AppConfig.RelayDemoMode,
+		govUC:               govUC,
 	}, nil
 }
 
-// startRelayWorkers нь SLA хяналтын background goroutine-уудыг эхлүүлнэ: sweep
-// (reminder/overdue/breach/escalate) 30с тутам; demo simulator (RELAY_DEMO_MODE)
-// 10с тутам доод platform-уудын хариуг дуурайна. ctx cancel болоход зогсоно.
-func (a *App) startRelayWorkers(ctx context.Context) {
-	if a.relayUC == nil {
-		return
-	}
+// startBackgroundWorkers нь SLA хяналтын background goroutine-уудыг эхлүүлнэ:
+//   - relay sweep (reminder/overdue/breach/escalate) 20с тутам
+//   - gov sweep (иргэний хүсэлтийн хугацаа хэтрэлт + чимээгүй зөвшөөрөл) 60с тутам
+//   - relay demo simulator (RELAY_DEMO_MODE) 10/25с тутам
+//
+// Модуль тус бүр ТУСДАА шалгагдана — нэг нь холбогдоогүй байхад нөгөө нь
+// зогсох ёсгүй. ctx cancel болоход бүгд зогсоно.
+func (a *App) startBackgroundWorkers(ctx context.Context) {
 	tick := func(every time.Duration, fn func(context.Context)) {
 		t := time.NewTicker(every)
 		defer t.Stop()
@@ -622,10 +625,18 @@ func (a *App) startRelayWorkers(ctx context.Context) {
 			}
 		}
 	}
-	go tick(20*time.Second, func(c context.Context) { _ = a.relayUC.SLASweep(c) })
-	if a.relayDemo {
-		go tick(10*time.Second, a.relayUC.SimulateStep)   // доод platform-уудын хариу дуурайх
-		go tick(25*time.Second, a.relayUC.SimulateIngest) // шинэ демо хүсэлт үүсгэх
+	if a.relayUC != nil {
+		go tick(20*time.Second, func(c context.Context) { _ = a.relayUC.SLASweep(c) })
+		if a.relayDemo {
+			go tick(10*time.Second, a.relayUC.SimulateStep)   // доод platform-уудын хариу дуурайх
+			go tick(25*time.Second, a.relayUC.SimulateIngest) // шинэ демо хүсэлт үүсгэх
+		}
+	}
+	// Иргэний хүсэлтийн SLA — хугацаа хэтрэлт тэмдэглэх + чимээгүй зөвшөөрөл
+	// хэрэгжүүлэх. Relay-ээс сийрэг (60с): хүний хугацаа цаг/хоногоор хэмжигддэг
+	// тул илүү нягт шалгах нь ачааллаас өөр үр дүн авчрахгүй.
+	if a.govUC != nil {
+		go tick(60*time.Second, func(c context.Context) { _ = a.govUC.SLASweep(c) })
 	}
 }
 
@@ -634,7 +645,7 @@ func (a *App) Run() (err error) {
 
 	// SLA хяналтын background worker-ууд — shutdown үед workerCtx cancel болж зогсоно.
 	workerCtx, stopWorkers := context.WithCancel(context.Background())
-	a.startRelayWorkers(workerCtx)
+	a.startBackgroundWorkers(workerCtx)
 
 	go func() {
 		srvLog.Infof("success to listen and serve on %s", a.server.Addr)
