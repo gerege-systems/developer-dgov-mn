@@ -1244,17 +1244,31 @@ html[lang="en"] .i18n-banner { display: block; }
 .sidepanel__head { display: flex; flex-direction: column; justify-content: center; gap: 1px; height: var(--topbar-h, 64px); padding: 0 16px; border-bottom: 1px solid var(--border); }
 .sidepanel__brand-name { font-size: 12px; color: var(--muted); }
 .sidepanel__title { font-family: var(--font-display); font-size: 16px; font-weight: 650; color: var(--fg); }
-.sidepanel__nav { display: flex; flex-direction: column; gap: 14px; padding: 14px 10px; overflow-y: auto; }
-.sidepanel__group { display: flex; flex-direction: column; gap: 3px; }
-.sidepanel__group-label { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--faint); padding: 4px 10px; }
+/* Гурван түвшний зүүн цэс: Систем (icon rail) → Дэд систем (нэрлэсэн хэсэг) →
+   Цэс (холбоос). Дэд системүүд нимгэн зураасаар тусгаарлагдаж, толгой нь тод
+   header, идэвхтэй цэс зүүн талдаа accent зураастай. */
+.sidepanel__nav { display: flex; flex-direction: column; gap: 0; padding: 6px 10px 16px; overflow-y: auto; }
+.sidepanel__group { display: flex; flex-direction: column; gap: 2px; padding: 11px 0 9px; }
+/* Дэд системийн хооронд тусгаарлагч — гурван түвшин тод харагдана. */
+.sidepanel__group + .sidepanel__group { border-top: 1px solid var(--border); }
+.sidepanel__group-label {
+  font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .055em;
+  color: var(--muted); padding: 2px 10px 5px;
+}
 .sidepanel__link {
+  position: relative;
   display: flex; align-items: center; gap: 10px;
-  padding: 9px 10px; border-radius: 10px;
+  padding: 9px 10px 9px 12px; border-radius: 9px;
   color: var(--secondary); font-size: 14px; text-decoration: none;
   transition: background .15s, color .15s;
 }
 .sidepanel__link:hover { background: var(--surface-2); color: var(--fg); }
-.sidepanel__link.is-active { background: var(--surface-2); color: var(--dan-blue); font-weight: 600; }
+.sidepanel__link.is-active { background: var(--dan-blue-soft); color: var(--dan-blue-text); font-weight: 600; }
+/* Идэвхтэй цэсийн зүүн ирмэгийн accent — байрлалыг тодоор илэрхийлнэ. */
+.sidepanel__link.is-active::before {
+  content: ""; position: absolute; left: 0; top: 7px; bottom: 7px; width: 3px;
+  border-radius: 0 3px 3px 0; background: var(--dan-blue);
+}
 
 .maincol { display: flex; flex-direction: column; min-width: 0; min-height: 100vh; }
 

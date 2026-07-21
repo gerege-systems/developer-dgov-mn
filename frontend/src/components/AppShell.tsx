@@ -44,12 +44,15 @@ interface NavItem {
   perm?: string; // шаардагдах эрх; байхгүй бол бүх нэвтэрсэн хэрэглэгчид
   superAdminOnly?: boolean; // зөвхөн super admin (perm bypass-д хамаарахгүй)
 }
-interface NavGroup {
-  labelKey?: DictKey;
+// Дэд систем (subsystem) = систем доторх нэрлэсэн бүлэг — зүүн цэсийн ДУНД түвшин.
+// Систем бүр ДОР ХАЯЖ 1 дэд системтэй тул labelKey ЗААВАЛ (нэргүй бүлэг байхгүй).
+interface NavSubsystem {
+  labelKey: DictKey;
   items: NavItem[];
 }
-// Систем = icon rail дахь дээд түвшний бүлэг. adminOnly бол зөвхөн admin харна;
-// superAdminOnly бол зөвхөн super admin харна.
+// Систем = icon rail дахь дээд түвшин (Супер админ / Админ / Менежер / Иргэн).
+// adminOnly бол зөвхөн admin харна; superAdminOnly бол зөвхөн super admin харна.
+// Гурван түвшин: Систем → Дэд систем → Цэс.
 interface NavSystem {
   key: string;
   labelKey: DictKey;
@@ -57,7 +60,7 @@ interface NavSystem {
   icon: typeof User;
   adminOnly?: boolean;
   superAdminOnly?: boolean;
-  groups: NavGroup[];
+  subsystems: NavSubsystem[]; // дор хаяж 1
 }
 
 // BPMN, translator, AI зэрэг хэсгүүдийг хассан — зөвхөн generic admin цөм.
@@ -70,7 +73,7 @@ const SYSTEMS: NavSystem[] = [
     brand: 'Super Admin System',
     icon: Crown,
     superAdminOnly: true,
-    groups: [
+    subsystems: [
       {
         labelKey: 'group.superadmin',
         items: [
@@ -86,7 +89,7 @@ const SYSTEMS: NavSystem[] = [
     brand: 'Admin System',
     icon: ShieldHalf,
     adminOnly: true,
-    groups: [
+    subsystems: [
       {
         labelKey: 'group.general',
         items: [
@@ -141,7 +144,7 @@ const SYSTEMS: NavSystem[] = [
     labelKey: 'sys.manager',
     brand: 'Manager System',
     icon: Briefcase,
-    groups: [
+    subsystems: [
       {
         labelKey: 'group.manager',
         items: [
@@ -159,7 +162,7 @@ const SYSTEMS: NavSystem[] = [
     labelKey: 'sys.gov',
     brand: 'Government Services',
     icon: Landmark,
-    groups: [
+    subsystems: [
       {
         labelKey: 'group.govServices',
         items: [
@@ -222,8 +225,8 @@ export default function AppShell({ user, children }: Props) {
     if (i.superAdminOnly) return isSuper;
     return !i.perm || isAdmin || (perms?.includes(i.perm) ?? false);
   };
-  const visibleGroups = (s: NavSystem) =>
-    s.groups
+  const visibleSubsystems = (s: NavSystem) =>
+    s.subsystems
       .map((g) => ({ ...g, items: g.items.filter(canSeeItem) }))
       .filter((g) => g.items.length > 0);
   const systems = SYSTEMS.filter((s) => {
@@ -233,14 +236,14 @@ export default function AppShell({ user, children }: Props) {
     // UserMenu-д хэвээр байна.)
     if (isSuper && !s.superAdminOnly) return false;
     if (s.adminOnly && !isAdmin) return false;
-    return visibleGroups(s).length > 0;
+    return visibleSubsystems(s).length > 0;
   });
 
   // Дээд талын хайлтын каталог — харагдах бүх цэсний зүйл (эрхийн дагуу) +
   // dropdown-д байдаг Профайл/Тохиргоо. Бичихэд шүүж, сонгоход шилжинэ.
   const searchItems: SearchItem[] = [
     ...systems.flatMap((s) =>
-      visibleGroups(s).flatMap((g) => g.items.map((i) => ({ label: T(i.labelKey), href: i.href, group: T(s.labelKey) }))),
+      visibleSubsystems(s).flatMap((g) => g.items.map((i) => ({ label: T(i.labelKey), href: i.href, group: T(s.labelKey) }))),
     ),
     { label: T('nav.profile'), href: '/me/profile', group: T('sys.user') },
     { label: T('nav.settings'), href: '/me/settings', group: T('sys.user') },
@@ -251,7 +254,7 @@ export default function AppShell({ user, children }: Props) {
   // ингэснээр admin/manager нэвтрэхдээ нүүрэн дээр өөрийн дээд системээ нээлттэй
   // хардаг; гүн холбоос (/admin/*, /manager/*) хэвээр зөв.
   const systemMatches = (s: NavSystem) =>
-    visibleGroups(s).some((g) => g.items.some((i) => i.href !== '/' && isActive(i.href)));
+    visibleSubsystems(s).some((g) => g.items.some((i) => i.href !== '/' && isActive(i.href)));
 
   const activeSystem = systems.find(systemMatches) ?? systems[0];
   const [openKey, setOpenKey] = useState(activeSystem?.key ?? '');
@@ -273,8 +276,8 @@ export default function AppShell({ user, children }: Props) {
   };
 
   // Доод tab bar-аас систем рүү шилжих хаяг — тухайн системийн эрхээр шүүгдсэн
-  // ЭХНИЙ хуудас (visibleGroups нь хоосон бүлгийг аль хэдийн хассан).
-  const firstHref = (s: NavSystem) => visibleGroups(s)[0]?.items[0]?.href ?? '/';
+  // ЭХНИЙ хуудас (visibleSubsystems нь хоосон бүлгийг аль хэдийн хассан).
+  const firstHref = (s: NavSystem) => visibleSubsystems(s)[0]?.items[0]?.href ?? '/';
 
   if (!activeSystem) {
     return (
@@ -334,7 +337,7 @@ export default function AppShell({ user, children }: Props) {
           <span className="sidepanel__title">{T(panel.labelKey)}</span>
         </div>
         <nav className="sidepanel__nav">
-          {visibleGroups(panel).map((g, gi) => (
+          {visibleSubsystems(panel).map((g, gi) => (
             <div key={gi} className="sidepanel__group">
               {g.labelKey && <span className="sidepanel__group-label">{T(g.labelKey)}</span>}
               {g.items.map((item) => {
