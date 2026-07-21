@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { QRCodeSVG } from 'qrcode.react';
 import { ShieldCheck, RefreshCw, HelpCircle } from 'lucide-react';
 import Alert from '@/components/Alert';
+import MFAChallenge from '@/components/superadmin/MFAChallenge';
 import { postJSON } from '@/lib/client';
 import { safeNext } from '@/lib/navigation';
 import { useT } from '@/lib/lang';
@@ -42,8 +42,7 @@ type Phase = 'idle' | 'starting' | 'waiting' | 'expired' | 'refused' | 'error' |
 
 const POLL_INTERVAL_MS = 2500;
 
-export default function LoginForm({ next, notice, googleLink, googleError }: { next: string; notice?: string; googleLink?: boolean; googleError?: boolean }) {
-  const router = useRouter();
+export default function LoginForm({ next, notice, googleLink, googleError, mfaGate }: { next: string; notice?: string; googleLink?: boolean; googleError?: boolean; mfaGate?: boolean }) {
   const { T } = useT();
 
   const [method, setMethod] = useState<Method>('id');
@@ -51,6 +50,10 @@ export default function LoginForm({ next, notice, googleLink, googleError }: { n
   const [start, setStart] = useState<StartData | null>(null);
   const [nationalId, setNationalId] = useState('');
   const [idError, setIdError] = useState('');
+  // MFA-той superadmin — eID poll эсвэл Google callback дараа 2 дахь хүчин зүйл
+  // шаардвал энэ challenge-ийг харуулна. mfaToken байвал eID poll урсгал (клиент
+  // token эзэмшинэ); null бол Google callback (sa_mfa cookie ашиглана).
+  const [mfa, setMfa] = useState<{ token?: string } | null>(mfaGate ? {} : null);
 
   // unmount хийсний дараа интервалд timer-уудыг цэвэрлэхэд ашиглана.
   const pollTimer = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -81,7 +84,7 @@ export default function LoginForm({ next, notice, googleLink, googleError }: { n
 
   const poll = useCallback(
     async (sessionId: string) => {
-      const res = await postJSON<{ state?: string }>('/api/auth/eid/poll', { session_id: sessionId });
+      const res = await postJSON<{ state?: string; mfa_required?: boolean; mfa_token?: string }>('/api/auth/eid/poll', { session_id: sessionId });
       if (!mounted.current) return;
 
       if (!res.ok) {
@@ -89,12 +92,23 @@ export default function LoginForm({ next, notice, googleLink, googleError }: { n
         return;
       }
 
+      // MFA-той superadmin — session-ий оронд mfa_token ирнэ. Poll-ыг зогсоож,
+      // TOTP/recovery challenge руу шилжинэ (mfa_token-ийг challenge-д дамжуулна).
+      if (res.data?.mfa_required && res.data?.mfa_token) {
+        stopTimers();
+        setPhase('success');
+        setMfa({ token: res.data.mfa_token });
+        return;
+      }
+
       const state = res.data?.state;
       if (state === 'COMPLETE') {
         stopTimers();
         setPhase('success');
-        router.push(safeNext(next));
-        router.refresh();
+        // Бүтэн хуудас шилжилт — router.push+refresh нь энд race болж, шинэ
+        // session cookie-той хуудас руу заримдаа шилжихгүй "Шилжиж байна…"
+        // дээр гацдаг. Hard redirect нь session-ийг найдвартай ачаална.
+        window.location.assign(safeNext(next));
         return;
       }
       if (state === 'EXPIRED') {
@@ -109,7 +123,7 @@ export default function LoginForm({ next, notice, googleLink, googleError }: { n
       }
       // RUNNING — үргэлжлүүлэн хүлээнэ.
     },
-    [next, router, stopTimers],
+    [next, stopTimers],
   );
 
   // start өгөгдөл хүлээн авсны дараа poll болон expiry timer-уудыг тохируулна.
@@ -222,6 +236,9 @@ export default function LoginForm({ next, notice, googleLink, googleError }: { n
 
   const isTerminal = phase === 'expired' || phase === 'refused' || phase === 'error';
   const busy = phase === 'starting' || phase === 'waiting';
+
+  // MFA gate идэвхжсэн бол зөвхөн 2 дахь хүчин зүйлийн challenge-ийг харуулна.
+  if (mfa) return <MFAChallenge mfaToken={mfa.token} next={next} />;
 
   return (
     <div className="form-grid" aria-live="polite">
@@ -430,7 +447,10 @@ export default function LoginForm({ next, notice, googleLink, googleError }: { n
         <>
           <div className="login-or"><span>{T('auth.eid.or')}</span></div>
 
-          <a className="btn btn--google btn--lg btn--block" href="/api/auth/google/start">
+          <a
+            className="btn btn--google btn--lg btn--block"
+            href={`/api/auth/google/start${next && next !== '/' ? `?next=${encodeURIComponent(next)}` : ''}`}
+          >
             <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.8 6.1C12.2 13.3 17.6 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9.1h12.4c-.5 2.9-2.1 5.3-4.6 7l7.1 5.5c4.2-3.9 6.6-9.6 6.6-17z"/><path fill="#FBBC05" d="M10.4 28.3a14.5 14.5 0 0 1 0-8.6l-7.8-6.1a24 24 0 0 0 0 20.8l7.8-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.1-5.5c-2 1.4-4.6 2.2-8.8 2.2-6.4 0-11.8-3.8-13.6-9.3l-7.8 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
             <span>{T('auth.google.button')}</span>
           </a>

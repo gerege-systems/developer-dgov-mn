@@ -6,8 +6,8 @@ import {
 } from './cookies';
 
 // Серверийн талд токен cookie-г унших / бичих / цэвэрлэх туслахууд.
-// Зөвхөн route handler болон server component-аас дуудагдана. Next 15-д
-// cookies() нь async тул бүх туслах Promise буцаана.
+// Зөвхөн route handler болон server component-аас дуудагдана.
+// Next 15-д cookies() нь Promise буцаадаг тул бүгд async.
 
 export async function getAccessToken(): Promise<string | undefined> {
   return (await cookies()).get(ACCESS_COOKIE)?.value;

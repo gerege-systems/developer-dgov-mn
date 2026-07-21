@@ -5,7 +5,7 @@ import GovReferencesView from '@/components/gov/GovReferencesView';
 import { fetchMe } from '@/lib/api';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Лавлагаа — Gerege' };
+export const metadata = { title: 'Лавлагаа — Government Template Platform V3.0' };
 
 export default async function MeReferencesPage() {
   const me = await fetchMe();
