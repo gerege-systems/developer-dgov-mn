@@ -8259,12 +8259,25 @@ const docTemplate = `{
                     "type": "integer",
                     "minimum": 0
                 },
+                "assurance_level": {
+                    "type": "string",
+                    "enum": [
+                        "low",
+                        "substantial",
+                        "high"
+                    ]
+                },
                 "authority": {
                     "type": "string",
                     "maxLength": 300
                 },
                 "authority_org_id": {
                     "type": "string"
+                },
+                "category": {
+                    "description": "── Үйл ажиллагааны тохиргоо (migration 47) ──────────────────────────\nПаспорт нийтлэгдэхэд иргэний порталын ажлын каталог руу буудаг хэсэг.",
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "channels": {
                     "type": "array",
@@ -8277,6 +8290,14 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 64
                 },
+                "cofog_code": {
+                    "type": "string",
+                    "maxLength": 16
+                },
+                "cofog_label": {
+                    "type": "string",
+                    "maxLength": 200
+                },
                 "description": {
                     "type": "string",
                     "maxLength": 4000
@@ -8285,12 +8306,29 @@ const docTemplate = `{
                     "type": "integer",
                     "minimum": 0
                 },
+                "fulfilment": {
+                    "type": "string",
+                    "enum": [
+                        "auto",
+                        "manual"
+                    ]
+                },
+                "has_assessment": {
+                    "type": "boolean"
+                },
+                "has_discretion": {
+                    "type": "boolean"
+                },
                 "legal_basis": {
                     "type": "string",
                     "maxLength": 4000
                 },
                 "life_event_id": {
                     "type": "string"
+                },
+                "main_activity": {
+                    "type": "string",
+                    "maxLength": 32
                 },
                 "max_days": {
                     "type": "integer",
@@ -8305,9 +8343,28 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 300
                 },
+                "online": {
+                    "type": "boolean"
+                },
                 "output": {
                     "type": "string",
                     "maxLength": 300
+                },
+                "output_ref_type": {
+                    "type": "string",
+                    "maxLength": 64
+                },
+                "output_type": {
+                    "type": "string",
+                    "enum": [
+                        "Declaration",
+                        "Physical object",
+                        "Code",
+                        "Financial obligation",
+                        "Financial benefit",
+                        "Recognition",
+                        "Permit"
+                    ]
                 },
                 "proactivity": {
                     "type": "string",
@@ -8318,10 +8375,26 @@ const docTemplate = `{
                         "proactive"
                     ]
                 },
+                "processing_time": {
+                    "type": "string",
+                    "maxLength": 32
+                },
+                "sdg_code": {
+                    "type": "string",
+                    "maxLength": 8
+                },
+                "sla_hours": {
+                    "type": "integer",
+                    "maximum": 8760,
+                    "minimum": 0
+                },
                 "steps_count": {
                     "type": "integer",
                     "maximum": 500,
                     "minimum": 0
+                },
+                "tacit_approval": {
+                    "type": "boolean"
                 },
                 "target_group": {
                     "type": "string",

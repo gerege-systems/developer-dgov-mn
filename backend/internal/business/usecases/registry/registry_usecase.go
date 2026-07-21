@@ -43,6 +43,24 @@ type ServiceInput struct {
 	AnnualVolume   int
 	Proactivity    string
 	LifeEventID    *string
+
+	// ── Үйл ажиллагааны тохиргоо (migration 47) ──────────────────────────
+	// Паспорт нийтлэгдэхэд иргэний порталын ажлын каталог руу буудаг хэсэг.
+	Category       string
+	COFOGCode      string
+	COFOGLabel     string
+	MainActivity   string
+	SDGCode        string
+	ProcessingTime string
+	OutputType     string
+	OutputRefType  string
+	AssuranceLevel string
+	Fulfilment     string
+	HasDiscretion  bool
+	HasAssessment  bool
+	SLAHours       int
+	TacitApproval  bool
+	Online         bool
 }
 
 // EvidenceLink нь паспортод нотолгоо холбох мөр.

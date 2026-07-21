@@ -249,7 +249,25 @@ export default function AppShell({ user, children }: Props) {
     { label: T('nav.settings'), href: '/me/settings', group: T('sys.user') },
   ];
 
-  const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
+  // Идэвхтэй цэсийг ХАМГИЙН УРТ таарсан замаар нь сонгоно.
+  //
+  // Энгийн startsWith нь үүрлэсэн замуудад ХОЁУЛАНГ нь идэвхжүүлдэг:
+  // /admin/relay/routes дээр байхад '/admin/relay' (Хяналтын самбар) ба
+  // '/admin/relay/routes' (Чиглүүлэлт) хоёулаа таарч, хоёр цэс зэрэг
+  // сонгогдсон харагдана. Тиймээс бүх цэснээс таарсан хамгийн уртыг нь олж,
+  // зөвхөн түүнийг идэвхтэй гэж үзнэ.
+  //
+  // Мөн зөвхөн сегментийн зааг дээр таарна ('/admin/relay' нь
+  // '/admin/relayfoo'-г таарууллаа гэж үзэхгүй).
+  const matches = (href: string) =>
+    href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(`${href}/`);
+
+  const bestHref = systems
+    .flatMap((s) => visibleSubsystems(s).flatMap((g) => g.items.map((i) => i.href)))
+    .filter(matches)
+    .reduce((best, href) => (href.length > best.length ? href : best), '');
+
+  const isActive = (href: string) => (bestHref !== '' ? href === bestHref : matches(href));
   // Нүүр '/' нь "me" системд багтдаг ч default панелийг түүгээр сонгохгүй —
   // ингэснээр admin/manager нэвтрэхдээ нүүрэн дээр өөрийн дээд системээ нээлттэй
   // хардаг; гүн холбоос (/admin/*, /manager/*) хэвээр зөв.

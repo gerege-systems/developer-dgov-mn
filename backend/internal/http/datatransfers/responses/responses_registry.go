@@ -47,6 +47,21 @@ type RegistryServiceResponse struct {
 	Proactivity    string     `json:"proactivity"`
 	Status         string     `json:"status"`
 	LifeEventID    *string    `json:"life_event_id"`
+	Category       string     `json:"category"`
+	COFOGCode      string     `json:"cofog_code"`
+	COFOGLabel     string     `json:"cofog_label"`
+	MainActivity   string     `json:"main_activity"`
+	SDGCode        string     `json:"sdg_code"`
+	ProcessingTime string     `json:"processing_time"`
+	OutputType     string     `json:"output_type"`
+	OutputRefType  string     `json:"output_ref_type"`
+	AssuranceLevel string     `json:"assurance_level"`
+	Fulfilment     string     `json:"fulfilment"`
+	HasDiscretion  bool       `json:"has_discretion"`
+	HasAssessment  bool       `json:"has_assessment"`
+	SLAHours       int        `json:"sla_hours"`
+	TacitApproval  bool       `json:"tacit_approval"`
+	Online         bool       `json:"online"`
 	Version        int        `json:"version"`
 	PublishedAt    *time.Time `json:"published_at"`
 	CreatedAt      time.Time  `json:"created_at"`
@@ -63,6 +78,11 @@ func FromRegistryService(s domain.RegistryService) RegistryServiceResponse {
 		TargetGroup: s.TargetGroup, Output: s.Output, Channels: s.Channels, Fee: s.Fee,
 		MaxDays: s.MaxDays, StepsCount: s.StepsCount, AnnualVolume: s.AnnualVolume,
 		Proactivity: s.Proactivity, Status: s.Status, LifeEventID: s.LifeEventID,
+		Category: s.Category, COFOGCode: s.COFOGCode, COFOGLabel: s.COFOGLabel,
+		MainActivity: s.MainActivity, SDGCode: s.SDGCode, ProcessingTime: s.ProcessingTime,
+		OutputType: s.OutputType, OutputRefType: s.OutputRefType, AssuranceLevel: s.AssuranceLevel,
+		Fulfilment: s.Fulfilment, HasDiscretion: s.HasDiscretion, HasAssessment: s.HasAssessment,
+		SLAHours: s.SLAHours, TacitApproval: s.TacitApproval, Online: s.Online,
 		Version: s.Version, PublishedAt: s.PublishedAt, CreatedAt: s.CreatedAt, UpdatedAt: s.UpdatedAt,
 	}
 	if out.Channels == nil {

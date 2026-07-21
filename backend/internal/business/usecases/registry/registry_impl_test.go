@@ -29,6 +29,24 @@ type fakeRepo struct {
 	published   *domain.RegistryServiceVersion
 	deletedID   string
 	statusCalls []string
+
+	// Ажлын каталог руу буусан проекцын мөр (migration 47).
+	projected  []string
+	withdrawn  []string
+	projectErr error
+}
+
+func (f *fakeRepo) ProjectToGov(_ context.Context, serviceID string) error {
+	if f.projectErr != nil {
+		return f.projectErr
+	}
+	f.projected = append(f.projected, serviceID)
+	return nil
+}
+
+func (f *fakeRepo) WithdrawFromGov(_ context.Context, serviceID string) error {
+	f.withdrawn = append(f.withdrawn, serviceID)
+	return nil
 }
 
 func (f *fakeRepo) ListServices(_ context.Context, filter repointerface.RegistryFilter) ([]domain.RegistryService, error) {
@@ -321,5 +339,76 @@ func TestArchiveServiceSetsStatus(t *testing.T) {
 	}
 	if len(repo.statusCalls) != 1 || repo.statusCalls[0] != domain.RegistryStatusArchived {
 		t.Errorf("статусын дуудалт: %v", repo.statusCalls)
+	}
+}
+
+// ── Регистр ↔ ажлын каталогийн нэгтгэл (migration 47) ───────────────────────
+
+// Паспорт нийтлэгдэхэд иргэний порталын ажлын каталог руу ЗААВАЛ буух ёстой —
+// эс тэгвээс регистрт нийтлэгдсэн атлаа иргэнд харагдахгүй зөрүү үүснэ.
+func TestPublishProjectsToGovCatalog(t *testing.T) {
+	repo := &fakeRepo{svc: domain.RegistryService{
+		ID: "svc-1", Status: domain.RegistryStatusDraft, Proactivity: domain.ProactivityInformation,
+	}}
+	if _, err := NewUsecase(repo).Publish(context.Background(), "svc-1", PublishInput{}); err != nil {
+		t.Fatalf("Publish: %v", err)
+	}
+	if len(repo.projected) != 1 || repo.projected[0] != "svc-1" {
+		t.Errorf("проекц дуудагдаагүй: %v", repo.projected)
+	}
+}
+
+// Проекц бүтэлгүйтвэл алдааг ЗАЛГИХГҮЙ — админ "нийтэллээ" гэж бодоод иргэнд
+// хүрээгүй байх нь хамгийн муу төгсгөл.
+func TestPublishSurfacesProjectionFailure(t *testing.T) {
+	repo := &fakeRepo{
+		svc:        domain.RegistryService{ID: "svc-1", Status: domain.RegistryStatusDraft, Proactivity: domain.ProactivityInformation},
+		projectErr: errors.New("gov catalog write failed"),
+	}
+	if _, err := NewUsecase(repo).Publish(context.Background(), "svc-1", PublishInput{}); err == nil {
+		t.Fatal("проекцын алдаа дуудагчид мэдэгдэх ёстой")
+	}
+}
+
+// Архивлахад ажлын үйлчилгээ унтрах ёстой.
+func TestArchiveWithdrawsFromGovCatalog(t *testing.T) {
+	repo := &fakeRepo{svc: domain.RegistryService{ID: "svc-1", Status: domain.RegistryStatusPublished}}
+	if err := NewUsecase(repo).ArchiveService(context.Background(), "svc-1"); err != nil {
+		t.Fatalf("ArchiveService: %v", err)
+	}
+	if len(repo.withdrawn) != 1 || repo.withdrawn[0] != "svc-1" {
+		t.Errorf("ажлын үйлчилгээ унтраагдаагүй: %v", repo.withdrawn)
+	}
+}
+
+// Үнэлэх эрхтэй үйлчилгээг автоматаар олгохоор хадгалахыг татгалзана
+// (VwVfG §35a-ийн гурван нөхцөлийн хоёр дахь нь).
+func TestServiceRejectsAutoWithDiscretion(t *testing.T) {
+	repo := &fakeRepo{}
+	_, err := NewUsecase(repo).CreateService(context.Background(), ServiceInput{
+		Code: "MN-TEST-1", Name: "Тест", Authority: "УБЕГ",
+		Fulfilment: domain.GovFulfilmentAuto, HasDiscretion: true,
+	})
+	if err == nil {
+		t.Fatal("үнэлэх эрхтэй үйлчилгээг auto болгохыг татгалзах ёстой")
+	}
+}
+
+// Үнэлэх эрх, үнэлгээний зай ХОЁУЛАА байхгүй бол auto зөвшөөрөгдөнө.
+func TestServiceAllowsAutoWhenFullyBound(t *testing.T) {
+	repo := &fakeRepo{}
+	svc, err := NewUsecase(repo).CreateService(context.Background(), ServiceInput{
+		Code: "MN-TEST-2", Name: "Лавлагаа", Authority: "УБЕГ",
+		Fulfilment: domain.GovFulfilmentAuto, SLAHours: 48,
+	})
+	if err != nil {
+		t.Fatalf("CreateService: %v", err)
+	}
+	if svc.Fulfilment != domain.GovFulfilmentAuto {
+		t.Errorf("fulfilment = %q", svc.Fulfilment)
+	}
+	// Шууд олгогддог үйлчилгээнд хүлээх хугацаа утгагүй тул тэглэгдэнэ.
+	if svc.SLAHours != 0 {
+		t.Errorf("auto үйлчилгээний SLAHours = %d, 0 байх ёстой", svc.SLAHours)
 	}
 }

@@ -72,6 +72,12 @@ func toServiceInput(req requests.RegistryServiceRequest) registryuc.ServiceInput
 		TargetGroup: req.TargetGroup, Output: req.Output, Channels: req.Channels,
 		Fee: req.Fee, MaxDays: req.MaxDays, StepsCount: req.StepsCount,
 		AnnualVolume: req.AnnualVolume, Proactivity: req.Proactivity, LifeEventID: req.LifeEventID,
+		Category: req.Category, COFOGCode: req.COFOGCode, COFOGLabel: req.COFOGLabel,
+		MainActivity: req.MainActivity, SDGCode: req.SDGCode, ProcessingTime: req.ProcessingTime,
+		OutputType: req.OutputType, OutputRefType: req.OutputRefType,
+		AssuranceLevel: req.AssuranceLevel, Fulfilment: req.Fulfilment,
+		HasDiscretion: req.HasDiscretion, HasAssessment: req.HasAssessment,
+		SLAHours: req.SLAHours, TacitApproval: req.TacitApproval, Online: req.Online,
 	}
 }
 

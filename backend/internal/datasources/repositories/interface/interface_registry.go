@@ -51,6 +51,18 @@ type RegistryRepository interface {
 	// (хувилбарын documents_count-д хэрэглэгдэнэ).
 	CountCitizenDocuments(ctx context.Context, serviceID string) (int, error)
 
+	// ── Ажлын каталог руу проекц (migration 47) ─────────────────────────
+	// ProjectToGov нь паспортыг иргэний порталын ажлын каталог (gov_services)
+	// руу буулгана — байхгүй бол үүсгэж, байгаа бол шинэчилнэ. Иргэнээс
+	// шаардах баримтын жагсаалтыг нотолгооны холбоосоос (from_citizen=true)
+	// автоматаар гаргана. Паспорт нийтлэгдэх бүрд дуудагдана.
+	ProjectToGov(ctx context.Context, serviceID string) error
+	// WithdrawFromGov нь архивлагдсан паспортын ажлын үйлчилгээг унтраана
+	// (мөрийг УСТГАХГҮЙ — өмнөх хүсэлтүүд нь түүн рүү заасаар байна).
+	WithdrawFromGov(ctx context.Context, serviceID string) error
+	// SetServiceEvents нь паспортын амьдралын үйл явдлын жагсаалтыг солино.
+	SetServiceEvents(ctx context.Context, serviceID string, eventIDs []string) error
+
 	// ── Нотолгооны каталог ──────────────────────────────────────────────
 	ListEvidences(ctx context.Context) ([]domain.RegistryEvidence, error)
 	GetEvidence(ctx context.Context, id string) (domain.RegistryEvidence, error)

@@ -18,10 +18,11 @@ import {
 } from 'lucide-react';
 import { getJSON, postJSON, sendJSON } from '@/lib/client';
 import { useT } from '@/lib/lang';
-import { CHANNELS, PROACTIVITY_LEVELS } from '@/lib/registryTypes';
+import { CHANNELS, PROACTIVITY_LEVELS, OUTPUT_TYPES } from '@/lib/registryTypes';
 import type {
   RegistryService, RegistryVersion, RegistryEvidence, RegistryEvidenceLink,
   RegistryOnceOnlyReport, RegistryLifeEvent, Proactivity,
+  Fulfilment, AssuranceLevel, OutputType,
 } from '@/lib/registryTypes';
 import { Loading, StatusChip, ProactivityChip, Delta, fmtDate, fmtNum } from './regShared';
 
@@ -124,6 +125,21 @@ export default function RegistryServiceDetailView({ id }: { id: string }) {
           annual_volume: form.annual_volume,
           proactivity: form.proactivity,
           life_event_id: form.life_event_id || null,
+          // Үйл ажиллагааны тохиргоо — нийтлэхэд иргэний каталог руу буудаг.
+          category: form.category,
+          cofog_code: form.cofog_code,
+          cofog_label: form.cofog_label,
+          sdg_code: form.sdg_code,
+          processing_time: form.processing_time,
+          output_type: form.output_type,
+          output_ref_type: form.output_ref_type,
+          assurance_level: form.assurance_level,
+          fulfilment: form.fulfilment,
+          has_discretion: form.has_discretion,
+          has_assessment: form.has_assessment,
+          sla_hours: form.sla_hours,
+          tacit_approval: form.tacit_approval,
+          online: form.online,
         }),
       T('registry.msg.saved'),
     );
@@ -386,6 +402,89 @@ export default function RegistryServiceDetailView({ id }: { id: string }) {
               ))}
             </select>
           </Field>
+          {/* ── Үйл ажиллагаа: иргэн юу хүлээхийг тодорхойлдог хэсэг ──
+              Энэ бүлэг нь паспорт нийтлэгдэхэд иргэний порталын ажлын каталог
+              руу шууд буудаг. Өмнө нь эдгээрийг тусад нь тохируулдаг байсан. */}
+          <Field label="Биелүүлэх горим">
+            <span>
+              <select
+                className="input"
+                style={{ maxWidth: 260 }}
+                value={form.fulfilment}
+                onChange={(e) => setForm({ ...form, fulfilment: e.target.value as Fulfilment })}
+              >
+                <option value="manual">Менежер хянаж шийдвэрлэнэ</option>
+                <option value="auto">Бүртгэлээс шууд олгоно</option>
+              </select>
+              {form.fulfilment === 'auto' && (form.has_discretion || form.has_assessment) && (
+                <div className="alert alert--danger" style={{ marginTop: 8, fontSize: 13 }}>
+                  Үнэлэх эрх эсвэл үнэлгээний зайтай үйлчилгээг автоматаар олгож болохгүй.
+                  Доорх хоёр тэмдэглэгээг арилгасны дараа хадгалагдана.
+                </div>
+              )}
+            </span>
+          </Field>
+
+          {/* Автоматжуулалтын эрх зүйн шалгуур — аль нэг нь тэмдэглэгдсэн бол
+              шийдвэрийг хүн гаргах ёстой. */}
+          <Field label="Үнэлэх эрх (Ermessen)">
+            <label style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13 }}>
+              <input type="checkbox" checked={form.has_discretion}
+                onChange={(e) => setForm({ ...form, has_discretion: e.target.checked })} />
+              Албан тушаалтан үнэлж шийдэх эрхтэй
+            </label>
+          </Field>
+          <Field label="Үнэлгээний зай">
+            <label style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13 }}>
+              <input type="checkbox" checked={form.has_assessment}
+                onChange={(e) => setForm({ ...form, has_assessment: e.target.checked })} />
+              Урьдчилсан нөхцөлийг үнэлэх шаардлагатай
+            </label>
+          </Field>
+
+          <Field label="Үйлчилгээний норм (цаг)">
+            <input className="input" type="number" min={0} style={{ maxWidth: 160 }}
+              disabled={form.fulfilment === 'auto'}
+              value={form.sla_hours}
+              onChange={(e) => setForm({ ...form, sla_hours: Number(e.target.value) })} />
+          </Field>
+          <Field label="Чимээгүй зөвшөөрөл">
+            <label style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13 }}>
+              <input type="checkbox" checked={form.tacit_approval}
+                onChange={(e) => setForm({ ...form, tacit_approval: e.target.checked })} />
+              Хугацаанд шийдвэрлээгүй бол зөвшөөрсөнд тооцно
+            </label>
+          </Field>
+
+          <Field label="Гаралтын төрөл (CPSV-AP)">
+            <select className="input" style={{ maxWidth: 260 }} value={form.output_type}
+              onChange={(e) => setForm({ ...form, output_type: e.target.value as OutputType })}>
+              {OUTPUT_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
+            </select>
+          </Field>
+          <Field label="Лавлагааны төрөл">
+            <input className="input" style={{ maxWidth: 260 }} value={form.output_ref_type}
+              placeholder="residence, tax, birth…"
+              onChange={(e) => setForm({ ...form, output_ref_type: e.target.value })} />
+          </Field>
+          <Field label="Баталгаажилтын түвшин (eIDAS)">
+            <select className="input" style={{ maxWidth: 200 }} value={form.assurance_level}
+              onChange={(e) => setForm({ ...form, assurance_level: e.target.value as AssuranceLevel })}>
+              <option value="low">low</option>
+              <option value="substantial">substantial</option>
+              <option value="high">high</option>
+            </select>
+          </Field>
+
+          <Field label="COFOG код">
+            <input className="input" style={{ maxWidth: 160 }} value={form.cofog_code}
+              placeholder="01.3.3" onChange={(e) => setForm({ ...form, cofog_code: e.target.value })} />
+          </Field>
+          <Field label="SDG процедур">
+            <input className="input" style={{ maxWidth: 160 }} value={form.sdg_code}
+              placeholder="S1" onChange={(e) => setForm({ ...form, sdg_code: e.target.value })} />
+          </Field>
+
           <Field label={T('registry.field.lifeEvent')}>
             <select className="input" style={{ maxWidth: 240 }} value={form.life_event_id ?? ''} onChange={(e) => setForm({ ...form, life_event_id: e.target.value || null })}>
               <option value="">—</option>

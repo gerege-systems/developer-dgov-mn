@@ -101,6 +101,7 @@ docker compose up -d --build
 | [backend/docs/DEVELOPMENT_MN.md](backend/docs/DEVELOPMENT_MN.md) | Фичер нэмэх заавар, тест, code style |
 | [backend/docs/API_CONTRACT_MN.md](backend/docs/API_CONTRACT_MN.md) | REST endpoint, request/response |
 | [backend/docs/AI_PIPELINE_MN.md](backend/docs/AI_PIPELINE_MN.md) | AI туслахын дотоод бүтэц: урсгал, prompt давхарга, tools, voice, өргөтгөх заавар |
+| [backend/docs/SERVICE_WORKFLOW_MN.md](backend/docs/SERVICE_WORKFLOW_MN.md) | Үйлчилгээний регистр (CPSV-AP паспорт) → ажлын каталог, хүсэлтийн төлөвийн машин, SLA, officer дараалал |
 | [backend/docs/SECURITY.md](backend/docs/SECURITY.md) | Хэрэгжсэн хяналт + ASVS roadmap |
 | [docs/DEPLOYMENT_MN.md](docs/DEPLOYMENT_MN.md) | VPS deploy runbook (compose, env файлууд, nginx, шинэчлэх, rollback) |
 | [ROADMAP.md](ROADMAP.md) | Юу хийгдсэн, юу дараагийнх |

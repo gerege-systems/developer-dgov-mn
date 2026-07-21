@@ -101,6 +101,7 @@ Open **http://localhost:3000** and choose **Login with eID** (scan the QR / open
 | [backend/docs/DEVELOPMENT.md](../backend/docs/DEVELOPMENT.md) | Add-a-feature guide, testing, code style |
 | [backend/docs/API_CONTRACT.md](../backend/docs/API_CONTRACT.md) | REST endpoints, request/response shapes |
 | [backend/docs/AI_PIPELINE.md](../backend/docs/AI_PIPELINE.md) | AI assistant internals: flows, prompt layers, tools, voice, how to extend |
+| [backend/docs/SERVICE_WORKFLOW.md](../backend/docs/SERVICE_WORKFLOW.md) | Service registry (CPSV-AP passports) → operational catalogue, request state machine, SLA, officer queue |
 | [backend/docs/SECURITY.md](../backend/docs/SECURITY.md) | Implemented controls + ASVS roadmap |
 | [docs/DEPLOYMENT.md](DEPLOYMENT.md) | VPS deployment runbook (compose, env files, nginx, updates, rollback) |
 | [ROADMAP.md](../ROADMAP.md) | What's shipped and what's next |

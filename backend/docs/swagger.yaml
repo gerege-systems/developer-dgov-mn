@@ -603,10 +603,22 @@ definitions:
       annual_volume:
         minimum: 0
         type: integer
+      assurance_level:
+        enum:
+        - low
+        - substantial
+        - high
+        type: string
       authority:
         maxLength: 300
         type: string
       authority_org_id:
+        type: string
+      category:
+        description: |-
+          ── Үйл ажиллагааны тохиргоо (migration 47) ──────────────────────────
+          Паспорт нийтлэгдэхэд иргэний порталын ажлын каталог руу буудаг хэсэг.
+        maxLength: 100
         type: string
       channels:
         items:
@@ -616,16 +628,34 @@ definitions:
       code:
         maxLength: 64
         type: string
+      cofog_code:
+        maxLength: 16
+        type: string
+      cofog_label:
+        maxLength: 200
+        type: string
       description:
         maxLength: 4000
         type: string
       fee:
         minimum: 0
         type: integer
+      fulfilment:
+        enum:
+        - auto
+        - manual
+        type: string
+      has_assessment:
+        type: boolean
+      has_discretion:
+        type: boolean
       legal_basis:
         maxLength: 4000
         type: string
       life_event_id:
+        type: string
+      main_activity:
+        maxLength: 32
         type: string
       max_days:
         maximum: 3650
@@ -637,8 +667,23 @@ definitions:
       name_en:
         maxLength: 300
         type: string
+      online:
+        type: boolean
       output:
         maxLength: 300
+        type: string
+      output_ref_type:
+        maxLength: 64
+        type: string
+      output_type:
+        enum:
+        - Declaration
+        - Physical object
+        - Code
+        - Financial obligation
+        - Financial benefit
+        - Recognition
+        - Permit
         type: string
       proactivity:
         enum:
@@ -647,10 +692,22 @@ definitions:
         - once_only
         - proactive
         type: string
+      processing_time:
+        maxLength: 32
+        type: string
+      sdg_code:
+        maxLength: 8
+        type: string
+      sla_hours:
+        maximum: 8760
+        minimum: 0
+        type: integer
       steps_count:
         maximum: 500
         minimum: 0
         type: integer
+      tacit_approval:
+        type: boolean
       target_group:
         maxLength: 300
         type: string
