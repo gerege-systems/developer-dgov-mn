@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Trash2, Loader2, Check, Ban, ChevronLeft, ChevronRight, UserPlus, X } from 'lucide-react';
+import { Trash2, Loader2, Check, Ban, ChevronLeft, ChevronRight, UserPlus, X, Search } from 'lucide-react';
 import { useT } from '@/lib/lang';
 import { getJSON, sendJSON } from '@/lib/client';
 import { ROLE_SUPERADMIN, ROLE_ADMIN, ROLE_USER, isSuperAdmin } from '@/lib/types';
@@ -22,6 +22,16 @@ interface RoleItem {
   id: number;
   key: string;
   name: string;
+}
+
+// Core (core.dgov.mn) /api/user/find-ийн хариу (шаардлагатай талбарууд).
+interface CoreCitizen {
+  id?: string | number;
+  reg_no?: string;
+  last_name?: string;
+  first_name?: string;
+  family_name?: string;
+  message?: string;
 }
 
 interface Props {
@@ -46,12 +56,13 @@ export default function UsersManager({ currentUserId, currentUserRoleId, readOnl
   const [page, setPage] = useState(0);
   const [actionError, setActionError] = useState('');
 
-  // "Хэрэглэгч нэмэх" модал — иргэнийг регистрээр урьдчилан бүртгэнэ.
-  const emptyForm = {
-    register: '', first_name: '', last_name: '', first_name_en: '', last_name_en: '', role_id: ROLE_USER,
-  };
+  // "Хэрэглэгч нэмэх" модал — регистрийн дугаараар Core (core.dgov.mn)-оос
+  // иргэнийг татаж (нэрийг гараар оруулахгүй), role оноож урьдчилан бүртгэнэ.
   const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState(emptyForm);
+  const [register, setRegister] = useState('');
+  const [roleId, setRoleId] = useState<number>(ROLE_USER);
+  const [citizen, setCitizen] = useState<CoreCitizen | null>(null);
+  const [lookingUp, setLookingUp] = useState(false);
   const [addError, setAddError] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -79,20 +90,37 @@ export default function UsersManager({ currentUserId, currentUserRoleId, readOnl
     }
   };
 
-  const openAdd = () => { setForm(emptyForm); setAddError(''); setAdding(true); };
+  const openAdd = () => {
+    setRegister(''); setRoleId(ROLE_USER); setCitizen(null); setAddError(''); setAdding(true);
+  };
+
+  // Регистрийн дугаараар Core-оос иргэнийг татна (нэрийг гараар оруулахгүй).
+  const lookup = async () => {
+    const text = register.trim();
+    if (!text) return;
+    setLookingUp(true); setAddError(''); setCitizen(null);
+    try {
+      const data = await getJSON<CoreCitizen>(`/api/core/users?search_text=${encodeURIComponent(text)}`);
+      if (data && data.id != null) setCitizen(data);
+      else setAddError((data && typeof data.message === 'string' ? data.message : '') || T('users.notFound'));
+    } catch (e) {
+      setAddError((e as Error).message || T('users.lookupError'));
+    } finally {
+      setLookingUp(false);
+    }
+  };
 
   const submitAdd = async () => {
-    const register = form.register.trim();
-    if (!register) return;
+    if (!citizen) return;
     setAddError('');
     setSaving(true);
+    // Нэр нь Core-оос ирнэ; иргэн эхлээд SSO-оор нэвтэрхэд SSO-гийн нэрээр
+    // шинэчлэгдэнэ. register нь Core-ийн reg_no (эрх бүхий эх сурвалж).
     const res = await sendJSON('/api/admin/users', 'POST', {
-      register,
-      first_name: form.first_name.trim() || undefined,
-      last_name: form.last_name.trim() || undefined,
-      first_name_en: form.first_name_en.trim() || undefined,
-      last_name_en: form.last_name_en.trim() || undefined,
-      role_id: form.role_id,
+      register: String(citizen.reg_no ?? register).trim(),
+      first_name: citizen.first_name ? String(citizen.first_name) : undefined,
+      last_name: citizen.last_name ? String(citizen.last_name) : undefined,
+      role_id: roleId,
     });
     setSaving(false);
     if (res.ok) {
@@ -143,35 +171,41 @@ export default function UsersManager({ currentUserId, currentUserRoleId, readOnl
 
           {addError && <div className="alert alert--danger" role="alert">{addError}</div>}
 
+          <p className="muted" style={{ fontSize: 13, marginTop: 0 }}>{T('users.addHint')}</p>
+
           <label style={{ display: 'block' }}>{T('users.register')}
-            <input
-              className="input mono"
-              value={form.register}
-              onChange={(e) => setForm({ ...form, register: e.target.value })}
-              placeholder={T('users.registerPlaceholder')}
-            />
+            <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+              <input
+                className="input mono"
+                value={register}
+                onChange={(e) => { setRegister(e.target.value); setCitizen(null); }}
+                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); void lookup(); } }}
+                placeholder={T('users.registerPlaceholder')}
+                style={{ flex: 1 }}
+              />
+              <button className="btn btn--secondary btn--sm" type="button" onClick={lookup} disabled={lookingUp || !register.trim()}>
+                {lookingUp ? <Loader2 size={14} strokeWidth={2} className="spin" /> : <Search size={14} strokeWidth={2} />}
+                <span>{T('users.lookup')}</span>
+              </button>
+            </div>
           </label>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px,1fr))', gap: 12, marginTop: 12 }}>
-            <label>{T('users.lastName')}
-              <input className="input" value={form.last_name} onChange={(e) => setForm({ ...form, last_name: e.target.value })} />
-            </label>
-            <label>{T('users.firstName')}
-              <input className="input" value={form.first_name} onChange={(e) => setForm({ ...form, first_name: e.target.value })} />
-            </label>
-            <label>{T('users.lastNameEn')}
-              <input className="input" value={form.last_name_en} onChange={(e) => setForm({ ...form, last_name_en: e.target.value })} />
-            </label>
-            <label>{T('users.firstNameEn')}
-              <input className="input" value={form.first_name_en} onChange={(e) => setForm({ ...form, first_name_en: e.target.value })} />
-            </label>
-          </div>
+          {/* Core-оос татсан иргэн — нэрийг гараар оруулахгүй, зөвхөн батламжлана. */}
+          {citizen && (
+            <div className="card" style={{ padding: 14, marginTop: 12, background: 'var(--surface-2)' }}>
+              <div style={{ fontWeight: 600 }}>{String(citizen.last_name ?? '')} {String(citizen.first_name ?? '')}</div>
+              <div className="muted mono" style={{ fontSize: 12, marginTop: 2 }}>
+                {String(citizen.reg_no ?? register).toUpperCase()}
+                {citizen.family_name ? ` · ${T('users.familyName')}: ${String(citizen.family_name)}` : ''}
+              </div>
+            </div>
+          )}
 
           <label style={{ display: 'block', marginTop: 12 }}>{T('users.col.role')}
             <select
               className="input"
-              value={form.role_id}
-              onChange={(e) => setForm({ ...form, role_id: Number(e.target.value) })}
+              value={roleId}
+              onChange={(e) => setRoleId(Number(e.target.value))}
             >
               {roles
                 // superadmin-ыг хэзээ ч санал болгохгүй; admin-ыг зөвхөн super
@@ -183,9 +217,9 @@ export default function UsersManager({ currentUserId, currentUserRoleId, readOnl
           </label>
 
           <div style={{ marginTop: 16, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            <button className="btn btn--primary btn--sm" type="button" onClick={submitAdd} disabled={saving || !form.register.trim()}>
+            <button className="btn btn--primary btn--sm" type="button" onClick={submitAdd} disabled={saving || !citizen}>
               {saving ? <Loader2 size={14} strokeWidth={2} className="spin" /> : <UserPlus size={14} strokeWidth={2} />}
-              <span>{T('common.save')}</span>
+              <span>{T('users.addConfirm')}</span>
             </button>
             <button className="btn btn--ghost btn--sm" type="button" onClick={() => setAdding(false)}>
               <X size={14} strokeWidth={2} /> {T('common.cancel')}
