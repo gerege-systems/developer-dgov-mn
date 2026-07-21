@@ -51,7 +51,7 @@ export default function RelayConfigView() {
   const all = platforms.data ?? [];
   const upstream = all.filter((p) => p.direction === 'upstream');
   const downstream = all.filter((p) => p.direction !== 'upstream');
-  const webhookURL = typeof window !== 'undefined' ? `${window.location.origin.replace(/^https?:\/\//, '')}/api/v1/relay/webhook` : '/api/v1/relay/webhook';
+  const webhookURL = typeof window !== 'undefined' ? `${window.location.origin}/api/relay/webhook` : '/api/relay/webhook';
 
   const platformRow = (p: RelayPlatform) => (
     <div className="defrow" key={p.id} style={{ flexWrap: 'wrap' }}>
