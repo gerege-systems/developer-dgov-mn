@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { getJSON } from '@/lib/client';
 import {
-  LayoutDashboard, User, ShieldCheck, HelpCircle, LogOut, Menu, Search,
+  LayoutDashboard, User, ShieldCheck, HelpCircle, LogOut, Menu, Search, ChevronDown,
   Users, ShieldHalf, Briefcase, Bot, Languages, Building2,
   ScrollText, ShieldAlert, KeyRound,
   Plug,
@@ -259,6 +259,17 @@ export default function AppShell({ user, children }: Props) {
   const activeSystem = systems.find(systemMatches) ?? systems[0];
   const [openKey, setOpenKey] = useState(activeSystem?.key ?? '');
   const [collapsed, setCollapsed] = useState(false);
+  // Accordion — зөвхөн НЭГ дэд систем нээлттэй байна (labelKey). Дараах sync
+  // effect нь навигаци/систем солиход идэвхтэй хуудсын дэд системийг нээнэ.
+  const [openSub, setOpenSub] = useState<string>('');
+
+  const panel = systems.find((s) => s.key === openKey) ?? activeSystem;
+  const panelSubs = panel ? visibleSubsystems(panel) : [];
+  // Идэвхтэй хуудсыг агуулсан дэд систем (эс бол эхнийх) — default нээлттэй.
+  const activeSubKey =
+    panelSubs.find((g) => g.items.some((i) => isActive(i.href)))?.labelKey ??
+    panelSubs[0]?.labelKey ??
+    '';
 
   useEffect(() => {
     if (activeSystem) setOpenKey(activeSystem.key);
@@ -268,6 +279,9 @@ export default function AppShell({ user, children }: Props) {
   useEffect(() => {
     if (typeof window !== 'undefined' && window.innerWidth <= 900) setCollapsed(true);
   }, []);
+
+  // Навигаци/систем солиход идэвхтэй хуудсын дэд системийг автоматаар нээнэ.
+  useEffect(() => { setOpenSub(activeSubKey); }, [activeSubKey]);
 
   // Mobile (≤900px)-д sidepanel нь зүүн талын drawer — навигаци эсвэл backdrop
   // дээр дарахад хаагдана. Desktop-д (grid) энэ нөлөөлөхгүй.
@@ -279,7 +293,7 @@ export default function AppShell({ user, children }: Props) {
   // ЭХНИЙ хуудас (visibleSubsystems нь хоосон бүлгийг аль хэдийн хассан).
   const firstHref = (s: NavSystem) => visibleSubsystems(s)[0]?.items[0]?.href ?? '/';
 
-  if (!activeSystem) {
+  if (!activeSystem || !panel) {
     return (
       <div className="shell2 shell2--loading" aria-busy="true">
         <aside className="iconrail" />
@@ -287,8 +301,6 @@ export default function AppShell({ user, children }: Props) {
       </div>
     );
   }
-
-  const panel = systems.find((s) => s.key === openKey) ?? activeSystem;
 
   return (
     <div className={`shell2${collapsed ? ' is-collapsed' : ''}`}>
@@ -337,9 +349,21 @@ export default function AppShell({ user, children }: Props) {
           <span className="sidepanel__title">{T(panel.labelKey)}</span>
         </div>
         <nav className="sidepanel__nav">
-          {visibleSubsystems(panel).map((g, gi) => (
-            <div key={gi} className="sidepanel__group">
-              {g.labelKey && <span className="sidepanel__group-label">{T(g.labelKey)}</span>}
+          {panelSubs.map((g) => {
+            const open = openSub === g.labelKey;
+            return (
+            <div key={g.labelKey} className={`sidepanel__group${open ? ' is-open' : ''}`}>
+              {/* Дэд системийн толгой — дарахад энэ нээгдэж, бусад нь хаагдана. */}
+              <button
+                type="button"
+                className="sidepanel__group-head"
+                aria-expanded={open}
+                onClick={() => setOpenSub(open ? '' : g.labelKey)}
+              >
+                <span className="sidepanel__group-label">{T(g.labelKey)}</span>
+                <ChevronDown size={15} strokeWidth={2.5} className="sidepanel__chev" />
+              </button>
+              {open && <div className="sidepanel__group-items">
               {g.items.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.href);
@@ -356,8 +380,10 @@ export default function AppShell({ user, children }: Props) {
                   </Link>
                 );
               })}
+              </div>}
             </div>
-          ))}
+            );
+          })}
         </nav>
       </aside>
 
