@@ -1,4 +1,4 @@
-// Gerege Template Version 27.0
+// eID based AI enabled Gerege Template Platform V3.0
 // OIDC provider — consent request-ийн товчийг backend-ээс авна.
 import { authedFetch } from '@/lib/api';
 import { proxyResult } from '@/lib/bff';

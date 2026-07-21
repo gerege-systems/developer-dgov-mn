@@ -16,7 +16,7 @@ export async function readJson<T = Record<string, unknown>>(req: Request): Promi
 /**
  * CSRF-ийн эсрэг хоёр давхар хамгаалалт. State-changing route-ууд дээр:
  *
- *  1. Custom header (`x-gerege-csrf: 1`) шаардана — cross-site form POST
+ *  1. Custom header (`x-dgov-csrf: 1`) шаардана — cross-site form POST
  *     custom header тавьж чаддаггүй, cross-origin fetch нь preflight-д
  *     CORS-оор хаагддаг тул энэ header нь хүсэлт өөрийн JS-ээс
  *     (lib/client.ts sendJSON) гарсныг баталдаг. SameSite=Lax-ийн
@@ -27,7 +27,7 @@ export async function readJson<T = Record<string, unknown>>(req: Request): Promi
  * Зөрвөл 403 буцаах NextResponse-г, тааралцвал `null`-г буцаана.
  */
 export function checkOrigin(req: Request): NextResponse | null {
-  if (req.headers.get('x-gerege-csrf') !== '1') {
+  if (req.headers.get('x-dgov-csrf') !== '1') {
     return NextResponse.json(
       { ok: false, status: 403, message: 'CSRF header дутуу байна.' },
       { status: 403 },
@@ -48,6 +48,8 @@ export function checkOrigin(req: Request): NextResponse | null {
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const INT_ID_RE = /^\d{1,10}$/;
+// Hydra OAuth2 client_id — UUID биш (жишээ нь "template-dgov-mn", "app-1a2b3c4d").
+const CLIENT_ID_RE = /^[A-Za-z0-9._~-]{1,128}$/;
 
 function invalidID(): NextResponse {
   return NextResponse.json({ ok: false, status: 400, message: 'ID буруу байна.' }, { status: 400 });
@@ -56,6 +58,15 @@ function invalidID(): NextResponse {
 /** Dynamic route-ийн UUID параметрийг шалгана (хэрэглэгчийн id). Буруу бол 400. */
 export function checkUUID(id: string): NextResponse | null {
   return UUID_RE.test(id) ? null : invalidID();
+}
+
+/**
+ * Dynamic route-ийн OAuth2 client_id параметрийг шалгана (application id).
+ * Application-ыг Hydra эзэмшдэг тул id нь client_id — UUID БИШ
+ * (жишээ нь "template-dgov-mn", "app-1a2b3c4d").
+ */
+export function checkClientID(id: string): NextResponse | null {
+  return CLIENT_ID_RE.test(id) ? null : invalidID();
 }
 
 /** Dynamic route-ийн бүхэл тоон id-г шалгана (role id г.м.). Буруу бол 400. */

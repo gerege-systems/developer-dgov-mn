@@ -5,7 +5,7 @@ import EidDevicesView from '@/components/me/eid/EidDevicesView';
 import { fetchMe } from '@/lib/api';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Төхөөрөмж — Gerege' };
+export const metadata = { title: 'Төхөөрөмж — Gerege Template Platform V3.0' };
 
 export default async function EidDevicesPage() {
   const me = await fetchMe();
@@ -13,7 +13,7 @@ export default async function EidDevicesPage() {
   return (
     <>
       <PageHead eyebrowKey="sys.user" titleKey="eid.devices.title" subKey="eid.devices.sub" />
-      <EidDevicesView show={!!me.eid} />
+      <EidDevicesView show={!!me.eid || !!me.eidProxy} />
     </>
   );
 }

@@ -1,11 +1,11 @@
-// Gerege Template Version 27.0
+// Gerege Template Platform V3.0
 // Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 
 import UIKit
 import AuthenticationServices
 import CryptoKit
 
-// Native Gerege SSO (OIDC + PKCE) — ASWebAuthenticationSession. RP-ийн стандарт
+// Native dgov SSO (OIDC + PKCE) — ASWebAuthenticationSession. RP-ийн стандарт
 // native урсгал: public client (secret-гүй) + PKCE + custom-scheme redirect. eID
 // баталгаажуулалт AS session дотор явж, дуусахад Hydra нь geregetemp://oauth2/
 // callback?code=… руу буцаж, session хаагдаад код гарна. Код → BFF
@@ -13,7 +13,7 @@ import CryptoKit
 @MainActor
 final class SSOAuth: NSObject, ObservableObject, ASWebAuthenticationPresentationContextProviding {
     static let issuer = "https://sso.gerege.mn"
-    static let clientID = "template-gerege-mn-ios"
+    static let clientID = "template-dgov-mn-ios"
     static let redirectURI = "geregetemp://oauth2/callback"
     static let callbackScheme = "geregetemp"
     static let scope = "openid profile email nationalid"

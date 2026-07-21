@@ -5,7 +5,7 @@ import GovServicesView from '@/components/gov/GovServicesView';
 import { fetchMe } from '@/lib/api';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Үйлчилгээ — Gerege' };
+export const metadata = { title: 'Үйлчилгээ — Gerege Template Platform V3.0' };
 
 export default async function MeServicesPage() {
   const me = await fetchMe();

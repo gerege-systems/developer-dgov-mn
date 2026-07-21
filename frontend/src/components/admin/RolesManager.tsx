@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader2, Save, Plus, Trash2, X } from 'lucide-react';
 import { useT } from '@/lib/lang';
 import { getJSON, sendJSON } from '@/lib/client';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface Role {
   id: number;
@@ -21,6 +22,9 @@ interface Permission {
 }
 
 const ADMIN_KEY = 'admin';
+// superadmin нь RBAC матрицаас гадуур удирддаг дээд эрх (бүх зүйлийг автоматаар
+// авдаг, энэ дэлгэцээс permission онооход хамаарахгүй) тул баганаас нь нуудаг.
+const SUPERADMIN_KEY = 'superadmin';
 
 export default function RolesManager() {
   const { T, tRole, tPerm } = useT();
@@ -96,6 +100,9 @@ export default function RolesManager() {
     else setActionError(res.message || T('roles.deleteError'));
   };
 
+  // superadmin баганыг матрицаас хасна (permission нь энэ дэлгэцээр удирддаггүй).
+  const visibleRoles = (roles ?? []).filter((r) => r.key !== SUPERADMIN_KEY);
+
   if (roles === null) {
     return (
       <div className="muted" style={{ display: 'flex', gap: 8, alignItems: 'center', padding: 16 }}>
@@ -110,37 +117,39 @@ export default function RolesManager() {
       {error && <div className="alert alert--danger" role="alert">{error}</div>}
 
       <div className="users__head">
-        {!adding && (
-          <button className="btn btn--primary" type="button" onClick={() => { setAdding(true); setActionError(''); }}>
-            <Plus size={16} strokeWidth={2} />
-            <span>{T('roles.add')}</span>
-          </button>
-        )}
+        <button className="btn btn--primary" type="button" onClick={() => { setAdding(true); setActionError(''); }}>
+          <Plus size={16} strokeWidth={2} />
+          <span>{T('roles.add')}</span>
+        </button>
       </div>
 
-      {adding && (
-        <div className="card" style={{ padding: 16, marginBottom: 16, display: 'grid', gap: 12 }}>
-          <div className="field">
-            <label className="field__label" htmlFor="r-name">{T('roles.name')}</label>
-            <input id="r-name" className="input" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={T('roles.namePh')} />
+      {/* Дүр нэмэх форм нь popup болов — товч нь зөвхөн нээх үүрэгтэй. */}
+      <Dialog open={adding} onOpenChange={(o) => { if (!o) setAdding(false); }}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>{T('roles.add')}</DialogTitle></DialogHeader>
+          <div style={{ display: 'grid', gap: 12 }}>
+            <div className="field">
+              <label className="field__label" htmlFor="r-name">{T('roles.name')}</label>
+              <input id="r-name" className="input" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={T('roles.namePh')} />
+            </div>
+            <div className="field">
+              <label className="field__label" htmlFor="r-key">{T('roles.key')}</label>
+              <input id="r-key" className="input mono" value={form.key} onChange={(e) => setForm({ ...form, key: e.target.value })} placeholder="sales_manager" />
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button className="btn btn--primary" type="button" onClick={createRole}><Save size={16} strokeWidth={2} /><span>{T('common.create')}</span></button>
+              <button className="btn btn--secondary" type="button" onClick={() => setAdding(false)}><X size={16} strokeWidth={2} /><span>{T('common.cancel')}</span></button>
+            </div>
           </div>
-          <div className="field">
-            <label className="field__label" htmlFor="r-key">{T('roles.key')}</label>
-            <input id="r-key" className="input mono" value={form.key} onChange={(e) => setForm({ ...form, key: e.target.value })} placeholder="sales_manager" />
-          </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button className="btn btn--primary" type="button" onClick={createRole}><Save size={16} strokeWidth={2} /><span>{T('common.create')}</span></button>
-            <button className="btn btn--secondary" type="button" onClick={() => setAdding(false)}><X size={16} strokeWidth={2} /><span>{T('common.cancel')}</span></button>
-          </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
 
       <div className="card" style={{ padding: 0, overflowX: 'auto' }}>
         <table className="rbac-matrix">
           <thead>
             <tr>
               <th>{T('roles.col.permission')}</th>
-              {roles.map((r) => <th key={r.id}>{tRole(r.key, r.name)}</th>)}
+              {visibleRoles.map((r) => <th key={r.id}>{tRole(r.key, r.name)}</th>)}
             </tr>
           </thead>
           <tbody>
@@ -152,7 +161,7 @@ export default function RolesManager() {
                     <small className="mono">{p.key}</small>
                   </span>
                 </td>
-                {roles.map((r) => {
+                {visibleRoles.map((r) => {
                   const isAdmin = r.key === ADMIN_KEY;
                   const checked = isAdmin || (draft[r.id]?.has(p.key) ?? false);
                   return (
@@ -171,7 +180,7 @@ export default function RolesManager() {
             ))}
             <tr>
               <td />
-              {roles.map((r) => (
+              {visibleRoles.map((r) => (
                 <td key={r.id}>
                   {r.key !== ADMIN_KEY && (
                     <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>

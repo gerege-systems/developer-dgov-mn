@@ -1,9 +1,9 @@
-// Gerege Template Version 27.0
+// Gerege Template Platform V3.0
 // Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 
 import SwiftUI
 
-// Нэвтрэх эхлэл — eID эсвэл Gerege SSO сонголт.
+// Нэвтрэх эхлэл — eID эсвэл dgov SSO сонголт.
 struct LoginView: View {
     @EnvironmentObject var state: AppState
     @StateObject private var sso = SSOAuth()
@@ -17,9 +17,9 @@ struct LoginView: View {
                     Image(systemName: "shield.checkerboard")
                         .font(.system(size: 56))
                         .foregroundStyle(.blue)
-                    Text("Gerege Template")
+                    Text("Gerege Template Platform V3.0")
                         .font(.largeTitle.bold())
-                    Text("eID эсвэл Gerege SSO-гоор нэвтэрнэ үү")
+                    Text("eID эсвэл dgov SSO-гоор нэвтэрнэ үү")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
@@ -41,7 +41,7 @@ struct LoginView: View {
                     } label: {
                         HStack {
                             if sso.busy { ProgressView().tint(.primary) }
-                            Label("Gerege SSO-гоор нэвтрэх", systemImage: "globe")
+                            Label("dgov SSO-гоор нэвтрэх", systemImage: "globe")
                         }
                         .frame(maxWidth: .infinity)
                     }

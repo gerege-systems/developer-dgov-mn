@@ -1,22 +1,56 @@
-// Gerege Template Version 27.0
-// OIDC provider login хуудас — Hydra нь browser-ыг энд login_challenge-тэй
-// чиглүүлнэ. Иргэн нэвтэрсэн бол challenge-ыг шууд accept хийж (subject = dan
-// user ID) Hydra руу буцна; эс бөгөөс dan-ийн /login руу (?next-ээр буцаж ирнэ).
+// eID based AI enabled Gerege Template Platform V3.0
+// OIDC provider (RP-facing) login хуудас — Hydra нь browser-ыг энд login_challenge-
+// тэй чиглүүлнэ. dan-ий ӨӨРИЙН дизайнаар (SigninShell + LoginForm: eID РД/QR +
+// Google) нэвтрүүлж, буцаж ирэхэд challenge-ыг accept хийнэ. Дээр талд аль RP-ээс
+// нэвтэрч буйг (client_name) харуулна.
 import { redirect } from 'next/navigation';
 import { getAccessToken } from '@/lib/session';
-import OAuthLoginClient from './OAuthLoginClient';
+import { backendFetch } from '@/lib/api';
+import LoginForm from '@/app/login/LoginForm';
+import AcceptClient from './AcceptClient';
 
 export const dynamic = 'force-dynamic';
 
 export default async function OAuthLoginPage(props: {
-  searchParams: Promise<{ login_challenge?: string }>;
+  searchParams: Promise<{ login_challenge?: string; glink?: string; gerror?: string }>;
 }) {
-  const { login_challenge: challenge } = await props.searchParams;
+  const sp = await props.searchParams;
+  const challenge = sp.login_challenge;
   if (!challenge) redirect('/');
-  const token = await getAccessToken();
-  if (!token) {
-    const ret = `/oauth/login?login_challenge=${encodeURIComponent(challenge)}`;
-    redirect(`/login?next=${encodeURIComponent(ret)}`);
-  }
-  return <OAuthLoginClient challenge={challenge} />;
+  const hasSession = !!(await getAccessToken());
+  const next = `/oauth/login?login_challenge=${challenge}`;
+
+  // Аль RP-ээс нэвтэрч буйг server талд авна (GetLogin — auth шаардахгүй).
+  let rpName = '';
+  const info = await backendFetch<{ ClientName?: string; ClientID?: string }>(
+    `/provider/login?login_challenge=${encodeURIComponent(challenge)}`,
+    { method: 'GET' },
+  );
+  if (info.ok && info.data) rpName = info.data.ClientName || info.data.ClientID || '';
+
+  return (
+    <section className="signin-card" aria-labelledby="login-title">
+      {rpName && (
+        <div
+          style={{
+            marginBottom: 4,
+            paddingBottom: 14,
+            borderBottom: '1px solid var(--border)',
+          }}
+        >
+          <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--fg)', lineHeight: 1.25 }}>
+            {rpName}
+          </div>
+          <div style={{ fontSize: 13, color: 'var(--muted)', marginTop: 3 }}>
+            Gerege SSO — нэгдсэн нэвтрэлтээр нэвтрэх гэж байна
+          </div>
+        </div>
+      )}
+      {hasSession ? (
+        <AcceptClient challenge={challenge} />
+      ) : (
+        <LoginForm next={next} googleLink={sp.glink === '1'} googleError={!!sp.gerror} />
+      )}
+    </section>
+  );
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Gerege Template Version 27.0
+# Gerege Template Platform V3.0
 # Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 #
 # Live smoke test — template.gerege.mn (эсвэл BASE=... өөр хост).
@@ -54,7 +54,7 @@ check_header "x-content-type-options"
 echo
 echo "── eID нэвтрэлт эхлүүлэлт (BFF) ──"
 qr=$(curl -s -m 20 -X POST "$BASE/api/auth/eid/start" \
-  -H "Content-Type: application/json" -H "Origin: $ORIGIN" -H "x-gerege-csrf: 1" -d '{}')
+  -H "Content-Type: application/json" -H "Origin: $ORIGIN" -H "x-dgov-csrf: 1" -d '{}')
 if echo "$qr" | grep -q '"session_id"' && echo "$qr" | grep -q '"verification_code"'; then
   pass "QR start → session_id + verification_code"
 else
@@ -62,7 +62,7 @@ else
 fi
 
 push=$(curl -s -m 20 -X POST "$BASE/api/auth/eid/start-id" \
-  -H "Content-Type: application/json" -H "Origin: $ORIGIN" -H "x-gerege-csrf: 1" \
+  -H "Content-Type: application/json" -H "Origin: $ORIGIN" -H "x-dgov-csrf: 1" \
   -d '{"national_id":"УБ99887766"}')
 if echo "$push" | grep -q '"session_id"'; then
   pass "РД push start → session_id"
@@ -79,7 +79,7 @@ assert_status "CSRF header-гүй POST → 403" 403 "$no_csrf"
 
 # Өөр origin-оос ирсэн хүсэлт → 403.
 bad_origin=$(curl -s -m 15 -o /dev/null -w '%{http_code}' -X POST "$BASE/api/auth/eid/start" \
-  -H "Content-Type: application/json" -H "Origin: https://evil.example" -H "x-gerege-csrf: 1" -d '{}')
+  -H "Content-Type: application/json" -H "Origin: https://evil.example" -H "x-dgov-csrf: 1" -d '{}')
 assert_status "буруу Origin → 403" 403 "$bad_origin"
 
 echo

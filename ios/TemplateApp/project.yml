@@ -25,11 +25,11 @@ targets:
     #  • geregetempeid — SSO-ийн eID SIBLING scheme: native SSO үед eID апп approve-ийн
     #                    дараа энэ scheme-ийг нээж апп+AS session-ыг foreground болгож poll
     #                    сэргээнэ (OAuth scheme-ийг дахин ашиглавал AS session эрт хаагдана).
-    # geregesmartid:// (Gerege eID апп)-ыг canOpenURL-д зөвшөөрнө.
+    # geregesmartid:// (eID Mongolia App)-ыг canOpenURL-д зөвшөөрнө.
     info:
       path: Sources/Info.plist
       properties:
-        CFBundleDisplayName: Gerege Template
+        CFBundleDisplayName: Gerege Template Platform V3.0
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         # Portrait-only апп — iPad multitasking-д бүх orientation шаардахгүйн тулд

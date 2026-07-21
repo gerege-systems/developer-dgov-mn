@@ -1,4 +1,4 @@
-// Gerege Template Version 27.0
+// eID based AI enabled Gerege Template Platform V3.0
 // OIDC provider (dan = SSO) — login challenge-ыг backend руу прокси (session-тэй).
 import { authedFetch } from '@/lib/api';
 import { checkOrigin, proxyResult, readJson } from '@/lib/bff';
