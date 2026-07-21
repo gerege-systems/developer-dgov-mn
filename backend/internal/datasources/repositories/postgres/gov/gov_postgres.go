@@ -90,11 +90,15 @@ func (r *govRepository) attachLifeEvents(ctx context.Context, list []domain.GovS
 	for _, s := range list {
 		ids = append(ids, s.ID)
 	}
+	// Амьдралын үйл явдлын МАСТЕР нь регистр (migration 47) — ажлын каталог
+	// нь registry_service_id-аараа дамжин уншина. Ингэснээр паспорт дээр
+	// хийсэн өөрчлөлт иргэний портал дээр шууд тусна.
 	rows, err := r.pool.Query(ctx, `
-		SELECT se.service_id, le.code, le.name, le.kind, le.eu_code, le.en_label
-		  FROM gov_service_events se
-		  JOIN gov_life_events le ON le.code = se.event_code
-		 WHERE se.service_id = ANY($1)
+		SELECT g.id, le.code, le.name, le.kind, le.eu_code, le.en_label
+		  FROM gov_services g
+		  JOIN registry_service_events se ON se.service_id = g.registry_service_id
+		  JOIN registry_life_events le    ON le.id = se.event_id
+		 WHERE g.id = ANY($1)
 		 ORDER BY le.sort_order`, ids)
 	if err != nil {
 		return err
@@ -153,7 +157,7 @@ func (r *govRepository) GetService(ctx context.Context, id string) (domain.GovSe
 
 func (r *govRepository) ListLifeEvents(ctx context.Context) ([]domain.GovLifeEvent, error) {
 	rows, err := r.pool.Query(ctx,
-		`SELECT code, name, kind, eu_code, en_label FROM gov_life_events ORDER BY sort_order`)
+		`SELECT code, name, kind, eu_code, en_label FROM registry_life_events ORDER BY sort_order`)
 	if err != nil {
 		return nil, err
 	}

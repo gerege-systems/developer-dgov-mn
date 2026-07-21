@@ -136,8 +136,74 @@ func validateService(in ServiceInput, withCode bool) (ServiceInput, error) {
 		return in, err
 	}
 	in.Channels = ch
+
+	// ── Үйл ажиллагааны тохиргоо ─────────────────────────────────────────
+	if in.Fulfilment == "" {
+		in.Fulfilment = domain.GovFulfilmentManual
+	}
+	in.Fulfilment = strings.ToLower(strings.TrimSpace(in.Fulfilment))
+	if in.Fulfilment != domain.GovFulfilmentAuto && in.Fulfilment != domain.GovFulfilmentManual {
+		return in, apperror.BadRequest("unknown fulfilment mode: " + in.Fulfilment)
+	}
+
+	// АВТОМАТЖУУЛАЛТЫН ЭРХ ЗҮЙН ШАЛГУУР (Германы VwVfG §35a-ийн загвар):
+	// шийдвэрийг бүрэн автоматаар гаргах нь эрх бүхий этгээдэд ҮНЭЛЭХ ЭРХ
+	// (Ermessen) ч, урьдчилсан нөхцөлд ҮНЭЛГЭЭНИЙ ЗАЙ (Beurteilungsspielraum)
+	// ч байхгүй үед л зөвшөөрөгдөнө. Тиймээс аль нэг нь тэмдэглэгдсэн атал
+	// 'auto' гэж хадгалахыг татгалзана — эс тэгвээс хүний оролцоо шаардах
+	// шийдвэр чимээгүйхэн машинд шилжинэ.
+	if in.Fulfilment == domain.GovFulfilmentAuto && (in.HasDiscretion || in.HasAssessment) {
+		return in, apperror.BadRequest(
+			"үнэлэх эрх эсвэл үнэлгээний зайтай үйлчилгээг автоматаар олгож болохгүй — " +
+				"эхлээд эдгээрийг арилгасан эсэхээ баталгаажуулна уу")
+	}
+
+	if in.AssuranceLevel == "" {
+		in.AssuranceLevel = "substantial"
+	}
+	in.AssuranceLevel = strings.ToLower(strings.TrimSpace(in.AssuranceLevel))
+	if !allowedAssurance[in.AssuranceLevel] {
+		return in, apperror.BadRequest("unknown assurance level: " + in.AssuranceLevel)
+	}
+
+	if in.OutputType == "" {
+		in.OutputType = "Declaration"
+	}
+	in.OutputType = strings.TrimSpace(in.OutputType)
+	if !allowedOutputType[in.OutputType] {
+		return in, apperror.BadRequest("unknown output type: " + in.OutputType)
+	}
+
+	if in.SLAHours < 0 || in.SLAHours > maxSLAHours {
+		return in, apperror.BadRequest("sla_hours is out of range")
+	}
+	// Шууд олгогддог үйлчилгээнд хүлээх хугацаа утгагүй.
+	if in.Fulfilment == domain.GovFulfilmentAuto {
+		in.SLAHours = 0
+	}
+
+	in.Category = strings.TrimSpace(in.Category)
+	in.COFOGCode = strings.TrimSpace(in.COFOGCode)
+	in.COFOGLabel = strings.TrimSpace(in.COFOGLabel)
+	in.MainActivity = strings.TrimSpace(in.MainActivity)
+	in.SDGCode = strings.ToUpper(strings.TrimSpace(in.SDGCode))
+	in.ProcessingTime = strings.ToUpper(strings.TrimSpace(in.ProcessingTime))
+	in.OutputRefType = strings.ToLower(strings.TrimSpace(in.OutputRefType))
 	return in, nil
 }
+
+// allowedAssurance нь eIDAS (Reg. 910/2014 Art.8)-ийн гурван түвшин.
+var allowedAssurance = map[string]bool{"low": true, "substantial": true, "high": true}
+
+// allowedOutputType нь CPSV-AP-ийн Output толь (7 утга).
+var allowedOutputType = map[string]bool{
+	"Declaration": true, "Physical object": true, "Code": true,
+	"Financial obligation": true, "Financial benefit": true,
+	"Recognition": true, "Permit": true,
+}
+
+// maxSLAHours — 1 жил. Үүнээс хэтэрсэн норм нь хог өгөгдөл.
+const maxSLAHours = 24 * 365
 
 // toDomain нь цэвэрлэгдсэн оролтыг domain entity рүү хөрвүүлнэ.
 func toDomain(in ServiceInput) domain.RegistryService {
@@ -158,6 +224,21 @@ func toDomain(in ServiceInput) domain.RegistryService {
 		AnnualVolume:   in.AnnualVolume,
 		Proactivity:    in.Proactivity,
 		LifeEventID:    in.LifeEventID,
+		Category:       in.Category,
+		COFOGCode:      in.COFOGCode,
+		COFOGLabel:     in.COFOGLabel,
+		MainActivity:   in.MainActivity,
+		SDGCode:        in.SDGCode,
+		ProcessingTime: in.ProcessingTime,
+		OutputType:     in.OutputType,
+		OutputRefType:  in.OutputRefType,
+		AssuranceLevel: in.AssuranceLevel,
+		Fulfilment:     in.Fulfilment,
+		HasDiscretion:  in.HasDiscretion,
+		HasAssessment:  in.HasAssessment,
+		SLAHours:       in.SLAHours,
+		TacitApproval:  in.TacitApproval,
+		Online:         in.Online,
 	}
 }
 
@@ -245,7 +326,13 @@ func (uc *usecase) DeleteService(ctx context.Context, id string) error {
 }
 
 func (uc *usecase) ArchiveService(ctx context.Context, id string) error {
-	return uc.repo.SetServiceStatus(ctx, id, domain.RegistryStatusArchived)
+	if err := uc.repo.SetServiceStatus(ctx, id, domain.RegistryStatusArchived); err != nil {
+		return err
+	}
+	// Архивласан үйлчилгээг иргэний каталогоос ч гаргана — эс тэгвээс
+	// регистрт "хэрэглэхээ больсон" гэж бичигдсэн атал иргэн хүсэлт гаргасаар
+	// байх зөрүү үүснэ.
+	return uc.repo.WithdrawFromGov(ctx, id)
 }
 
 // ── Нотолгооны холбоос ──────────────────────────────────────────────────────
@@ -386,7 +473,24 @@ func (uc *usecase) Publish(ctx context.Context, serviceID string, in PublishInpu
 		return domain.RegistryServiceVersion{}, apperror.InternalCause(mErr)
 	}
 
-	return uc.repo.PublishVersion(ctx, &ver)
+	out, err := uc.repo.PublishVersion(ctx, &ver)
+	if err != nil {
+		return domain.RegistryServiceVersion{}, err
+	}
+
+	// Нийтлэгдсэн паспортыг иргэний порталын ажлын каталог руу буулгана
+	// (migration 47). Регистр нь мастер тул паспорт нийтлэгдэх нь "иргэн энэ
+	// үйлчилгээг ашиглаж чадна" гэсэн үг — тусад нь гараар тохируулах алхам
+	// байх ёсгүй.
+	//
+	// Алдааг ЗАЛГИХГҮЙ: проекц амжилтгүй бол регистрт нийтлэгдсэн атлаа
+	// иргэнд харагдахгүй "чимээгүй зөрүү" үүсэх тул дуудагчид мэдэгдэнэ.
+	// Хувилбарын мөр аль хэдийн бичигдсэн тул дахин Publish дуудахад
+	// проекц дахин оролдогдоно.
+	if projErr := uc.repo.ProjectToGov(ctx, serviceID); projErr != nil {
+		return out, projErr
+	}
+	return out, nil
 }
 
 func (uc *usecase) ListVersions(ctx context.Context, serviceID string) ([]domain.RegistryServiceVersion, error) {

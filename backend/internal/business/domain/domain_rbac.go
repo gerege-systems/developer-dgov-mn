@@ -19,7 +19,6 @@ const (
 	PermRelayView      = "relay.view"      // Хүсэлт дамжуулах / SLA хяналтын самбар үзэх
 	PermRelayManage    = "relay.manage"    // Relay platform/route чиглүүлэлт удирдах
 	PermGovReview      = "gov.review"      // Иргэний үйлчилгээний хүсэлт хянаж шийдвэрлэх (менежер)
-	PermGovCatalog     = "gov.catalog"     // Төрийн үйлчилгээний каталог удирдах (админ)
 	PermRegistryView   = "registry.view"   // Үйлчилгээний нэгдсэн регистр, once-only самбар үзэх
 	PermRegistryManage = "registry.manage" // Үйлчилгээний паспорт/нотолгоо/хувилбар удирдах
 )
@@ -37,7 +36,6 @@ var AllPermissions = []Permission{
 	{Key: PermRelayView, Label: "SLA хяналтын самбар үзэх", Category: "administration"},
 	{Key: PermRelayManage, Label: "Хүсэлт дамжуулах чиглүүлэлт удирдах", Category: "administration"},
 	{Key: PermGovReview, Label: "Иргэний хүсэлт хянах", Category: "management"},
-	{Key: PermGovCatalog, Label: "Үйлчилгээний каталог удирдах", Category: "administration"},
 	{Key: PermRegistryView, Label: "Үйлчилгээний регистр үзэх", Category: "administration"},
 	{Key: PermRegistryManage, Label: "Үйлчилгээний регистр удирдах", Category: "administration"},
 }

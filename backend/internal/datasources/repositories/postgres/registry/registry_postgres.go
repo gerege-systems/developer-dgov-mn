@@ -51,14 +51,19 @@ func NewRegistryRepository(pool *pgxpool.Pool) repointerface.RegistryRepository 
 
 const serviceColumns = `id, code, name, name_en, description, authority, authority_org_id, legal_basis,
 	target_group, output, channels, fee, max_days, steps_count, annual_volume, proactivity, status,
-	life_event_id, version, published_at, created_at, updated_at`
+	life_event_id, category, cofog_code, cofog_label, main_activity, sdg_code, processing_time,
+	output_type, output_ref_type, assurance_level, fulfilment, has_discretion, has_assessment,
+	sla_hours, tacit_approval, online, version, published_at, created_at, updated_at`
 
 func scanService(row pgx.Row) (domain.RegistryService, error) {
 	var s domain.RegistryService
 	err := row.Scan(&s.ID, &s.Code, &s.Name, &s.NameEN, &s.Description, &s.Authority, &s.AuthorityOrgID,
 		&s.LegalBasis, &s.TargetGroup, &s.Output, &s.Channels, &s.Fee, &s.MaxDays, &s.StepsCount,
-		&s.AnnualVolume, &s.Proactivity, &s.Status, &s.LifeEventID, &s.Version, &s.PublishedAt,
-		&s.CreatedAt, &s.UpdatedAt)
+		&s.AnnualVolume, &s.Proactivity, &s.Status, &s.LifeEventID,
+		&s.Category, &s.COFOGCode, &s.COFOGLabel, &s.MainActivity, &s.SDGCode, &s.ProcessingTime,
+		&s.OutputType, &s.OutputRefType, &s.AssuranceLevel, &s.Fulfilment, &s.HasDiscretion,
+		&s.HasAssessment, &s.SLAHours, &s.TacitApproval, &s.Online,
+		&s.Version, &s.PublishedAt, &s.CreatedAt, &s.UpdatedAt)
 	return s, err
 }
 
@@ -153,12 +158,19 @@ func (r *registryRepository) CreateService(ctx context.Context, in *domain.Regis
 	s, err := scanService(r.pool.QueryRow(ctx, `
 		INSERT INTO registry_services
 			(code, name, name_en, description, authority, authority_org_id, legal_basis, target_group,
-			 output, channels, fee, max_days, steps_count, annual_volume, proactivity, status, life_event_id)
-		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
+			 output, channels, fee, max_days, steps_count, annual_volume, proactivity, status, life_event_id,
+			 category, cofog_code, cofog_label, main_activity, sdg_code, processing_time,
+			 output_type, output_ref_type, assurance_level, fulfilment, has_discretion, has_assessment,
+			 sla_hours, tacit_approval, online)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,
+		        $18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32)
 		RETURNING `+serviceColumns,
 		in.Code, in.Name, in.NameEN, in.Description, in.Authority, in.AuthorityOrgID, in.LegalBasis,
 		in.TargetGroup, in.Output, in.Channels, in.Fee, in.MaxDays, in.StepsCount, in.AnnualVolume,
-		in.Proactivity, in.Status, in.LifeEventID))
+		in.Proactivity, in.Status, in.LifeEventID,
+		in.Category, in.COFOGCode, in.COFOGLabel, in.MainActivity, in.SDGCode, in.ProcessingTime,
+		in.OutputType, in.OutputRefType, in.AssuranceLevel, in.Fulfilment, in.HasDiscretion,
+		in.HasAssessment, in.SLAHours, in.TacitApproval, in.Online))
 	if isUniqueViolation(err) {
 		return domain.RegistryService{}, apperror.Conflict("service code already exists")
 	}
@@ -171,12 +183,20 @@ func (r *registryRepository) UpdateService(ctx context.Context, in *domain.Regis
 			name = $2, name_en = $3, description = $4, authority = $5, authority_org_id = $6,
 			legal_basis = $7, target_group = $8, output = $9, channels = $10, fee = $11,
 			max_days = $12, steps_count = $13, annual_volume = $14, proactivity = $15,
-			life_event_id = $16, updated_at = now()
+			life_event_id = $16,
+			category = $17, cofog_code = $18, cofog_label = $19, main_activity = $20,
+			sdg_code = $21, processing_time = $22, output_type = $23, output_ref_type = $24,
+			assurance_level = $25, fulfilment = $26, has_discretion = $27, has_assessment = $28,
+			sla_hours = $29, tacit_approval = $30, online = $31,
+			updated_at = now()
 		WHERE id = $1
 		RETURNING `+serviceColumns,
 		in.ID, in.Name, in.NameEN, in.Description, in.Authority, in.AuthorityOrgID, in.LegalBasis,
 		in.TargetGroup, in.Output, in.Channels, in.Fee, in.MaxDays, in.StepsCount, in.AnnualVolume,
-		in.Proactivity, in.LifeEventID))
+		in.Proactivity, in.LifeEventID,
+		in.Category, in.COFOGCode, in.COFOGLabel, in.MainActivity, in.SDGCode, in.ProcessingTime,
+		in.OutputType, in.OutputRefType, in.AssuranceLevel, in.Fulfilment, in.HasDiscretion,
+		in.HasAssessment, in.SLAHours, in.TacitApproval, in.Online))
 	if errors.Is(err, pgx.ErrNoRows) {
 		return domain.RegistryService{}, apperror.NotFound("service not found")
 	}
@@ -438,11 +458,12 @@ func (r *registryRepository) DeleteEvidence(ctx context.Context, id string) erro
 
 // ── Амьдралын үйл явдал ─────────────────────────────────────────────────────
 
-const lifeEventColumns = `id, code, name, kind, description, lead_agency, sort_order, created_at`
+const lifeEventColumns = `id, code, name, kind, description, lead_agency, eu_code, en_label, sort_order, created_at`
 
 func scanLifeEvent(row pgx.Row) (domain.RegistryLifeEvent, error) {
 	var l domain.RegistryLifeEvent
-	err := row.Scan(&l.ID, &l.Code, &l.Name, &l.Kind, &l.Description, &l.LeadAgency, &l.SortOrder, &l.CreatedAt)
+	err := row.Scan(&l.ID, &l.Code, &l.Name, &l.Kind, &l.Description, &l.LeadAgency,
+		&l.EUCode, &l.ENLabel, &l.SortOrder, &l.CreatedAt)
 	return l, err
 }
 
@@ -465,10 +486,10 @@ func (r *registryRepository) ListLifeEvents(ctx context.Context) ([]domain.Regis
 
 func (r *registryRepository) CreateLifeEvent(ctx context.Context, in *domain.RegistryLifeEvent) (domain.RegistryLifeEvent, error) {
 	l, err := scanLifeEvent(r.pool.QueryRow(ctx, `
-		INSERT INTO registry_life_events (code, name, kind, description, lead_agency, sort_order)
-		VALUES ($1,$2,$3,$4,$5,$6)
+		INSERT INTO registry_life_events (code, name, kind, description, lead_agency, eu_code, en_label, sort_order)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
 		RETURNING `+lifeEventColumns,
-		in.Code, in.Name, in.Kind, in.Description, in.LeadAgency, in.SortOrder))
+		in.Code, in.Name, in.Kind, in.Description, in.LeadAgency, in.EUCode, in.ENLabel, in.SortOrder))
 	if isUniqueViolation(err) {
 		return domain.RegistryLifeEvent{}, apperror.Conflict("life event code already exists")
 	}
@@ -553,4 +574,106 @@ func (r *registryRepository) Overview(ctx context.Context) (domain.RegistryOverv
 		o.ByProactivity[k] = n
 	}
 	return o, rows.Err()
+}
+
+// ── Ажлын каталог руу проекц (migration 47) ──────────────────────────────────
+//
+// Регистр нь үйлчилгээний ЦОРЫН ГАНЦ эх сурвалж; gov_services нь түүний ажлын
+// проекц. Паспортыг нийтлэх бүрд энэ функц ажиллаж, иргэний портал дээрх
+// үйлчилгээг паспортын одоогийн агуулгатай тэнцүүлнэ.
+
+// ProjectToGov нь паспортыг gov_services руу upsert хийнэ. Түлхүүр нь
+// registry_service_id (UNIQUE) тул давхар мөр үүсэхгүй.
+//
+// evidence нь registry_service_evidences-ээс ИРГЭНЭЭС шаардаж буй (from_citizen)
+// баримтуудаар автоматаар бүрдэнэ — once-only зөрчлийг засаж нотолгоог
+// "байгууллага өөрөө татна" болгомогц иргэний харагдац шууд цэвэрлэгдэнэ.
+func (r *registryRepository) ProjectToGov(ctx context.Context, serviceID string) error {
+	_, err := r.pool.Exec(ctx, `
+		INSERT INTO gov_services
+			(code, name, category, agency, description, fee, processing_days, online,
+			 cofog_code, cofog_label, main_activity, sdg_code, processing_time,
+			 output_type, output_ref_type, evidence, legal_basis, assurance_level,
+			 lifecycle, fulfilment, has_discretion, has_assessment, sla_hours,
+			 tacit_approval, enabled, registry_service_id)
+		SELECT
+			r.code, r.name, r.category, r.authority, r.description, r.fee, r.max_days,
+			'e-mongolia' = ANY(r.channels),
+			r.cofog_code, r.cofog_label, r.main_activity, r.sdg_code, r.processing_time,
+			r.output_type, r.output_ref_type,
+			COALESCE((
+				SELECT jsonb_agg(e.name ORDER BY e.name)
+				  FROM registry_service_evidences se
+				  JOIN registry_evidences e ON e.id = se.evidence_id
+				 WHERE se.service_id = r.id AND se.from_citizen
+			), '[]'::jsonb),
+			r.legal_basis, r.assurance_level,
+			'active', r.fulfilment, r.has_discretion, r.has_assessment, r.sla_hours,
+			r.tacit_approval, true, r.id
+		FROM registry_services r
+		WHERE r.id = $1
+		ON CONFLICT (registry_service_id) DO UPDATE SET
+			code            = EXCLUDED.code,
+			name            = EXCLUDED.name,
+			category        = EXCLUDED.category,
+			agency          = EXCLUDED.agency,
+			description     = EXCLUDED.description,
+			fee             = EXCLUDED.fee,
+			processing_days = EXCLUDED.processing_days,
+			online          = EXCLUDED.online,
+			cofog_code      = EXCLUDED.cofog_code,
+			cofog_label     = EXCLUDED.cofog_label,
+			main_activity   = EXCLUDED.main_activity,
+			sdg_code        = EXCLUDED.sdg_code,
+			processing_time = EXCLUDED.processing_time,
+			output_type     = EXCLUDED.output_type,
+			output_ref_type = EXCLUDED.output_ref_type,
+			evidence        = EXCLUDED.evidence,
+			legal_basis     = EXCLUDED.legal_basis,
+			assurance_level = EXCLUDED.assurance_level,
+			lifecycle       = 'active',
+			fulfilment      = EXCLUDED.fulfilment,
+			has_discretion  = EXCLUDED.has_discretion,
+			has_assessment  = EXCLUDED.has_assessment,
+			sla_hours       = EXCLUDED.sla_hours,
+			tacit_approval  = EXCLUDED.tacit_approval,
+			enabled         = true`, serviceID)
+	if isUniqueViolation(err) {
+		// code нь өөр (холбогдоогүй) мөрөнд аль хэдийн эзэмшигдсэн.
+		return apperror.Conflict("энэ кодтой ажлын үйлчилгээ аль хэдийн байна")
+	}
+	return err
+}
+
+// WithdrawFromGov нь архивлагдсан паспортын ажлын үйлчилгээг унтраана. Мөрийг
+// УСТГАХГҮЙ: gov_applications нь service_id-аар түүн рүү заасаар байгаа тул
+// устгавал иргэний хүсэлтийн түүх тасарна. enabled=false болгосноор каталогт
+// харагдахаа болино (ListServices нь `WHERE enabled` шүүдэг).
+func (r *registryRepository) WithdrawFromGov(ctx context.Context, serviceID string) error {
+	_, err := r.pool.Exec(ctx,
+		`UPDATE gov_services SET enabled = false, lifecycle = 'withdrawn'
+		  WHERE registry_service_id = $1`, serviceID)
+	return err
+}
+
+// SetServiceEvents нь паспортын амьдралын үйл явдлын жагсаалтыг НЭГ транзакцид
+// солино (хуучныг устгаад шинийг оруулна).
+func (r *registryRepository) SetServiceEvents(ctx context.Context, serviceID string, eventIDs []string) error {
+	tx, err := r.pool.Begin(ctx)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(ctx) //nolint:errcheck // commit-ийн дараах rollback нь ErrTxClosed — хүлээгдсэн
+
+	if _, err := tx.Exec(ctx, `DELETE FROM registry_service_events WHERE service_id = $1`, serviceID); err != nil {
+		return err
+	}
+	for _, id := range eventIDs {
+		if _, err := tx.Exec(ctx,
+			`INSERT INTO registry_service_events(service_id, event_id) VALUES ($1,$2)
+			 ON CONFLICT DO NOTHING`, serviceID, id); err != nil {
+			return err
+		}
+	}
+	return tx.Commit(ctx)
 }

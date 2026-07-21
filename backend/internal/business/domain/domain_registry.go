@@ -33,8 +33,13 @@ type RegistryLifeEvent struct {
 	Kind        string // life | business
 	Description string
 	LeadAgency  string
-	SortOrder   int
-	CreatedAt   time.Time
+	// EUCode нь ЕХ-ны хяналттай толийн код: life → ox8/life-event/LE
+	// (BIR, RES, MOV…), business → m58/business-event/BE (STBU…).
+	// Хоосон бол зөвхөн үндэсний ойлголт (migration 47).
+	EUCode    string
+	ENLabel   string
+	SortOrder int
+	CreatedAt time.Time
 }
 
 // RegistryEvidence нь нотолгооны каталогийн нэг бичиг баримт. InKHUR нь уг
@@ -87,10 +92,33 @@ type RegistryService struct {
 	Proactivity    string
 	Status         string
 	LifeEventID    *string
-	Version        int
-	PublishedAt    *time.Time
-	CreatedAt      time.Time
-	UpdatedAt      *time.Time
+
+	// ── Үйл ажиллагааны тохиргоо (migration 47) ──────────────────────────
+	// Эдгээр нь паспорт нийтлэгдэхэд ажлын каталог (gov_services) руу
+	// БУУДАГ талбарууд. Регистр мастер тул тэдгээрийг ЭНД засна —
+	// gov_services-ийг гараар засах шаардлагагүй.
+	Category       string
+	COFOGCode      string // НҮБ COFOG 1999
+	COFOGLabel     string
+	MainActivity   string // dct:type — ЕХ main-activity authority table
+	SDGCode        string // SDG Annex II procedure код
+	ProcessingTime string // cv:processingTime — ISO 8601 duration
+	OutputType     string // cpsv:produces — CPSV-AP Output толь
+	OutputRefType  string // гаралт лавлагаа бол gov_references.type
+	AssuranceLevel string // eIDAS: low/substantial/high
+	// Fulfilment нь auto бол иргэн хүсэлт гаргамагц бүртгэлээс шууд
+	// олгогдоно; manual бол менежерийн дараалалд орно.
+	Fulfilment    string
+	HasDiscretion bool // үнэлэх эрх (Ermessen)
+	HasAssessment bool // үнэлгээний зай (Beurteilungsspielraum)
+	SLAHours      int  // байгууллагын норм (MaxDays нь хуулийн дээд хугацаа)
+	TacitApproval bool
+	Online        bool
+
+	Version     int
+	PublishedAt *time.Time
+	CreatedAt   time.Time
+	UpdatedAt   *time.Time
 
 	// Дэлгэрэнгүй уншилтад л дүүргэгдэнэ (жагсаалтад хоосон).
 	Evidences []RegistryServiceEvidence

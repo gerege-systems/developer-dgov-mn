@@ -27,6 +27,24 @@ type RegistryServiceRequest struct {
 	AnnualVolume   int      `json:"annual_volume" validate:"min=0"`
 	Proactivity    string   `json:"proactivity" validate:"omitempty,oneof=information online once_only proactive"`
 	LifeEventID    *string  `json:"life_event_id" validate:"omitempty,uuid"`
+
+	// ── Үйл ажиллагааны тохиргоо (migration 47) ──────────────────────────
+	// Паспорт нийтлэгдэхэд иргэний порталын ажлын каталог руу буудаг хэсэг.
+	Category       string `json:"category" validate:"omitempty,max=100"`
+	COFOGCode      string `json:"cofog_code" validate:"omitempty,max=16"`
+	COFOGLabel     string `json:"cofog_label" validate:"omitempty,max=200"`
+	MainActivity   string `json:"main_activity" validate:"omitempty,max=32"`
+	SDGCode        string `json:"sdg_code" validate:"omitempty,max=8"`
+	ProcessingTime string `json:"processing_time" validate:"omitempty,max=32"`
+	OutputType     string `json:"output_type" validate:"omitempty,oneof='Declaration' 'Physical object' 'Code' 'Financial obligation' 'Financial benefit' 'Recognition' 'Permit'"`
+	OutputRefType  string `json:"output_ref_type" validate:"omitempty,max=64"`
+	AssuranceLevel string `json:"assurance_level" validate:"omitempty,oneof=low substantial high"`
+	Fulfilment     string `json:"fulfilment" validate:"omitempty,oneof=auto manual"`
+	HasDiscretion  bool   `json:"has_discretion"`
+	HasAssessment  bool   `json:"has_assessment"`
+	SLAHours       int    `json:"sla_hours" validate:"min=0,max=8760"`
+	TacitApproval  bool   `json:"tacit_approval"`
+	Online         bool   `json:"online"`
 }
 
 // RegistryEvidenceLink нь паспортод холбогдох нэг нотолгоо.
