@@ -4,7 +4,7 @@
 
 How to deploy the **Gerege Template Platform V3.0** (Төр, хувийн хэвшлийн
 үйлчилгээний суурь платформ) — a production-ready foundation for building
-public and private digital services — to a single VPS with Docker Compose
+digital services — to a single VPS with Docker Compose
 behind nginx. The steps below use the
 platform's flagship reference deployment, **DAN-Gerege SSO** (sso.gerege.mn),
 as the worked example. The stack is Postgres + Redis + Go API + Next.js BFF web

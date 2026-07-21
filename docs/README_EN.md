@@ -1,6 +1,6 @@
 # Gerege Template Platform V3.0
 
-> **The foundation for public and private digital services** — **eID based · AI enabled** — a
+> **The foundation to build digital services** — **eID based · AI enabled** — a
 > production-ready foundation for building any public- or private-sector digital service.
 
 **Gerege Template Platform V3.0** is the *foundation for public- and
@@ -27,7 +27,7 @@ fintech, hospital or school product at the same assurance level.
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](../CONTRIBUTING.md)
 
 A production-ready, security-hardened **full-stack foundation** built on Clean
-Architecture — the base layer for public and private digital services. It pairs a Go
+Architecture — the base layer for building digital services. It pairs a Go
 (**chi · net/http + pgx (pgxpool) + PostgreSQL + Redis**) backend with a Next.js
 (**BFF**) frontend, wired together and ready to extend into any system. The
 backend uses the standard library `net/http` with the

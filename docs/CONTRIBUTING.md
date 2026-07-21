@@ -1,6 +1,6 @@
 # Contributing · Хувь нэмэр оруулах
 
-Thanks for your interest in improving **Gerege Template Platform V3.0**! / **Gerege Template Platform V3.0** (Төр, хувийн хэвшлийн үйлчилгээний суурь платформ)-ийг сайжруулах сонирхолд тань баярлалаа!
+Thanks for your interest in improving **Gerege Template Platform V3.0**! / **Gerege Template Platform V3.0** (Цахим үйлчилгээг бүтээх суурь)-ийг сайжруулах сонирхолд тань баярлалаа!
 
 ## Getting started · Эхлэх
 

@@ -1,6 +1,6 @@
 # Gerege Template Platform V3.0
 
-> **The foundation for public and private digital services** — a production-ready,
+> **The foundation to build digital services** — a production-ready,
 > security-hardened full stack for building any public- or private-sector digital service on top.
 
 **Gerege Template Platform V3.0** is the *foundation for public- and

@@ -2,7 +2,7 @@
 
 > 🌐 [English](DEPLOYMENT.md) · **Монгол**
 
-**Gerege Template Platform V3.0** (Төр, хувийн хэвшлийн үйлчилгээний суурь платформ) — цахим
+**Gerege Template Platform V3.0** (Цахим үйлчилгээг бүтээх суурь) — цахим
 засаглалын аливаа үйлчилгээг дээр нь босгох production-ready суурь — г нэг VPS
 дээр Docker Compose-оор, nginx-ийн ард deploy хийх заавар. Доорх алхмуудад
 платформын туг далбаа лавлагаа deployment болох **DAN-Gerege SSO**

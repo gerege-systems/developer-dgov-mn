@@ -1,10 +1,9 @@
 // Gerege Template Platform V3.0
 // Gerege Systems Development Team & Claude AI, 2026
 //
-// Gerege Template Platform V3.0 — «Төр, хувийн хэвшлийн үйлчилгээний суурь
-// платформ» нүүр (landing) хуудасны маркетингийн текст — mn / en хосоор.
-// Апп-ын үндсэн dict (lib/i18n.ts)-ийг бөглөхгүйн тулд landing-ийн урт
-// мөрүүдийг энд төвлөрүүлэв.
+// Gerege Template Platform V3.0 — «Цахим үйлчилгээг бүтээх суурь» нүүр
+// (landing) хуудасны маркетингийн текст — mn / en хосоор. Апп-ын үндсэн dict
+// (lib/i18n.ts)-ийг бөглөхгүйн тулд landing-ийн урт мөрүүдийг энд төвлөрүүлэв.
 // Бүх түлхүүр хоёр хэлэнд адил байх ёстой (i18n.ts-тэй нэг зарчим).
 
 export interface LandingCopy {
@@ -62,9 +61,9 @@ const mn: LandingCopy = {
   nav: { features: 'Боломжууд', security: 'Аюулгүй байдал', tech: 'Технологи', docs: 'Баримт', login: 'Нэвтрэх' },
   hero: {
     badge: 'Gerege Template Platform V3.0 · eID суурьтай · AI-жуулсан · Нээлттэй эх',
-    titleLead: 'Төр, хувийн хэвшлийн',
-    titleAccent: 'цахим үйлчилгээг',
-    titleTail: 'бүтээх суурь',
+    titleLead: 'Цахим үйлчилгээг',
+    titleAccent: 'бүтээх',
+    titleTail: 'суурь',
     lede:
       'Gerege Template Platform V3.0 нь төрийн байгууллага ба хувийн хэвшлийн аль алины цахим үйлчилгээг дээр нь босгож болох, үйлдвэрлэлд бэлэн, аюулгүй байдлаар хатуужуулсан бүрэн стек. Баталгаажсан иргэний танилт (eID), нэгдсэн нэвтрэлт, цахим гарын үсэг, AI туслах — банк, даатгал, финтек, эрүүл мэнд, боловсрол, төрийн үйлчилгээ хаана ч ижил суурь дээр.',
     ctaLogin: 'Gerege SSO-оор нэвтрэх',
@@ -143,7 +142,7 @@ const mn: LandingCopy = {
     tagline: 'Цэвэр архитектур · Нээлттэй стандарт · Найдвартай хамгаалалт',
   },
   footer: {
-    tagline: 'Gerege Template Platform V3.0 — төр, хувийн хэвшлийн цахим үйлчилгээг бүтээх, үйлдвэрлэлд бэлэн суурь. Gerege Systems, 2026.',
+    tagline: 'Gerege Template Platform V3.0 — цахим үйлчилгээг бүтээх, үйлдвэрлэлд бэлэн суурь. Gerege Systems, 2026.',
     links: ['Үйлчилгээний нөхцөл', 'Нууцлалын бодлого', 'Холбоо барих'],
     copyright: '© 2026 Gerege Systems · Gerege Template Platform V3.0',
   },
@@ -154,8 +153,8 @@ const en: LandingCopy = {
   nav: { features: 'Features', security: 'Security', tech: 'Technology', docs: 'Docs', login: 'Sign in' },
   hero: {
     badge: 'Gerege Template Platform V3.0 · eID-based · AI-enabled · Open Source',
-    titleLead: 'The foundation for',
-    titleAccent: 'public and private',
+    titleLead: 'The foundation to',
+    titleAccent: 'build',
     titleTail: 'digital services',
     lede:
       'Gerege Template Platform V3.0 is a production-ready, security-hardened full stack for building digital services — for government agencies and private-sector companies alike. Verified citizen identity (eID), single sign-on, e-signatures and an AI assistant: the same foundation for banking, insurance, fintech, healthcare, education and public services.',
@@ -235,7 +234,7 @@ const en: LandingCopy = {
     tagline: 'Clean Architecture · Open standards · Secure by design',
   },
   footer: {
-    tagline: 'Gerege Template Platform V3.0 — a production-ready foundation for building public and private digital services. Gerege Systems, 2026.',
+    tagline: 'Gerege Template Platform V3.0 — a production-ready foundation for building digital services. Gerege Systems, 2026.',
     links: ['Terms of Service', 'Privacy Policy', 'Contact'],
     copyright: '© 2026 Gerege Systems · Gerege Template Platform V3.0',
   },
