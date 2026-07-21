@@ -5,8 +5,8 @@
 REST API reference for the **Government Template Platform V3.0** (Цахим засаглалыг
 бүтээх суурь) — a production-ready foundation for building digital-government
 services (Clean-Architecture Go backend + Next.js BFF + Gemini AI). This contract
-tracks its flagship reference deployment, **DAN-Government SSO** (sso.dgov.mn), the
-eID-based national Single Sign-On. The live, auto-generated spec is served at `GET
+tracks its reference deployment, **Government Template Platform** (template.dgov.mn), an
+eID-based government service platform. The live, auto-generated spec is served at `GET
 /swagger/` (source: `docs/swagger.json`).
 
 > **Note on paths.** Every module below mounts under the `/api` group, and each
@@ -301,8 +301,8 @@ backend.
 
 ## OIDC provider — login/consent/logout (`/api/v1/provider`)
 
-Active **only when Hydra is configured** (`ProviderConfigured()`). This is
-sso.dgov.mn acting as an OIDC **provider** with Ory Hydra in front; the Next.js
+Active **only when the provider is configured** (`ProviderConfigured()`). This is
+the platform acting as an OIDC **provider** (its own built-in Go provider); the Next.js
 BFF `/login`, `/consent`, `/logout` pages call these. Body-capped (4 KiB). The
 `get`/`reject`/`logout-accept` endpoints are challenge-authenticated (no
 bearer); the `accept` endpoints require a logged-in citizen (subject = dan user

@@ -4,7 +4,7 @@
 > production-ready суурь платформ: түүн дээр АЛЬ ч төрийн цахим үйлчилгээг
 > итгэлтэйгээр босгоно. Нэг суурь — бүх төрийн үйлчилгээ. Гол онцлог чадвар нь
 > eID-д суурилсан улсын нэгдсэн нэвтрэлт (Single Sign-On) бөгөөд түүний бэлэн
-> эталон deployment нь **DAN-Government SSO** ([sso.dgov.mn](https://sso.dgov.mn)).
+> эталон deployment нь **Government Template Platform** ([template.dgov.mn](https://template.dgov.mn)).
 > Энэ файл нь хийгдсэн ажил ба урагшлах төлөвлөгөөг харуулна.
 > Дэлгэрэнгүй баримт: [README.md](README.md#documentation).
 
@@ -12,7 +12,7 @@
 нэвтрэлт, Google холболт, dgov SSO consumer, өөрийн OIDC provider (Hydra),
 байгууллага/гишүүнчлэл, төрийн үйлчилгээ, API gateway, PAdES гарын үсэг,
 интеграци, audit, RBAC/superadmin, сайтын харагдац — бүгд эталон deployment-д
-([sso.dgov.mn](https://sso.dgov.mn)) найдвартай ажиллаж байгаа (CI ногоон).
+([template.dgov.mn](https://template.dgov.mn)) найдвартай ажиллаж байгаа (CI ногоон).
 
 ---
 
@@ -81,7 +81,7 @@
 - Admin (нийтийн хуудас) ба per-user (апп) scope-ыг тусгаарласан
 
 ### Deploy
-- [sso.dgov.mn](https://sso.dgov.mn) дээр production deploy (docker compose: db + redis + migrate + api + web + Hydra)
+- [template.dgov.mn](https://template.dgov.mn) дээр production deploy (docker compose: db + redis + migrate + api + web)
 - Бүх док EN/MN хосоор шинэчлэгдсэн; DEPLOYMENT(_MN).md, AI_PIPELINE(_MN).md, CLAUDE.md
 
 ---

@@ -5,8 +5,8 @@
 Энэ баримт нь **Government Template Platform V3.0** (Цахим засаглалыг бүтээх суурь)
 — аливаа цахим засаглалын үйлчилгээг дээр нь босгох боломжтой production-д бэлэн
 суурийн ерөнхий архитектурыг тайлбарлана. Түүний тэргүүлэх жишиг deployment нь
-**DAN-Government SSO** (**sso.dgov.mn** дээр байрласан) — **eID-д суурилсан улсын
-Single Sign-On** юм. Backend модуль нь `template`; стек нь **chi (net/http) + pgx
+**Government Template Platform** (**template.dgov.mn** дээр байрласан) — **eID-д суурилсан
+төрийн үйлчилгээний платформ** (Government SSO-ийн Relying Party) юм. Backend модуль нь `template`; стек нь **chi (net/http) + pgx
 (pgxpool) + PostgreSQL + Redis + Gemini AI**, Clean Architecture зарчмаар зохион
 байгуулагдсан бөгөөд Next.js BFF-ээр хучигдсан.
 
@@ -503,7 +503,7 @@ go build ./...                 # build
 docker compose up -d --build   # db + redis + migrate (one-off) + api + web
 ```
 
-Health check: `curl http://localhost:8080/health`. sso.dgov.mn топологийг
+Health check: `curl http://localhost:8080/health`. deployment топологийг
 `docs/DEPLOYMENT.md`-ээс үз.
 
 ## Credits & License

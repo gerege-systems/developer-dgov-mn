@@ -19,9 +19,9 @@ security hardening — all bilingual (mn/en) and observable from day one. Built 
 **chi (net/http)** for HTTP, **pgx (pgxpool) + PostgreSQL** for data, and
 **Redis + Ristretto** for cache.
 
-> **Reference deployment:** **DAN-Government SSO** ([sso.dgov.mn](https://sso.dgov.mn))
-> — the national Single Sign-On — is one real-world service built on this platform,
-> showcasing eID login as an OIDC provider (via an optional **Ory Hydra** front-end).
+> **Reference deployment:** **Government Template Platform** ([template.dgov.mn](https://template.dgov.mn))
+> — a government service platform and Relying Party of Government SSO built on this
+> foundation, showcasing eID single sign-on and a built-in OIDC provider for other apps.
 
 ## 📌 Origin & Open Source
 
@@ -168,9 +168,8 @@ EID_DISPLAY_TEXT=
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 
-# OIDC PROVIDER side (DAN as issuer, via Ory Hydra) — provider flows are inert unless set
-HYDRA_ADMIN_URL=http://hydra:4445
-HYDRA_PUBLIC_URL=                # issuer, e.g. https://sso.dgov.mn (empty = provider off)
+# OIDC PROVIDER side (the platform is its own issuer) — provider flows are inert unless set
+OAUTH_ISSUER=                    # issuer, e.g. https://template.dgov.mn (empty = provider off)
 SSO_STATE_KEY=                   # >= 32 bytes; login/consent state cookie HMAC
 SSO_FIRSTPARTY_CLIENTS=          # CSV client_ids that skip the consent screen
 SSO_ADMIN_API_KEYS=              # CSV bootstrap keys for the /admin surface

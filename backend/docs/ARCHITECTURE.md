@@ -5,14 +5,14 @@
 This document describes the high-level architecture of the **Government Template
 Platform V3.0** (Цахим засаглалыг бүтээх суурь) — a production-ready foundation on
 which any digital-government service can be built. Its flagship reference
-deployment is **DAN-Government SSO** (at **sso.dgov.mn**), an **eID-based national
-Single Sign-On**. The backend module is `template`; the stack is **chi (net/http)
+deployment is **Government Template Platform** (at **template.dgov.mn**), an **eID-based
+government service platform** — a Relying Party of Government SSO. The backend module is `template`; the stack is **chi (net/http)
 + pgx (pgxpool) + PostgreSQL + Redis + Gemini AI**, organized along Clean
 Architecture lines and fronted by a Next.js BFF.
 
 In that reference deployment the platform serves as both an **eID Relying Party**
 (users log in with eID) and an **OIDC Identity Provider** (other government apps
-log in *through* dan via Ory Hydra). Row-Level Security in PostgreSQL is the
+log in *through* it via the built-in Go provider). Row-Level Security in PostgreSQL is the
 load-bearing per-user isolation boundary — see
 [Row-Level Security](#row-level-security-rls).
 
@@ -506,7 +506,7 @@ docker compose up -d --build   # db + redis + migrate (one-off) + api + web
 ```
 
 Health check: `curl http://localhost:8080/health`. See `docs/DEPLOYMENT.md` for
-the sso.dgov.mn topology.
+the deployment topology.
 
 ## Credits & License
 

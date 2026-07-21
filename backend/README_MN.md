@@ -18,10 +18,10 @@
 хэлтэй (mn/en), эхнээсээ observable. **chi (net/http)** (HTTP), **pgx (pgxpool) +
 PostgreSQL** (өгөгдөл), **Redis + Ristretto** (кэш) дээр суурилсан.
 
-> **Жишиг deployment:** **DAN-Government SSO** ([sso.dgov.mn](https://sso.dgov.mn))
-> — улсын нэгдсэн нэвтрэлт (Single Sign-On) — нь энэ суурин дээр бүтээгдсэн бодит
-> үйлчилгээний нэг жишээ бөгөөд eID нэвтрэлтийг OIDC provider болгон (сонголттой
-> **Ory Hydra** урдтайгаар) харуулдаг.
+> **Жишиг deployment:** **Government Template Platform** ([template.dgov.mn](https://template.dgov.mn))
+> — төрийн үйлчилгээний платформ бөгөөд Government SSO-ийн Relying Party — энэ суурин
+> дээр бүтээгдсэн жишээ бөгөөд eID нэвтрэлт болон бусад аппад зориулсан өөрийн OIDC
+> provider-ийг харуулдаг.
 
 ## 📌 Эх сурвалж ба нээлттэй эх (Open Source)
 
@@ -168,9 +168,8 @@ EID_DISPLAY_TEXT=
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 
-# OIDC PROVIDER тал (DAN нь issuer, Ory Hydra-аар) — тохируулаагүй бол урсгал inert
-HYDRA_ADMIN_URL=http://hydra:4445
-HYDRA_PUBLIC_URL=                # issuer, жишээ https://sso.dgov.mn (хоосон = provider унтарна)
+# OIDC PROVIDER тал (платформ өөрөө issuer) — тохируулаагүй бол урсгал inert
+OAUTH_ISSUER=                    # issuer, жишээ https://template.dgov.mn (хоосон = provider унтарна)
 SSO_STATE_KEY=                   # >= 32 байт; login/consent state cookie HMAC
 SSO_FIRSTPARTY_CLIENTS=          # consent дэлгэцийг алгасах client_id-уудын CSV
 SSO_ADMIN_API_KEYS=              # /admin гадаргуугийн bootstrap key-үүдийн CSV

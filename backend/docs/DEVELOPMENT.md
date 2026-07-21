@@ -5,8 +5,8 @@
 This guide helps developers set up and work with the **Government Template
 Platform V3.0** (Цахим засаглалыг бүтээх суурь) codebase — a production-ready
 foundation on which any digital-government service can be built. Its flagship
-reference deployment is **DAN-Government SSO**, the eID-based national Single
-Sign-On built on this stack.
+reference deployment is **Government Template Platform** (template.dgov.mn), an eID-based
+government service platform built on this stack.
 
 > **Origin.** Derived from the open-source
 > [snykk/go-rest-boilerplate](https://github.com/snykk/go-rest-boilerplate)

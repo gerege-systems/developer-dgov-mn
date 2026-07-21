@@ -7,8 +7,8 @@
 Architecture Go backend + Next.js BFF frontend + Gemini AI pipeline-ийг хооронд нь
 холбож, аюулгүй байдлыг хатууруулж, ямар ч систем рүү өргөтгөхөд бэлэн болгосон.
 Та дэд бүтэц бус, үнэ цэнийг л бүтээнэ — identity, аюулгүй байдал, AI, үйлчилгээний
-тулгуур эхний өдрөөс шийдэгдсэн ирнэ. Жишээ deployment нь **DAN-Government SSO**
-нэрээр [sso.dgov.mn](https://sso.dgov.mn)-д ажиллаж, платформын eID нэгдсэн
+тулгуур эхний өдрөөс шийдэгдсэн ирнэ. Жишээ deployment нь **Government Template Platform**
+нэрээр [template.dgov.mn](https://template.dgov.mn)-д ажиллаж, платформын eID
 нэвтрэлтийг production-д харуулж байна.
 
 > 🌐 **Монгол** · [English](docs/README_EN.md)

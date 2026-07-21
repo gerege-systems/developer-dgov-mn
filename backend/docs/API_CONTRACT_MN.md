@@ -5,8 +5,8 @@
 **Government Template Platform V3.0** (Цахим засаглалыг бүтээх суурь)-ийн REST API
 лавлагаа — цахим засаглалын үйлчилгээг дээр нь босгох production-д бэлэн суурь
 (Clean-Architecture Go backend + Next.js BFF + Gemini AI). Энэ лавлагаа нь түүний
-тэргүүлэх жишиг deployment болох **DAN-Government SSO** (sso.dgov.mn) — eID-д
-суурилсан үндэсний нэгдсэн нэвтрэлт (Single Sign-On)-ийг тусгана. Амьд, автоматаар
+жишиг deployment болох **Government Template Platform** (template.dgov.mn) — eID-д
+суурилсан төрийн үйлчилгээний платформыг тусгана. Амьд, автоматаар
 үүсгэгддэг spec-ийг `GET /swagger/`-ээр үзүүлнэ (эх сурвалж: `docs/swagger.json`).
 
 > **Зам (path)-ын тухай тэмдэглэл.** Доорх модуль бүр `/api` бүлгийн дор
@@ -298,8 +298,8 @@ Gerege Core (core.dgov.mn)-ийн хайлтын wrap; service токен backen
 
 ## OIDC provider — login/consent/logout (`/api/v1/provider`)
 
-Зөвхөн **Hydra тохируулагдсан үед** (`ProviderConfigured()`) идэвхжинэ. Энэ нь
-sso.dgov.mn нь Ory Hydra урдаа тавьж OIDC **provider** болсон нь; Next.js BFF-ийн
+Зөвхөн **provider тохируулагдсан үед** (`ProviderConfigured()`) идэвхжинэ. Энэ нь
+платформ өөрөө OIDC **provider** болсон нь (өөрийн Go provider); Next.js BFF-ийн
 `/login`, `/consent`, `/logout` хуудсууд дуудна. Body хязгаартай (4 KiB).
 `get`/`reject`/`logout-accept` нь challenge-аар баталгаажна (bearer-гүй);
 `accept` endpoint-ууд нэвтэрсэн иргэн шаардана (subject = dan user ID).

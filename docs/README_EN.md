@@ -8,7 +8,7 @@ governance is built*: a Clean-Architecture Go backend + Next.js BFF frontend +
 Gemini AI pipeline, wired together, security-hardened and ready to extend into
 any system. Build the value, not the plumbing — the identity, security, AI and
 service scaffolding come solved from day one. A reference deployment runs as
-**DAN-Government SSO** at [sso.dgov.mn](https://sso.dgov.mn), showcasing the
+**Government Template Platform** at [template.dgov.mn](https://template.dgov.mn), showcasing the
 platform's eID single sign-on in production.
 
 > 🌐 [Монгол](../README.md) · **English**

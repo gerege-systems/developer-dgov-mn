@@ -5,8 +5,8 @@
 Энэ заавар нь хөгжүүлэгчдэд **Government Template Platform V3.0** (Цахим
 засаглалыг бүтээх суурь) кодын бааз — аливаа цахим засаглалын үйлчилгээг дээр нь
 босгох production-ready суурь — дээр тохиргоо хийж, ажиллахад туслана. Түүний
-туг далбаа лавлагаа deployment нь энэ стек дээр бүтээгдсэн eID-д суурилсан
-үндэсний Single Sign-On буюу **DAN-Government SSO** юм.
+жишиг лавлагаа deployment нь энэ стек дээр бүтээгдсэн eID-д суурилсан төрийн
+үйлчилгээний платформ буюу **Government Template Platform** (template.dgov.mn) юм.
 
 > **Эх сурвалж.** Najib Fikri-ийн нээлттэй эх
 > [snykk/go-rest-boilerplate](https://github.com/snykk/go-rest-boilerplate)
