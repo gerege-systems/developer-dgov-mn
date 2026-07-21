@@ -22,6 +22,9 @@ interface Permission {
 }
 
 const ADMIN_KEY = 'admin';
+// superadmin нь RBAC матрицаас гадуур удирддаг дээд эрх (бүх зүйлийг автоматаар
+// авдаг, энэ дэлгэцээс permission онооход хамаарахгүй) тул баганаас нь нуудаг.
+const SUPERADMIN_KEY = 'superadmin';
 
 export default function RolesManager() {
   const { T, tRole, tPerm } = useT();
@@ -97,6 +100,9 @@ export default function RolesManager() {
     else setActionError(res.message || T('roles.deleteError'));
   };
 
+  // superadmin баганыг матрицаас хасна (permission нь энэ дэлгэцээр удирддаггүй).
+  const visibleRoles = (roles ?? []).filter((r) => r.key !== SUPERADMIN_KEY);
+
   if (roles === null) {
     return (
       <div className="muted" style={{ display: 'flex', gap: 8, alignItems: 'center', padding: 16 }}>
@@ -143,7 +149,7 @@ export default function RolesManager() {
           <thead>
             <tr>
               <th>{T('roles.col.permission')}</th>
-              {roles.map((r) => <th key={r.id}>{tRole(r.key, r.name)}</th>)}
+              {visibleRoles.map((r) => <th key={r.id}>{tRole(r.key, r.name)}</th>)}
             </tr>
           </thead>
           <tbody>
@@ -155,7 +161,7 @@ export default function RolesManager() {
                     <small className="mono">{p.key}</small>
                   </span>
                 </td>
-                {roles.map((r) => {
+                {visibleRoles.map((r) => {
                   const isAdmin = r.key === ADMIN_KEY;
                   const checked = isAdmin || (draft[r.id]?.has(p.key) ?? false);
                   return (
@@ -174,7 +180,7 @@ export default function RolesManager() {
             ))}
             <tr>
               <td />
-              {roles.map((r) => (
+              {visibleRoles.map((r) => (
                 <td key={r.id}>
                   {r.key !== ADMIN_KEY && (
                     <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
