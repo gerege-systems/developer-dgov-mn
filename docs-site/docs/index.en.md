@@ -7,11 +7,16 @@
 governance is built*. You build the value, not the plumbing — identity, security,
 AI and service scaffolding come solved from day one.
 
+!!! tip "Open Source"
+    This platform is an **open-source** project — read the full source, fork it,
+    and run it for your own organization.
+    :material-github: [View on GitHub](https://github.com/gerege-systems/template-dgov-mn)
+
 <div class="grid cards" markdown>
 
 - :material-shield-key: **eID + Government SSO**  
-  Electronic-ID (eID) based sign-in + an OpenID Connect (Ory Hydra) SSO provider.
-  Apps connect with a single tap.
+  Electronic-ID (eID) based sign-in + an OpenID Connect (built-in Go provider)
+  SSO provider. Apps connect with a single tap.
 
 - :material-layers: **Clean Architecture**  
   Go (chi · net/http · pgx, no ORM) backend + Next.js 15 BFF frontend. Clear

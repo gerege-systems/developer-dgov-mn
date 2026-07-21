@@ -7,11 +7,16 @@
 бүтцийг бус, үнэ цэнийг л бүтээнэ — identity, аюулгүй байдал, AI, үйлчилгээний
 тулгуур эхний өдрөөс шийдэгдсэн ирнэ.
 
+!!! tip "Нээлттэй эх (Open Source)"
+    Энэхүү платформ бол **нээлттэй эх** төсөл — эх кодыг бүрэн эхээр нь үзэж,
+    fork хийж, өөрийн байгууллагадаа ашиглаж болно.
+    :material-github: [GitHub дээр үзэх](https://github.com/gerege-systems/template-dgov-mn)
+
 <div class="grid cards" markdown>
 
 - :material-shield-key: **eID + Government SSO**  
-  Цахим үнэмлэх (eID)-т суурилсан нэвтрэлт + OpenID Connect (Ory Hydra) SSO
-  провайдер. Апп-ууд нэг товшилтоор холбогдоно.
+  Цахим үнэмлэх (eID)-т суурилсан нэвтрэлт + OpenID Connect (өөрийн Go provider)
+  SSO провайдер. Апп-ууд нэг товшилтоор холбогдоно.
 
 - :material-layers: **Цэвэр архитектур**  
   Go (chi · net/http · pgx, ORM-гүй) backend + Next.js 15 BFF frontend. Давхаргууд

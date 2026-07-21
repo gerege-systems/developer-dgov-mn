@@ -60,14 +60,14 @@ const mn: LandingCopy = {
   brand: 'Government Template Platform V3.0',
   nav: { features: 'Боломжууд', security: 'Аюулгүй байдал', tech: 'Технологи', docs: 'Баримт', login: 'Нэвтрэх' },
   hero: {
-    badge: 'Government Template Platform V3.0 · eID суурьтай · AI-жуулсан',
+    badge: 'Government Template Platform V3.0 · eID суурьтай · AI-жуулсан · Нээлттэй эх',
     titleLead: 'Цахим засаглалыг',
     titleAccent: 'бүтээх',
     titleTail: 'суурь',
     lede:
       'Government Template Platform V3.0 нь төрийн аливаа цахим үйлчилгээг дээр нь босгож болох, үйлдвэрлэлд бэлэн, аюулгүй байдлаар хатуужуулсан бүрэн стек. Цэвэр архитектур бүхий Go сервер, Next.js BFF нүүр, Gemini AI урсгал, eID нэвтрэлт — бүгд эхний өдрөөс нэгдмэл, туршигдсан хэлбэрээр бэлэн.',
     ctaLogin: 'Government SSO-оор нэвтрэх',
-    ctaExplore: 'Боломжийг үзэх',
+    ctaExplore: 'GitHub дээр үзэх',
     stackLabel: 'Дэмждэг стандартууд',
     stats: [
       { value: 'Clean Arch', label: 'Цэгцтэй, өргөтгөхөд бэлэн бүтэц' },
@@ -103,7 +103,7 @@ const mn: LandingCopy = {
     sub: 'Хурд, найдвар, аюулгүй байдлыг эрхэмлэн, удаан насжих зарчмаар сонгосон бүрэлдэхүүн.',
     backendTitle: 'Сервер тал — Go, Clean Architecture',
     backendBody:
-      'Цэвэр архитектур бүхий Go (chi · net/http) сервер, ORM-гүй гар бичмэл SQL (pgx) дээр PostgreSQL, Redis түргэн санах ой. Давхаргууд тод ялгаатай тул шинэ боломжийг эмх цэгцтэй нэмнэ. OAuth2/OIDC-ийг олон улсад батжсан Ory Hydra хөдөлгүүрээр гүйцэтгэнэ.',
+      'Цэвэр архитектур бүхий Go (chi · net/http) сервер, ORM-гүй гар бичмэл SQL (pgx) дээр PostgreSQL, Redis түргэн санах ой. Давхаргууд тод ялгаатай тул шинэ боломжийг эмх цэгцтэй нэмнэ. OAuth2/OIDC-ийг платформ өөрөө (өөрийн Go provider) хангадаг.',
     frontendTitle: 'Хэрэглэгчийн тал — Next.js BFF',
     frontendBody:
       'Хөтч зөвхөн өөрийн эх сурвалжтай харилцаж, серверийн тал нь дотоод системтэй холбогдоно (BFF загвар). Нэвтрэлтийн түлхүүр хэрэглэгчийн код руу хэзээ ч гардаггүй. TanStack Query өгөгдлийн давхарга, mn/en хос хэл, гэрэл/харанхуй загвар бэлэн.',
@@ -138,7 +138,7 @@ const mn: LandingCopy = {
     title: 'Цахим засаглалаа өнөөдрөөс бүтээж эхэл',
     sub: 'Government Template Platform V3.0 нь дэд бүтцийг бэлэн болгож өгнө — та зөвхөн үйлчилгээгээ бүтээхэд анхаарна. eID-ээр нэвтэрч, бэлэн боломжуудыг өөрөө туршина уу.',
     ctaLogin: 'Government SSO-оор нэвтрэх',
-    ctaExplore: 'Боломжийг үзэх',
+    ctaExplore: 'GitHub дээр үзэх',
     tagline: 'Цэвэр архитектур · Нээлттэй стандарт · Найдвартай хамгаалалт',
   },
   footer: {
@@ -152,14 +152,14 @@ const en: LandingCopy = {
   brand: 'Government Template Platform V3.0',
   nav: { features: 'Features', security: 'Security', tech: 'Technology', docs: 'Docs', login: 'Sign in' },
   hero: {
-    badge: 'Government Template Platform V3.0 · eID-based · AI-enabled',
+    badge: 'Government Template Platform V3.0 · eID-based · AI-enabled · Open Source',
     titleLead: 'The foundation to',
     titleAccent: 'build digital',
     titleTail: 'governance',
     lede:
       'Government Template Platform V3.0 is a production-ready, security-hardened full stack for building any digital-government service on top. A Clean-Architecture Go backend, a Next.js BFF frontend, a Gemini AI pipeline and eID sign-in — all wired together and ready from day one.',
     ctaLogin: 'Sign in with Government SSO',
-    ctaExplore: 'Explore features',
+    ctaExplore: 'View on GitHub',
     stackLabel: 'Standards supported',
     stats: [
       { value: 'Clean Arch', label: 'Layered, ready to extend' },
@@ -182,7 +182,7 @@ const en: LandingCopy = {
       'Tokens in httpOnly cookies (never exposed to browser JS), double CSRF defense, row-level security (RLS), CSP/HSTS headers and per-IP rate limiting — baked in, not bolted on.',
     ssoTitle: 'SSO provider for third parties (OAuth2 / OIDC)',
     ssoBody:
-      'The platform itself can act as an OpenID Connect provider (built on Ory Hydra). Relying applications (RPs) delegate sign-in to this foundation and receive verified user data as standard claims.',
+      'The platform itself can act as an OpenID Connect provider (a built-in Go provider). Relying applications (RPs) delegate sign-in to this foundation and receive verified user data as standard claims.',
     signTitle: 'Signature relay',
     signBody:
       'Third-party RPs can have documents e-signed (PAdES) through the platform’s eID RP credentials — without holding their own eID certificates.',
@@ -195,7 +195,7 @@ const en: LandingCopy = {
     sub: 'Components chosen for speed, reliability and security — and built to last.',
     backendTitle: 'Go backend · Clean Architecture',
     backendBody:
-      'A Clean-Architecture Go (chi · net/http) backend with hand-written SQL (pgx, no ORM) over PostgreSQL and Redis caching. Clear layers make new features easy to add. OAuth2/OIDC is powered by the battle-tested Ory Hydra engine.',
+      'A Clean-Architecture Go (chi · net/http) backend with hand-written SQL (pgx, no ORM) over PostgreSQL and Redis caching. Clear layers make new features easy to add. OAuth2/OIDC is served by a built-in Go provider — no external OAuth server.',
     frontendTitle: 'Next.js frontend (BFF)',
     frontendBody:
       'The browser talks only to same-origin Next.js routes, which proxy to the backend server-side. Tokens never reach client JS. TanStack Query data layer, bilingual mn/en, light/dark themes — all included.',
@@ -230,7 +230,7 @@ const en: LandingCopy = {
     title: 'Start building digital governance today',
     sub: 'Government Template Platform V3.0 gives you the infrastructure ready-made — so you focus only on your service. Sign in with eID and try the built-in capabilities yourself.',
     ctaLogin: 'Sign in with Government SSO',
-    ctaExplore: 'Explore features',
+    ctaExplore: 'View on GitHub',
     tagline: 'Clean Architecture · Open standards · Secure by design',
   },
   footer: {
