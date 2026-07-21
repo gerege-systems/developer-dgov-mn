@@ -2,6 +2,7 @@ import React from 'react';
 import { redirect } from 'next/navigation';
 import PageHead from '@/components/PageHead';
 import SuperadminManager from '@/components/admin/SuperadminManager';
+import AccessModeCard from '@/components/superadmin/AccessModeCard';
 import { fetchMe } from '@/lib/api';
 import { isSuperAdmin } from '@/lib/types';
 
@@ -17,6 +18,7 @@ export default async function SuperadminPage() {
   return (
     <>
       <PageHead eyebrowKey="sys.admin" titleKey="nav.superadmin" subKey="superadmin.sub" />
+      <AccessModeCard />
       <SuperadminManager currentUserId={me.id} />
     </>
   );

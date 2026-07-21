@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Trash2, Loader2, Check, Ban, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Trash2, Loader2, Check, Ban, ChevronLeft, ChevronRight, UserPlus, X } from 'lucide-react';
 import { useT } from '@/lib/lang';
 import { getJSON, sendJSON } from '@/lib/client';
-import { ROLE_SUPERADMIN, ROLE_ADMIN, isSuperAdmin } from '@/lib/types';
+import { ROLE_SUPERADMIN, ROLE_ADMIN, ROLE_USER, isSuperAdmin } from '@/lib/types';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 
 interface AdminUser {
   id: string;
@@ -45,6 +46,15 @@ export default function UsersManager({ currentUserId, currentUserRoleId, readOnl
   const [page, setPage] = useState(0);
   const [actionError, setActionError] = useState('');
 
+  // "Хэрэглэгч нэмэх" модал — иргэнийг регистрээр урьдчилан бүртгэнэ.
+  const emptyForm = {
+    register: '', first_name: '', last_name: '', first_name_en: '', last_name_en: '', role_id: ROLE_USER,
+  };
+  const [adding, setAdding] = useState(false);
+  const [form, setForm] = useState(emptyForm);
+  const [addError, setAddError] = useState('');
+  const [saving, setSaving] = useState(false);
+
   const usersQuery = useQuery({
     queryKey: ['admin-users', page],
     queryFn: () => getJSON<AdminUser[]>(`/api/admin/users?offset=${page * PAGE_SIZE}&limit=${PAGE_SIZE}`),
@@ -66,6 +76,30 @@ export default function UsersManager({ currentUserId, currentUserRoleId, readOnl
       await queryClient.invalidateQueries({ queryKey: ['admin-users'] });
     } else {
       setActionError(res.message || T('users.actionError'));
+    }
+  };
+
+  const openAdd = () => { setForm(emptyForm); setAddError(''); setAdding(true); };
+
+  const submitAdd = async () => {
+    const register = form.register.trim();
+    if (!register) return;
+    setAddError('');
+    setSaving(true);
+    const res = await sendJSON('/api/admin/users', 'POST', {
+      register,
+      first_name: form.first_name.trim() || undefined,
+      last_name: form.last_name.trim() || undefined,
+      first_name_en: form.first_name_en.trim() || undefined,
+      last_name_en: form.last_name_en.trim() || undefined,
+      role_id: form.role_id,
+    });
+    setSaving(false);
+    if (res.ok) {
+      setAdding(false);
+      await queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+    } else {
+      setAddError(res.message || T('users.addError'));
     }
   };
 
@@ -92,6 +126,73 @@ export default function UsersManager({ currentUserId, currentUserRoleId, readOnl
   return (
     <div className="users">
       {error && <div className="alert alert--danger" role="alert">{error}</div>}
+
+      {!readOnly && (
+        <div style={{ marginBottom: 14, display: 'flex', justifyContent: 'flex-end' }}>
+          <button className="btn btn--primary btn--sm" type="button" onClick={openAdd}>
+            <UserPlus size={14} strokeWidth={2} /> {T('users.add')}
+          </button>
+        </div>
+      )}
+
+      {/* Иргэнийг регистрээр урьдчилан бүртгэх — хаалттай горимд нэвтрэх
+          боломжтой болгоно. */}
+      <Dialog open={adding} onOpenChange={(o) => { if (!o) setAdding(false); }}>
+        <DialogContent style={{ maxWidth: 560 }}>
+          <DialogHeader><DialogTitle>{T('users.addTitle')}</DialogTitle></DialogHeader>
+
+          {addError && <div className="alert alert--danger" role="alert">{addError}</div>}
+
+          <label style={{ display: 'block' }}>{T('users.register')}
+            <input
+              className="input mono"
+              value={form.register}
+              onChange={(e) => setForm({ ...form, register: e.target.value })}
+              placeholder={T('users.registerPlaceholder')}
+            />
+          </label>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px,1fr))', gap: 12, marginTop: 12 }}>
+            <label>{T('users.lastName')}
+              <input className="input" value={form.last_name} onChange={(e) => setForm({ ...form, last_name: e.target.value })} />
+            </label>
+            <label>{T('users.firstName')}
+              <input className="input" value={form.first_name} onChange={(e) => setForm({ ...form, first_name: e.target.value })} />
+            </label>
+            <label>{T('users.lastNameEn')}
+              <input className="input" value={form.last_name_en} onChange={(e) => setForm({ ...form, last_name_en: e.target.value })} />
+            </label>
+            <label>{T('users.firstNameEn')}
+              <input className="input" value={form.first_name_en} onChange={(e) => setForm({ ...form, first_name_en: e.target.value })} />
+            </label>
+          </div>
+
+          <label style={{ display: 'block', marginTop: 12 }}>{T('users.col.role')}
+            <select
+              className="input"
+              value={form.role_id}
+              onChange={(e) => setForm({ ...form, role_id: Number(e.target.value) })}
+            >
+              {roles
+                // superadmin-ыг хэзээ ч санал болгохгүй; admin-ыг зөвхөн super
+                // admin-д (backend 403 өгдөгтэй нийцүүлэв).
+                .filter((r) => r.id !== ROLE_SUPERADMIN)
+                .filter((r) => r.id !== ROLE_ADMIN || callerIsSuperAdmin)
+                .map((r) => <option key={r.id} value={r.id}>{tRole(r.key, r.name)}</option>)}
+            </select>
+          </label>
+
+          <div style={{ marginTop: 16, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <button className="btn btn--primary btn--sm" type="button" onClick={submitAdd} disabled={saving || !form.register.trim()}>
+              {saving ? <Loader2 size={14} strokeWidth={2} className="spin" /> : <UserPlus size={14} strokeWidth={2} />}
+              <span>{T('common.save')}</span>
+            </button>
+            <button className="btn btn--ghost btn--sm" type="button" onClick={() => setAdding(false)}>
+              <X size={14} strokeWidth={2} /> {T('common.cancel')}
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {usersQuery.isPending && (
         <div className="muted" style={{ display: 'flex', gap: 8, alignItems: 'center', padding: 16 }}>
