@@ -13,17 +13,17 @@ PostgreSQL + Redis + Go API (also the OIDC issuer) + Next.js BFF.
 
 ```
 Internet ──► nginx (80/443, Let's Encrypt)
-   ├─ /oauth2/*, /.well-known/*, /userinfo ─► hydra (public)
+   ├─ /oauth2/*, /.well-known/*, /userinfo ─► api (OIDC issuer)
    ├─ /rp/sign/*      ─► api relay
    ├─ /rp/eid/*, /rp/eid-org/* ─► api (eID proxy)
    └─ everything else  ─► web (Next.js BFF) ──► api
-   internal: db (Postgres 16) · redis (7) · hydra
+   internal: db (Postgres 16) · redis (7)
 ```
 
 ## Env files (gitignored)
 
 - **`.env`** — compose interpolation (Postgres/Redis secrets, ports, domain).
-- **`backend.env`** — API config (JWT_SECRET, EID_RP_*, HYDRA_*, SSO_*, …).
+- **`backend.env`** — API config (JWT_SECRET, EID_RP_*, OAUTH_ISSUER, SSO_*, …).
 
 !!! warning "Separate secrets"
     Every deployment must have its own `JWT_SECRET`, `SSO_STATE_KEY` and RP
@@ -38,7 +38,7 @@ cd /srv/sso-dgov-mn
 
 # 2) create the env files (.env + backend.env)
 
-# 3) bring the stack up — migrate and hydra-migrate apply the schema automatically
+# 3) bring the stack up — migrate applies the schema automatically
 docker compose up -d --build
 
 # or re-deploy:
@@ -74,5 +74,5 @@ volumes collide.
 
 | Deployment | Domain | Ports (example) |
 |---|---|---|
-| `sso-dgov-mn` | sso.dgov.mn | web 3008 · hydra 4446 |
-| `template-dgov-mn` | template.dgov.mn | web 3009 · hydra 4448 |
+| `sso-dgov-mn` | sso.dgov.mn | web 3008 |
+| `template-dgov-mn` | template.dgov.mn | web 3009 |

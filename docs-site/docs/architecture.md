@@ -14,7 +14,7 @@ Internet ──► nginx (TLS)
    ├─ /rp/eid-org/* ─► eID service proxy — байгууллага (backend)
    └─ бусад бүх       ─► Next.js BFF (web) ──► backend API (:8080)
                                                    │
-   internal network:  db (PostgreSQL) · redis · hydra
+   internal network:  db (PostgreSQL) · redis
 ```
 
 ## Давхаргууд
@@ -53,6 +53,6 @@ backend/
 │       ├── handlers/       # func(w,r) error, v1.Wrap
 │       ├── middlewares/    # auth, oauth-bearer, rate-limit, ...
 │       └── routes/         # route группировка
-├── pkg/                    # eid, hydra, oidc, gemini, ...
+├── pkg/                    # eid, oidc, secrethash, gemini, ...
 └── migrations/             # numbered SQL (N_name.up/down.sql)
 ```

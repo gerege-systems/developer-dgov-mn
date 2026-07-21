@@ -13,17 +13,17 @@ PostgreSQL + Redis + Go API (өөрийн OIDC issuer-ийг мөн хангад
 
 ```
 Internet ──► nginx (80/443, Let's Encrypt)
-   ├─ /oauth2/*, /.well-known/*, /userinfo ─► hydra (public)
+   ├─ /oauth2/*, /.well-known/*, /userinfo ─► api (OIDC issuer)
    ├─ /rp/sign/*      ─► api relay
    ├─ /rp/eid/*, /rp/eid-org/* ─► api (eID proxy)
    └─ бусад бүх         ─► web (Next.js BFF) ──► api
-   internal: db (Postgres 16) · redis (7) · hydra
+   internal: db (Postgres 16) · redis (7)
 ```
 
 ## Env файлууд (gitignored)
 
 - **`.env`** — compose interpolation (Postgres/Redis нууц, ports, домэйн).
-- **`backend.env`** — API-ийн тохиргоо (JWT_SECRET, EID_RP_*, HYDRA_*, SSO_*, …).
+- **`backend.env`** — API-ийн тохиргоо (JWT_SECRET, EID_RP_*, OAUTH_ISSUER, SSO_*, …).
 
 !!! warning "Секрет тусад нь"
     Тусдаа deployment бүр өөрийн `JWT_SECRET`, `SSO_STATE_KEY`, RP креденшлтэй байх ёстой
@@ -38,7 +38,7 @@ cd /srv/sso-dgov-mn
 
 # 2) env файлуудыг бэлдэх (.env + backend.env)
 
-# 3) stack өргөх — migrate болон hydra-migrate автоматаар schema-г тавина
+# 3) stack өргөх — migrate автоматаар schema-г тавина
 docker compose up -d --build
 
 # эсвэл дахин deploy:
@@ -74,5 +74,5 @@ tag / volume мөргөлдөнө.
 
 | Deployment | Домэйн | Порт (жишээ) |
 |---|---|---|
-| `sso-dgov-mn` | sso.dgov.mn | web 3008 · hydra 4446 |
-| `template-dgov-mn` | template.dgov.mn | web 3009 · hydra 4448 |
+| `sso-dgov-mn` | sso.dgov.mn | web 3008 |
+| `template-dgov-mn` | template.dgov.mn | web 3009 |
