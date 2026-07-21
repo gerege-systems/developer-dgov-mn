@@ -32,6 +32,8 @@ type fakeRepo struct {
 	platformsByCode map[string]domain.RelayPlatform // GetPlatformByCode-д (заавал биш)
 	detail          *domain.RelayRequestDetail      // GetRequestDetail-д (заавал биш)
 	respondSource   string                          // RespondAssignment-ийн буцаах source_platform
+	platforms       []domain.RelayPlatform          // ListPlatforms-д (заавал биш)
+	requests        []domain.RelayRequest           // ListRequests-д (заавал биш)
 }
 
 func (f *fakeRepo) RoutesForService(_ context.Context, code string) ([]domain.RelayRoute, error) {
@@ -77,7 +79,9 @@ func (f *fakeRepo) AppendEvent(_ context.Context, e *domain.RelayEvent) error {
 }
 
 // Дараах методуудыг тест ашиглахгүй тул минимал.
-func (f *fakeRepo) ListPlatforms(context.Context) ([]domain.RelayPlatform, error) { return nil, nil }
+func (f *fakeRepo) ListPlatforms(context.Context) ([]domain.RelayPlatform, error) {
+	return f.platforms, nil
+}
 func (f *fakeRepo) GetPlatformByCode(_ context.Context, code string) (domain.RelayPlatform, error) {
 	if p, ok := f.platformsByCode[code]; ok {
 		return p, nil
@@ -99,7 +103,9 @@ func (f *fakeRepo) GetAssignment(context.Context, string) (domain.RelayAssignmen
 func (f *fakeRepo) Overview(context.Context) (domain.RelayOverview, error) {
 	return domain.RelayOverview{}, nil
 }
-func (f *fakeRepo) ListRequests(context.Context, int) ([]domain.RelayRequest, error) { return nil, nil }
+func (f *fakeRepo) ListRequests(context.Context, int) ([]domain.RelayRequest, error) {
+	return f.requests, nil
+}
 func (f *fakeRepo) GetRequestDetail(context.Context, string) (domain.RelayRequestDetail, error) {
 	if f.detail != nil {
 		return *f.detail, nil
@@ -257,6 +263,23 @@ func TestRespondFulfilledNotifiesUpstreamDemo(t *testing.T) {
 	}
 	if countEvents(f.events, domain.RelayEvtFulfilled) != 1 {
 		t.Errorf("expected fulfilled event, got %+v", f.events)
+	}
+}
+
+// TestSimulateForwardUp — demo simulator (SimulateStep) нь биелэгдсэн хүсэлтийг
+// дээд demo peer руу автоматаар дамжуулж forwarded_up event үүсгэхийг шалгана.
+func TestSimulateForwardUp(t *testing.T) {
+	up := domain.RelayPlatform{Code: "e-mongolia", Direction: domain.RelayDirUpstream, EndpointURL: "demo://loopback", Enabled: true}
+	f := &fakeRepo{
+		platforms:       []domain.RelayPlatform{up},
+		platformsByCode: map[string]domain.RelayPlatform{"e-mongolia": up},
+		requests:        []domain.RelayRequest{{ID: "req-1", Status: domain.RelayReqFulfilled}},
+		detail:          &domain.RelayRequestDetail{Request: domain.RelayRequest{ID: "req-1", ServiceCode: "passport"}},
+	}
+	uc := NewUsecase(f)
+	uc.SimulateStep(context.Background())
+	if countEvents(f.events, domain.RelayEvtForwardedUp) != 1 {
+		t.Errorf("simulator should forward a fulfilled request upstream once, events=%+v", f.events)
 	}
 }
 

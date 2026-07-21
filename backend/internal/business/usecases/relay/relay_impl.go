@@ -220,6 +220,60 @@ func (u *usecase) SimulateStep(ctx context.Context) {
 			_ = u.Respond(ctx, a.ID, RespondInput{Status: domain.RelayAsgDone, Result: []byte(`{"ok":true,"note":"demo fulfilled"}`)})
 		}
 	}
+	// Биелэгдсэн демо хүсэлтүүдийг дээд platform руу дамжуулж (forwarded_up),
+	// dashboard дээр дээшээ дамжуулах урсгалыг өөрөө харуулна.
+	u.simulateForwardUp(ctx)
+}
+
+// simulateForwardUp нь demo (scaffold) — сүүлийн биелэгдсэн (fulfilled) хүсэлтүүдээс
+// хараахан дээш дамжуулаагүйг нь дээд (upstream) demo peer руу ForwardUp хийж,
+// timeline-д forwarded_up event үүсгэнэ. Нэг tick-д цөөхнийг (2) дамжуулж аажим
+// харагдуулна. demo endpoint тул гадаад HTTP явахгүй.
+func (u *usecase) simulateForwardUp(ctx context.Context) {
+	plats, err := u.repo.ListPlatforms(ctx)
+	if err != nil {
+		return
+	}
+	upstream := ""
+	for _, p := range plats {
+		if p.Direction == domain.RelayDirUpstream && p.Enabled {
+			upstream = p.Code
+			break
+		}
+	}
+	if upstream == "" {
+		return
+	}
+	reqs, err := u.repo.ListRequests(ctx, 30)
+	if err != nil {
+		return
+	}
+	forwarded := 0
+	for _, r := range reqs {
+		if forwarded >= 2 {
+			break
+		}
+		if r.Status != domain.RelayReqFulfilled {
+			continue
+		}
+		detail, derr := u.repo.GetRequestDetail(ctx, r.ID)
+		if derr != nil {
+			continue
+		}
+		already := false
+		for _, e := range detail.Events {
+			if e.Type == domain.RelayEvtForwardedUp {
+				already = true
+				break
+			}
+		}
+		if already {
+			continue
+		}
+		if err := u.ForwardUp(ctx, r.ID, upstream); err == nil {
+			forwarded++
+		}
+	}
 }
 
 // simulateDemoWindow нь demo хүсэлтийн богино SLA цонх — dashboard дээр
