@@ -1,9 +1,9 @@
-// Government Template Platform V3.0
+// Gerege Template Platform V3.0
 // Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 
 import Foundation
 
-// APIClient нь DAN-Government SSO-ийн BFF (https://sso.dgov.mn/api/*)-тай харьцана.
+// APIClient нь DAN-Gerege SSO-ийн BFF (https://sso.gerege.mn/api/*)-тай харьцана.
 // Нэвтрэлт нь httpOnly cookie (dgov_access/refresh)-д хадгалагдана; URLSession
 // нь HTTPCookieStorage.shared-д cookie-г автоматаар хадгалж, дараагийн хүсэлтэд
 // илгээдэг. BFF-ийн mutating route нь `x-dgov-csrf: 1` header шаарддаг (Origin
@@ -26,7 +26,7 @@ final class APIClient {
     static let shared = APIClient()
 
     // Production BFF. Локал туршилтад http://localhost:3000 болгож болно.
-    static let baseURL = URL(string: "https://sso.dgov.mn")!
+    static let baseURL = URL(string: "https://sso.gerege.mn")!
 
     private let session: URLSession
 

@@ -1,4 +1,4 @@
-// Government Template Platform V3.0
+// Gerege Template Platform V3.0
 // Gerege Systems Development Team & Claude AI, 2026.
 //
 // Landing theme-ийн хуваалцсан төрлүүд. Theme = харагдац (палетр · фонт · стиль ·

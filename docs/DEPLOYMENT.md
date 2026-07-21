@@ -2,10 +2,10 @@
 
 > 🌐 **English** · [Монгол](DEPLOYMENT_MN.md)
 
-How to deploy the **Government Template Platform V3.0** (Цахим засаглалыг бүтээх
+How to deploy the **Gerege Template Platform V3.0** (Цахим засаглалыг бүтээх
 суурь) — a production-ready foundation for building digital-government services —
 to a single VPS with Docker Compose behind nginx. The steps below use the
-platform's flagship reference deployment, **DAN-Government SSO** (sso.dgov.mn),
+platform's flagship reference deployment, **DAN-Gerege SSO** (sso.gerege.mn),
 as the worked example. The stack is Postgres + Redis + Go API + Next.js BFF web
 + **Ory Hydra** (the OIDC issuer that turns dan into an SSO provider). This is
 the runbook used for the reference deployment.
@@ -48,7 +48,7 @@ own schema into the separate `hydra` database and exits.
 
 - A VPS with Docker + the compose plugin (`docker compose version`)
 - nginx + certbot on the host (or any reverse proxy that terminates TLS)
-- A DNS record for `sso.dgov.mn` pointing at the server
+- A DNS record for `sso.gerege.mn` pointing at the server
 
 ## 1. Get the code
 
@@ -76,15 +76,15 @@ APP_DB_DSN=host=db port=5432 user=app_user password=<same> dbname=gerege_templat
 REDIS_PASS=<random>
 
 # --- App / origin ---
-APP_ORIGIN=https://sso.dgov.mn    # exact public origin (CSRF origin check)
+APP_ORIGIN=https://sso.gerege.mn    # exact public origin (CSRF origin check)
 WEB_PORT=3007                     # loopback port nginx proxies the app to
 API_RELAY_PORT=8091               # loopback port nginx proxies /rp/sign to (api :8080)
 
 # --- Ory Hydra (OIDC issuer) ---
 HYDRA_PUBLIC_PORT=4444            # loopback port nginx proxies the OIDC public API to
 HYDRA_ADMIN_PORT=4445             # Hydra admin API — bound to loopback, NEVER proxied
-HYDRA_PUBLIC_URL=https://sso.dgov.mn          # REQUIRED — OIDC issuer / self URL
-HYDRA_POST_LOGOUT_REDIRECT=https://sso.dgov.mn/   # optional; defaults to HYDRA_PUBLIC_URL/
+HYDRA_PUBLIC_URL=https://sso.gerege.mn          # REQUIRED — OIDC issuer / self URL
+HYDRA_POST_LOGOUT_REDIRECT=https://sso.gerege.mn/   # optional; defaults to HYDRA_PUBLIC_URL/
 HYDRA_SYSTEM_SECRET=<≥32 random chars>        # REQUIRED — Hydra system secret
 HYDRA_COOKIE_SECRET=<≥32 random chars>        # REQUIRED — Hydra cookie secret
 HYDRA_PAIRWISE_SALT=<random>                  # REQUIRED — pairwise subject salt
@@ -119,14 +119,14 @@ DB_POSTGRE_DSN=postgres://postgres:<POSTGRES_PASSWORD>@db:5432/gerege_template?s
                                   # The api overrides this with APP_DB_DSN (see §3).
 JWT_SECRET=<≥32 random chars>
 JWT_EXPIRED=24                    # hours (1–24)
-JWT_ISSUER=sso.dgov.mn
+JWT_ISSUER=sso.gerege.mn
 JWT_REFRESH_EXPIRED=7             # days
 BCRYPT_COST=12
 OTP_MAX_ATTEMPTS=5
 REDIS_HOST=redis:6379
 REDIS_PASS=<same as .env>
 REDIS_EXPIRED=5                   # minutes
-ALLOWED_ORIGINS=https://sso.dgov.mn
+ALLOWED_ORIGINS=https://sso.gerege.mn
 TRUSTED_PROXIES=172.16.0.0/12,127.0.0.1   # trust XFF only from the docker net + nginx.
                                   # REQUIRED behind the proxy: the api has no public
                                   # app port, so requests arrive from the web/nginx
@@ -140,24 +140,24 @@ EID_RP_UUID=<RP UUID issued by eID Mongolia>
 EID_RP_NAME=dan-dgov-mn
 EID_RP_SECRET=<RP secret>
 EID_CERT_LEVEL=ADVANCED           # ADVANCED for login (QUALIFIED/QSCD for signing)
-EID_CALLBACK_URL=https://sso.dgov.mn/login/verify   # must be allowlisted at the IdP
-EID_DISPLAY_TEXT=sso.dgov.mn
+EID_CALLBACK_URL=https://sso.gerege.mn/login/verify   # must be allowlisted at the IdP
+EID_DISPLAY_TEXT=sso.gerege.mn
 
 # --- Google OAuth (eID account-linking; server-side code exchange) ---
 GOOGLE_CLIENT_ID=<…>
 GOOGLE_CLIENT_SECRET=<…>
 
-# --- dgov SSO consumer (sso.dgov.mn OIDC — 2nd login alongside eID) ---
-SSO_ISSUER=https://sso.dgov.mn
+# --- dgov SSO consumer (sso.gerege.mn OIDC — 2nd login alongside eID) ---
+SSO_ISSUER=https://sso.gerege.mn
 SSO_CLIENT_ID=<…>
 SSO_CLIENT_SECRET=<…>
-SSO_REDIRECT_URI=https://sso.dgov.mn/sso/callback
+SSO_REDIRECT_URI=https://sso.gerege.mn/sso/callback
 SSO_SCOPE=openid profile email
 SSO_NATIVE_CLIENT_ID=dan-dgov-mn-ios   # Hydra client_id for the mobile PKCE flow
 
 # --- OIDC PROVIDER side (dan fronts Ory Hydra as an SSO issuer) ---
 HYDRA_ADMIN_URL=http://hydra:4445      # admin API (client CRUD + login/consent/logout)
-HYDRA_PUBLIC_URL=https://sso.dgov.mn   # issuer used to build redirects
+HYDRA_PUBLIC_URL=https://sso.gerege.mn   # issuer used to build redirects
 SSO_STATE_KEY=<≥32 random chars>       # login/consent state cookie HMAC key
 SSO_FIRSTPARTY_CLIENTS=<csv client_ids>   # skip the consent screen for these
 SSO_ADMIN_API_KEYS=<csv bootstrap keys>   # bootstrap keys for the /admin surface
@@ -230,7 +230,7 @@ upstream dan_hydra { server 127.0.0.1:4444; }   # = HYDRA_PUBLIC_PORT
 upstream dan_relay { server 127.0.0.1:8091; }   # = API_RELAY_PORT (api :8080)
 
 server {
-    server_name sso.dgov.mn;
+    server_name sso.gerege.mn;
 
     # OIDC protocol endpoints → Ory Hydra public API
     location /oauth2/                         { proxy_pass http://dan_hydra; include /etc/nginx/proxy_params; }
@@ -252,7 +252,7 @@ server {
 ```
 
 (Put the shared `proxy_set_header` lines in `/etc/nginx/proxy_params` and
-`include` them, or repeat them per block.) Then `certbot --nginx -d sso.dgov.mn`
+`include` them, or repeat them per block.) Then `certbot --nginx -d sso.gerege.mn`
 for TLS. The compose file sets `COOKIE_SECURE=true` and Hydra runs
 `SERVE_COOKIES_SAME_SITE_MODE=None` (needs `Secure`), so the site **must** be
 served over HTTPS or browsers will drop the auth and OIDC cookies.
@@ -310,8 +310,8 @@ docker compose ps                                       # all healthy / migrate 
 docker logs dan-dgov-mn-migrate-1 | tail -3             # "migration [up] success"
 docker logs dan-dgov-mn-hydra-migrate-1 | tail -3       # Hydra schema applied
 docker logs dan-dgov-mn-api-1 2>&1 | grep -i error      # should be empty
-curl -s -o /dev/null -w '%{http_code}\n' https://sso.dgov.mn/   # 200
-curl -s https://sso.dgov.mn/.well-known/openid-configuration | head -c 80   # OIDC issuer JSON
+curl -s -o /dev/null -w '%{http_code}\n' https://sso.gerege.mn/   # 200
+curl -s https://sso.gerege.mn/.well-known/openid-configuration | head -c 80   # OIDC issuer JSON
 ```
 
 ## 7. Rollback
@@ -337,4 +337,4 @@ apply the matching `N_*.down.sql` by hand before rolling the code back past it.
 
 ---
 
-**Government Template Platform V3.0** — Co-developed by the **Gerege Systems Development Team** and **Claude AI**, 2026.
+**Gerege Template Platform V3.0** — Co-developed by the **Gerege Systems Development Team** and **Claude AI**, 2026.

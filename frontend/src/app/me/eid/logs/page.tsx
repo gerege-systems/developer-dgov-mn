@@ -5,7 +5,7 @@ import EidLogsView from '@/components/me/eid/EidLogsView';
 import { fetchMe } from '@/lib/api';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Үйл ажиллагаа — Government Template Platform V3.0' };
+export const metadata = { title: 'Үйл ажиллагаа — Gerege Template Platform V3.0' };
 
 export default async function EidLogsPage() {
   const me = await fetchMe();

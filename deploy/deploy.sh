@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Government Template Platform V3.0
+# Gerege Template Platform V3.0
 # Gerege Systems Development Team & Claude AI, 2026
 #
 # Remote deploy step, run ON the server by the CD workflow (.github/workflows/deploy.yml)

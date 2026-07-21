@@ -1,7 +1,7 @@
-# App integration (Government SSO / OIDC RP)
+# App integration (Gerege SSO / OIDC RP)
 
-Connect your app as a relying party of **Government SSO (sso.dgov.mn)**. When the
-user clicks sign in, they are redirected to sso.dgov.mn, authenticate with eID,
+Connect your app as a relying party of **Gerege SSO (sso.gerege.mn)**. When the
+user clicks sign in, they are redirected to sso.gerege.mn, authenticate with eID,
 and return to your app.
 
 ## 1. Register your app as an RP client
@@ -32,7 +32,7 @@ Two ways:
 If your app is built on this template, set in `backend.env`:
 
 ```env
-SSO_ISSUER=https://sso.dgov.mn
+SSO_ISSUER=https://sso.gerege.mn
 SSO_CLIENT_ID=<client_id>
 SSO_CLIENT_SECRET=<client_secret>
 SSO_REDIRECT_URI=https://myapp.dgov.mn/sso/callback
@@ -41,17 +41,17 @@ SSO_SCOPE=openid profile email
 
 ## 3. The sign-in flow
 
-1. The user clicks **“Sign in with Government SSO”** → `/api/auth/sso/start`.
+1. The user clicks **“Sign in with Gerege SSO”** → `/api/auth/sso/start`.
 2. The backend `/sso/start` creates state (Redis) and builds the authorize URL at
-   `sso.dgov.mn/oauth2/auth`; the browser is redirected there.
-3. The user authenticates with eID at sso.dgov.mn.
-4. sso.dgov.mn redirects back to `https://myapp.dgov.mn/sso/callback?code&state`.
+   `sso.gerege.mn/oauth2/auth`; the browser is redirected there.
+3. The user authenticates with eID at sso.gerege.mn.
+4. sso.gerege.mn redirects back to `https://myapp.dgov.mn/sso/callback?code&state`.
 5. The backend `/sso/callback` exchanges the code for tokens, upserts the citizen
    by `sso_sub`, and issues the app's own session (JWT).
 
 ## 4. Logout
 
-RP-initiated logout redirects to `sso.dgov.mn/oauth2/sessions/logout` with an
+RP-initiated logout redirects to `sso.gerege.mn/oauth2/sessions/logout` with an
 `id_token_hint` and a `post_logout_redirect_uri`. That post-logout URI must be
 **registered on the client** (`register-rp.sh` sets it automatically).
 

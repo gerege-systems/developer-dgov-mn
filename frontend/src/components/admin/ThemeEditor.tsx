@@ -204,7 +204,7 @@ export default function ThemeEditor({ theme, onDone }: Props) {
                 {L('Үлдсэн (body)', 'Body')}
               </div>
             </div>
-            <div className="theme-preview__brand">{mergedCopy.brand || 'Government Template Platform V3.0'}</div>
+            <div className="theme-preview__brand">{mergedCopy.brand || 'Gerege Template Platform V3.0'}</div>
             <div className="theme-preview__hero">
               {mergedCopy.hero.titleLead} <span style={{ color: 'var(--gold)' }}>{mergedCopy.hero.titleAccent}</span> {mergedCopy.hero.titleTail}
             </div>

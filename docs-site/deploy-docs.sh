@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Government Template Platform V3.0
+# Gerege Template Platform V3.0
 # Gerege Systems Development Team & Claude AI, 2026
 #
 # Build the MkDocs documentation site and deploy it to the server (one command).
-# Хостлогддог: https://template.dgov.mn/docs/  (nginx → /var/www/template-docs)
+# Хостлогддог: https://template.gerege.mn/docs/  (nginx → /var/www/template-docs)
 #
 # Ашиглах:
 #   ./docs-site/deploy-docs.sh
@@ -54,4 +54,4 @@ tar czf "$TGZ" -C site .
   "rm -rf '$DOCS_TARGET' && mkdir -p '$DOCS_TARGET' && tar xzf /tmp/template-docs.tgz -C '$DOCS_TARGET' && rm -f /tmp/template-docs.tgz"
 rm -f "$TGZ"
 
-echo "✅ Docs deployed → https://template.dgov.mn/docs/"
+echo "✅ Docs deployed → https://template.gerege.mn/docs/"

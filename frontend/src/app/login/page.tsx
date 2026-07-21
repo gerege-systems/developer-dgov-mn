@@ -1,4 +1,4 @@
-// Government Template Platform V3.0
+// Gerege Template Platform V3.0
 // Gerege Systems Development Team & Claude AI, 2026
 import React from 'react';
 import { LogIn } from 'lucide-react';
@@ -7,9 +7,9 @@ import { safeNext } from '@/lib/navigation';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Нэвтрэх — Government Template Platform V3.0' };
+export const metadata = { title: 'Нэвтрэх — Gerege Template Platform V3.0' };
 
-// Нэвтрэлт нь Government SSO (sso.dgov.mn)-оор дамжина. Товч дарахад sso.dgov.mn
+// Нэвтрэлт нь Gerege SSO (sso.gerege.mn)-оор дамжина. Товч дарахад sso.gerege.mn
 // руу шилжиж, тэндээ нэвтэрч, буцаж ирнэ (OIDC RP урсгал). SSO callback амжилтгүй
 // бол энд ?error=sso-тэй буцаж, дахин оролдох боломж өгнө.
 export default async function LoginPage(props: {
@@ -29,7 +29,7 @@ export default async function LoginPage(props: {
       >
         <div>
           <h1 id="login-title" style={{ margin: '0 0 0.4rem' }}>Нэвтрэх</h1>
-          <p style={{ margin: 0, opacity: 0.7 }}>Government SSO (sso.dgov.mn)-оор нэвтэрнэ үү.</p>
+          <p style={{ margin: 0, opacity: 0.7 }}>Gerege SSO (sso.gerege.mn)-оор нэвтэрнэ үү.</p>
         </div>
 
         {failed && (
@@ -54,7 +54,7 @@ export default async function LoginPage(props: {
           style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
         >
           <LogIn size={18} strokeWidth={2} />
-          <span>Government SSO-оор нэвтрэх</span>
+          <span>Gerege SSO-оор нэвтрэх</span>
         </a>
       </section>
     </SigninShell>

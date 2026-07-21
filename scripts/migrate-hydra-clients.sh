@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Government Template Platform V3.0
+# Gerege Template Platform V3.0
 #
 # Hydra-гийн `hydra` DB дэх OAuth2 client-уудыг үндсэн DB-ийн oauth_clients руу
 # зөөнө. Cutover-ийн ӨМНӨ ажиллуулна.

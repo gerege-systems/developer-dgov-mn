@@ -1,6 +1,6 @@
 # eID Service Proxy
 
-Registered apps call **Government SSO's** eID services on behalf of their users
+Registered apps call **Gerege SSO's** eID services on behalf of their users
 via a **proxy**. The SSO identifies the user from the token's subject and fetches
 the data with **its own** eidmongolia.mn RP credentials — so apps never need to
 hold eID credentials.
@@ -9,8 +9,8 @@ hold eID credentials.
 
 | Service | Public path | Endpoints |
 |---|---|---|
-| **`eid-proxy`** (personal) | `https://sso.dgov.mn/rp/eid/*` | `summary` · `certificates` · `devices` · `activity` |
-| **`eid-org-proxy`** (organizations) | `https://sso.dgov.mn/rp/eid-org/*` | `organizations` · `organizations/{regNo}/signers` |
+| **`eid-proxy`** (personal) | `https://sso.gerege.mn/rp/eid/*` | `summary` · `certificates` · `devices` · `activity` |
+| **`eid-org-proxy`** (organizations) | `https://sso.gerege.mn/rp/eid-org/*` | `organizations` · `organizations/{regNo}/signers` |
 
 All are **read-only** (GET). Personal and organization services are grouped
 separately so the admin can manage them independently.
@@ -18,7 +18,7 @@ separately so the admin can manage them independently.
 ## Calling the proxy
 
 ```bash
-GET https://sso.dgov.mn/rp/eid/summary
+GET https://sso.gerege.mn/rp/eid/summary
 Authorization: Bearer <the user's SSO access token>
 ```
 

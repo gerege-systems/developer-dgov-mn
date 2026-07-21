@@ -1,19 +1,19 @@
-# Government Template Platform V3.0 — iOS App (TemplateApp)
+# Gerege Template Platform V3.0 — iOS App (TemplateApp)
 
 > **Цахим засаглалыг бүтээх суурь** — _Нэг суурь — бүх төрийн үйлчилгээ._
 
-**Government Template Platform V3.0**-ийн жишиг **iOS клиент**. eID эсвэл dgov
+**Gerege Template Platform V3.0**-ийн жишиг **iOS клиент**. eID эсвэл dgov
 SSO-гоор нэвтэрч, хэрэглэгчийн профайл + eID PKI мэдээллийг харуулна — суурь
 платформ дээр бүтээгдсэн native мобайл үйлчилгээг хэрхэн босгохын үлгэр жишээ.
 Native SwiftUI, гуравдагч хамааралгүй (SPM пакеж ашигладаггүй).
 
 > Тайлбар: энэ бол **Relying-Party консюмер** апп — иргэний eID **апп** (өөр төсөл)
 > биш. eID нэвтрэлтийг QR/РД-push урсгалаар платформын backend-ээр дамжуулж хийнэ.
-> Жишиг deployment нь **DAN-Government SSO** ([sso.dgov.mn](https://sso.dgov.mn)).
+> Жишиг deployment нь **DAN-Gerege SSO** ([sso.gerege.mn](https://sso.gerege.mn)).
 
 ## Архитектур
 
-- Апп → `https://sso.dgov.mn/api/*` (BFF) — backend-тэй шууд харьцахгүй.
+- Апп → `https://sso.gerege.mn/api/*` (BFF) — backend-тэй шууд харьцахгүй.
 - Session нь httpOnly cookie (`dgov_access`/`refresh`)-д. `URLSession` +
   `HTTPCookieStorage.shared` нь cookie-г автоматаар хадгалж/илгээнэ.
 - BFF-ийн mutating route `x-dgov-csrf: 1` header шаарддаг (Origin header
@@ -22,7 +22,7 @@ Native SwiftUI, гуравдагч хамааралгүй (SPM пакеж аши
 ### Нэвтрэлт
 - **eID** — `POST /api/auth/eid/start` (QR) эсвэл `/start-id` (РД→push) →
   `/api/auth/eid/poll` ~2.5с тутам → `COMPLETE` болоход cookie суулгана.
-- **dgov SSO** — `WKWebView`-д `/api/auth/sso/start` ачаалж, sso.dgov.mn дээр
+- **dgov SSO** — `WKWebView`-д `/api/auth/sso/start` ачаалж, sso.gerege.mn дээр
   баталгаажуулна. `/me*` руу буцахад WKWebView-ийн cookie-г `HTTPCookieStorage`
   руу хуулж, `URLSession`-д ашиглана.
 - **Профайл** — `GET /api/me` + `GET /api/me/eid/summary`.
@@ -63,5 +63,5 @@ Xcode дотор:
 
 ## Тохиргоо
 
-- Backend хаяг: `APIClient.baseURL` (default `https://sso.dgov.mn`).
+- Backend хаяг: `APIClient.baseURL` (default `https://sso.gerege.mn`).
   Локал BFF-д туршихад `http://localhost:3000` болгож, ATS exception нэмнэ.

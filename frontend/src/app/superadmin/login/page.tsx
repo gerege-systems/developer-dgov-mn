@@ -5,7 +5,7 @@ import LoginForm from '@/app/login/LoginForm';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Супер админ нэвтрэх — Government Template Platform V3.0' };
+export const metadata = { title: 'Супер админ нэвтрэх — Gerege Template Platform V3.0' };
 
 // Superadmin нэвтрэлт — Google / eID сонголт нь ердийн LoginForm-той адил.
 // MFA-той superadmin бол backend session-ий оронд MFA gate буцаана; LoginForm

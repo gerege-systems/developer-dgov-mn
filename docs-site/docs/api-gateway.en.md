@@ -34,7 +34,7 @@ Granting adds `svc:<name>` to the app's OAuth2 client allowed scope; revoking
 removes it. This is **immediate** — the proxy checks the client's current grant.
 
 ```text
-App "template.dgov.mn"
+App "template.gerege.mn"
   ├─ SSO login .............. automatic (built-in)
   ├─ [x] eid-sign ........... svc:eid-sign
   ├─ [ ] eid-proxy .......... not granted → /rp/eid → 403

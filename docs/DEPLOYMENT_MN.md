@@ -2,11 +2,11 @@
 
 > 🌐 [English](DEPLOYMENT.md) · **Монгол**
 
-**Government Template Platform V3.0** (Цахим засаглалыг бүтээх суурь) — цахим
+**Gerege Template Platform V3.0** (Цахим засаглалыг бүтээх суурь) — цахим
 засаглалын аливаа үйлчилгээг дээр нь босгох production-ready суурь — г нэг VPS
 дээр Docker Compose-оор, nginx-ийн ард deploy хийх заавар. Доорх алхмуудад
-платформын туг далбаа лавлагаа deployment болох **DAN-Government SSO**
-(sso.dgov.mn)-ийг ажилласан жишээ болгон ашигласан. Стек нь Postgres + Redis +
+платформын туг далбаа лавлагаа deployment болох **DAN-Gerege SSO**
+(sso.gerege.mn)-ийг ажилласан жишээ болгон ашигласан. Стек нь Postgres + Redis +
 Go API + Next.js BFF web + **Ory Hydra** (dan-ийг SSO provider болгодог OIDC
 issuer). Жишиг deployment-д ашигласан бодит runbook.
 
@@ -49,7 +49,7 @@ Hydra-гийн өөрийн schema-г тусдаа `hydra` database руу тү�
 
 - Docker + compose plugin-тэй VPS (`docker compose version`)
 - Хост дээр nginx + certbot (эсвэл TLS terminate хийдэг дурын reverse proxy)
-- Сервер рүү заасан `sso.dgov.mn` DNS бичлэг
+- Сервер рүү заасан `sso.gerege.mn` DNS бичлэг
 
 ## 1. Кодоо татах
 
@@ -77,15 +77,15 @@ APP_DB_DSN=host=db port=5432 user=app_user password=<мөн адил> dbname=ger
 REDIS_PASS=<санамсаргүй>
 
 # --- App / origin ---
-APP_ORIGIN=https://sso.dgov.mn    # яг нийтийн origin (CSRF origin шалгалт)
+APP_ORIGIN=https://sso.gerege.mn    # яг нийтийн origin (CSRF origin шалгалт)
 WEB_PORT=3007                     # nginx app руу проксилдог loopback port
 API_RELAY_PORT=8091               # nginx /rp/sign-ыг проксилдог loopback port (api :8080)
 
 # --- Ory Hydra (OIDC issuer) ---
 HYDRA_PUBLIC_PORT=4444            # nginx OIDC public API руу проксилдог loopback port
 HYDRA_ADMIN_PORT=4445             # Hydra admin API — loopback дээр, ХЭЗЭЭ Ч проксилохгүй
-HYDRA_PUBLIC_URL=https://sso.dgov.mn          # REQUIRED — OIDC issuer / self URL
-HYDRA_POST_LOGOUT_REDIRECT=https://sso.dgov.mn/   # заавал биш; default нь HYDRA_PUBLIC_URL/
+HYDRA_PUBLIC_URL=https://sso.gerege.mn          # REQUIRED — OIDC issuer / self URL
+HYDRA_POST_LOGOUT_REDIRECT=https://sso.gerege.mn/   # заавал биш; default нь HYDRA_PUBLIC_URL/
 HYDRA_SYSTEM_SECRET=<≥32 санамсаргүй тэмдэгт>  # REQUIRED — Hydra system secret
 HYDRA_COOKIE_SECRET=<≥32 санамсаргүй тэмдэгт>  # REQUIRED — Hydra cookie secret
 HYDRA_PAIRWISE_SALT=<санамсаргүй>              # REQUIRED — pairwise subject salt
@@ -119,14 +119,14 @@ DB_POSTGRE_DSN=postgres://postgres:<POSTGRES_PASSWORD>@db:5432/gerege_template?s
                                   # api-д APP_DB_DSN-ээр дарж бичигдэнэ (§3-ыг үз).
 JWT_SECRET=<≥32 санамсаргүй тэмдэгт>
 JWT_EXPIRED=24                    # цаг (1–24)
-JWT_ISSUER=sso.dgov.mn
+JWT_ISSUER=sso.gerege.mn
 JWT_REFRESH_EXPIRED=7             # хоног
 BCRYPT_COST=12
 OTP_MAX_ATTEMPTS=5
 REDIS_HOST=redis:6379
 REDIS_PASS=<.env-тэй ижил>
 REDIS_EXPIRED=5                   # минут
-ALLOWED_ORIGINS=https://sso.dgov.mn
+ALLOWED_ORIGINS=https://sso.gerege.mn
 TRUSTED_PROXIES=172.16.0.0/12,127.0.0.1   # XFF-д зөвхөн docker сүлжээ + nginx-ээс итгэнэ.
                                   # Proxy-гийн ард ЗААВАЛ: api нийтийн app порт-гүй тул
                                   # хүсэлт web/nginx peer-ээс ирнэ. Итгэмжит proxy
@@ -139,24 +139,24 @@ EID_RP_UUID=<eID Mongolia-гийн олгосон RP UUID>
 EID_RP_NAME=dan-dgov-mn
 EID_RP_SECRET=<RP secret>
 EID_CERT_LEVEL=ADVANCED           # нэвтрэлтэд ADVANCED (гарын үсэгт QUALIFIED/QSCD)
-EID_CALLBACK_URL=https://sso.dgov.mn/login/verify   # IdP-ийн allowlist-д байх ёстой
-EID_DISPLAY_TEXT=sso.dgov.mn
+EID_CALLBACK_URL=https://sso.gerege.mn/login/verify   # IdP-ийн allowlist-д байх ёстой
+EID_DISPLAY_TEXT=sso.gerege.mn
 
 # --- Google OAuth (eID account холболт; server талд code exchange) ---
 GOOGLE_CLIENT_ID=<…>
 GOOGLE_CLIENT_SECRET=<…>
 
-# --- dgov SSO consumer (sso.dgov.mn OIDC — eID-ийн зэрэгцээ 2 дахь нэвтрэлт) ---
-SSO_ISSUER=https://sso.dgov.mn
+# --- dgov SSO consumer (sso.gerege.mn OIDC — eID-ийн зэрэгцээ 2 дахь нэвтрэлт) ---
+SSO_ISSUER=https://sso.gerege.mn
 SSO_CLIENT_ID=<…>
 SSO_CLIENT_SECRET=<…>
-SSO_REDIRECT_URI=https://sso.dgov.mn/sso/callback
+SSO_REDIRECT_URI=https://sso.gerege.mn/sso/callback
 SSO_SCOPE=openid profile email
 SSO_NATIVE_CLIENT_ID=dan-dgov-mn-ios   # mobile PKCE урсгалын Hydra client_id
 
 # --- OIDC PROVIDER тал (dan нь Ory Hydra-г SSO issuer болгож урдаа тавина) ---
 HYDRA_ADMIN_URL=http://hydra:4445      # admin API (client CRUD + login/consent/logout)
-HYDRA_PUBLIC_URL=https://sso.dgov.mn   # redirect байгуулахад ашиглах issuer
+HYDRA_PUBLIC_URL=https://sso.gerege.mn   # redirect байгуулахад ашиглах issuer
 SSO_STATE_KEY=<≥32 санамсаргүй тэмдэгт> # login/consent state cookie HMAC түлхүүр
 SSO_FIRSTPARTY_CLIENTS=<csv client_id>    # эдгээрт consent дэлгэц алгасна
 SSO_ADMIN_API_KEYS=<csv bootstrap key>    # /admin гадаргуугийн bootstrap key
@@ -229,7 +229,7 @@ upstream dan_hydra { server 127.0.0.1:4444; }   # = HYDRA_PUBLIC_PORT
 upstream dan_relay { server 127.0.0.1:8091; }   # = API_RELAY_PORT (api :8080)
 
 server {
-    server_name sso.dgov.mn;
+    server_name sso.gerege.mn;
 
     # OIDC протоколын endpoint → Ory Hydra public API
     location /oauth2/                         { proxy_pass http://dan_hydra; include /etc/nginx/proxy_params; }
@@ -252,7 +252,7 @@ server {
 
 (Хуваалцсан `proxy_set_header` мөрүүдийг `/etc/nginx/proxy_params`-д хийж
 `include` хий, эсвэл block бүрт давт.) Дараа нь TLS:
-`certbot --nginx -d sso.dgov.mn`. Compose файл `COOKIE_SECURE=true` тавьдаг ба
+`certbot --nginx -d sso.gerege.mn`. Compose файл `COOKIE_SECURE=true` тавьдаг ба
 Hydra нь `SERVE_COOKIES_SAME_SITE_MODE=None` (Secure шаарддаг)-оор ажилладаг тул
 сайт **заавал HTTPS-ээр** үйлчлэх ёстой — эс бөгөөс browser auth болон OIDC
 cookie-г хадгалахгүй.
@@ -312,8 +312,8 @@ docker compose ps                                       # бүгд healthy / mig
 docker logs dan-dgov-mn-migrate-1 | tail -3             # "migration [up] success"
 docker logs dan-dgov-mn-hydra-migrate-1 | tail -3       # Hydra schema түрхэгдсэн
 docker logs dan-dgov-mn-api-1 2>&1 | grep -i error      # хоосон байх ёстой
-curl -s -o /dev/null -w '%{http_code}\n' https://sso.dgov.mn/   # 200
-curl -s https://sso.dgov.mn/.well-known/openid-configuration | head -c 80   # OIDC issuer JSON
+curl -s -o /dev/null -w '%{http_code}\n' https://sso.gerege.mn/   # 200
+curl -s https://sso.gerege.mn/.well-known/openid-configuration | head -c 80   # OIDC issuer JSON
 ```
 
 ## 7. Буцаах (Rollback)
@@ -339,4 +339,4 @@ docker compose build && docker compose up -d
 
 ---
 
-**Government Template Platform V3.0** — **Gerege Systems Development Team** болон **Claude AI** хамтран бүтээв, 2026.
+**Gerege Template Platform V3.0** — **Gerege Systems Development Team** болон **Claude AI** хамтран бүтээв, 2026.

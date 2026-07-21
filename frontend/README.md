@@ -1,8 +1,8 @@
-# Government Template Platform V3.0 — Frontend
+# Gerege Template Platform V3.0 — Frontend
 
 > **Цахим засаглалыг бүтээх суурь** — _Нэг суурь — бүх төрийн үйлчилгээ._
 
-**Government Template Platform V3.0**-ийн Next.js 15 frontend — аль ч цахим төрийн
+**Gerege Template Platform V3.0**-ийн Next.js 15 frontend — аль ч цахим төрийн
 үйлчилгээг дээр нь босгож болох, үйлдвэрлэлд бэлэн суурь. Backend нь Go (chi · pgx ·
 PostgreSQL · Redis) — энэ frontend түүн рүү **BFF (Backend-for-Frontend)** загвараар
 найдвартай прокси хийж, токеныг browser-т хэзээ ч гаргалгүй, Clean-Architecture Go
@@ -15,7 +15,7 @@ backend + Next.js BFF + Gemini AI стекийг нэг цул туршлага 
   апп нь **OIDC provider (RP-facing)** хуудсуудыг хангадаг (Ory Hydra урдаа).
 - Хэмжээ: ~48 хуудас route, ~100 route handler (`/api/*` + `/sso/callback`).
 
-> **Жишиг deployment:** **DAN-Government SSO** ([sso.dgov.mn](https://sso.dgov.mn))
+> **Жишиг deployment:** **DAN-Gerege SSO** ([sso.gerege.mn](https://sso.gerege.mn))
 > — eID-д суурилсан үндэсний нэгдсэн нэвтрэлт (Single Sign-On) — нь энэ суурин дээр
 > бүтээгдсэн бодит үйлчилгээний нэг жишээ.
 
@@ -230,7 +230,7 @@ eID-ээр эхэлж баталгаажуулсны дараа Google account-�
 баталгаажуулахыг шаардана. `GOOGLE_CLIENT_ID` хоосон бол товч "тохируулаагүй" руу заана.
 
 ### dgov SSO (OIDC consumer)
-`api/auth/sso/start` → backend `POST /sso/start` (Redis state) → `sso.dgov.mn`
+`api/auth/sso/start` → backend `POST /sso/start` (Redis state) → `sso.gerege.mn`
 authorize URL руу redirect → `/sso/callback` (route handler) → токен хос →
 cookie. iOS native апп нь `api/auth/sso/native`-аар (ASWebAuthenticationSession +
 PKCE, public client) кодоо солино.

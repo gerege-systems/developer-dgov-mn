@@ -6,10 +6,10 @@ import EidVerify from './EidVerify';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'eID баталгаажуулалт — Government Template Platform V3.0' };
+export const metadata = { title: 'eID баталгаажуулалт — Gerege Template Platform V3.0' };
 
 // eID апп-аас App2App буцалтын callback (IdP-д бүртгэгдсэн
-// https://sso.dgov.mn/login/verify). eID апп буцахдаа session id-г
+// https://sso.gerege.mn/login/verify). eID апп буцахдаа session id-г
 // нэмдэг — нийтлэг нэрсийг (sessionToken / session_id / sid) хүлээж авна.
 export default async function EidVerifyPage(
   props: {

@@ -1,4 +1,4 @@
-// Government Template Platform V3.0
+// Gerege Template Platform V3.0
 // Platform-хоорондын хүсэлт дамжуулах + SLA хяналтын frontend типүүд (backend
 // responses_relay.go-ийн snake_case DTO-той тохирно).
 

@@ -1,13 +1,14 @@
-// Government Template Platform V3.0
+// Gerege Template Platform V3.0
 // Gerege Systems Development Team & Claude AI, 2026
 //
-// Government Template Platform V3.0 — «Цахим засаглалыг бүтээх суурь» нүүр
-// (landing) хуудасны маркетингийн текст — mn / en хосоор. Апп-ын үндсэн dict
-// (lib/i18n.ts)-ийг бөглөхгүйн тулд landing-ийн урт мөрүүдийг энд төвлөрүүлэв.
+// Gerege Template Platform V3.0 — «Төр, хувийн хэвшлийн үйлчилгээний суурь
+// платформ» нүүр (landing) хуудасны маркетингийн текст — mn / en хосоор.
+// Апп-ын үндсэн dict (lib/i18n.ts)-ийг бөглөхгүйн тулд landing-ийн урт
+// мөрүүдийг энд төвлөрүүлэв.
 // Бүх түлхүүр хоёр хэлэнд адил байх ёстой (i18n.ts-тэй нэг зарчим).
 
 export interface LandingCopy {
-  /** Брэнд нэр (nav + footer). Хоосон бол 'Government Template Platform V3.0'. Theme-ээр солино. */
+  /** Брэнд нэр (nav + footer). Хоосон бол 'Gerege Template Platform V3.0'. Theme-ээр солино. */
   brand?: string;
   nav: { features: string; security: string; tech: string; docs: string; login: string };
   hero: {
@@ -57,16 +58,16 @@ export interface LandingCopy {
 }
 
 const mn: LandingCopy = {
-  brand: 'Government Template Platform V3.0',
+  brand: 'Gerege Template Platform V3.0',
   nav: { features: 'Боломжууд', security: 'Аюулгүй байдал', tech: 'Технологи', docs: 'Баримт', login: 'Нэвтрэх' },
   hero: {
-    badge: 'Government Template Platform V3.0 · eID суурьтай · AI-жуулсан · Нээлттэй эх',
-    titleLead: 'Цахим засаглалыг',
-    titleAccent: 'бүтээх',
-    titleTail: 'суурь',
+    badge: 'Gerege Template Platform V3.0 · eID суурьтай · AI-жуулсан · Нээлттэй эх',
+    titleLead: 'Төр, хувийн хэвшлийн',
+    titleAccent: 'цахим үйлчилгээг',
+    titleTail: 'бүтээх суурь',
     lede:
-      'Government Template Platform V3.0 нь төрийн аливаа цахим үйлчилгээг дээр нь босгож болох, үйлдвэрлэлд бэлэн, аюулгүй байдлаар хатуужуулсан бүрэн стек. Цэвэр архитектур бүхий Go сервер, Next.js BFF нүүр, Gemini AI урсгал, eID нэвтрэлт — бүгд эхний өдрөөс нэгдмэл, туршигдсан хэлбэрээр бэлэн.',
-    ctaLogin: 'Government SSO-оор нэвтрэх',
+      'Gerege Template Platform V3.0 нь төрийн байгууллага ба хувийн хэвшлийн аль алины цахим үйлчилгээг дээр нь босгож болох, үйлдвэрлэлд бэлэн, аюулгүй байдлаар хатуужуулсан бүрэн стек. Баталгаажсан иргэний танилт (eID), нэгдсэн нэвтрэлт, цахим гарын үсэг, AI туслах — банк, даатгал, финтек, эрүүл мэнд, боловсрол, төрийн үйлчилгээ хаана ч ижил суурь дээр.',
+    ctaLogin: 'Gerege SSO-оор нэвтрэх',
     ctaExplore: 'GitHub дээр үзэх',
     stackLabel: 'Дэмждэг стандартууд',
     stats: [
@@ -77,7 +78,7 @@ const mn: LandingCopy = {
   },
   advantages: {
     heading: 'Дээр нь бүтээхэд бэлэн, бат бөх суурь',
-    sub: 'Иргэн төвтэй, өндөр найдвартай төрийн үйлчилгээний онцлог шаардлагад нийцүүлэн эхнээс нь нямбай, цэгцтэй бүтээв. Та үндсэн дэд бүтцийг бус, үнэ цэнийг л бүтээнэ.',
+    sub: 'Төрийн үйлчилгээний өндөр найдвартай байдлын шаардлагаар хатуужуулж, хувийн хэвшлийн бүтээгдэхүүний хурдад тохируулан бүтээв. Та танилт, аюулгүй байдал, нийцлийн дэд бүтцийг бус, үнэ цэнийг л бүтээнэ.',
     eidTag: 'Баталгаажуулалт',
     eidTitle: 'Цахим үнэмлэхээр хормын дотор',
     eidBody:
@@ -136,29 +137,29 @@ const mn: LandingCopy = {
   },
   cta: {
     title: 'Цахим засаглалаа өнөөдрөөс бүтээж эхэл',
-    sub: 'Government Template Platform V3.0 нь дэд бүтцийг бэлэн болгож өгнө — та зөвхөн үйлчилгээгээ бүтээхэд анхаарна. eID-ээр нэвтэрч, бэлэн боломжуудыг өөрөө туршина уу.',
-    ctaLogin: 'Government SSO-оор нэвтрэх',
+    sub: 'Gerege Template Platform V3.0 нь дэд бүтцийг бэлэн болгож өгнө — та зөвхөн үйлчилгээгээ бүтээхэд анхаарна. eID-ээр нэвтэрч, бэлэн боломжуудыг өөрөө туршина уу.',
+    ctaLogin: 'Gerege SSO-оор нэвтрэх',
     ctaExplore: 'GitHub дээр үзэх',
     tagline: 'Цэвэр архитектур · Нээлттэй стандарт · Найдвартай хамгаалалт',
   },
   footer: {
-    tagline: 'Government Template Platform V3.0 — цахим засаглалыг бүтээх, үйлдвэрлэлд бэлэн суурь. Gerege Systems, 2026.',
+    tagline: 'Gerege Template Platform V3.0 — цахим засаглалыг бүтээх, үйлдвэрлэлд бэлэн суурь. Gerege Systems, 2026.',
     links: ['Үйлчилгээний нөхцөл', 'Нууцлалын бодлого', 'Холбоо барих'],
-    copyright: '© 2026 Gerege Systems · Government Template Platform V3.0',
+    copyright: '© 2026 Gerege Systems · Gerege Template Platform V3.0',
   },
 };
 
 const en: LandingCopy = {
-  brand: 'Government Template Platform V3.0',
+  brand: 'Gerege Template Platform V3.0',
   nav: { features: 'Features', security: 'Security', tech: 'Technology', docs: 'Docs', login: 'Sign in' },
   hero: {
-    badge: 'Government Template Platform V3.0 · eID-based · AI-enabled · Open Source',
+    badge: 'Gerege Template Platform V3.0 · eID-based · AI-enabled · Open Source',
     titleLead: 'The foundation to',
     titleAccent: 'build digital',
     titleTail: 'governance',
     lede:
-      'Government Template Platform V3.0 is a production-ready, security-hardened full stack for building any digital-government service on top. A Clean-Architecture Go backend, a Next.js BFF frontend, a Gemini AI pipeline and eID sign-in — all wired together and ready from day one.',
-    ctaLogin: 'Sign in with Government SSO',
+      'Gerege Template Platform V3.0 is a production-ready, security-hardened full stack for building any digital-government service on top. A Clean-Architecture Go backend, a Next.js BFF frontend, a Gemini AI pipeline and eID sign-in — all wired together and ready from day one.',
+    ctaLogin: 'Sign in with Gerege SSO',
     ctaExplore: 'View on GitHub',
     stackLabel: 'Standards supported',
     stats: [
@@ -228,15 +229,15 @@ const en: LandingCopy = {
   },
   cta: {
     title: 'Start building digital governance today',
-    sub: 'Government Template Platform V3.0 gives you the infrastructure ready-made — so you focus only on your service. Sign in with eID and try the built-in capabilities yourself.',
-    ctaLogin: 'Sign in with Government SSO',
+    sub: 'Gerege Template Platform V3.0 gives you the infrastructure ready-made — so you focus only on your service. Sign in with eID and try the built-in capabilities yourself.',
+    ctaLogin: 'Sign in with Gerege SSO',
     ctaExplore: 'View on GitHub',
     tagline: 'Clean Architecture · Open standards · Secure by design',
   },
   footer: {
-    tagline: 'Government Template Platform V3.0 — a production-ready foundation for building digital governance. Gerege Systems, 2026.',
+    tagline: 'Gerege Template Platform V3.0 — a production-ready foundation for building digital governance. Gerege Systems, 2026.',
     links: ['Terms of Service', 'Privacy Policy', 'Contact'],
-    copyright: '© 2026 Gerege Systems · Government Template Platform V3.0',
+    copyright: '© 2026 Gerege Systems · Gerege Template Platform V3.0',
   },
 };
 

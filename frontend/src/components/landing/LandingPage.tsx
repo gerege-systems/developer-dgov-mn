@@ -1,4 +1,4 @@
-// Government Template Platform V3.0
+// Gerege Template Platform V3.0
 // Gerege Systems Development Team & Claude AI, 2026
 "use client";
 
@@ -14,7 +14,7 @@ import { landingCopy, type LandingCopy } from './copy';
 import { deepMerge } from '@/lib/theme';
 
 // Нээлттэй эх (Open Source) кодын GitHub репозитор.
-const GITHUB_URL = 'https://github.com/gerege-systems/template-dgov-mn';
+const GITHUB_URL = 'https://github.com/gerege-systems/template-gerege-mn';
 
 // GitHub-ийн лого (lucide-react нь brand icon-уудыг гаргадаггүй тул inline SVG).
 const GitHubMark = ({ size = 18 }: { size?: number }) => (
@@ -37,10 +37,10 @@ interface Props {
 }
 
 /**
- * Government Template Platform V3.0 — «Цахим засаглалыг бүтээх суурь» нүүр
+ * Gerege Template Platform V3.0 — «Цахим засаглалыг бүтээх суурь» нүүр
  * (landing). Нэвтрээгүй зочдод харагдах маркетингийн нүүр. Платформын бүх
- * чадварыг харуулж, hero-ийн баруун талд Government SSO (sso.dgov.mn)-оор
- * нэвтрэх картыг шигтгэв. Нэвтрэх товч дарахад sso.dgov.mn руу шилжиж, тэндээ
+ * чадварыг харуулж, hero-ийн баруун талд Gerege SSO (sso.gerege.mn)-оор
+ * нэвтрэх картыг шигтгэв. Нэвтрэх товч дарахад sso.gerege.mn руу шилжиж, тэндээ
  * нэвтэрч, буцаж ирнэ (OIDC RP урсгал). Брэнд токен (blue + gold) дээр найруулав.
  */
 export default function LandingPage({ next, themeLanding }: Props) {
@@ -51,9 +51,9 @@ export default function LandingPage({ next, themeLanding }: Props) {
   // Идэвхтэй theme-ийн текст байвал copy.ts default дээр гүн merge хийнэ.
   const override = themeLanding?.[lang];
   const t = override ? deepMerge(landingCopy[lang], override) : landingCopy[lang];
-  const brand = t.brand || 'Government Template Platform V3.0';
-  // Government SSO (sso.dgov.mn) руу нэвтрэлт эхлүүлэх — backend /sso/start руу
-  // прокси хийж, browser-ийг sso.dgov.mn-ий authorize URL руу шилжүүлнэ.
+  const brand = t.brand || 'Gerege Template Platform V3.0';
+  // Gerege SSO (sso.gerege.mn) руу нэвтрэлт эхлүүлэх — backend /sso/start руу
+  // прокси хийж, browser-ийг sso.gerege.mn-ий authorize URL руу шилжүүлнэ.
   const ssoHref = `/api/auth/sso/start${next ? `?next=${encodeURIComponent(next)}` : ''}`;
 
   return (

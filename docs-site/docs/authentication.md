@@ -1,10 +1,10 @@
-# Нэвтрэлт (eID + Government SSO)
+# Нэвтрэлт (eID + Gerege SSO)
 
 Платформ дараах нэвтрэлтийг дэмжинэ:
 
 - **eID нэвтрэлт** — цахим үнэмлэхээр (QR / App2App / РД push).
 - **Google холболт** — eID баталгаажуулалтын дараа Google дансаа холбоно.
-- **Government SSO (OIDC)** — платформ өөрөө OpenID Connect провайдер болж, апп-ууд
+- **Gerege SSO (OIDC)** — платформ өөрөө OpenID Connect провайдер болж, апп-ууд
   түүгээр дамжин нэвтэрнэ.
 
 ## eID нэвтрэлт
@@ -16,7 +16,7 @@ Session нь JWT access + refresh (rotation); logout хоёуланг хүчин
 `sub` (subject) нь платформын **тогтвортой, opaque per-citizen танигч** (user UUID)
 бөгөөд OIDC провайдер урсгалд өөрийн провайдер цөмд дамждаг.
 
-## Government SSO (OIDC провайдер)
+## Gerege SSO (OIDC провайдер)
 
 Платформ нь **өөрийн Go код** дээр суурилсан OpenID Connect провайдер. Relying party
 (RP) апп-ууд нэвтрэлтээ платформд даатган, хэрэглэгчийн баталгаажсан мэдээллийг
@@ -25,7 +25,7 @@ Session нь JWT access + refresh (rotation); logout хоёуланг хүчин
 ```mermaid
 sequenceDiagram
   participant App as Апп (RP)
-  participant SSO as sso.dgov.mn (Government SSO)
+  participant SSO as sso.gerege.mn (Gerege SSO)
   participant eID as eID Mongolia
   App->>SSO: /oauth2/auth?client_id&redirect_uri&scope
   SSO->>eID: eID-ээр баталгаажуулах

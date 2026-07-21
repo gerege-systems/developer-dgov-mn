@@ -49,7 +49,7 @@ bash deploy/deploy.sh
 
 ```nginx
 server {
-    server_name sso.dgov.mn;
+    server_name sso.gerege.mn;
     client_max_body_size 30m;
 
     location /oauth2/                           { proxy_pass http://127.0.0.1:4446; include /etc/nginx/proxy_params; }
@@ -74,5 +74,5 @@ volumes collide.
 
 | Deployment | Domain | Ports (example) |
 |---|---|---|
-| `sso-dgov-mn` | sso.dgov.mn | web 3008 |
-| `template-dgov-mn` | template.dgov.mn | web 3009 |
+| `sso-dgov-mn` | sso.gerege.mn | web 3008 |
+| `template-dgov-mn` | template.gerege.mn | web 3009 |

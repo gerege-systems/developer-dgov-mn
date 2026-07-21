@@ -305,9 +305,9 @@ export default function AppShell({ user, children }: Props) {
   return (
     <div className={`shell2${collapsed ? ' is-collapsed' : ''}`}>
       <aside className="iconrail">
-        <Link href="/" className="iconrail__brand" aria-label="Government Template Platform V3.0">
+        <Link href="/" className="iconrail__brand" aria-label="Gerege Template Platform V3.0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/brand.webp" alt="Government Template Platform V3.0" />
+          <img src="/brand.webp" alt="Gerege Template Platform V3.0" />
         </Link>
         <nav className="iconrail__nav" aria-label={T('shell.menu')}>
           {systems.map((s) => {

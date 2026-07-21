@@ -1,7 +1,7 @@
-site_name: Government Template Platform V3.0
-site_description: Цахим засаглалыг бүтээх суурь — Government Template Platform V3.0 documentation
-site_url: https://template.dgov.mn/docs/
-copyright: © 2026 Gerege Systems · Government Template Platform V3.0
+site_name: Gerege Template Platform V3.0
+site_description: Цахим засаглалыг бүтээх суурь — Gerege Template Platform V3.0 documentation
+site_url: https://template.gerege.mn/docs/
+copyright: © 2026 Gerege Systems · Gerege Template Platform V3.0
 docs_dir: docs
 site_dir: site
 use_directory_urls: true
@@ -58,7 +58,7 @@ plugins:
         - locale: en
           name: English
           build: true
-          site_name: Government Template Platform V3.0
+          site_name: Gerege Template Platform V3.0
           nav_translations:
             Танилцуулга: Overview
             Архитектур: Architecture

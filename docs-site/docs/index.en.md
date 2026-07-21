@@ -1,20 +1,20 @@
-# Government Template Platform V3.0
+# Gerege Template Platform V3.0
 
 > **The foundation to build digital governance** — a production-ready,
 > security-hardened full stack for building any digital-government service on top.
 
-**Government Template Platform V3.0** is the *foundation on which digital
+**Gerege Template Platform V3.0** is the *foundation on which digital
 governance is built*. You build the value, not the plumbing — identity, security,
 AI and service scaffolding come solved from day one.
 
 !!! tip "Open Source"
     This platform is an **open-source** project — read the full source, fork it,
     and run it for your own organization.
-    :material-github: [View on GitHub](https://github.com/gerege-systems/template-dgov-mn)
+    :material-github: [View on GitHub](https://github.com/gerege-systems/template-gerege-mn)
 
 <div class="grid cards" markdown>
 
-- :material-shield-key: **eID + Government SSO**  
+- :material-shield-key: **eID + Gerege SSO**  
   Electronic-ID (eID) based sign-in + an OpenID Connect (built-in Go provider)
   SSO provider. Apps connect with a single tap.
 
@@ -37,17 +37,17 @@ The platform is composed of several independent services:
 
 | Domain | Role |
 |---|---|
-| **sso.dgov.mn** | Government SSO — OIDC provider + eID Relying Party (holds the eID credentials) |
-| **template.dgov.mn** | Example app — a relying party of Government SSO (signs in via SSO) |
+| **sso.gerege.mn** | Gerege SSO — OIDC provider + eID Relying Party (holds the eID credentials) |
+| **template.gerege.mn** | Example app — a relying party of Gerege SSO (signs in via SSO) |
 
-Apps (such as `template.dgov.mn`) sign in through **sso.dgov.mn** and call the
+Apps (such as `template.gerege.mn`) sign in through **sso.gerege.mn** and call the
 authorized eID services via a proxy. Only the SSO holds the RP credentials that
 talk to eID Mongolia, so apps are freed from that security burden.
 
 ## Key capabilities
 
-- **Authentication** — eID (QR / App2App / national-ID push) + Google linking + Government SSO (OIDC).
-- **OIDC provider** — built on its own Go code; apps `Sign in with Government SSO`.
+- **Authentication** — eID (QR / App2App / national-ID push) + Google linking + Gerege SSO (OIDC).
+- **OIDC provider** — built on its own Go code; apps `Sign in with Gerege SSO`.
 - **eID PKI profile** — organizations, certificates, devices, activity.
 - **Document signing (PAdES)** — third-party apps sign through the eID sign relay.
 - **eID Service Proxy** — personal (`eid-proxy`) and organization (`eid-org-proxy`), separately.
@@ -56,5 +56,5 @@ talk to eID Mongolia, so apps are freed from that security burden.
 - **RBAC & super admin**, **audit log**, **security hardening** (RLS, CSP, HSTS, CSRF).
 
 !!! tip "Where to start?"
-    To connect your app to Government SSO, see [App integration](sso-integration.md).
+    To connect your app to Gerege SSO, see [App integration](sso-integration.md).
     To fetch eID data through the proxy, see [eID Service Proxy](eid-services.md).

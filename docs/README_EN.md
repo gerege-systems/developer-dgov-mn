@@ -1,14 +1,14 @@
-# Government Template Platform V3.0
+# Gerege Template Platform V3.0
 
 > **Цахим засаглалыг бүтээх суурь** — **eID based · AI enabled** — a
 > production-ready foundation for building any digital-government service.
 
-**Government Template Platform V3.0** is the *foundation on which digital
+**Gerege Template Platform V3.0** is the *foundation on which digital
 governance is built*: a Clean-Architecture Go backend + Next.js BFF frontend +
 Gemini AI pipeline, wired together, security-hardened and ready to extend into
 any system. Build the value, not the plumbing — the identity, security, AI and
 service scaffolding come solved from day one. A reference deployment runs as
-**Government Template Platform** at [template.dgov.mn](https://template.dgov.mn), showcasing the
+**Gerege Template Platform** at [template.gerege.mn](https://template.gerege.mn), showcasing the
 platform's eID single sign-on in production.
 
 > 🌐 [Монгол](../README.md) · **English**
@@ -40,7 +40,7 @@ set. Upstream attribution is retained in [AUTHORS](../AUTHORS). This project is
 ## Monorepo structure
 
 ```
-government-template-platform/
+gerege-template-platform/
 ├── backend/           # Go · chi (net/http) · pgx (pgxpool) · PostgreSQL · Redis · eID/Google/SSO auth
 │   └── docs/          # ARCHITECTURE · DEVELOPMENT · API_CONTRACT · SECURITY (EN/MN)
 └── frontend/          # Next.js BFF (server-side proxy to the backend; cookie sessions)
@@ -57,7 +57,7 @@ government-template-platform/
 - **Organizations & membership** — create/lookup organizations (state-registry lookup via Gerege Verify/XYP) and manage members/roles, RLS-scoped per user.
 - **Government services portal** — the citizen-facing `Төрийн үйлчилгээ` surface: service catalogue, applications, references, notifications, payments, appointments.
 - **API gateway** — admin-managed services / routes / consumers / API keys / policies with request telemetry (overview + logs).
-- **OIDC provider (SSO)** — the platform itself can act as an identity provider: the platform's own Go OAuth2/OIDC provider drives the login/consent/logout flows so relying parties can sign in through it (`Sign in with Government SSO` in the reference deployment). Enabled when `OAUTH_ISSUER` is configured.
+- **OIDC provider (SSO)** — the platform itself can act as an identity provider: the platform's own Go OAuth2/OIDC provider drives the login/consent/logout flows so relying parties can sign in through it (`Sign in with Gerege SSO` in the reference deployment). Enabled when `OAUTH_ISSUER` is configured.
 - **Document signing (PAdES)** — server-side PDF signing through eID Mongolia `/v3`, with a persistent Document-Signer certificate; a sign-relay lets third-party RPs sign through the platform's eID credentials.
 - **Third-party integrations** — per-user OAuth links (Google Drive/Meet, Dropbox) with tokens encrypted at rest (AES-256-GCM), plus **Gerege Space** app-native SFTP storage.
 - **AI pipeline (Gemini)** — SDK-free REST client with function calling: text/voice chat, speech-to-text, text-to-speech, live translation. Layered system prompt (hardcoded guardrails + admin-configurable scope/instructions in the DB) keeps the assistant inside its configured domain; a `search_knowledge` tool grounds answers in the `ai_knowledge` table.
@@ -119,7 +119,7 @@ attribution is retained in [AUTHORS](../AUTHORS).
 
 ---
 
-**Government Template Platform V3.0** — Co-developed by the **Gerege Systems
+**Gerege Template Platform V3.0** — Co-developed by the **Gerege Systems
 Development Team** and **Claude AI**, 2026.
 
 <!-- submodule sync test: dgov-mn-projects -->

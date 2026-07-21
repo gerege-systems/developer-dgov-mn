@@ -1,14 +1,14 @@
-# Government Template Platform V3.0
+# Gerege Template Platform V3.0
 
 > **Цахим засаглалыг бүтээх суурь** — **eID-д суурилсан · AI-аар хүчирхэгжсэн** —
 > төрийн аливаа цахим үйлчилгээг дээр нь босгох, үйлдвэрлэлд бэлэн суурь.
 
-**Government Template Platform V3.0** нь *цахим засаглалыг бүтээх суурь*: Clean-
+**Gerege Template Platform V3.0** нь *цахим засаглалыг бүтээх суурь*: Clean-
 Architecture Go backend + Next.js BFF frontend + Gemini AI pipeline-ийг хооронд нь
 холбож, аюулгүй байдлыг хатууруулж, ямар ч систем рүү өргөтгөхөд бэлэн болгосон.
 Та дэд бүтэц бус, үнэ цэнийг л бүтээнэ — identity, аюулгүй байдал, AI, үйлчилгээний
-тулгуур эхний өдрөөс шийдэгдсэн ирнэ. Жишээ deployment нь **Government Template Platform**
-нэрээр [template.dgov.mn](https://template.dgov.mn)-д ажиллаж, платформын eID
+тулгуур эхний өдрөөс шийдэгдсэн ирнэ. Жишээ deployment нь **Gerege Template Platform**
+нэрээр [template.gerege.mn](https://template.gerege.mn)-д ажиллаж, платформын eID
 нэвтрэлтийг production-д харуулж байна.
 
 > 🌐 **Монгол** · [English](docs/README_EN.md)
@@ -40,7 +40,7 @@ SQL-тэй [jackc/pgx](https://github.com/jackc/pgx) драйвертэй хос
 ## Monorepo бүтэц
 
 ```
-government-template-platform/
+gerege-template-platform/
 ├── backend/           # Go · chi (net/http) · pgx (pgxpool) · PostgreSQL · Redis · eID/Google/SSO танилт
 │   └── docs/          # ARCHITECTURE · DEVELOPMENT · API_CONTRACT · SECURITY (EN/MN)
 └── frontend/          # Next.js BFF (backend руу server талаас прокси; cookie session)
@@ -57,7 +57,7 @@ government-template-platform/
 - **Байгууллага ба гишүүнчлэл** — байгууллага үүсгэх/хайх (улсын бүртгэлээс Gerege Verify/XYP-ээр лавлах) + гишүүд/эрх удирдах, хэрэглэгч тус бүрт RLS-ээр хамгаалагдсан.
 - **Төрийн үйлчилгээний портал** — иргэн рүү харсан `Төрийн үйлчилгээ` гадаргуу: үйлчилгээний каталог, хүсэлт, лавлагаа, мэдэгдэл, төлбөр, цаг захиалга.
 - **API gateway** — админ удирддаг services / routes / consumers / API key / policy + хүсэлтийн телеметр (overview + logs).
-- **OIDC provider (SSO)** — платформ өөрөө identity provider болж чадна: өөрийн Go OAuth2/OIDC provider-ээр login/consent/logout урсгалыг жолоодох тул relying party-ууд түүгээр дамжин нэвтэрнэ (жишээ deployment дээр `Sign in with Government SSO`). `OAUTH_ISSUER` тохируулагдсан үед идэвхжинэ.
+- **OIDC provider (SSO)** — платформ өөрөө identity provider болж чадна: өөрийн Go OAuth2/OIDC provider-ээр login/consent/logout урсгалыг жолоодох тул relying party-ууд түүгээр дамжин нэвтэрнэ (жишээ deployment дээр `Sign in with Gerege SSO`). `OAUTH_ISSUER` тохируулагдсан үед идэвхжинэ.
 - **Баримт бичгийн гарын үсэг (PAdES)** — eID Mongolia `/v3`-ээр PDF-д server талаас гарын үсэг зурна, байнгын Document-Signer гэрчилгээтэй; sign-relay нь 3 дагч RP-уудыг платформын eID креденшлээр дамжуулан гарын үсэг зурах боломж олгоно.
 - **Гуравдагч этгээдийн интеграци** — хэрэглэгч тус бүрийн OAuth холболт (Google Drive/Meet, Dropbox), токеныг шифрлэн (AES-256-GCM) хадгална; мөн **Gerege Space** апп-ын өөрийн SFTP хадгалалт.
 - **AI pipeline (Gemini)** — SDK-гүй REST client + function calling: текст/дуут чат, яриа→текст (STT), текст→яриа (TTS), шууд орчуулга. Давхаргат system prompt (кодод хатуу суурь дүрэм + админ DB-ээс тохируулдаг хамрах хүрээ/заавар) туслахыг зөвхөн заасан хүрээнд барина; `search_knowledge` tool нь хариултыг `ai_knowledge` хүснэгтийн өгөгдөлд тулгуурлуулна.
@@ -119,5 +119,5 @@ attribution-г [AUTHORS](AUTHORS)-д хадгалсан.
 
 ---
 
-**Government Template Platform V3.0** — **Gerege Systems Development Team** болон
+**Gerege Template Platform V3.0** — **Gerege Systems Development Team** болон
 **Claude AI** хамтран бүтээв, 2026.

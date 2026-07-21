@@ -1,6 +1,6 @@
 # eID Service Proxy
 
-Бүртгэгдсэн апп-ууд **Government SSO**-ий eID service-үүдийг хэрэглэгчийнхээ өмнөөс
+Бүртгэгдсэн апп-ууд **Gerege SSO**-ий eID service-үүдийг хэрэглэгчийнхээ өмнөөс
 **proxy**-оор дуудна. SSO нь token-ий subject-ээр хэрэглэгчийг тогтоож, **өөрийн**
 eidmongolia.mn RP креденшлээр өгөгдлийг татаж өгдөг тул апп-д eID credential эзэмших
 шаардлагагүй.
@@ -9,8 +9,8 @@ eidmongolia.mn RP креденшлээр өгөгдлийг татаж өгдө�
 
 | Service | Public зам | Endpoint-ууд |
 |---|---|---|
-| **`eid-proxy`** (хувь хүн) | `https://sso.dgov.mn/rp/eid/*` | `summary` · `certificates` · `devices` · `activity` |
-| **`eid-org-proxy`** (байгууллага) | `https://sso.dgov.mn/rp/eid-org/*` | `organizations` · `organizations/{regNo}/signers` |
+| **`eid-proxy`** (хувь хүн) | `https://sso.gerege.mn/rp/eid/*` | `summary` · `certificates` · `devices` · `activity` |
+| **`eid-org-proxy`** (байгууллага) | `https://sso.gerege.mn/rp/eid-org/*` | `organizations` · `organizations/{regNo}/signers` |
 
 Бүгд **ЗӨВХӨН унших** (GET). Хувь хүн ба байгууллагын service тусад нь бүлэглэгдсэн
 тул admin-аас бие даан удирдана.
@@ -18,7 +18,7 @@ eidmongolia.mn RP креденшлээр өгөгдлийг татаж өгдө�
 ## Дуудлага
 
 ```bash
-GET https://sso.dgov.mn/rp/eid/summary
+GET https://sso.gerege.mn/rp/eid/summary
 Authorization: Bearer <хэрэглэгчийн SSO access token>
 ```
 

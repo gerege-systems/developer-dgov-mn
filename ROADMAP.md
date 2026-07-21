@@ -1,10 +1,10 @@
-# ROADMAP — Government Template Platform V3.0 (Цахим засаглалыг бүтээх суурь)
+# ROADMAP — Gerege Template Platform V3.0 (Цахим засаглалыг бүтээх суурь)
 
-> **Government Template Platform V3.0** (*Цахим засаглалыг бүтээх суурь*) —
+> **Gerege Template Platform V3.0** (*Цахим засаглалыг бүтээх суурь*) —
 > production-ready суурь платформ: түүн дээр АЛЬ ч төрийн цахим үйлчилгээг
 > итгэлтэйгээр босгоно. Нэг суурь — бүх төрийн үйлчилгээ. Гол онцлог чадвар нь
 > eID-д суурилсан улсын нэгдсэн нэвтрэлт (Single Sign-On) бөгөөд түүний бэлэн
-> эталон deployment нь **Government Template Platform** ([template.dgov.mn](https://template.dgov.mn)).
+> эталон deployment нь **Gerege Template Platform** ([template.gerege.mn](https://template.gerege.mn)).
 > Энэ файл нь хийгдсэн ажил ба урагшлах төлөвлөгөөг харуулна.
 > Дэлгэрэнгүй баримт: [README.md](README.md#documentation).
 
@@ -12,13 +12,13 @@
 нэвтрэлт, Google холболт, dgov SSO consumer, өөрийн OIDC provider (Hydra),
 байгууллага/гишүүнчлэл, төрийн үйлчилгээ, API gateway, PAdES гарын үсэг,
 интеграци, audit, RBAC/superadmin, сайтын харагдац — бүгд эталон deployment-д
-([template.dgov.mn](https://template.dgov.mn)) найдвартай ажиллаж байгаа (CI ногоон).
+([template.gerege.mn](https://template.gerege.mn)) найдвартай ажиллаж байгаа (CI ногоон).
 
 ---
 
 ## ✅ Хийгдсэн
 
-### Суурь платформ (Government Template Platform V3.0)
+### Суурь платформ (Gerege Template Platform V3.0)
 - Clean Architecture Go backend: chi (net/http) + pgx (ORM-гүй) + PostgreSQL + Redis
 - RBAC: динамик role/permission + каталог; Postgres RLS (ENABLE+FORCE, non-superuser app role)
 - Observability: OTel tracing + Prometheus + Zap; security headers, CORS, rate limiting, server timeouts
@@ -35,7 +35,7 @@
 - **eID Mongolia RP нэвтрэлт** цорын ганц нэвтрэх арга болов (нууц үг/OTP/бүртгэл хасагдсан):
   QR (`/eid/start`), иргэний РД push (`/eid/start-id`), long-poll session (`/eid/poll`)
 - **Google OAuth холболт** — Google account-ийг eID хэрэглэгчид холбож, дараа нь түүгээр нэвтрэх; салгах
-- **dgov SSO (OIDC) consumer** (`sso.dgov.mn`) — start / callback / native (мобайл PKCE) / logout
+- **dgov SSO (OIDC) consumer** (`sso.gerege.mn`) — start / callback / native (мобайл PKCE) / logout
 - Landing = eID нэвтрэх дэлгэц; hard-redirect засвар
 - Session: JWT access + refresh (rotation, `kind` guard); logout = refresh revoke + access deny-list
 
@@ -81,7 +81,7 @@
 - Admin (нийтийн хуудас) ба per-user (апп) scope-ыг тусгаарласан
 
 ### Deploy
-- [template.dgov.mn](https://template.dgov.mn) дээр production deploy (docker compose: db + redis + migrate + api + web)
+- [template.gerege.mn](https://template.gerege.mn) дээр production deploy (docker compose: db + redis + migrate + api + web)
 - Бүх док EN/MN хосоор шинэчлэгдсэн; DEPLOYMENT(_MN).md, AI_PIPELINE(_MN).md, CLAUDE.md
 
 ---
@@ -119,5 +119,5 @@
 
 ---
 
-**Government Template Platform V3.0** — Co-developed by the **Gerege Systems
+**Gerege Template Platform V3.0** — Co-developed by the **Gerege Systems
 Development Team** and **Claude AI**, 2026.

@@ -1,4 +1,4 @@
-// Government Template Platform V3.0
+// Gerege Template Platform V3.0
 // Gerege Systems Development Team & Claude AI, 2026
 import React from 'react';
 import { redirect } from 'next/navigation';
@@ -9,7 +9,7 @@ import LandingPage from '@/components/landing/LandingPage';
 
 export const dynamic = 'force-dynamic';
 
-// sso.dgov.mn нь энэ платформын жишээ deployment. Нүүр хуудас нь Government
+// sso.gerege.mn нь энэ платформын жишээ deployment. Нүүр хуудас нь Government
 // Template Platform V3.0-ийн («Цахим засаглалыг бүтээх суурь») чадваруудыг
 // харуулсан landing бөгөөд нэвтрэх картыг (LoginForm) hero дотроо шигтгэсэн.
 // Нэвтэрсэн хэрэглэгчийг /me домэйн руу шилжүүлнэ.
