@@ -123,7 +123,7 @@ const mn: LandingCopy = {
   },
   everything: {
     heading: 'Бүх боломж нэг суурин дээр',
-    sub: 'Иргэн ба хөгжүүлэгчдэд эхний өдрөөс бэлэн — доороос нь дахин бүтээх шаардлагагүй.',
+    sub: 'Төрийн байгууллага, банк, даатгал, эрүүл мэнд, боловсрол — салбар бүрийн баг эхний өдрөөс ашиглана. Доороос нь дахин бүтээх шаардлагагүй.',
     items: [
       { title: 'eID нэвтрэлт', body: 'Регистрийн дугаараар иргэний апп руу мэдэгдэл, QR, App2App.' },
       { title: 'SSO / OIDC хангагч', body: 'Платформ өөрөө нэвтрэлт хангаж, RP-үүдийг холбоно.' },
@@ -136,14 +136,14 @@ const mn: LandingCopy = {
     ],
   },
   cta: {
-    title: 'Цахим засаглалаа өнөөдрөөс бүтээж эхэл',
-    sub: 'Gerege Template Platform V3.0 нь дэд бүтцийг бэлэн болгож өгнө — та зөвхөн үйлчилгээгээ бүтээхэд анхаарна. eID-ээр нэвтэрч, бэлэн боломжуудыг өөрөө туршина уу.',
+    title: 'Цахим үйлчилгээгээ өнөөдрөөс бүтээж эхэл',
+    sub: 'Gerege Template Platform V3.0 нь танилт, аюулгүй байдал, нийцлийн дэд бүтцийг бэлэн болгож өгнө — та зөвхөн үйлчилгээгээ бүтээхэд анхаарна. eID-ээр нэвтэрч, бэлэн боломжуудыг өөрөө туршина уу.',
     ctaLogin: 'Gerege SSO-оор нэвтрэх',
     ctaExplore: 'GitHub дээр үзэх',
     tagline: 'Цэвэр архитектур · Нээлттэй стандарт · Найдвартай хамгаалалт',
   },
   footer: {
-    tagline: 'Gerege Template Platform V3.0 — цахим засаглалыг бүтээх, үйлдвэрлэлд бэлэн суурь. Gerege Systems, 2026.',
+    tagline: 'Gerege Template Platform V3.0 — төр, хувийн хэвшлийн цахим үйлчилгээг бүтээх, үйлдвэрлэлд бэлэн суурь. Gerege Systems, 2026.',
     links: ['Үйлчилгээний нөхцөл', 'Нууцлалын бодлого', 'Холбоо барих'],
     copyright: '© 2026 Gerege Systems · Gerege Template Platform V3.0',
   },
@@ -154,11 +154,11 @@ const en: LandingCopy = {
   nav: { features: 'Features', security: 'Security', tech: 'Technology', docs: 'Docs', login: 'Sign in' },
   hero: {
     badge: 'Gerege Template Platform V3.0 · eID-based · AI-enabled · Open Source',
-    titleLead: 'The foundation to',
-    titleAccent: 'build digital',
-    titleTail: 'governance',
+    titleLead: 'The foundation for',
+    titleAccent: 'public and private',
+    titleTail: 'digital services',
     lede:
-      'Gerege Template Platform V3.0 is a production-ready, security-hardened full stack for building any digital-government service on top. A Clean-Architecture Go backend, a Next.js BFF frontend, a Gemini AI pipeline and eID sign-in — all wired together and ready from day one.',
+      'Gerege Template Platform V3.0 is a production-ready, security-hardened full stack for building digital services — for government agencies and private-sector companies alike. Verified citizen identity (eID), single sign-on, e-signatures and an AI assistant: the same foundation for banking, insurance, fintech, healthcare, education and public services.',
     ctaLogin: 'Sign in with Gerege SSO',
     ctaExplore: 'View on GitHub',
     stackLabel: 'Standards supported',
@@ -170,7 +170,7 @@ const en: LandingCopy = {
   },
   advantages: {
     heading: 'A solid foundation, ready to build on',
-    sub: 'Engineered from the ground up for the demands of citizen-centric, high-assurance government services — so you build value, not plumbing.',
+    sub: 'Hardened to the assurance bar of public services, tuned to the pace of private-sector product teams — so you build value, not identity, security and compliance plumbing.',
     eidTag: 'Authentication',
     eidTitle: 'Instant eID sign-in',
     eidBody:
@@ -215,7 +215,7 @@ const en: LandingCopy = {
   },
   everything: {
     heading: 'Every capability on one foundation',
-    sub: 'Ready for citizens and developers from day one — no need to rebuild the basics.',
+    sub: 'Government agencies, banks, insurers, hospitals, schools — every team starts from day one. No need to rebuild the basics.',
     items: [
       { title: 'eID sign-in', body: 'Push to the citizen app by ID number, QR, App2App.' },
       { title: 'SSO / OIDC provider', body: 'The platform issues sign-in and connects RPs.' },
@@ -228,8 +228,8 @@ const en: LandingCopy = {
     ],
   },
   cta: {
-    title: 'Start building digital governance today',
-    sub: 'Gerege Template Platform V3.0 gives you the infrastructure ready-made — so you focus only on your service. Sign in with eID and try the built-in capabilities yourself.',
+    title: 'Start building your digital service today',
+    sub: 'Gerege Template Platform V3.0 gives you identity, security and compliance infrastructure ready-made — so you focus only on your service. Sign in with eID and try the built-in capabilities yourself.',
     ctaLogin: 'Sign in with Gerege SSO',
     ctaExplore: 'View on GitHub',
     tagline: 'Clean Architecture · Open standards · Secure by design',

@@ -79,12 +79,12 @@ export const DEFAULT_PALETTE: Required<ThemeColors> = {
   muted: '#6c7480',
   border: '#e6e8ed',
   borderStrong: '#c6cbd4',
-  danBlue: '#1767e7',
+  danBlue: '#3a6dff',
   gold: '#c39a4e',
   success: '#279a5b',
   danger: '#ce3f3d',
-  lpNavy: '#0f1f39',
-  lpHeader: '#0f1f39',
+  lpNavy: '#0a2466',
+  lpHeader: '#0a2466',
 };
 
 /** Өнгө сонгогчийн эрэмбэ + шошго (mn). */

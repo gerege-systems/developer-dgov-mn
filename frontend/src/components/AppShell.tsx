@@ -249,7 +249,18 @@ export default function AppShell({ user, children }: Props) {
     { label: T('nav.settings'), href: '/me/settings', group: T('sys.user') },
   ];
 
-  const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
+  // Зам таарах эсэх — зөвхөн сегментийн ЗААГ дээр (startsWith нь '/admin/relay'-г
+  // '/admin/relayfoo'-д ч таарууллаа гэж үзэх байсан).
+  const matchesPath = (href: string) =>
+    href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(href + '/');
+  // Таарсан замуудаас ХАМГИЙН УРТ нь л идэвхтэй. Энгийн startsWith нь эцэг зам
+  // ('/admin/relay') болон хүүхэд зам ('/admin/relay/config') хоёрыг ЗЭРЭГ
+  // идэвхжүүлж, sidebar дээр хоёр мөр сонгогдсон харагдаж байв.
+  const activeHref = searchItems
+    .map((i) => i.href)
+    .filter(matchesPath)
+    .reduce((best, href) => (href.length > best.length ? href : best), '');
+  const isActive = (href: string) => activeHref !== '' && href === activeHref;
   // Нүүр '/' нь "me" системд багтдаг ч default панелийг түүгээр сонгохгүй —
   // ингэснээр admin/manager нэвтрэхдээ нүүрэн дээр өөрийн дээд системээ нээлттэй
   // хардаг; гүн холбоос (/admin/*, /manager/*) хэвээр зөв.

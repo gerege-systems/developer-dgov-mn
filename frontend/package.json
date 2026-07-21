@@ -1,8 +1,8 @@
 {
-  "name": "dan-dgov-web",
+  "name": "gerege-template-web",
   "version": "27.0.0",
   "private": true,
-  "description": "gerege-backend-template-v27-д тохирсон Next.js frontend — me.dgov.mn-ийн gerege theme дээр суурилсан.",
+  "description": "Gerege Template Platform V3.0-ийн Next.js BFF frontend — төр, хувийн хэвшлийн цахим үйлчилгээний суурь.",
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",
