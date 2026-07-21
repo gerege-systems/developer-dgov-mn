@@ -14,18 +14,18 @@ Session нь JWT access + refresh (rotation); logout хоёуланг хүчин
 (refresh + access deny-list). Нууц үг / и-мэйл-OTP нэвтрэлт байхгүй.
 
 `sub` (subject) нь платформын **тогтвортой, opaque per-citizen танигч** (user UUID)
-бөгөөд OIDC провайдер урсгалд Hydra-д дамждаг.
+бөгөөд OIDC провайдер урсгалд өөрийн провайдер цөмд дамждаг.
 
 ## Government SSO (OIDC провайдер)
 
-Платформ нь **Ory Hydra** дээр суурилсан OpenID Connect провайдер. Relying party
+Платформ нь **өөрийн Go код** дээр суурилсан OpenID Connect провайдер. Relying party
 (RP) апп-ууд нэвтрэлтээ платформд даатган, хэрэглэгчийн баталгаажсан мэдээллийг
 стандарт claim-аар авна.
 
 ```mermaid
 sequenceDiagram
   participant App as Апп (RP)
-  participant SSO as sso.dgov.mn (Hydra)
+  participant SSO as sso.dgov.mn (Government SSO)
   participant eID as eID Mongolia
   App->>SSO: /oauth2/auth?client_id&redirect_uri&scope
   SSO->>eID: eID-ээр баталгаажуулах

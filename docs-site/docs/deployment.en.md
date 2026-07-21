@@ -1,7 +1,7 @@
 # Deployment
 
 Deploy the platform to a single VPS with **Docker Compose + nginx**. The stack is
-PostgreSQL + Redis + Go API + Next.js BFF + **Ory Hydra** (the OIDC issuer).
+PostgreSQL + Redis + Go API (also the OIDC issuer) + Next.js BFF.
 
 ## Prerequisites
 
@@ -22,11 +22,11 @@ Internet ──► nginx (80/443, Let's Encrypt)
 
 ## Env files (gitignored)
 
-- **`.env`** — compose interpolation (Postgres/Redis/Hydra secrets, ports, domain).
+- **`.env`** — compose interpolation (Postgres/Redis secrets, ports, domain).
 - **`backend.env`** — API config (JWT_SECRET, EID_RP_*, HYDRA_*, SSO_*, …).
 
 !!! warning "Separate secrets"
-    Every deployment must have its own `JWT_SECRET`, Hydra secrets and RP
+    Every deployment must have its own `JWT_SECRET`, `SSO_STATE_KEY` and RP
     credentials — never shared across deployments.
 
 ## Deploy steps

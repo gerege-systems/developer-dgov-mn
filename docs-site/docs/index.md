@@ -47,7 +47,7 @@ SSO эзэмшдэг тул апп-ууд аюулгүй байдлын ачаа
 ## Гол чадварууд
 
 - **Нэвтрэлт** — eID (QR / App2App / РД push) + Google холболт + Government SSO (OIDC).
-- **OIDC провайдер** — Ory Hydra дээр суурилсан; апп-ууд `Sign in with Government SSO`.
+- **OIDC провайдер** — өөрийн Go код дээр суурилсан; апп-ууд `Sign in with Government SSO`.
 - **eID PKI профайл** — байгууллага, гэрчилгээ, төхөөрөмж, идэвх.
 - **Цахим гарын үсэг (PAdES)** — eID sign relay-ээр 3 дагч апп-ууд гарын үсэг зурна.
 - **eID Service Proxy** — хувь хүн (`eid-proxy`) ба байгууллага (`eid-org-proxy`) тусад нь.

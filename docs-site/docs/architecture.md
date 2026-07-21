@@ -8,7 +8,7 @@ repository → domain`. Business core нь web framework-ийг import хийд�
 ```
 Internet ──► nginx (TLS)
    │
-   ├─ /oauth2/*, /.well-known/*, /userinfo ─► Ory Hydra (OIDC issuer)
+   ├─ /oauth2/*, /.well-known/*, /userinfo ─► Go API — өөрийн OIDC issuer
    ├─ /rp/sign/*   ─► eID sign relay (backend)
    ├─ /rp/eid/*     ─► eID service proxy — хувь хүн (backend)
    ├─ /rp/eid-org/* ─► eID service proxy — байгууллага (backend)
@@ -23,7 +23,7 @@ Internet ──► nginx (TLS)
 |---|---|---|
 | **Backend** | Go · chi (net/http) · pgx (ORM-гүй) | Clean Architecture, RLS, hand-written SQL |
 | **Frontend** | Next.js 15 (BFF) | Браузер зөвхөн ижил-origin route-той харилцана; токен client JS-д гардаггүй |
-| **OIDC provider** | Ory Hydra | login/consent/logout урсгалыг платформ өөрөө жолоодоно |
+| **OIDC provider** | Өөрийн Go код (usecases/oidc) | login/consent/logout урсгалыг платформ өөрөө жолоодоно |
 | **Identity** | eID Mongolia RP | Цахим үнэмлэхээр баталгаажуулалт |
 | **Cache/queue** | Redis | session deny-list, transient state |
 | **AI** | Gemini (SDK-гүй REST) | чат, дуу хоолой, орчуулга |

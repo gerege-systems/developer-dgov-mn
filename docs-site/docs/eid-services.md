@@ -26,13 +26,13 @@ Authorization: Bearer <хэрэглэгчийн SSO access token>
 
 ## Зөвшөөрөл (authorization)
 
-App нь тухайн service-т **олгогдсон** байх ёстой. Олголт нь client-ийн Hydra allowed
+App нь тухайн service-т **олгогдсон** байх ёстой. Олголт нь client-ийн OAuth2 allowed
 scope дахь **service scope** (`svc:eid-proxy` / `svc:eid-org-proxy`)-ээр
 илэрхийлэгдэнэ — Admin-аас апп-д service олгоход энэ scope нэмэгдэнэ.
 
 Хүсэлт бүрт SSO нь:
 
-1. Token-ыг Hydra introspection (RFC 7662)-оор шалгана → `active` + `sub`.
+1. Token-ыг өөрийн introspection (RFC 7662)-оор шалгана → `active` + `sub`.
 2. Token-ий `client_id`-ээр client-ийг татаж, тухайн service scope олгогдсон эсэхийг
    шалгана (**одоогийн** олголтыг шалгадаг тул олгох/цуцлах шууд хүчинтэй).
 3. `sub`-ээр хэрэглэгчийг тогтоож, eID Mongolia-аас өгөгдлийг татна.

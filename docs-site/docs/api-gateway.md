@@ -30,7 +30,7 @@ per-app зөвшөөрлөөр олгогдоно.
 ## Апп-д service олгох
 
 **Admin → Applications → тухайн апп → SERVICES** хэсэгт service-үүдийг checkbox-оор
-олгоно. Олгоход тухайн апп-ын Hydra client-ийн allowed scope-д `svc:<name>`
+олгоно. Олгоход тухайн апп-ын OAuth2 client-ийн allowed scope-д `svc:<name>`
 нэмэгддэг; цуцлахад хасагдана. Энэ нь **шууд хүчинтэй** — proxy нь client-ийн
 одоогийн олголтыг шалгадаг.
 

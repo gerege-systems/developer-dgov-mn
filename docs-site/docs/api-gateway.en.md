@@ -30,7 +30,7 @@ be granted to apps.
 ## Granting a service to an app
 
 In **Admin → Applications → the app → SERVICES**, grant services via checkboxes.
-Granting adds `svc:<name>` to the app's Hydra client allowed scope; revoking
+Granting adds `svc:<name>` to the app's OAuth2 client allowed scope; revoking
 removes it. This is **immediate** — the proxy checks the client's current grant.
 
 ```text

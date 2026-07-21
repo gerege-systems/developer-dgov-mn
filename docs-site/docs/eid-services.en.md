@@ -27,7 +27,7 @@ The response is that user's eID data (fetched with the SSO's RP credentials).
 ## Authorization
 
 The app must be **granted** the service. The grant is expressed as the **service
-scope** (`svc:eid-proxy` / `svc:eid-org-proxy`) in the client's Hydra allowed
+scope** (`svc:eid-proxy` / `svc:eid-org-proxy`) in the client's OAuth2 allowed
 scope — granting the service to the app in the admin adds this scope.
 
 On every request the SSO:

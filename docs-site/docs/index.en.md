@@ -47,7 +47,7 @@ talk to eID Mongolia, so apps are freed from that security burden.
 ## Key capabilities
 
 - **Authentication** — eID (QR / App2App / national-ID push) + Google linking + Government SSO (OIDC).
-- **OIDC provider** — built on Ory Hydra; apps `Sign in with Government SSO`.
+- **OIDC provider** — built on its own Go code; apps `Sign in with Government SSO`.
 - **eID PKI profile** — organizations, certificates, devices, activity.
 - **Document signing (PAdES)** — third-party apps sign through the eID sign relay.
 - **eID Service Proxy** — personal (`eid-proxy`) and organization (`eid-org-proxy`), separately.

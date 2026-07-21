@@ -8,7 +8,7 @@ domain`. The business core never imports the web framework.
 ```
 Internet ──► nginx (TLS)
    │
-   ├─ /oauth2/*, /.well-known/*, /userinfo ─► Ory Hydra (OIDC issuer)
+   ├─ /oauth2/*, /.well-known/*, /userinfo ─► Go API — built-in OIDC issuer
    ├─ /rp/sign/*   ─► eID sign relay (backend)
    ├─ /rp/eid/*     ─► eID service proxy — personal (backend)
    ├─ /rp/eid-org/* ─► eID service proxy — organizations (backend)
@@ -23,7 +23,7 @@ Internet ──► nginx (TLS)
 |---|---|---|
 | **Backend** | Go · chi (net/http) · pgx (no ORM) | Clean Architecture, RLS, hand-written SQL |
 | **Frontend** | Next.js 15 (BFF) | The browser talks only to same-origin routes; tokens never reach client JS |
-| **OIDC provider** | Ory Hydra | the platform drives login/consent/logout itself |
+| **OIDC provider** | Built-in (Go, usecases/oidc) | the platform drives login/consent/logout itself |
 | **Identity** | eID Mongolia RP | electronic-ID verification |
 | **Cache/queue** | Redis | session deny-list, transient state |
 | **AI** | Gemini (SDK-free REST) | chat, voice, translation |

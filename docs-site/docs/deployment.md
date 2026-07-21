@@ -1,7 +1,7 @@
 # Байршуулалт (Deployment)
 
 Платформыг ганц VPS дээр **Docker Compose + nginx**-ээр байршуулна. Stack:
-PostgreSQL + Redis + Go API + Next.js BFF + **Ory Hydra** (OIDC issuer).
+PostgreSQL + Redis + Go API (өөрийн OIDC issuer-ийг мөн хангадаг) + Next.js BFF.
 
 ## Шаардлага
 
@@ -22,11 +22,11 @@ Internet ──► nginx (80/443, Let's Encrypt)
 
 ## Env файлууд (gitignored)
 
-- **`.env`** — compose interpolation (Postgres/Redis/Hydra нууц, ports, домэйн).
+- **`.env`** — compose interpolation (Postgres/Redis нууц, ports, домэйн).
 - **`backend.env`** — API-ийн тохиргоо (JWT_SECRET, EID_RP_*, HYDRA_*, SSO_*, …).
 
 !!! warning "Секрет тусад нь"
-    Тусдаа deployment бүр өөрийн `JWT_SECRET`, Hydra нууц, RP креденшлтэй байх ёстой
+    Тусдаа deployment бүр өөрийн `JWT_SECRET`, `SSO_STATE_KEY`, RP креденшлтэй байх ёстой
     — deployment хооронд хуваалцахгүй.
 
 ## Deploy алхмууд

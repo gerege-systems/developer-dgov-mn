@@ -14,18 +14,18 @@ access + refresh (rotation); logout revokes both (refresh + access deny-list).
 There is no password or email/OTP login.
 
 The `sub` (subject) is the platform's **stable, opaque per-citizen identifier**
-(user UUID), passed to Hydra in the OIDC provider flow.
+(user UUID), passed to the built-in OIDC provider in the flow.
 
 ## Government SSO (OIDC provider)
 
-The platform is an OpenID Connect provider built on **Ory Hydra**. Relying-party
+The platform is an OpenID Connect provider built on its **own Go code**. Relying-party
 (RP) apps delegate sign-in to the platform and receive verified user data as
 standard claims.
 
 ```mermaid
 sequenceDiagram
   participant App as App (RP)
-  participant SSO as sso.dgov.mn (Hydra)
+  participant SSO as sso.dgov.mn (Government SSO)
   participant eID as eID Mongolia
   App->>SSO: /oauth2/auth?client_id&redirect_uri&scope
   SSO->>eID: verify with eID
