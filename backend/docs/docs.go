@@ -1499,7 +1499,7 @@ const docTemplate = `{
         },
         "/core/organizations": {
             "get": {
-                "description": "core.dgov.mn /api/organization/find — search_text (регистр г.м.). Хариуг дамжуулна.",
+                "description": "core.gerege.mn /api/organization/find — search_text (регистр г.м.). Хариуг дамжуулна.",
                 "produces": [
                     "application/json"
                 ],
@@ -1527,7 +1527,7 @@ const docTemplate = `{
         },
         "/core/users": {
             "get": {
-                "description": "core.dgov.mn /api/user/find — search_text (core_id эсвэл регистр). Хариуг дамжуулна.",
+                "description": "core.gerege.mn /api/user/find — search_text (core_id эсвэл регистр). Хариуг дамжуулна.",
                 "produces": [
                     "application/json"
                 ],

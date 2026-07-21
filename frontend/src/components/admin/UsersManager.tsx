@@ -24,7 +24,7 @@ interface RoleItem {
   name: string;
 }
 
-// Core (core.dgov.mn) /api/user/find-ийн хариу (шаардлагатай талбарууд).
+// Core (core.gerege.mn) /api/user/find-ийн хариу (шаардлагатай талбарууд).
 interface CoreCitizen {
   id?: string | number;
   reg_no?: string;
@@ -56,7 +56,7 @@ export default function UsersManager({ currentUserId, currentUserRoleId, readOnl
   const [page, setPage] = useState(0);
   const [actionError, setActionError] = useState('');
 
-  // "Хэрэглэгч нэмэх" модал — регистрийн дугаараар Core (core.dgov.mn)-оос
+  // "Хэрэглэгч нэмэх" модал — регистрийн дугаараар Core (core.gerege.mn)-оос
   // иргэнийг татаж (нэрийг гараар оруулахгүй), role оноож урьдчилан бүртгэнэ.
   const [adding, setAdding] = useState(false);
   const [register, setRegister] = useState('');

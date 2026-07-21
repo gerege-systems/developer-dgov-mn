@@ -287,7 +287,7 @@ OAuth2 **`client_secret`** (зөвхөн confidential төрөл) нь create / 
 
 ## Gerege Core (`/api/v1/core`) 🔒
 
-Gerege Core (core.dgov.mn)-ийн хайлтын wrap; service токен backend-д нуугдана.
+Gerege Core (core.gerege.mn)-ийн хайлтын wrap; service токен backend-д нуугдана.
 
 | Method | Path | Тайлбар |
 |--------|------|-------------|

@@ -289,7 +289,7 @@ the create / rotate response — and never again.
 
 ## Gerege Core (`/api/v1/core`) 🔒
 
-Search wrapper over Gerege Core (core.dgov.mn); the service token stays on the
+Search wrapper over Gerege Core (core.gerege.mn); the service token stays on the
 backend.
 
 | Method | Path | Description |

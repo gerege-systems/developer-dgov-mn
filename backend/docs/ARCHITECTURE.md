@@ -64,7 +64,7 @@ the platform adds the eID/SSO/government-service surface:
 | `gov`          | Citizen "Government services" portal — applications, references, notifications, payments, appointments (per-user, **RLS**) over a public service catalogue. |
 | `gateway`      | API gateway — services / routes / policies + telemetry (each service carries an OAuth `scope`). |
 | `applications` | Unified OAuth2 **client registry** (RP + m2m) backed by **Ory Hydra** — merges the old gateway consumers/API-keys and the SSO RP registration; per-service access = OAuth scopes (`application_services` → `gateway_services.scope`). Admin-managed (`gateway.manage`), gated on Hydra. |
-| `core`         | Gerege Core (`core.dgov.mn`) USER FIND / ORG FIND lookup wrapper. |
+| `core`         | Gerege Core (`core.gerege.mn`) USER FIND / ORG FIND lookup wrapper. |
 | `provider`     | **OIDC Provider** — login/consent/logout core in front of **Ory Hydra**; dan is itself an SSO IdP. |
 | `integrations` | User third-party OAuth (Google Drive/Meet, Dropbox); tokens stored **AES-256-GCM encrypted** (**RLS**). |
 | `assets`       | Personal signature image + organization stamp (images to Google Drive, URL in DB). |
@@ -491,7 +491,7 @@ Loaded from `.env` / environment by Viper (`internal/config/config.go`; see
 | **XYP** | `XYP_API_BASE` (`https://xyp.dgov.mn`), `XYP_CLIENT_ID`, `XYP_CLIENT_SECRET` |
 | **Gerege Space** | `GSPACE_HOST`, `GSPACE_PORT` (22), `GSPACE_USER`, `GSPACE_PASSWORD`, `GSPACE_BASE_PATH` (gerege-space), `GSPACE_QUOTA_BYTES` (2 MB) |
 | **Gemini AI** | `GEMINI_API_KEY`, `GEMINI_MODEL`, `GEMINI_TTS_MODEL`, `GEMINI_VOICE`, `GEMINI_API_BASE`, `AI_SCOPE_PROMPT` |
-| **Gerege Core** | `CORE_API_BASE` (`https://core.dgov.mn`), `CORE_API_TOKEN` |
+| **Gerege Core** | `CORE_API_BASE` (`https://core.gerege.mn`), `CORE_API_TOKEN` |
 | **Integrations** | `INTEGRATION_ENC_KEY` (AES-256-GCM; prod required) |
 | **OIDC Provider (Hydra)** | `HYDRA_ADMIN_URL` (`http://hydra:4445`), `HYDRA_PUBLIC_URL`, `SSO_STATE_KEY` (≥32), `SSO_FIRSTPARTY_CLIENTS`, `SSO_ADMIN_API_KEYS`, `SSO_ADMIN_SUBS` |
 | **Observability** | `OTEL_EXPORTER` (``/`stdout`/`otlp`), `OTEL_SAMPLE_RATIO`, `OBSERVABILITY_TOKEN` |

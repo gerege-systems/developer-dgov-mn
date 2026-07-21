@@ -64,7 +64,7 @@ eID/SSO/төрийн үйлчилгээний гадаргууг нэмдэг:
 | `gov`          | Иргэний "Төрийн үйлчилгээ" портал — хүсэлт, лавлагаа, мэдэгдэл, төлбөр, цаг захиалга (per-user, **RLS**); каталог нийтийн. |
 | `gateway`      | API gateway — services / routes / policies + телеметр (service бүр OAuth `scope`-той). |
 | `applications` | Нэгдсэн OAuth2 **client бүртгэл** (RP + m2m), **Ory Hydra**-аар дэмжигдсэн — хуучин gateway consumers/API-key болон SSO RP бүртгэлийг нэгтгэнэ; service тус бүрийн хандалт = OAuth scope (`application_services` → `gateway_services.scope`). Админ удирдана (`gateway.manage`), Hydra дээр gated. |
-| `core`         | Gerege Core (`core.dgov.mn`) USER FIND / ORG FIND лавлагааны wrap. |
+| `core`         | Gerege Core (`core.gerege.mn`) USER FIND / ORG FIND лавлагааны wrap. |
 | `provider`     | **OIDC Provider** — **Ory Hydra**-гийн урд талын login/consent/logout цөм; dan өөрөө SSO IdP. |
 | `integrations` | Хэрэглэгчийн гуравдагч этгээдийн OAuth (Google Drive/Meet, Dropbox); токеныг **AES-256-GCM шифрлэн** хадгална (**RLS**). |
 | `assets`       | Хувь хүний гарын үсгийн зураг + байгууллагын тамга (зураг Google Drive-д, URL DB-д). |
@@ -489,7 +489,7 @@ key-үүд:
 | **XYP** | `XYP_API_BASE` (`https://xyp.dgov.mn`), `XYP_CLIENT_ID`, `XYP_CLIENT_SECRET` |
 | **Gerege Space** | `GSPACE_HOST`, `GSPACE_PORT` (22), `GSPACE_USER`, `GSPACE_PASSWORD`, `GSPACE_BASE_PATH` (gerege-space), `GSPACE_QUOTA_BYTES` (2 MB) |
 | **Gemini AI** | `GEMINI_API_KEY`, `GEMINI_MODEL`, `GEMINI_TTS_MODEL`, `GEMINI_VOICE`, `GEMINI_API_BASE`, `AI_SCOPE_PROMPT` |
-| **Gerege Core** | `CORE_API_BASE` (`https://core.dgov.mn`), `CORE_API_TOKEN` |
+| **Gerege Core** | `CORE_API_BASE` (`https://core.gerege.mn`), `CORE_API_TOKEN` |
 | **Integrations** | `INTEGRATION_ENC_KEY` (AES-256-GCM; prod заавал) |
 | **OIDC Provider (Hydra)** | `HYDRA_ADMIN_URL` (`http://hydra:4445`), `HYDRA_PUBLIC_URL`, `SSO_STATE_KEY` (≥32), `SSO_FIRSTPARTY_CLIENTS`, `SSO_ADMIN_API_KEYS`, `SSO_ADMIN_SUBS` |
 | **Observability** | `OTEL_EXPORTER` (``/`stdout`/`otlp`), `OTEL_SAMPLE_RATIO`, `OBSERVABILITY_TOKEN` |

@@ -16,7 +16,7 @@ import (
 	"template/internal/http/middlewares"
 )
 
-// coreRoute нь Gerege Core (core.dgov.mn)-ийн хайлтын /core/* бүлгийг холбоно.
+// coreRoute нь Gerege Core (core.gerege.mn)-ийн хайлтын /core/* бүлгийг холбоно.
 // Энэ нь privileged service token-оор үндэсний бүртгэлээс иргэн/байгууллагыг
 // РД-гээр хайдаг тул зөвхөн 'users.manage' эрхтэй ажилтан хандана (admin давна) —
 // эс бөгөөс дурын нэвтэрсэн хэрэглэгч иргэдийн PII-г чөлөөтэй хайх боломжтой болно.

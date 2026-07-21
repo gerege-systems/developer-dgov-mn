@@ -271,7 +271,7 @@ func NewApp() (*App, error) {
 	// Platform-хоорондын хүсэлт дамжуулах + SLA хяналт (relay).
 	relayUC := relayuc.NewUsecase(relaypostgres.NewRelayRepository(pool))
 
-	// Gerege Core (core.dgov.mn) — USER FIND / ORG FIND хайлтын wrap.
+	// Gerege Core (core.gerege.mn) — USER FIND / ORG FIND хайлтын wrap.
 	coreUC := core.NewUsecase(config.AppConfig.CoreAPIBase, config.AppConfig.CoreAPIToken)
 
 	// Government SSO (sso.dgov.mn, OIDC) — гадаад SSO provider-т нэвтрэх RP урсгал.

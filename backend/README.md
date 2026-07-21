@@ -183,7 +183,7 @@ SIGN_RELAY_TOKEN=                # shared token so third-party RPs sign via DAN'
 XYP_API_BASE=https://xyp.dgov.mn # org lookup (state registry); Basic auth
 XYP_CLIENT_ID=
 XYP_CLIENT_SECRET=
-CORE_API_BASE=https://core.dgov.mn  # Gerege Core user/org find
+CORE_API_BASE=https://core.gerege.mn  # Gerege Core user/org find
 CORE_API_TOKEN=
 
 # Gerege Space — app-native SFTP storage (empty = feature disabled)
