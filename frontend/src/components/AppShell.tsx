@@ -12,7 +12,7 @@ import {
   Plug,
   Gauge, Server, Crown, Palette,
   Landmark, Inbox, FileCheck, CalendarClock, Wallet, Bell,
-  CreditCard, Smartphone, FileSignature, BookOpen, ClipboardCheck,
+  CreditCard, Smartphone, FileSignature, BookOpen, ClipboardCheck, Library, Database,
 } from 'lucide-react';
 import UserMenu from './UserMenu';
 import NavSearch, { type SearchItem } from './NavSearch';
@@ -116,6 +116,15 @@ const SYSTEMS: NavSystem[] = [
         items: [
           { href: '/admin/relay', labelKey: 'nav.relayDashboard', icon: Gauge, perm: 'relay.view' },
           { href: '/admin/relay/config', labelKey: 'nav.relayConfig', icon: Building2, perm: 'relay.manage' },
+        ],
+      },
+      {
+        // Үйлчилгээний нэгдсэн регистр (CPSV-AP паспорт + нотолгооны каталог).
+        labelKey: 'group.registry',
+        items: [
+          { href: '/admin/registry', labelKey: 'nav.registryOverview', icon: Gauge, perm: 'registry.view' },
+          { href: '/admin/registry/services', labelKey: 'nav.registryServices', icon: Library, perm: 'registry.view' },
+          { href: '/admin/registry/evidences', labelKey: 'nav.registryEvidences', icon: Database, perm: 'registry.view' },
         ],
       },
       {

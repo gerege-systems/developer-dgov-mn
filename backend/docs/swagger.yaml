@@ -515,6 +515,149 @@ definitions:
     - password
     - username
     type: object
+  template_internal_http_datatransfers_requests.RegistryEvidenceLink:
+    properties:
+      evidence_id:
+        type: string
+      from_citizen:
+        description: |-
+          FromCitizen — уг баримтыг иргэнээс шаардаж байгаа эсэх. ХУР-д байгаа
+          баримтыг иргэнээс шаардвал once-only зөрчил болно.
+        type: boolean
+      note:
+        maxLength: 4000
+        type: string
+      required:
+        type: boolean
+    required:
+    - evidence_id
+    type: object
+  template_internal_http_datatransfers_requests.RegistryEvidenceRequest:
+    properties:
+      code:
+        maxLength: 64
+        type: string
+      description:
+        maxLength: 4000
+        type: string
+      holder_agency:
+        maxLength: 300
+        type: string
+      in_khur:
+        type: boolean
+      khur_service_code:
+        maxLength: 200
+        type: string
+      name:
+        maxLength: 300
+        type: string
+      source_system:
+        maxLength: 300
+        type: string
+    required:
+    - name
+    type: object
+  template_internal_http_datatransfers_requests.RegistryEvidencesRequest:
+    properties:
+      evidences:
+        items:
+          $ref: '#/definitions/template_internal_http_datatransfers_requests.RegistryEvidenceLink'
+        maxItems: 100
+        type: array
+    type: object
+  template_internal_http_datatransfers_requests.RegistryLifeEventRequest:
+    properties:
+      code:
+        maxLength: 64
+        type: string
+      description:
+        maxLength: 4000
+        type: string
+      kind:
+        enum:
+        - life
+        - business
+        type: string
+      lead_agency:
+        maxLength: 300
+        type: string
+      name:
+        maxLength: 300
+        type: string
+      sort_order:
+        maximum: 10000
+        minimum: 0
+        type: integer
+    required:
+    - code
+    - name
+    type: object
+  template_internal_http_datatransfers_requests.RegistryPublishRequest:
+    properties:
+      change_note:
+        maxLength: 1000
+        type: string
+    type: object
+  template_internal_http_datatransfers_requests.RegistryServiceRequest:
+    properties:
+      annual_volume:
+        minimum: 0
+        type: integer
+      authority:
+        maxLength: 300
+        type: string
+      authority_org_id:
+        type: string
+      channels:
+        items:
+          type: string
+        maxItems: 10
+        type: array
+      code:
+        maxLength: 64
+        type: string
+      description:
+        maxLength: 4000
+        type: string
+      fee:
+        minimum: 0
+        type: integer
+      legal_basis:
+        maxLength: 4000
+        type: string
+      life_event_id:
+        type: string
+      max_days:
+        maximum: 3650
+        minimum: 0
+        type: integer
+      name:
+        maxLength: 300
+        type: string
+      name_en:
+        maxLength: 300
+        type: string
+      output:
+        maxLength: 300
+        type: string
+      proactivity:
+        enum:
+        - information
+        - online
+        - once_only
+        - proactive
+        type: string
+      steps_count:
+        maximum: 500
+        minimum: 0
+        type: integer
+      target_group:
+        maxLength: 300
+        type: string
+    required:
+    - authority
+    - name
+    type: object
   template_internal_http_datatransfers_requests.RelayIngestRequest:
     properties:
       due_at:
@@ -2625,6 +2768,36 @@ paths:
       summary: OTP кодыг шалгаж бүртгэлийг идэвхжүүлэх
       tags:
       - auth
+  /catalog/life-events:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Нийтийн каталогийн амьдралын үйл явдлууд
+      tags:
+      - catalog
+  /catalog/services/{id}:
+    get:
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Нийтийн каталогийн нэг үйлчилгээ (зөвхөн нийтлэгдсэн)
+      tags:
+      - catalog
   /core/organizations:
     get:
       description: core.gerege.mn /api/organization/find — search_text (регистр г.м.).
@@ -3576,6 +3749,399 @@ paths:
       summary: OAuth2 token endpoint
       tags:
       - oidc
+  /registry/catalog:
+    get:
+      parameters:
+      - description: Нэр/код дотор хайх
+        in: query
+        name: q
+        type: string
+      - description: Эрх бүхий байгууллага
+        in: query
+        name: authority
+        type: string
+      - description: Амьдралын үйл явдал
+        in: query
+        name: life_event_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Нийтийн каталог (зөвхөн нийтлэгдсэн паспорт)
+      tags:
+      - registry
+  /registry/evidences:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Нотолгооны каталог (ХУР mapping-тай)
+      tags:
+      - registry
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Evidence
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/template_internal_http_datatransfers_requests.RegistryEvidenceRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Нотолгоо бүртгэх
+      tags:
+      - registry
+  /registry/evidences/{id}:
+    delete:
+      parameters:
+      - description: Evidence ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Нотолгоо устгах
+      tags:
+      - registry
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Evidence ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Evidence
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/template_internal_http_datatransfers_requests.RegistryEvidenceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Нотолгоо засах (ХУР боломж тэмдэглэх)
+      tags:
+      - registry
+  /registry/life-events:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Амьдралын/бизнесийн үйл явдлууд
+      tags:
+      - registry
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Life event
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/template_internal_http_datatransfers_requests.RegistryLifeEventRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Амьдралын/бизнесийн үйл явдал үүсгэх
+      tags:
+      - registry
+  /registry/life-events/{id}:
+    delete:
+      parameters:
+      - description: Life event ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Амьдралын үйл явдал устгах
+      tags:
+      - registry
+  /registry/once-only:
+    get:
+      parameters:
+      - description: Эрх бүхий байгууллагаар шүүх
+        in: query
+        name: authority
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Once-only зөрчлүүд (ХУР-д байгааг иргэнээс дахин шаардаж буй)
+      tags:
+      - registry
+  /registry/overview:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Регистрийн нэгтгэл (инвентар, once-only, проактив байдал)
+      tags:
+      - registry
+  /registry/services:
+    get:
+      parameters:
+      - description: draft/published/archived
+        in: query
+        name: status
+        type: string
+      - description: Эрх бүхий байгууллага
+        in: query
+        name: authority
+        type: string
+      - description: Проактив байдлын шат
+        in: query
+        name: proactivity
+        type: string
+      - description: Нэр/код дотор хайх
+        in: query
+        name: q
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Үйлчилгээний паспортын жагсаалт (ноорог орно)
+      tags:
+      - registry
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Service
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/template_internal_http_datatransfers_requests.RegistryServiceRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Үйлчилгээний паспорт үүсгэх (ноорог)
+      tags:
+      - registry
+  /registry/services/{id}:
+    delete:
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Ноорог паспорт устгах (нийтлэгдсэнийг устгахгүй — архивлана)
+      tags:
+      - registry
+    get:
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Үйлчилгээний паспорт (нотолгоотой нь)
+      tags:
+      - registry
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Service
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/template_internal_http_datatransfers_requests.RegistryServiceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Үйлчилгээний паспорт засах
+      tags:
+      - registry
+  /registry/services/{id}/archive:
+    post:
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Паспортыг архивлах
+      tags:
+      - registry
+  /registry/services/{id}/evidences:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Evidences
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/template_internal_http_datatransfers_requests.RegistryEvidencesRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Паспортын шаардах нотолгооны жагсаалтыг солих
+      tags:
+      - registry
+  /registry/services/{id}/once-only:
+    get:
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Нэг үйлчилгээний once-only шалгалт
+      tags:
+      - registry
+  /registry/services/{id}/publish:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Publish
+        in: body
+        name: body
+        schema:
+          $ref: '#/definitions/template_internal_http_datatransfers_requests.RegistryPublishRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Паспортыг нийтлэх (шинэ хувилбар + baseline delta)
+      tags:
+      - registry
+  /registry/services/{id}/versions:
+    get:
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      summary: Паспортын хувилбарын түүх (baseline delta-тай)
+      tags:
+      - registry
   /relay/assignments/{id}/respond:
     post:
       consumes:

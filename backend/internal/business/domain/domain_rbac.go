@@ -20,6 +20,8 @@ const (
 	PermRelayManage    = "relay.manage"    // Relay platform/route чиглүүлэлт удирдах
 	PermGovReview      = "gov.review"      // Иргэний үйлчилгээний хүсэлт хянаж шийдвэрлэх (менежер)
 	PermGovCatalog     = "gov.catalog"     // Төрийн үйлчилгээний каталог удирдах (админ)
+	PermRegistryView   = "registry.view"   // Үйлчилгээний нэгдсэн регистр, once-only самбар үзэх
+	PermRegistryManage = "registry.manage" // Үйлчилгээний паспорт/нотолгоо/хувилбар удирдах
 )
 
 // AllPermissions нь эрхийн каталог (seed + ListPermissions-д ашиглана). Label/
@@ -36,6 +38,8 @@ var AllPermissions = []Permission{
 	{Key: PermRelayManage, Label: "Хүсэлт дамжуулах чиглүүлэлт удирдах", Category: "administration"},
 	{Key: PermGovReview, Label: "Иргэний хүсэлт хянах", Category: "management"},
 	{Key: PermGovCatalog, Label: "Үйлчилгээний каталог удирдах", Category: "administration"},
+	{Key: PermRegistryView, Label: "Үйлчилгээний регистр үзэх", Category: "administration"},
+	{Key: PermRegistryManage, Label: "Үйлчилгээний регистр удирдах", Category: "administration"},
 }
 
 // Role нь динамик эрх (RBAC). IsSystem эрхүүдийг (admin/manager/user) устгаж/
