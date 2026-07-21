@@ -12,7 +12,7 @@ import type { SiteAppearance } from '@/lib/api';
 const PRESETS = ['cobalt', 'teal', 'violet', 'emerald', 'amber'] as const;
 type Preset = (typeof PRESETS)[number];
 const HEX = /^#[0-9a-fA-F]{6}$/;
-const DEFAULT_CUSTOM = '#3a6dff';
+const DEFAULT_CUSTOM = '#0064e1';
 
 /**
  * Админы сайтын нийтийн харагдац (accent · font · style · theme) тохируулагч.

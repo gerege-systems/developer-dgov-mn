@@ -9,10 +9,10 @@
   /* Landing (нүүр) hero-ийн navy дэвсгэрийн default. :root-д тавьсан тул admin
      theme (theme-bootstrap.js) <html>-д --lp-navy-г override хийхэд .lp дотор
      уламжлагдана. Landing light/dark аль алинд ижил (үргэлж гүн navy). */
-  --lp-navy:   oklch(29% 0.120 264);
+  --lp-navy:   oklch(45% 0.18 257);
   /* --lp-header нь landing-ийн ДЭЭД цэс (nav)-ийн дэвсгэр — --lp-navy-гаас
      ТУСДАА удирдана (admin theme lpHeader). Default нь ижил navy. */
-  --lp-header: oklch(29% 0.120 264);
+  --lp-header: oklch(45% 0.18 257);
 
   /* Гадаргуу */
   --bg:        oklch(98.5% 0.003 260);
@@ -28,14 +28,14 @@
   --border:        oklch(92% 0.006 260);
   --border-strong: oklch(82% 0.01 260);
 
-  /* Gerege брэнд — #3A6DFF (gerege.mn brand-500). Токены нэр (--dan-blue*) нь
-     DB-д хадгалагдсан theme config-ийн түлхүүртэй (danBlue) тулгардаг тул
-     хэвээр; зөвхөн УТГА нь Gerege цэнхэр болов. */
-  --dan-blue:        oklch(59% 0.224 265);
-  --dan-blue-hover:  oklch(53% 0.230 265);
-  --dan-blue-active: oklch(47% 0.235 265);
-  --dan-blue-soft:   oklch(95% 0.035 265);
-  --dan-blue-text:   oklch(48% 0.200 264);
+  /* Gerege брэнд — #0064E1 cobalt (sso.gerege.mn-тэй ижил hue 257 хүрээ).
+     Токены нэр (--dan-blue*) нь DB-д хадгалагдсан theme config-ийн түлхүүртэй
+     (danBlue) тулгардаг тул хэвээр. */
+  --dan-blue:        oklch(53% 0.21 257);
+  --dan-blue-hover:  oklch(48% 0.22 257);
+  --dan-blue-active: oklch(43% 0.23 257);
+  --dan-blue-soft:   oklch(95% 0.03 257);
+  --dan-blue-text:   oklch(50% 0.22 257);
   --on-dan-blue:     oklch(99% 0 0);
 
   /* Алт — баталгаажсан / итгэлийн тэмдэг ЗӨВХӨН */
@@ -80,11 +80,11 @@ html[data-theme="dark"] {
   --faint:     oklch(46% 0.012 260);
   --border:        oklch(28% 0.014 260);
   --border-strong: oklch(36% 0.016 260);
-  --dan-blue:        oklch(70% 0.190 265);
-  --dan-blue-hover:  oklch(75% 0.185 265);
-  --dan-blue-active: oklch(81% 0.170 265);
-  --dan-blue-soft:   oklch(30% 0.110 265);
-  --dan-blue-text:   oklch(78% 0.170 265);
+  --dan-blue:        oklch(66% 0.19 257);
+  --dan-blue-hover:  oklch(72% 0.19 257);
+  --dan-blue-active: oklch(78% 0.18 257);
+  --dan-blue-soft:   oklch(28% 0.10 257);
+  --dan-blue-text:   oklch(76% 0.18 257);
   --on-dan-blue:     oklch(99% 0 0);
   --gold:      oklch(80% 0.12 80);
   --gold-soft: oklch(28% 0.06 80);
