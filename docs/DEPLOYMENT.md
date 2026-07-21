@@ -2,9 +2,10 @@
 
 > 🌐 **English** · [Монгол](DEPLOYMENT_MN.md)
 
-How to deploy the **Gerege Template Platform V3.0** (Цахим засаглалыг бүтээх
-суурь) — a production-ready foundation for building digital-government services —
-to a single VPS with Docker Compose behind nginx. The steps below use the
+How to deploy the **Gerege Template Platform V3.0** (Төр, хувийн хэвшлийн
+үйлчилгээний суурь платформ) — a production-ready foundation for building
+public and private digital services — to a single VPS with Docker Compose
+behind nginx. The steps below use the
 platform's flagship reference deployment, **DAN-Gerege SSO** (sso.gerege.mn),
 as the worked example. The stack is Postgres + Redis + Go API + Next.js BFF web
 + **Ory Hydra** (the OIDC issuer that turns dan into an SSO provider). This is

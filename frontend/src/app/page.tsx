@@ -10,7 +10,7 @@ import LandingPage from '@/components/landing/LandingPage';
 export const dynamic = 'force-dynamic';
 
 // sso.gerege.mn нь энэ платформын жишээ deployment. Нүүр хуудас нь Government
-// Template Platform V3.0-ийн («Цахим засаглалыг бүтээх суурь») чадваруудыг
+// Template Platform V3.0-ийн («Төр, хувийн хэвшлийн үйлчилгээний суурь платформ») чадваруудыг
 // харуулсан landing бөгөөд нэвтрэх картыг (LoginForm) hero дотроо шигтгэсэн.
 // Нэвтэрсэн хэрэглэгчийг /me домэйн руу шилжүүлнэ.
 export default async function Home(props: {

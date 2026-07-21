@@ -1,11 +1,11 @@
 # Gerege Template Platform V3.0
 
-> **The foundation to build digital governance** — a production-ready,
-> security-hardened full stack for building any digital-government service on top.
+> **The foundation for public and private digital services** — a production-ready,
+> security-hardened full stack for building any public- or private-sector digital service on top.
 
-**Gerege Template Platform V3.0** is the *foundation on which digital
-governance is built*. You build the value, not the plumbing — identity, security,
-AI and service scaffolding come solved from day one.
+**Gerege Template Platform V3.0** is the *foundation for public- and
+private-sector digital services*. You build the value, not the plumbing —
+identity, security, AI and service scaffolding come solved from day one.
 
 !!! tip "Open Source"
     This platform is an **open-source** project — read the full source, fork it,

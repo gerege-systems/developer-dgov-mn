@@ -1,15 +1,21 @@
 # Gerege Template Platform V3.0
 
-> **Цахим засаглалыг бүтээх суурь** — **eID based · AI enabled** — a
-> production-ready foundation for building any digital-government service.
+> **The foundation for public and private digital services** — **eID based · AI enabled** — a
+> production-ready foundation for building any public- or private-sector digital service.
 
-**Gerege Template Platform V3.0** is the *foundation on which digital
-governance is built*: a Clean-Architecture Go backend + Next.js BFF frontend +
-Gemini AI pipeline, wired together, security-hardened and ready to extend into
-any system. Build the value, not the plumbing — the identity, security, AI and
-service scaffolding come solved from day one. A reference deployment runs as
-**Gerege Template Platform** at [template.gerege.mn](https://template.gerege.mn), showcasing the
-platform's eID single sign-on in production.
+**Gerege Template Platform V3.0** is the *foundation for public- and
+private-sector digital services*: a Clean-Architecture Go backend + Next.js BFF
+frontend + Gemini AI pipeline, wired together, security-hardened and ready to
+extend into any system. Build the value, not the plumbing — the identity,
+security, AI and service scaffolding come solved from day one. A reference
+deployment runs as **Gerege Template Platform** at
+[template.gerege.mn](https://template.gerege.mn), showcasing the platform's eID
+single sign-on in production.
+
+The platform is the code expression of **Gerege Systems LLC**'s stated mission —
+*"deliver government and private-sector services to citizens in an easy way"*.
+One foundation carries a government agency's service and a bank, insurer,
+fintech, hospital or school product at the same assurance level.
 
 > 🌐 [Монгол](../README.md) · **English**
 
@@ -21,7 +27,7 @@ platform's eID single sign-on in production.
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](../CONTRIBUTING.md)
 
 A production-ready, security-hardened **full-stack foundation** built on Clean
-Architecture — the base layer for building digital governance. It pairs a Go
+Architecture — the base layer for public and private digital services. It pairs a Go
 (**chi · net/http + pgx (pgxpool) + PostgreSQL + Redis**) backend with a Next.js
 (**BFF**) frontend, wired together and ready to extend into any system. The
 backend uses the standard library `net/http` with the
@@ -106,6 +112,30 @@ Open **http://localhost:3000** and choose **Login with eID** (scan the QR / open
 | [ROADMAP.md](../ROADMAP.md) | What's shipped and what's next |
 | [SECURITY.md](../SECURITY.md) | How to report a vulnerability |
 | [CONTRIBUTING.md](../CONTRIBUTING.md) | How to contribute |
+
+## About Gerege Systems LLC
+
+**Gerege Systems LLC** (Гэрэгэ Системс, Ulaanbaatar, incorporated 2017) combines
+a citizen-facing distribution channel for public and private services with
+regulated trust services.
+
+- **Mission:** *"deliver government and private-sector services to citizens in
+  an easy way"* — this platform's positioning follows directly from it.
+- **Regulated trust services:** one of **five** organisations licensed to issue
+  digital-signature certificates in Mongolia (licence code `0925`, valid
+  2025-06-12 → 2030-06-12; see the MDDIC
+  [register](https://mddic.gov.mn/signature/)). eID Mongolia (`e-id.mn`) is the
+  product in this line.
+- **Sectors:** public-service channels (Gerege Kiosk, Gerege App), payment
+  infrastructure (Smart POS), education (EdTech), healthcare (MedTech),
+  insurance and banking.
+
+> **Clarification.** Gerege Systems did **not** build **DAN** (national
+> authentication), **XYP** (data exchange) or **e-Mongolia** — those are state
+> systems owned by the National Data Center, and Gerege acts as a relying party
+> / channel to them. This platform likewise sits on the *consumer* side of
+> those rails. Its e-signature architecture follows the eIDAS *model* but is
+> not an EU-listed **qualified** trust service.
 
 ## Contributing
 

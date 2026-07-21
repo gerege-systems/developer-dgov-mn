@@ -235,7 +235,7 @@ const en: LandingCopy = {
     tagline: 'Clean Architecture · Open standards · Secure by design',
   },
   footer: {
-    tagline: 'Gerege Template Platform V3.0 — a production-ready foundation for building digital governance. Gerege Systems, 2026.',
+    tagline: 'Gerege Template Platform V3.0 — a production-ready foundation for building public and private digital services. Gerege Systems, 2026.',
     links: ['Terms of Service', 'Privacy Policy', 'Contact'],
     copyright: '© 2026 Gerege Systems · Gerege Template Platform V3.0',
   },

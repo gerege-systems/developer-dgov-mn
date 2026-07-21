@@ -40,7 +40,7 @@ const sourceSerif = Source_Serif_4({
 export const metadata = {
   title: 'Gerege Template Platform V3.0',
   description:
-    'eID based, AI enabled. Gerege Template Platform V3.0 — chi (net/http) + pgx дээр суурилсан, төрийн аливаа цахим үйлчилгээг дээр нь босгох, үйлдвэрлэлд бэлэн суурь: eID нэвтрэлт, SSO/OIDC, Gemini AI, аюулгүй байдлын хатуужуулалт нэг дороос.',
+    'eID based, AI enabled. Gerege Template Platform V3.0 — chi (net/http) + pgx дээр суурилсан, төр, хувийн хэвшлийн аливаа цахим үйлчилгээг дээр нь босгох, үйлдвэрлэлд бэлэн суурь: eID нэвтрэлт, SSO/OIDC, Gemini AI, аюулгүй байдлын хатуужуулалт нэг дороос.',
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
