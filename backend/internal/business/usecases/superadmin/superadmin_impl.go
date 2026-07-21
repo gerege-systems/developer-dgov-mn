@@ -31,15 +31,27 @@ const (
 // давхаргаар дуудсанаар кэш цэвэрлэлт болон domain баталгаажуулалтыг
 // давхардуулахгүй дахин ашиглана.
 type usecase struct {
-	usersUC users.Usecase
-	auditUC audit.Usecase
-	invites repointerface.SuperadminInviteRepository
+	usersUC  users.Usecase
+	auditUC  audit.Usecase
+	invites  repointerface.SuperadminInviteRepository
+	platform AccessModeStore
 }
 
 // NewUsecase нь super admin use case-ийг үүсгэнэ. invitesRepo нь nil байж болно
-// (урилгын endpoint-ууд тухайн үед "тохируулаагүй" алдаа буцаана).
-func NewUsecase(usersUC users.Usecase, auditUC audit.Usecase, invitesRepo repointerface.SuperadminInviteRepository) Usecase {
-	return &usecase{usersUC: usersUC, auditUC: auditUC, invites: invitesRepo}
+// (урилгын endpoint-ууд тухайн үед "тохируулаагүй" алдаа буцаана). platform нь
+// платформын хандалтын горим (public|private) store.
+func NewUsecase(usersUC users.Usecase, auditUC audit.Usecase, invitesRepo repointerface.SuperadminInviteRepository, platform AccessModeStore) Usecase {
+	return &usecase{usersUC: usersUC, auditUC: auditUC, invites: invitesRepo, platform: platform}
+}
+
+// GetAccessMode нь платформын хандалтын горимыг буцаана (public|private).
+func (uc *usecase) GetAccessMode(ctx context.Context) (string, error) {
+	return uc.platform.GetAccessMode(ctx)
+}
+
+// SetAccessMode нь платформын хандалтын горимыг тохируулна (validation нь store-д).
+func (uc *usecase) SetAccessMode(ctx context.Context, mode string) error {
+	return uc.platform.SetAccessMode(ctx, mode)
 }
 
 func (uc *usecase) ListAdmins(ctx context.Context) (ListAdminsResponse, error) {

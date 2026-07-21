@@ -4150,6 +4150,63 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/admin/users": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Иргэнийг регистрийн дугаараар урьдчилан бүртгэж, role ононо. Private горимд зөвхөн ингэж бүртгэсэн иргэн Government SSO-оор нэвтэрнэ. 'users.manage' эрх шаардана; admin/superadmin role-ыг зөвхөн super admin ононо.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Хэрэглэгч урьдчилан бүртгэх (private платформ)",
+                "parameters": [
+                    {
+                        "description": "Register + role",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_datatransfers_requests.AdminCreateUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "User pre-registered",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Insufficient privilege for the role",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Register already exists",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/audit": {
             "get": {
                 "security": [
@@ -5718,6 +5775,98 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/superadmin/access-mode": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Платформын хандалтын горим (public|private)-ыг буцаана. Зөвхөн super admin хандана.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "superadmin"
+                ],
+                "summary": "Платформын хандалтын горим",
+                "responses": {
+                    "200": {
+                        "description": "Access mode fetched",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid token",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Not a super admin",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Платформын хандалтын горимыг тохируулна. public: хэн ч Government SSO-оор нэвтэрнэ; private: зөвхөн урьдчилан бүртгэсэн хэрэглэгч. Зөвхөн super admin хандана.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "superadmin"
+                ],
+                "summary": "Платформын хандалтын горим тохируулах",
+                "parameters": [
+                    {
+                        "description": "Access mode",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_datatransfers_requests.SuperadminAccessModeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Access mode updated",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid token",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Not a super admin",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/superadmin/admins": {
             "get": {
                 "security": [
@@ -6358,6 +6507,43 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "string"
+                }
+            }
+        },
+        "template_internal_http_datatransfers_requests.AdminCreateUserRequest": {
+            "type": "object",
+            "required": [
+                "register"
+            ],
+            "properties": {
+                "first_name": {
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "first_name_en": {
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "last_name": {
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "last_name_en": {
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "register": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 6
+                },
+                "role_id": {
+                    "type": "integer",
+                    "enum": [
+                        2,
+                        3,
+                        4
+                    ]
                 }
             }
         },
@@ -7018,6 +7204,21 @@ const docTemplate = `{
                 "theme": {
                     "type": "string",
                     "maxLength": 16
+                }
+            }
+        },
+        "template_internal_http_datatransfers_requests.SuperadminAccessModeRequest": {
+            "type": "object",
+            "required": [
+                "mode"
+            ],
+            "properties": {
+                "mode": {
+                    "type": "string",
+                    "enum": [
+                        "public",
+                        "private"
+                    ]
                 }
             }
         },

@@ -71,6 +71,11 @@ type UserRepository interface {
 	// буцаана; эс бөгөөс шинэ идэвхтэй мөр оруулна. Бүгд нэг round-trip
 	// (INSERT … ON CONFLICT … RETURNING).
 	UpsertFromEID(ctx context.Context, in *domain.User) (domain.User, error)
+	// CreatePreRegistered нь админ иргэнийг РЕГИСТРИЙН ДУГААР (national_id)-аар
+	// урьдчилан бүртгэнэ (private платформ): national_id + нэр + role-той идэвхтэй
+	// мөр (password/email/civil_id/sso_sub-гүй). Давхардсан national_id →
+	// apperror.Conflict.
+	CreatePreRegistered(ctx context.Context, in *domain.User) (domain.User, error)
 	// List нь filter-т тохирох хэрэглэгчдийг offset/limit-ээр хуудаслан
 	// буцаана. Limit нь сервер талд хатуу хязгаарлагдсан тул буруу
 	// ажиллаж буй дуудагч бүх хүснэгтийг татаж чадахгүй.

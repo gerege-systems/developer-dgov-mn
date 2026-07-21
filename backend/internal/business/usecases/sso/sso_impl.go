@@ -44,15 +44,17 @@ type usecase struct {
 	jwt            jwt.JWTService
 	redis          caches.RedisCache
 	nativeClientID string
-	tokens         TokenStorer // сонголттой — nil бол SSO токен хадгалахгүй
+	tokens         TokenStorer      // сонголттой — nil бол SSO токен хадгалахгүй
+	access         AccessModeReader // сонголттой — nil бол public гэж үзнэ
 }
 
 // NewUsecase нь SSO usecase угсарна. nativeClientID нь mobile (PKCE, public
-// client) урсгалын Hydra client_id (жишээ template-dgov-mn-ios) — хоосон бол
-// native code-exchange идэвхгүй. tokenStorer нь SSO eID proxy-д зориулж токен
-// хадгалах (nil бол хадгалахгүй).
-func NewUsecase(oidcClient *oidc.Client, store UserStore, jwtSvc jwt.JWTService, redis caches.RedisCache, nativeClientID string, tokenStorer TokenStorer) Usecase {
-	return &usecase{oidc: oidcClient, store: store, jwt: jwtSvc, redis: redis, nativeClientID: nativeClientID, tokens: tokenStorer}
+// client) урсгалын client_id (жишээ template-dgov-mn-ios) — хоосон бол native
+// code-exchange идэвхгүй. tokenStorer нь SSO eID proxy-д зориулж токен хадгалах
+// (nil бол хадгалахгүй). accessMode нь платформын хандалтын горим уншигч (nil бол
+// public — хэн ч нэвтэрч болно).
+func NewUsecase(oidcClient *oidc.Client, store UserStore, jwtSvc jwt.JWTService, redis caches.RedisCache, nativeClientID string, tokenStorer TokenStorer, accessMode AccessModeReader) Usecase {
+	return &usecase{oidc: oidcClient, store: store, jwt: jwtSvc, redis: redis, nativeClientID: nativeClientID, tokens: tokenStorer, access: accessMode}
 }
 
 func (u *usecase) Configured() bool { return u.oidc.Configured() }
@@ -155,6 +157,13 @@ func (u *usecase) finish(ctx context.Context, tokens oidc.Tokens) (CompleteRespo
 	googleName := strings.TrimSpace(info.GoogleName)
 	googlePicture := strings.TrimSpace(info.GooglePicture)
 
+	// Private платформын хандалтын шалгуур — eID-ээр баталгаажсаны ДАРАА, upsert-
+	// ийн ӨМНӨ. Private горимд урьдчилан бүртгээгүй иргэнийг энд зогсооно (шинэ
+	// данс үүсгэхгүй).
+	if err := u.enforceAccessMode(ctx, civilID, nationalID); err != nil {
+		return CompleteResponse{}, err
+	}
+
 	var stored domain.User
 	if civilID != "" {
 		user := &domain.User{
@@ -229,6 +238,39 @@ func (u *usecase) finish(ctx context.Context, tokens oidc.Tokens) (CompleteRespo
 		LogoutRef:    logoutRef,
 		User:         stored,
 	}, nil
+}
+
+// accessDeniedMsg нь private платформд бүртгэлгүй иргэнд буцаах мессеж.
+const accessDeniedMsg = "Энэ платформ хаалттай (private). Танд нэвтрэх эрх олгогдоогүй байна — системийн админд хандана уу."
+
+// enforceAccessMode нь private платформ дээр зөвхөн админаас урьдчилан бүртгэсэн
+// (national_id/civil_id-ээр тохирох) иргэнийг л оруулна. Public горимд (эсвэл
+// reader тохируулаагүй бол) юу ч блоклохгүй. Горим унших/шалгах DB алдаа гарвал
+// internal error буцааж, нэвтрэлтийг тэр удаад зогсооно (fail-open биш —
+// баталгаагүй байдалд эрхгүй иргэнийг оруулахгүй).
+func (u *usecase) enforceAccessMode(ctx context.Context, civilID, nationalID string) error {
+	if u.access == nil {
+		return nil // public (default)
+	}
+	mode, err := u.access.GetAccessMode(ctx)
+	if err != nil {
+		return apperror.InternalCause(fmt.Errorf("read access mode: %w", err))
+	}
+	if mode != domain.AccessModePrivate {
+		return nil // public — хэн ч нэвтэрч болно
+	}
+	// Private: иргэнийг тодорхойлох дугаар байхгүй бол оруулах аргагүй.
+	if civilID == "" && nationalID == "" {
+		return apperror.Forbidden(accessDeniedMsg)
+	}
+	ok, err := u.store.AuthorizedByCivilOrNational(ctx, civilID, nationalID)
+	if err != nil {
+		return apperror.InternalCause(err)
+	}
+	if !ok {
+		return apperror.Forbidden(accessDeniedMsg)
+	}
+	return nil
 }
 
 // LogoutURL нь logout ref-ээр Redis-ээс id_token-ыг GetDel-ээр авч, RP-initiated

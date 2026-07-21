@@ -57,6 +57,20 @@ type Usecase interface {
 	// DeleteInvite нь урилгыг цуцална (хараахан ашиглаагүй бол дахин
 	// бүртгүүлэх боломжгүй болно). Байхгүй бол apperror.NotFound.
 	DeleteInvite(ctx context.Context, req DeleteInviteRequest) error
+
+	// GetAccessMode нь платформын хандалтын горим (public|private)-ыг буцаана.
+	GetAccessMode(ctx context.Context) (string, error)
+	// SetAccessMode нь платформын хандалтын горимыг тохируулна. public: хэн ч
+	// Government SSO-оор нэвтэрнэ; private: зөвхөн админаас урьдчилан бүртгэсэн
+	// хэрэглэгч. Буруу утга → apperror.BadRequest.
+	SetAccessMode(ctx context.Context, mode string) error
+}
+
+// AccessModeStore нь платформын хандалтын горимыг унших/бичих
+// (postgres/platformsettings) хамгийн бага хараат байдал.
+type AccessModeStore interface {
+	GetAccessMode(ctx context.Context) (string, error)
+	SetAccessMode(ctx context.Context, mode string) error
 }
 
 // Request / Response төрлүүд (Input/Output Boundary).

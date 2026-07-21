@@ -113,6 +113,33 @@ definitions:
     required:
     - user_id
     type: object
+  template_internal_http_datatransfers_requests.AdminCreateUserRequest:
+    properties:
+      first_name:
+        maxLength: 100
+        type: string
+      first_name_en:
+        maxLength: 100
+        type: string
+      last_name:
+        maxLength: 100
+        type: string
+      last_name_en:
+        maxLength: 100
+        type: string
+      register:
+        maxLength: 20
+        minLength: 6
+        type: string
+      role_id:
+        enum:
+        - 2
+        - 3
+        - 4
+        type: integer
+    required:
+    - register
+    type: object
   template_internal_http_datatransfers_requests.ApplicationRequest:
     properties:
       app_type:
@@ -582,6 +609,16 @@ definitions:
     - font
     - style
     - theme
+    type: object
+  template_internal_http_datatransfers_requests.SuperadminAccessModeRequest:
+    properties:
+      mode:
+        enum:
+        - public
+        - private
+        type: string
+    required:
+    - mode
     type: object
   template_internal_http_datatransfers_requests.SuperadminAddAdminByRegisterRequest:
     properties:
@@ -4194,6 +4231,44 @@ paths:
       summary: eID PKI самбарын нэгдсэн тоо
       tags:
       - users
+  /v1/admin/users:
+    post:
+      consumes:
+      - application/json
+      description: Иргэнийг регистрийн дугаараар урьдчилан бүртгэж, role ононо. Private
+        горимд зөвхөн ингэж бүртгэсэн иргэн Government SSO-оор нэвтэрнэ. 'users.manage'
+        эрх шаардана; admin/superadmin role-ыг зөвхөн super admin ононо.
+      parameters:
+      - description: Register + role
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/template_internal_http_datatransfers_requests.AdminCreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User pre-registered
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+        "403":
+          description: Insufficient privilege for the role
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+        "409":
+          description: Register already exists
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      security:
+      - BearerAuth: []
+      summary: Хэрэглэгч урьдчилан бүртгэх (private платформ)
+      tags:
+      - admin
   /v1/audit:
     get:
       description: Hash-chained, append-only audit log-ийг хуудаслан буцаана. action
@@ -5175,6 +5250,67 @@ paths:
       summary: PDF гарын үсэг эхлүүлэх (eID PIN2)
       tags:
       - sign
+  /v1/superadmin/access-mode:
+    get:
+      description: Платформын хандалтын горим (public|private)-ыг буцаана. Зөвхөн
+        super admin хандана.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Access mode fetched
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+        "401":
+          description: Missing or invalid token
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+        "403":
+          description: Not a super admin
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      security:
+      - BearerAuth: []
+      summary: Платформын хандалтын горим
+      tags:
+      - superadmin
+    put:
+      consumes:
+      - application/json
+      description: 'Платформын хандалтын горимыг тохируулна. public: хэн ч Government
+        SSO-оор нэвтэрнэ; private: зөвхөн урьдчилан бүртгэсэн хэрэглэгч. Зөвхөн super
+        admin хандана.'
+      parameters:
+      - description: Access mode
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/template_internal_http_datatransfers_requests.SuperadminAccessModeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Access mode updated
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+        "401":
+          description: Missing or invalid token
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+        "403":
+          description: Not a super admin
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      security:
+      - BearerAuth: []
+      summary: Платформын хандалтын горим тохируулах
+      tags:
+      - superadmin
   /v1/superadmin/admins:
     get:
       description: Админ түвшний бүх бүртгэлийг (super admin + admin) буцаана. Зөвхөн
