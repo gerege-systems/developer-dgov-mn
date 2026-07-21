@@ -17,3 +17,7 @@ backend.env
 /frontend/node_modules/
 /frontend/.next/
 /frontend/out/
+
+# MkDocs build output + local venv (docs-site)
+docs-site/site/
+docs-site/.venv/

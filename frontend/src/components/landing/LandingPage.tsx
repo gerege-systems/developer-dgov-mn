@@ -16,6 +16,10 @@ import { deepMerge } from '@/lib/theme';
 // Нээлттэй эх (Open Source) кодын GitHub репозитор.
 const GITHUB_URL = 'https://github.com/gerege-systems/template-gerege-mn';
 
+// Баримтжуулалт — MkDocs Material сайт, GitHub Pages дээр (docs-site/ эх код;
+// .github/workflows/docs.yml нь push бүрд build+deploy хийнэ).
+const DOCS_URL = 'https://gerege-systems.github.io/template-gerege-mn/';
+
 // GitHub-ийн лого (lucide-react нь brand icon-уудыг гаргадаггүй тул inline SVG).
 const GitHubMark = ({ size = 18 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
@@ -71,7 +75,7 @@ export default function LandingPage({ next, themeLanding }: Props) {
             <a href="#features">{t.nav.features}</a>
             <a href="#security">{t.nav.security}</a>
             <a href="#tech">{t.nav.tech}</a>
-            <a href="/docs/">{t.nav.docs}</a>
+            <a href={DOCS_URL} target="_blank" rel="noreferrer">{t.nav.docs}</a>
           </nav>
 
           <div className="lp-nav__actions">
@@ -105,7 +109,7 @@ export default function LandingPage({ next, themeLanding }: Props) {
             <a href="#features" onClick={() => setMenuOpen(false)}>{t.nav.features}</a>
             <a href="#security" onClick={() => setMenuOpen(false)}>{t.nav.security}</a>
             <a href="#tech" onClick={() => setMenuOpen(false)}>{t.nav.tech}</a>
-            <a href="/docs/" onClick={() => setMenuOpen(false)}>{t.nav.docs}</a>
+            <a href={DOCS_URL} target="_blank" rel="noreferrer" onClick={() => setMenuOpen(false)}>{t.nav.docs}</a>
           </nav>
         )}
       </header>
