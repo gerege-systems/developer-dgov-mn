@@ -34,6 +34,7 @@ import (
 	"template/internal/business/usecases/org"
 	provideruc "template/internal/business/usecases/provider"
 	"template/internal/business/usecases/rbac"
+	"template/internal/business/usecases/registry"
 	relayuc "template/internal/business/usecases/relay"
 	"template/internal/business/usecases/security"
 	"template/internal/business/usecases/sign"
@@ -60,6 +61,7 @@ import (
 	platformsettings "template/internal/datasources/repositories/postgres/platformsettings"
 	rbacpostgres "template/internal/datasources/repositories/postgres/rbac"
 	recoverypostgres "template/internal/datasources/repositories/postgres/recovery"
+	registrypostgres "template/internal/datasources/repositories/postgres/registry"
 	relaypostgres "template/internal/datasources/repositories/postgres/relay"
 	securitypostgres "template/internal/datasources/repositories/postgres/security"
 	sitepostgres "template/internal/datasources/repositories/postgres/site"
@@ -271,6 +273,10 @@ func NewApp() (*App, error) {
 
 	// Platform-хоорондын хүсэлт дамжуулах + SLA хяналт (relay).
 	relayUC := relayuc.NewUsecase(relaypostgres.NewRelayRepository(pool))
+
+	// Үйлчилгээний нэгдсэн регистр (CPSV-AP паспорт + нотолгооны каталог) —
+	// мастер өгөгдөл тул RLS-гүй; хамгаалалт нь registry.view/manage эрхээр.
+	registryUC := registry.NewUsecase(registrypostgres.NewRegistryRepository(pool))
 
 	// Gerege Core (core.gerege.mn) — USER FIND / ORG FIND хайлтын wrap.
 	coreUC := core.NewUsecase(config.AppConfig.CoreAPIBase, config.AppConfig.CoreAPIToken)
@@ -521,6 +527,10 @@ func NewApp() (*App, error) {
 		// Хүсэлт дамжуулах + SLA хяналт (JWT + relay эрх). SLA sweep + demo
 		// simulator/generator нь App.Run-д background-аар ажиллана.
 		routes.NewRelayRoute(api, relayUC, rbacUC, authMiddleware).Routes()
+		// Үйлчилгээний нэгдсэн регистр — админ бүртгэл (registry.view/manage) +
+		// нийтийн каталог (нэвтэрсэн дурын иргэн).
+		routes.NewRegistryRoute(api, registryUC, rbacUC, authMiddleware).Routes()
+		routes.NewCatalogRoute(api, registryUC, authMiddleware).Routes()
 		routes.NewApplicationsRoute(api, applicationsUC, rbacUC, authMiddleware).Routes()
 		routes.NewCoreRoute(api, coreUC, rbacUC, authMiddleware).Routes()
 		routes.NewSSORoute(api, ssoUC).Routes()

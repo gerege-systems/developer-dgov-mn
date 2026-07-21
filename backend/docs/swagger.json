@@ -1495,6 +1495,53 @@
                 }
             }
         },
+        "/catalog/life-events": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "catalog"
+                ],
+                "summary": "Нийтийн каталогийн амьдралын үйл явдлууд",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/catalog/services/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "catalog"
+                ],
+                "summary": "Нийтийн каталогийн нэг үйлчилгээ (зөвхөн нийтлэгдсэн)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Service ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/core/organizations": {
             "get": {
                 "description": "core.gerege.mn /api/organization/find — search_text (регистр г.м.). Хариуг дамжуулна.",
@@ -2984,6 +3031,616 @@
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/registry/catalog": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "registry"
+                ],
+                "summary": "Нийтийн каталог (зөвхөн нийтлэгдсэн паспорт)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Нэр/код дотор хайх",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Эрх бүхий байгууллага",
+                        "name": "authority",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Амьдралын үйл явдал",
+                        "name": "life_event_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/registry/evidences": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "registry"
+                ],
+                "summary": "Нотолгооны каталог (ХУР mapping-тай)",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "registry"
+                ],
+                "summary": "Нотолгоо бүртгэх",
+                "parameters": [
+                    {
+                        "description": "Evidence",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_datatransfers_requests.RegistryEvidenceRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/registry/evidences/{id}": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "registry"
+                ],
+                "summary": "Нотолгоо засах (ХУР боломж тэмдэглэх)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Evidence ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Evidence",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_datatransfers_requests.RegistryEvidenceRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "registry"
+                ],
+                "summary": "Нотолгоо устгах",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Evidence ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/registry/life-events": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "registry"
+                ],
+                "summary": "Амьдралын/бизнесийн үйл явдлууд",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "registry"
+                ],
+                "summary": "Амьдралын/бизнесийн үйл явдал үүсгэх",
+                "parameters": [
+                    {
+                        "description": "Life event",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_datatransfers_requests.RegistryLifeEventRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/registry/life-events/{id}": {
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "registry"
+                ],
+                "summary": "Амьдралын үйл явдал устгах",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Life event ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/registry/once-only": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "registry"
+                ],
+                "summary": "Once-only зөрчлүүд (ХУР-д байгааг иргэнээс дахин шаардаж буй)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Эрх бүхий байгууллагаар шүүх",
+                        "name": "authority",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/registry/overview": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "registry"
+                ],
+                "summary": "Регистрийн нэгтгэл (инвентар, once-only, проактив байдал)",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/registry/services": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "registry"
+                ],
+                "summary": "Үйлчилгээний паспортын жагсаалт (ноорог орно)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "draft/published/archived",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Эрх бүхий байгууллага",
+                        "name": "authority",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Проактив байдлын шат",
+                        "name": "proactivity",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Нэр/код дотор хайх",
+                        "name": "q",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "registry"
+                ],
+                "summary": "Үйлчилгээний паспорт үүсгэх (ноорог)",
+                "parameters": [
+                    {
+                        "description": "Service",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_datatransfers_requests.RegistryServiceRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/registry/services/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "registry"
+                ],
+                "summary": "Үйлчилгээний паспорт (нотолгоотой нь)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Service ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "registry"
+                ],
+                "summary": "Үйлчилгээний паспорт засах",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Service ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Service",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_datatransfers_requests.RegistryServiceRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "registry"
+                ],
+                "summary": "Ноорог паспорт устгах (нийтлэгдсэнийг устгахгүй — архивлана)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Service ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/registry/services/{id}/archive": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "registry"
+                ],
+                "summary": "Паспортыг архивлах",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Service ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/registry/services/{id}/evidences": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "registry"
+                ],
+                "summary": "Паспортын шаардах нотолгооны жагсаалтыг солих",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Service ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Evidences",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_datatransfers_requests.RegistryEvidencesRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/registry/services/{id}/once-only": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "registry"
+                ],
+                "summary": "Нэг үйлчилгээний once-only шалгалт",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Service ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/registry/services/{id}/publish": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "registry"
+                ],
+                "summary": "Паспортыг нийтлэх (шинэ хувилбар + baseline delta)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Service ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Publish",
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_datatransfers_requests.RegistryPublishRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/registry/services/{id}/versions": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "registry"
+                ],
+                "summary": "Паспортын хувилбарын түүх (baseline delta-тай)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Service ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
                         }
                     }
                 }
@@ -7375,6 +8032,202 @@
                     "type": "string",
                     "maxLength": 25,
                     "minLength": 3
+                }
+            }
+        },
+        "template_internal_http_datatransfers_requests.RegistryEvidenceLink": {
+            "type": "object",
+            "required": [
+                "evidence_id"
+            ],
+            "properties": {
+                "evidence_id": {
+                    "type": "string"
+                },
+                "from_citizen": {
+                    "description": "FromCitizen — уг баримтыг иргэнээс шаардаж байгаа эсэх. ХУР-д байгаа\nбаримтыг иргэнээс шаардвал once-only зөрчил болно.",
+                    "type": "boolean"
+                },
+                "note": {
+                    "type": "string",
+                    "maxLength": 4000
+                },
+                "required": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "template_internal_http_datatransfers_requests.RegistryEvidenceRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "maxLength": 64
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 4000
+                },
+                "holder_agency": {
+                    "type": "string",
+                    "maxLength": 300
+                },
+                "in_khur": {
+                    "type": "boolean"
+                },
+                "khur_service_code": {
+                    "type": "string",
+                    "maxLength": 200
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 300
+                },
+                "source_system": {
+                    "type": "string",
+                    "maxLength": 300
+                }
+            }
+        },
+        "template_internal_http_datatransfers_requests.RegistryEvidencesRequest": {
+            "type": "object",
+            "properties": {
+                "evidences": {
+                    "type": "array",
+                    "maxItems": 100,
+                    "items": {
+                        "$ref": "#/definitions/template_internal_http_datatransfers_requests.RegistryEvidenceLink"
+                    }
+                }
+            }
+        },
+        "template_internal_http_datatransfers_requests.RegistryLifeEventRequest": {
+            "type": "object",
+            "required": [
+                "code",
+                "name"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "maxLength": 64
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 4000
+                },
+                "kind": {
+                    "type": "string",
+                    "enum": [
+                        "life",
+                        "business"
+                    ]
+                },
+                "lead_agency": {
+                    "type": "string",
+                    "maxLength": 300
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 300
+                },
+                "sort_order": {
+                    "type": "integer",
+                    "maximum": 10000,
+                    "minimum": 0
+                }
+            }
+        },
+        "template_internal_http_datatransfers_requests.RegistryPublishRequest": {
+            "type": "object",
+            "properties": {
+                "change_note": {
+                    "type": "string",
+                    "maxLength": 1000
+                }
+            }
+        },
+        "template_internal_http_datatransfers_requests.RegistryServiceRequest": {
+            "type": "object",
+            "required": [
+                "authority",
+                "name"
+            ],
+            "properties": {
+                "annual_volume": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "authority": {
+                    "type": "string",
+                    "maxLength": 300
+                },
+                "authority_org_id": {
+                    "type": "string"
+                },
+                "channels": {
+                    "type": "array",
+                    "maxItems": 10,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "code": {
+                    "type": "string",
+                    "maxLength": 64
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 4000
+                },
+                "fee": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "legal_basis": {
+                    "type": "string",
+                    "maxLength": 4000
+                },
+                "life_event_id": {
+                    "type": "string"
+                },
+                "max_days": {
+                    "type": "integer",
+                    "maximum": 3650,
+                    "minimum": 0
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 300
+                },
+                "name_en": {
+                    "type": "string",
+                    "maxLength": 300
+                },
+                "output": {
+                    "type": "string",
+                    "maxLength": 300
+                },
+                "proactivity": {
+                    "type": "string",
+                    "enum": [
+                        "information",
+                        "online",
+                        "once_only",
+                        "proactive"
+                    ]
+                },
+                "steps_count": {
+                    "type": "integer",
+                    "maximum": 500,
+                    "minimum": 0
+                },
+                "target_group": {
+                    "type": "string",
+                    "maxLength": 300
                 }
             }
         },
