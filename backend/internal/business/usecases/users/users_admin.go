@@ -6,6 +6,7 @@ package users
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"template/internal/apperror"
 	"template/internal/business/domain"
@@ -71,6 +72,44 @@ func (uc *usecase) UpdateRole(ctx context.Context, req UpdateRoleRequest) error 
 	}
 	uc.ristrettoCache.Del(fmt.Sprintf("user/%s", existing.Email))
 	return nil
+}
+
+// CreatePreRegistered нь private платформд иргэнийг регистрийн дугаараар
+// урьдчилан бүртгэнэ. Эрхийн хамгаалалт нь UpdateRole-той ижил: super admin
+// эрхийг ХЭЗЭЭ Ч энэ замаар оноож болохгүй; ADMIN эрхийг зөвхөн super admin
+// оноож чадна (энгийн admin нь зөвхөн user/manager бүртгэнэ).
+func (uc *usecase) CreatePreRegistered(ctx context.Context, req CreatePreRegisterRequest) (domain.User, error) {
+	if req.RoleID == domain.RoleSuperAdmin {
+		return domain.User{}, apperror.Forbidden("cannot assign the super admin role")
+	}
+	if req.CallerRoleID != domain.RoleSuperAdmin && req.RoleID == domain.RoleAdmin {
+		return domain.User{}, apperror.Forbidden("only a super admin can grant the admin role")
+	}
+	roleID := req.RoleID
+	if roleID == 0 {
+		roleID = domain.RoleUser
+	}
+	// Регистрийн дугаарыг eID-ийн адил жижиг үсгээр — ssouser upsert нь
+	// lower(national_id)-аар тааруулдаг тул тохирно.
+	natID := strings.ToLower(strings.TrimSpace(req.Register))
+	if natID == "" {
+		return domain.User{}, apperror.BadRequest("регистрийн дугаар шаардлагатай")
+	}
+	user := &domain.User{
+		Username:    "reg_" + natID,
+		FirstName:   strings.TrimSpace(req.FirstName),
+		LastName:    strings.TrimSpace(req.LastName),
+		FirstNameEn: strings.TrimSpace(req.FirstNameEn),
+		LastNameEn:  strings.TrimSpace(req.LastNameEn),
+		NationalID:  natID,
+		RoleID:      roleID,
+		Active:      true,
+	}
+	stored, err := uc.repo.CreatePreRegistered(ctx, user)
+	if err != nil {
+		return domain.User{}, mapRepoError(err, "pre-register user")
+	}
+	return stored, nil
 }
 
 // SetActive нь хэрэглэгчийг идэвхжүүлэх/идэвхгүй болгоно. Super admin бүртгэлийг

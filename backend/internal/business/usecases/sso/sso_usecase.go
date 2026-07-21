@@ -20,6 +20,15 @@ type UserStore interface {
 	// UpsertByCivilID — nationalid scope-оос иргэний дугаар ирсэн үед байгаа eID
 	// хэрэглэгчтэй civil_id-ээр тааруулж, sso_sub холбоно (давхардлаас сэргийлнэ).
 	UpsertByCivilID(ctx context.Context, civilID, nationalID, ssoSub string, in *domain.User) (domain.User, error)
+	// AuthorizedByCivilOrNational — private платформын шалгуур: civil_id ЭСВЭЛ
+	// national_id-аар тохирох хэрэглэгч (админаас урьдчилан бүртгэсэн) байгаа эсэх.
+	AuthorizedByCivilOrNational(ctx context.Context, civilID, nationalID string) (bool, error)
+}
+
+// AccessModeReader нь платформын хандалтын горимыг (public|private) уншина
+// (postgres/platformsettings). Private горимд урьдчилан бүртгээгүй иргэн нэвтрэхгүй.
+type AccessModeReader interface {
+	GetAccessMode(ctx context.Context) (string, error)
 }
 
 // StartResponse нь browser-ийг чиглүүлэх SSO authorize URL.

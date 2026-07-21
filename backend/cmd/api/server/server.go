@@ -57,6 +57,7 @@ import (
 	oauthpostgres "template/internal/datasources/repositories/postgres/oauth"
 	orgpostgres "template/internal/datasources/repositories/postgres/org"
 	orgstamppostgres "template/internal/datasources/repositories/postgres/orgstamp"
+	platformsettings "template/internal/datasources/repositories/postgres/platformsettings"
 	rbacpostgres "template/internal/datasources/repositories/postgres/rbac"
 	recoverypostgres "template/internal/datasources/repositories/postgres/recovery"
 	relaypostgres "template/internal/datasources/repositories/postgres/relay"
@@ -279,7 +280,10 @@ func NewApp() (*App, error) {
 	// ssoClient дээр (eID proxy-тай хамт) угсарсан. ssoTokenStorer нь SSO eID
 	// proxy идэвхтэй үед нэвтрэлтийн дараа токенуудыг хадгална (nil бол алгасна).
 	ssoRepo := ssouserpostgres.NewSSOUserRepository(pool)
-	ssoUC := sso.NewUsecase(ssoClient, ssoRepo, jwtService, redisCache, config.AppConfig.SSONativeClientID, ssoTokenStorer)
+	// Платформын хандалтын горим (public|private) — SSO нэвтрэлтийн gate болон
+	// superadmin тохиргоонд хэрэглэнэ.
+	platformSettingsRepo := platformsettings.NewRepository(pool)
+	ssoUC := sso.NewUsecase(ssoClient, ssoRepo, jwtService, redisCache, config.AppConfig.SSONativeClientID, ssoTokenStorer, platformSettingsRepo)
 
 	// Хэрэглэгчийн гуравдагч этгээдийн интеграци (Google Drive/Meet, Dropbox) —
 	// OAuth токеныг шифрлэн хадгална (RLS-тэй per-user хүснэгт).
@@ -318,7 +322,7 @@ func NewApp() (*App, error) {
 	// super admin урилга (allow-list). users давхаргаар (кэш-зөв мутациуд)
 	// ажиллаж, мутаци бүрийг audit log-д бичнэ.
 	superadminInviteRepo := superadmininvitepostgres.NewSuperadminInviteRepository(pool)
-	superadminUC := superadmin.NewUsecase(usersUC, auditUC, superadminInviteRepo)
+	superadminUC := superadmin.NewUsecase(usersUC, auditUC, superadminInviteRepo, platformSettingsRepo)
 
 	// Super admin бүртгэлийн шидтэн (урилга → Google → eID → и-мэйл OTP →
 	// TOTP) + MFA-тай super admin нэвтрэлтийн 2 дахь шат. TOTP secret-ийг

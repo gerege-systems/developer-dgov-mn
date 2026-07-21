@@ -102,3 +102,8 @@ func NewUsersUsecase(t mockConstructorTestingTNewUsersUsecase) *UsersUsecase {
 	t.Cleanup(func() { m.AssertExpectations(t) })
 	return m
 }
+
+func (_m *UsersUsecase) CreatePreRegistered(ctx context.Context, req users.CreatePreRegisterRequest) (domain.User, error) {
+	ret := _m.Called(ctx, req)
+	return ret.Get(0).(domain.User), ret.Error(1)
+}

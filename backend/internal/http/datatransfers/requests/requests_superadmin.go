@@ -20,3 +20,9 @@ type SuperadminCreateAdminRequest struct {
 	FirstNameEn string `json:"first_name_en" validate:"omitempty,max=100"`
 	LastNameEn  string `json:"last_name_en" validate:"omitempty,max=100"`
 }
+
+// SuperadminAccessModeRequest нь PUT /superadmin/access-mode-ийн body — платформын
+// хандалтын горим. mode нь 'public' эсвэл 'private'.
+type SuperadminAccessModeRequest struct {
+	Mode string `json:"mode" validate:"required,oneof=public private"`
+}

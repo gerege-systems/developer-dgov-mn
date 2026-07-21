@@ -22,9 +22,9 @@ func newUC(t *testing.T) (superadmin.Usecase, *mocks.UsersUsecase, *mocks.AuditU
 	t.Helper()
 	usersUC := mocks.NewUsersUsecase(t)
 	auditUC := mocks.NewAuditUsecase(t)
-	// Урилгын repo нь эдгээр тестүүдэд хэрэглэгддэггүй (админ удирдлагын
-	// урсгал) тул nil — урилгын method-ууд өөрсдөө nil-г шалгаж алдаа буцаана.
-	return superadmin.NewUsecase(usersUC, auditUC, nil), usersUC, auditUC
+	// Урилгын repo болон platform access-mode store нь эдгээр тестүүдэд
+	// хэрэглэгддэггүй (админ удирдлагын урсгал) тул nil.
+	return superadmin.NewUsecase(usersUC, auditUC, nil, nil), usersUC, auditUC
 }
 
 func TestCreateAdmin_ActivatesAndAudits(t *testing.T) {

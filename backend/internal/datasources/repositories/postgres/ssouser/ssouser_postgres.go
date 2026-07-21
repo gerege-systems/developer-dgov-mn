@@ -100,7 +100,41 @@ func (r *ssoUserRepository) UpsertBySSOSub(ctx context.Context, ssoSub string, i
 func (r *ssoUserRepository) UpsertByCivilID(ctx context.Context, civilID, nationalID, ssoSub string, in *domain.User) (domain.User, error) {
 	var stored records.Users
 	err := r.withRLS(ctx, func(tx pgx.Tx) error {
-		// Эхлээд: civil_id-гүй байсан ПАЙРВАЙЗ (sso_sub) мөр байвал түүнд civil_id/
+		// Хамгийн эхэнд: админаас урьдчилан бүртгэсэн мөр (national_id-тай, гэхдээ
+		// civil_id/sso_sub-гүй) байвал энэ нэвтрэлтэд ХОЛБОНО. Private платформд
+		// админ иргэнийг регистрийн дугаар (national_id)-аар урьдчилан бүртгэдэг тул
+		// иргэн эхлээд SSO-оор нэвтрэхэд тэр мөрийг олж, civil_id/sso_sub-ыг залгана
+		// (шинэ давхардсан мөр үүсгэхгүй). role_id/email хөндөхгүй.
+		if nationalID != "" {
+			natRows, nErr := tx.Query(ctx, `
+				UPDATE users SET
+					civil_id       = $2,
+					sso_sub        = $3,
+					first_name     = COALESCE(NULLIF($4,''), first_name),
+					last_name      = COALESCE(NULLIF($5,''), last_name),
+					first_name_en  = COALESCE(NULLIF($6,''), first_name_en),
+					last_name_en   = COALESCE(NULLIF($7,''), last_name_en),
+					active         = true,
+					updated_at     = now()
+				WHERE lower(national_id) = lower($1)
+				  AND (civil_id IS NULL OR civil_id = '')
+				  AND (sso_sub  IS NULL OR sso_sub  = '')
+				RETURNING `+records.UserColumns+`
+			`, nationalID, civilID, ssoSub, in.FirstName, in.LastName, in.FirstNameEn, in.LastNameEn)
+			if nErr != nil {
+				return nErr
+			}
+			natPromoted, nScanErr := pgx.CollectRows(natRows, pgx.RowToStructByName[records.Users])
+			if nScanErr != nil {
+				return nScanErr
+			}
+			if len(natPromoted) == 1 {
+				stored = natPromoted[0]
+				return nil
+			}
+		}
+
+		// Дараа нь: civil_id-гүй байсан ПАЙРВАЙЗ (sso_sub) мөр байвал түүнд civil_id/
 		// national_id-ыг нэмж "дэвшүүлнэ". Ингэснээр иргэн урьд SSO-гоор
 		// nationalid scope-ГҮЙ нэвтэрч (sso_sub мөр үүсгээд) дараа nationalid-тай
 		// эргэж ирэхэд доорх INSERT нь давхардсан sso_sub-д мөргөлдөхгүй.
@@ -171,4 +205,26 @@ func (r *ssoUserRepository) UpsertByCivilID(ctx context.Context, civilID, nation
 		return domain.User{}, fmt.Errorf("sso civil upsert succeeded but RETURNING produced no row")
 	}
 	return stored.ToV1Domain(), nil
+}
+
+// AuthorizedByCivilOrNational нь private платформын хандалтын шалгуур: өгсөн
+// civil_id ЭСВЭЛ national_id-аар тохирох (устгаагүй) хэрэглэгч байвал true.
+// Private горимд урьдчилан бүртгэгдээгүй иргэн eID-ээр баталгаажсан ч нэвтрэхгүй.
+func (r *ssoUserRepository) AuthorizedByCivilOrNational(ctx context.Context, civilID, nationalID string) (bool, error) {
+	var exists bool
+	err := r.withRLS(ctx, func(tx pgx.Tx) error {
+		return tx.QueryRow(ctx, `
+			SELECT EXISTS(
+				SELECT 1 FROM users
+				WHERE deleted_at IS NULL
+				  AND (
+				    ($1 <> '' AND lower(civil_id)    = lower($1)) OR
+				    ($2 <> '' AND lower(national_id) = lower($2))
+				  )
+			)`, civilID, nationalID).Scan(&exists)
+	})
+	if err != nil {
+		return false, fmt.Errorf("check platform authorization: %w", err)
+	}
+	return exists, nil
 }

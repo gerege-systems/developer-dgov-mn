@@ -47,5 +47,8 @@ func (rt *superadminRoute) Routes() {
 		r.Get("/invites", v1.Wrap(rt.handler.ListInvites))
 		r.Post("/invites", v1.Wrap(rt.handler.CreateInvite))
 		r.Delete("/invites/{email}", v1.Wrap(rt.handler.DeleteInvite))
+		// Платформын хандалтын горим (public|private) — зөвхөн super admin.
+		r.Get("/access-mode", v1.Wrap(rt.handler.GetAccessMode))
+		r.Put("/access-mode", v1.Wrap(rt.handler.SetAccessMode))
 	})
 }

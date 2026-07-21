@@ -291,3 +291,20 @@ func NewUserRepository(t mockConstructorTestingTNewUserRepository) *UserReposito
 
 	return mock
 }
+
+func (_m *UserRepository) CreatePreRegistered(ctx context.Context, in *domain.User) (domain.User, error) {
+	ret := _m.Called(ctx, in)
+	var r0 domain.User
+	if rf, ok := ret.Get(0).(func(context.Context, *domain.User) domain.User); ok {
+		r0 = rf(ctx, in)
+	} else {
+		r0 = ret.Get(0).(domain.User)
+	}
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, *domain.User) error); ok {
+		r1 = rf(ctx, in)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
