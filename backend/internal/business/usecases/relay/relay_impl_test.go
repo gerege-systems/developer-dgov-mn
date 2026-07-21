@@ -28,6 +28,10 @@ type fakeRepo struct {
 	breachFlip  bool // MarkBreachNotified буцаах утга
 	createdReq  *domain.RelayRequest
 	createdAsg  []domain.RelayAssignment
+
+	platformsByCode map[string]domain.RelayPlatform // GetPlatformByCode-д (заавал биш)
+	detail          *domain.RelayRequestDetail      // GetRequestDetail-д (заавал биш)
+	respondSource   string                          // RespondAssignment-ийн буцаах source_platform
 }
 
 func (f *fakeRepo) RoutesForService(_ context.Context, code string) ([]domain.RelayRoute, error) {
@@ -51,7 +55,7 @@ func (f *fakeRepo) CreateRequestWithAssignments(_ context.Context, req *domain.R
 }
 func (f *fakeRepo) MarkDispatched(context.Context, string) error { return nil }
 func (f *fakeRepo) RespondAssignment(_ context.Context, _, status string, _ []byte) (domain.RelayRequest, bool, error) {
-	return domain.RelayRequest{ID: "req-1"}, status == domain.RelayAsgDone, nil
+	return domain.RelayRequest{ID: "req-1", SourcePlatform: f.respondSource}, status == domain.RelayAsgDone, nil
 }
 func (f *fakeRepo) DueSoonAssignments(context.Context) ([]domain.RelayAssignment, error) {
 	return f.dueSoon, nil
@@ -74,7 +78,10 @@ func (f *fakeRepo) AppendEvent(_ context.Context, e *domain.RelayEvent) error {
 
 // Дараах методуудыг тест ашиглахгүй тул минимал.
 func (f *fakeRepo) ListPlatforms(context.Context) ([]domain.RelayPlatform, error) { return nil, nil }
-func (f *fakeRepo) GetPlatformByCode(context.Context, string) (domain.RelayPlatform, error) {
+func (f *fakeRepo) GetPlatformByCode(_ context.Context, code string) (domain.RelayPlatform, error) {
+	if p, ok := f.platformsByCode[code]; ok {
+		return p, nil
+	}
 	return domain.RelayPlatform{}, apperror.NotFound("platform not found")
 }
 func (f *fakeRepo) CreatePlatform(context.Context, *domain.RelayPlatform) (domain.RelayPlatform, error) {
@@ -94,6 +101,9 @@ func (f *fakeRepo) Overview(context.Context) (domain.RelayOverview, error) {
 }
 func (f *fakeRepo) ListRequests(context.Context, int) ([]domain.RelayRequest, error) { return nil, nil }
 func (f *fakeRepo) GetRequestDetail(context.Context, string) (domain.RelayRequestDetail, error) {
+	if f.detail != nil {
+		return *f.detail, nil
+	}
 	return domain.RelayRequestDetail{}, nil
 }
 
@@ -191,6 +201,62 @@ func TestSweepOverdueBreachEscalate(t *testing.T) {
 	}
 	if countEvents(f.events, domain.RelayEvtBreachNotified) != 1 {
 		t.Errorf("expected 1 breach_notified event")
+	}
+}
+
+// TestForwardUpDemoMode — demo горимд дээд platform-ын endpoint нь demo://loopback
+// тул гадаад HTTP webhook илгээхгүй боловч timeline-д forwarded_up event нэмэгдэж,
+// алдаа гарахгүй байхыг шалгана (дээшээ дамжуулах урсгал).
+func TestForwardUpDemoMode(t *testing.T) {
+	f := &fakeRepo{
+		platformsByCode: map[string]domain.RelayPlatform{
+			"e-mongolia": {ID: "u1", Code: "e-mongolia", Name: "И-Монгол", Direction: domain.RelayDirUpstream, EndpointURL: "demo://loopback", WebhookSecret: "s", Enabled: true},
+		},
+		detail: &domain.RelayRequestDetail{Request: domain.RelayRequest{ID: "req-1", ServiceCode: "passport", Title: "Демо"}},
+	}
+	uc := NewUsecase(f)
+	if err := uc.ForwardUp(context.Background(), "req-1", "e-mongolia"); err != nil {
+		t.Fatalf("ForwardUp (demo): %v", err)
+	}
+	if countEvents(f.events, domain.RelayEvtForwardedUp) != 1 {
+		t.Errorf("expected 1 forwarded_up event, got %+v", f.events)
+	}
+}
+
+// TestForwardUpRejectsDownstream — дээшээ дамжуулахыг зөвхөн upstream platform руу
+// зөвшөөрнө; downstream руу дамжуулах оролдлого алдаа өгнө.
+func TestForwardUpRejectsDownstream(t *testing.T) {
+	f := &fakeRepo{
+		platformsByCode: map[string]domain.RelayPlatform{
+			"tax": {ID: "d1", Code: "tax", Direction: domain.RelayDirDownstream, EndpointURL: "demo://loopback"},
+		},
+		detail: &domain.RelayRequestDetail{Request: domain.RelayRequest{ID: "req-1"}},
+	}
+	uc := NewUsecase(f)
+	if err := uc.ForwardUp(context.Background(), "req-1", "tax"); err == nil {
+		t.Error("expected error forwarding to a downstream platform")
+	}
+	if countEvents(f.events, domain.RelayEvtForwardedUp) != 0 {
+		t.Error("no forwarded_up event should be recorded on rejection")
+	}
+}
+
+// TestRespondFulfilledNotifiesUpstreamDemo — биелэгдсэн хүсэлтийн эх нь бүртгэлтэй
+// дээд platform бол demo горимд webhook нь loopback (гадагш дуудлагагүй) хэдий ч
+// урсгал алдаагүй ажиллаж, fulfilled event нэмэгдэнэ.
+func TestRespondFulfilledNotifiesUpstreamDemo(t *testing.T) {
+	f := &fakeRepo{
+		respondSource: "e-mongolia",
+		platformsByCode: map[string]domain.RelayPlatform{
+			"e-mongolia": {Code: "e-mongolia", Direction: domain.RelayDirUpstream, EndpointURL: "demo://loopback", Enabled: true},
+		},
+	}
+	uc := NewUsecase(f)
+	if err := uc.Respond(context.Background(), "asg-a", RespondInput{Status: domain.RelayAsgDone}); err != nil {
+		t.Fatalf("Respond: %v", err)
+	}
+	if countEvents(f.events, domain.RelayEvtFulfilled) != 1 {
+		t.Errorf("expected fulfilled event, got %+v", f.events)
 	}
 }
 
