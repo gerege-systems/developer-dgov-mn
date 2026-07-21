@@ -41,6 +41,14 @@ const (
 	RelayEvtFulfilled      = "fulfilled"
 	RelayEvtOverdue        = "overdue"
 	RelayEvtBreachNotified = "breach_notified"
+	RelayEvtForwardedUp    = "forwarded_up" // дээд platform руу webhook-оор дамжуулав
+)
+
+// Platform-ын чиглэл: upstream (дээрээс хүсэлт ирж, бид түүнд хариу/дамжуулна)
+// эсвэл downstream (бид доош хүсэлт дамжуулж, хариуг нь хүлээнэ).
+const (
+	RelayDirUpstream   = "upstream"
+	RelayDirDownstream = "downstream"
 )
 
 // RelayReminderFractions нь SLA цонхны аль хувь дээр downstream-д сануулга
@@ -52,13 +60,16 @@ var RelayReminderFractions = []float64{0.75, 0.90}
 // SLA-даа тааруулж уртасгаж болно).
 const RelayEscalateGrace = 2 * time.Minute
 
-// RelayPlatform нь дамжуулах хүрэх (downstream) platform-ын бүртгэл.
+// RelayPlatform нь дамжуулагч peer platform-ын бүртгэл — Direction-оор upstream
+// (дээд) эсвэл downstream (доод) болохыг заана.
 type RelayPlatform struct {
 	ID                string
 	Code              string
 	Name              string
-	EndpointURL       string // хүсэлт push хийх хаяг (demo-д дотоод loopback)
+	Direction         string // upstream | downstream
+	EndpointURL       string // webhook push хийх хаяг (demo-д дотоод loopback)
 	SupervisorContact string // escalate хийх дээд шатны хаяг
+	WebhookSecret     string // ирсэн/явах webhook-ийн HMAC гарын үсгийн нууц
 	Enabled           bool
 	CreatedAt         time.Time
 }

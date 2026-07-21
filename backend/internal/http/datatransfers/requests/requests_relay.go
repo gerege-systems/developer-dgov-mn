@@ -30,8 +30,10 @@ type RelayRespondRequest struct {
 type RelayPlatformRequest struct {
 	Code              string `json:"code" validate:"required"`
 	Name              string `json:"name" validate:"required"`
+	Direction         string `json:"direction" validate:"omitempty,oneof=upstream downstream"`
 	EndpointURL       string `json:"endpoint_url"`
 	SupervisorContact string `json:"supervisor_contact"`
+	WebhookSecret     string `json:"webhook_secret"`
 	Enabled           bool   `json:"enabled"`
 }
 
@@ -40,4 +42,10 @@ type RelayRouteRequest struct {
 	ServiceCode string `json:"service_code" validate:"required"`
 	PlatformID  string `json:"platform_id" validate:"required"`
 	SLAMinutes  int    `json:"sla_minutes"`
+}
+
+// RelayForwardRequest нь хүсэлтийг сонгосон дээд (upstream) platform руу дамжуулах
+// (admin).
+type RelayForwardRequest struct {
+	PlatformCode string `json:"platform_code" validate:"required"`
 }

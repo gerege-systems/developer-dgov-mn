@@ -3,14 +3,14 @@
 // Government Template Platform V3.0
 // Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
-import { Loader2, ArrowLeft, Building2, Clock } from 'lucide-react';
-import { getJSON } from '@/lib/client';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Loader2, ArrowLeft, Building2, Clock, ArrowUp } from 'lucide-react';
+import { getJSON, postJSON } from '@/lib/client';
 import { useT } from '@/lib/lang';
 import { formatTS } from '@/lib/format';
-import type { RelayRequestDetail, RelayAssignment } from '@/lib/relayTypes';
+import type { RelayRequestDetail, RelayAssignment, RelayPlatform } from '@/lib/relayTypes';
 
 const POLL_MS = 5000;
 
@@ -40,11 +40,27 @@ function AssignmentRow({ a }: { a: RelayAssignment }) {
 
 export default function RelayRequestDetailView({ id }: { id: string }) {
   const { T } = useT();
+  const qc = useQueryClient();
   const q = useQuery({ queryKey: ['relay-req', id], queryFn: () => getJSON<RelayRequestDetail>(`/api/relay/requests/${id}`), refetchInterval: POLL_MS });
+  const platforms = useQuery({ queryKey: ['relay-platforms'], queryFn: () => getJSON<RelayPlatform[]>('/api/relay/platforms') });
+  const [upTo, setUpTo] = useState('');
+  const [fwErr, setFwErr] = useState('');
+  const [fwBusy, setFwBusy] = useState(false);
+
+  const forwardUp = async () => {
+    if (!upTo) return;
+    setFwErr(''); setFwBusy(true);
+    const res = await postJSON(`/api/relay/requests/${id}/forward`, { platform_code: upTo });
+    setFwBusy(false);
+    if (!res.ok) { setFwErr(res.message || 'error'); return; }
+    setUpTo('');
+    qc.invalidateQueries({ queryKey: ['relay-req', id] });
+  };
 
   if (q.isPending) return <div className="card"><Loader2 className="spin" size={18} /> {T('relay.loading')}</div>;
   if (q.isError) return <div className="alert alert--danger" role="alert">{(q.error as Error).message}</div>;
   const { request: r, assignments, events } = q.data!;
+  const upstreams = (platforms.data ?? []).filter((p) => p.direction === 'upstream');
 
   return (
     <>
@@ -65,6 +81,22 @@ export default function RelayRequestDetailView({ id }: { id: string }) {
           {r.fulfilled_at && <div className="defrow"><span className="defrow__label">{T('relay.field.fulfilled')}</span><span className="defrow__value mono">{formatTS(r.fulfilled_at)}</span></div>}
           {r.breach_notified && <div className="defrow"><span className="defrow__label">{T('relay.field.breach')}</span><span className="defrow__value" style={{ color: 'var(--danger,#dc2626)' }}>{T('relay.breachYes')}</span></div>}
         </div>
+
+        {/* Дээд platform руу дамжуулах (webhook) */}
+        {upstreams.length > 0 && (
+          <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--border)', display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+            <ArrowUp size={15} style={{ color: 'var(--dan-blue-text)' }} />
+            <span className="muted" style={{ fontSize: 13 }}>{T('relay.forward.label')}</span>
+            <select className="input" value={upTo} onChange={(e) => setUpTo(e.target.value)} style={{ maxWidth: 220 }}>
+              <option value="">{T('relay.forward.pick')}</option>
+              {upstreams.map((p) => <option key={p.id} value={p.code}>{p.name}</option>)}
+            </select>
+            <button className="btn btn--primary btn--sm" onClick={forwardUp} disabled={!upTo || fwBusy}>
+              {fwBusy ? <Loader2 className="spin" size={14} /> : <ArrowUp size={14} />} {T('relay.forward.send')}
+            </button>
+            {fwErr && <span className="alert alert--danger" style={{ fontSize: 12, padding: '2px 8px' }}>{fwErr}</span>}
+          </div>
+        )}
       </section>
 
       <section className="card" style={{ marginTop: 16 }}>

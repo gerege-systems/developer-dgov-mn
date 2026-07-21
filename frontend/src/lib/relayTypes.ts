@@ -76,8 +76,10 @@ export interface RelayPlatform {
   id: string;
   code: string;
   name: string;
+  direction: 'upstream' | 'downstream';
   endpoint_url: string;
   supervisor_contact: string;
+  webhook_secret: string;
   enabled: boolean;
   created_at: string;
 }

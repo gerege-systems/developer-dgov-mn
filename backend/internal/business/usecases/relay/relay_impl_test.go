@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	"template/internal/apperror"
 	"template/internal/business/domain"
 )
 
@@ -73,6 +74,9 @@ func (f *fakeRepo) AppendEvent(_ context.Context, e *domain.RelayEvent) error {
 
 // Дараах методуудыг тест ашиглахгүй тул минимал.
 func (f *fakeRepo) ListPlatforms(context.Context) ([]domain.RelayPlatform, error) { return nil, nil }
+func (f *fakeRepo) GetPlatformByCode(context.Context, string) (domain.RelayPlatform, error) {
+	return domain.RelayPlatform{}, apperror.NotFound("platform not found")
+}
 func (f *fakeRepo) CreatePlatform(context.Context, *domain.RelayPlatform) (domain.RelayPlatform, error) {
 	return domain.RelayPlatform{}, nil
 }

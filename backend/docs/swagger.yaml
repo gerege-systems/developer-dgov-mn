@@ -658,6 +658,13 @@ definitions:
     - authority
     - name
     type: object
+  template_internal_http_datatransfers_requests.RelayForwardRequest:
+    properties:
+      platform_code:
+        type: string
+    required:
+    - platform_code
+    type: object
   template_internal_http_datatransfers_requests.RelayIngestRequest:
     properties:
       due_at:
@@ -683,6 +690,11 @@ definitions:
     properties:
       code:
         type: string
+      direction:
+        enum:
+        - upstream
+        - downstream
+        type: string
       enabled:
         type: boolean
       endpoint_url:
@@ -690,6 +702,8 @@ definitions:
       name:
         type: string
       supervisor_contact:
+        type: string
+      webhook_secret:
         type: string
     required:
     - code
@@ -4318,6 +4332,34 @@ paths:
       summary: Хүсэлтийн дэлгэрэнгүй (assignments + timeline)
       tags:
       - relay
+  /relay/requests/{id}/forward:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Request ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Дамжуулах дээд platform
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/template_internal_http_datatransfers_requests.RelayForwardRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+      security:
+      - BearerAuth: []
+      summary: Хүсэлтийг дээд (upstream) platform руу webhook-оор дамжуулах
+      tags:
+      - relay
   /relay/routes:
     get:
       produces:
@@ -4372,6 +4414,38 @@ paths:
       security:
       - BearerAuth: []
       summary: Чиглүүлэлт устгах
+      tags:
+      - relay
+  /relay/webhook:
+    post:
+      consumes:
+      - application/json
+      description: X-Relay-Source (илгээгчийн code) + X-Relay-Signature (sha256=HMAC)
+        header-аар баталгаажуулж, шинэ хүсэлт болгон ingest хийнэ. JWT шаардахгүй.
+      parameters:
+      - description: Илгээгч platform-ын code
+        in: header
+        name: X-Relay-Source
+        required: true
+        type: string
+      - description: sha256=<HMAC-SHA256>
+        in: header
+        name: X-Relay-Signature
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/template_internal_http_handlers_v1.BaseResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/template_internal_http_datatransfers_responses.RelayRequestResponse'
+              type: object
+      summary: Peer platform-оос webhook хүлээж авах (дээш/доош, HMAC гарын үсэгтэй)
       tags:
       - relay
   /site/appearance:

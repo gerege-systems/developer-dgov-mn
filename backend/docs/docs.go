@@ -3948,6 +3948,51 @@ const docTemplate = `{
                 }
             }
         },
+        "/relay/requests/{id}/forward": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "relay"
+                ],
+                "summary": "Хүсэлтийг дээд (upstream) platform руу webhook-оор дамжуулах",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Request ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Дамжуулах дээд platform",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_datatransfers_requests.RelayForwardRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/relay/routes": {
             "get": {
                 "security": [
@@ -4036,6 +4081,57 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/relay/webhook": {
+            "post": {
+                "description": "X-Relay-Source (илгээгчийн code) + X-Relay-Signature (sha256=HMAC) header-аар баталгаажуулж, шинэ хүсэлт болгон ingest хийнэ. JWT шаардахгүй.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "relay"
+                ],
+                "summary": "Peer platform-оос webhook хүлээж авах (дээш/доош, HMAC гарын үсэгтэй)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Илгээгч platform-ын code",
+                        "name": "X-Relay-Source",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "sha256=\u003cHMAC-SHA256\u003e",
+                        "name": "X-Relay-Signature",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/template_internal_http_datatransfers_responses.RelayRequestResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -8233,6 +8329,17 @@ const docTemplate = `{
                 }
             }
         },
+        "template_internal_http_datatransfers_requests.RelayForwardRequest": {
+            "type": "object",
+            "required": [
+                "platform_code"
+            ],
+            "properties": {
+                "platform_code": {
+                    "type": "string"
+                }
+            }
+        },
         "template_internal_http_datatransfers_requests.RelayIngestRequest": {
             "type": "object",
             "required": [
@@ -8275,6 +8382,13 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
+                "direction": {
+                    "type": "string",
+                    "enum": [
+                        "upstream",
+                        "downstream"
+                    ]
+                },
                 "enabled": {
                     "type": "boolean"
                 },
@@ -8285,6 +8399,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "supervisor_contact": {
+                    "type": "string"
+                },
+                "webhook_secret": {
                     "type": "string"
                 }
             }

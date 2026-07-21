@@ -7,9 +7,11 @@
 package relay
 
 import (
+	"io"
 	"net/http"
 	"strconv"
 
+	"template/internal/business/domain"
 	relayuc "template/internal/business/usecases/relay"
 	"template/internal/http/datatransfers/requests"
 	"template/internal/http/datatransfers/responses"
@@ -85,6 +87,50 @@ func (h Handler) Respond(w http.ResponseWriter, r *http.Request) error {
 		return v1.RespondWithError(w, r, err)
 	}
 	return v1.NewSuccessResponse(w, r, http.StatusOK, "response recorded", nil)
+}
+
+// ReceiveWebhook godoc
+// @Summary      Peer platform-оос webhook хүлээж авах (дээш/доош, HMAC гарын үсэгтэй)
+// @Description  X-Relay-Source (илгээгчийн code) + X-Relay-Signature (sha256=HMAC) header-аар баталгаажуулж, шинэ хүсэлт болгон ingest хийнэ. JWT шаардахгүй.
+// @Tags         relay
+// @Accept       json
+// @Produce      json
+// @Param        X-Relay-Source     header  string  true  "Илгээгч platform-ын code"
+// @Param        X-Relay-Signature  header  string  true  "sha256=<HMAC-SHA256>"
+// @Success      201  {object}  v1.BaseResponse{data=responses.RelayRequestResponse}
+// @Router       /relay/webhook [post]
+func (h Handler) ReceiveWebhook(w http.ResponseWriter, r *http.Request) error {
+	body, err := io.ReadAll(io.LimitReader(r.Body, 1<<20)) // 1 MiB дээд хязгаар
+	if err != nil {
+		return v1.NewErrorResponse(w, r, http.StatusBadRequest, "webhook бие уншиж чадсангүй")
+	}
+	out, err := h.usecase.ReceiveWebhook(r.Context(),
+		r.Header.Get(domain.RelayWebhookSourceHeader), r.Header.Get(domain.RelayWebhookSigHeader), body)
+	if err != nil {
+		return v1.RespondWithError(w, r, err)
+	}
+	return v1.NewSuccessResponse(w, r, http.StatusCreated, "webhook accepted", responses.FromRelayRequest(out))
+}
+
+// ForwardUp godoc
+// @Summary      Хүсэлтийг дээд (upstream) platform руу webhook-оор дамжуулах
+// @Tags         relay
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id    path  string  true  "Request ID"
+// @Param        body  body  requests.RelayForwardRequest  true  "Дамжуулах дээд platform"
+// @Success      200  {object}  v1.BaseResponse
+// @Router       /relay/requests/{id}/forward [post]
+func (h Handler) ForwardUp(w http.ResponseWriter, r *http.Request) error {
+	var req requests.RelayForwardRequest
+	if !decode(w, r, &req) {
+		return nil
+	}
+	if err := h.usecase.ForwardUp(r.Context(), chi.URLParam(r, "id"), req.PlatformCode); err != nil {
+		return v1.RespondWithError(w, r, err)
+	}
+	return v1.NewSuccessResponse(w, r, http.StatusOK, "forwarded upstream", nil)
 }
 
 // ── Dashboard (admin) ────────────────────────────────────────────────────────
@@ -169,7 +215,8 @@ func (h Handler) CreatePlatform(w http.ResponseWriter, r *http.Request) error {
 		return nil
 	}
 	p, err := h.usecase.CreatePlatform(r.Context(), relayuc.PlatformInput{
-		Code: req.Code, Name: req.Name, EndpointURL: req.EndpointURL, SupervisorContact: req.SupervisorContact, Enabled: req.Enabled,
+		Code: req.Code, Name: req.Name, Direction: req.Direction, EndpointURL: req.EndpointURL,
+		SupervisorContact: req.SupervisorContact, WebhookSecret: req.WebhookSecret, Enabled: req.Enabled,
 	})
 	if err != nil {
 		return v1.RespondWithError(w, r, err)

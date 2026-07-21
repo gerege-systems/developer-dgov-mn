@@ -24,15 +24,17 @@ type RelayPlatformResponse struct {
 	ID                string    `json:"id"`
 	Code              string    `json:"code"`
 	Name              string    `json:"name"`
+	Direction         string    `json:"direction"`
 	EndpointURL       string    `json:"endpoint_url"`
 	SupervisorContact string    `json:"supervisor_contact"`
+	WebhookSecret     string    `json:"webhook_secret"`
 	Enabled           bool      `json:"enabled"`
 	CreatedAt         time.Time `json:"created_at"`
 }
 
 func FromRelayPlatform(p domain.RelayPlatform) RelayPlatformResponse {
-	return RelayPlatformResponse{ID: p.ID, Code: p.Code, Name: p.Name, EndpointURL: p.EndpointURL,
-		SupervisorContact: p.SupervisorContact, Enabled: p.Enabled, CreatedAt: p.CreatedAt}
+	return RelayPlatformResponse{ID: p.ID, Code: p.Code, Name: p.Name, Direction: p.Direction, EndpointURL: p.EndpointURL,
+		SupervisorContact: p.SupervisorContact, WebhookSecret: p.WebhookSecret, Enabled: p.Enabled, CreatedAt: p.CreatedAt}
 }
 
 func ToRelayPlatformList(list []domain.RelayPlatform) []RelayPlatformResponse {

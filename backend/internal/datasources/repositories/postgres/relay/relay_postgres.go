@@ -58,12 +58,26 @@ func (r *relayRepository) execDelete(ctx context.Context, sql, id, notFoundMsg s
 
 // ── Platforms ────────────────────────────────────────────────────────────────
 
-const platformColumns = `id, code, name, endpoint_url, supervisor_contact, enabled, created_at`
+const platformColumns = `id, code, name, direction, endpoint_url, supervisor_contact, webhook_secret, enabled, created_at`
 
 func scanPlatform(row pgx.Row) (domain.RelayPlatform, error) {
 	var p domain.RelayPlatform
-	err := row.Scan(&p.ID, &p.Code, &p.Name, &p.EndpointURL, &p.SupervisorContact, &p.Enabled, &p.CreatedAt)
+	err := row.Scan(&p.ID, &p.Code, &p.Name, &p.Direction, &p.EndpointURL, &p.SupervisorContact, &p.WebhookSecret, &p.Enabled, &p.CreatedAt)
 	return p, err
+}
+
+// GetPlatformByCode нь code-оор нэг platform-ыг олно (webhook баталгаажуулах,
+// дээшээ дамжуулах эх/хүрэх platform-ыг тодорхойлоход).
+func (r *relayRepository) GetPlatformByCode(ctx context.Context, code string) (domain.RelayPlatform, error) {
+	p, err := scanPlatform(r.pool.QueryRow(ctx,
+		`SELECT `+platformColumns+` FROM relay_platforms WHERE code = $1`, code))
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return domain.RelayPlatform{}, apperror.NotFound("platform not found")
+		}
+		return domain.RelayPlatform{}, err
+	}
+	return p, nil
 }
 
 func (r *relayRepository) ListPlatforms(ctx context.Context) ([]domain.RelayPlatform, error) {
@@ -85,9 +99,9 @@ func (r *relayRepository) ListPlatforms(ctx context.Context) ([]domain.RelayPlat
 
 func (r *relayRepository) CreatePlatform(ctx context.Context, in *domain.RelayPlatform) (domain.RelayPlatform, error) {
 	p, err := scanPlatform(r.pool.QueryRow(ctx,
-		`INSERT INTO relay_platforms(code, name, endpoint_url, supervisor_contact, enabled)
-		 VALUES ($1,$2,$3,$4,$5) RETURNING `+platformColumns,
-		in.Code, in.Name, in.EndpointURL, in.SupervisorContact, in.Enabled))
+		`INSERT INTO relay_platforms(code, name, direction, endpoint_url, supervisor_contact, webhook_secret, enabled)
+		 VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING `+platformColumns,
+		in.Code, in.Name, in.Direction, in.EndpointURL, in.SupervisorContact, in.WebhookSecret, in.Enabled))
 	if err != nil {
 		return domain.RelayPlatform{}, mapWrite(err, "platform code already exists")
 	}

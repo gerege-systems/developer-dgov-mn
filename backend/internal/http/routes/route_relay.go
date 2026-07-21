@@ -40,12 +40,17 @@ func (rt *relayRoute) Routes() {
 	view := middlewares.RequirePermission(rt.resolver, domain.PermRelayView)
 	manage := middlewares.RequirePermission(rt.resolver, domain.PermRelayManage)
 
+	// Peer webhook (дээш/доош) — JWT-гүй, HMAC гарын үсгээр баталгаажна. authMiddleware-
+	// ийн ГАДНА бүртгэнэ.
+	rt.router.Post("/v1/relay/webhook", v1.Wrap(rt.handler.ReceiveWebhook))
+
 	rt.router.Route("/v1/relay", func(r chi.Router) {
 		r.Use(rt.authMiddleware)
 
 		// Ingest / Respond (m2m урсгал — scaffold-д relay.manage-аар).
 		r.With(manage).Post("/requests", v1.Wrap(rt.handler.Ingest))
 		r.With(manage).Post("/assignments/{id}/respond", v1.Wrap(rt.handler.Respond))
+		r.With(manage).Post("/requests/{id}/forward", v1.Wrap(rt.handler.ForwardUp))
 
 		// Dashboard.
 		r.With(view).Get("/overview", v1.Wrap(rt.handler.Overview))

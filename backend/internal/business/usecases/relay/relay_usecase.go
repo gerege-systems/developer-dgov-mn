@@ -21,6 +21,13 @@ type Usecase interface {
 	// Respond нь доод platform-ын callback — assignment-ыг терминал болгоно.
 	Respond(ctx context.Context, assignmentID string, in RespondInput) error
 
+	// ReceiveWebhook нь бүртгэлтэй peer (дээд эсвэл доод) platform-оос ирсэн
+	// webhook-ийг HMAC гарын үсгээр баталгаажуулж, шинэ хүсэлт болгон ingest хийнэ.
+	ReceiveWebhook(ctx context.Context, sourceCode, signature string, body []byte) (domain.RelayRequest, error)
+	// ForwardUp нь хүсэлтийг сонгосон дээд (upstream) platform руу webhook-оор
+	// дамжуулна (тайлагнах/шат ахиулах).
+	ForwardUp(ctx context.Context, requestID, platformCode string) error
+
 	// SLASweep нь background worker-ийн нэг алхам: reminder/overdue/breach/escalate.
 	SLASweep(ctx context.Context) error
 	// SimulateStep нь demo (scaffold) — доод platform-уудын нэрийн өмнөөс хариу
@@ -64,8 +71,10 @@ type (
 	PlatformInput struct {
 		Code              string
 		Name              string
+		Direction         string // upstream | downstream (хоосон бол downstream)
 		EndpointURL       string
 		SupervisorContact string
+		WebhookSecret     string // хоосон бол автоматаар үүсгэнэ
 		Enabled           bool
 	}
 	RouteInput struct {

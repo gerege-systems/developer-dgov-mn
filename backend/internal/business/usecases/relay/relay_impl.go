@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
+	"net/http"
 	"strings"
 	"time"
 
@@ -22,11 +23,12 @@ import (
 const simulateHoldDur = 20 * time.Second
 
 type usecase struct {
-	repo repointerface.RelayRepository
+	repo       repointerface.RelayRepository
+	httpClient *http.Client
 }
 
 func NewUsecase(repo repointerface.RelayRepository) Usecase {
-	return &usecase{repo: repo}
+	return &usecase{repo: repo, httpClient: &http.Client{Timeout: 8 * time.Second}}
 }
 
 // event нь timeline/feed бичлэг нэмнэ (best-effort; хүсэлтийг блоклохгүй).
@@ -93,19 +95,34 @@ func (u *usecase) Ingest(ctx context.Context, in IngestInput) (domain.RelayReque
 	}
 	u.event(ctx, stored.ID, nil, domain.RelayEvtReceived,
 		fmt.Sprintf("Хүсэлт хүлээн авлаа: %s — %d байгууллагад дамжуулна", code, len(storedAsg)))
-	u.dispatch(ctx, storedAsg)
+	u.dispatch(ctx, stored, storedAsg)
 	return stored, nil
 }
 
-// dispatch нь assignment бүрийг доод platform руу дамжуулна. Production-д
-// platform.endpoint_url руу POST хийнэ; demo-д loopback (simulator хариулна).
-func (u *usecase) dispatch(ctx context.Context, asg []domain.RelayAssignment) {
+// dispatch нь assignment бүрийг доод platform руу дамжуулна. Бодит endpoint-той
+// platform руу HMAC гарын үсэгтэй webhook POST хийнэ; demo-д loopback (гадаад
+// дуудлагагүй, simulator хариулна).
+func (u *usecase) dispatch(ctx context.Context, req domain.RelayRequest, asg []domain.RelayAssignment) {
+	// Downstream platform-уудыг id-гаар нь нэг удаа уншиж (endpoint/secret авахад).
+	byID := map[string]domain.RelayPlatform{}
+	if plats, err := u.repo.ListPlatforms(ctx); err == nil {
+		for _, p := range plats {
+			byID[p.ID] = p
+		}
+	}
 	for i := range asg {
 		if err := u.repo.MarkDispatched(ctx, asg[i].ID); err != nil {
 			logger.ErrorWithContext(ctx, "relay: mark dispatched failed", logger.Fields{"error": err.Error(), "assignment": asg[i].ID})
 			continue
 		}
 		u.event(ctx, asg[i].RequestID, &asg[i].ID, domain.RelayEvtDispatched, "Даалгавар дамжуулав: "+asg[i].PlatformName)
+		if p, ok := byID[asg[i].PlatformID]; ok {
+			u.deliverWebhook(ctx, p, domain.RelayWebhookEnvelope{
+				Event: domain.RelayEvtDispatched, SourceCode: "self", ServiceCode: req.ServiceCode,
+				ExternalRef: req.ExternalRef, Title: req.Title, Priority: req.Priority,
+				Payload: req.Payload, DueAt: &asg[i].DueAt, SentAt: time.Now(),
+			})
+		}
 	}
 }
 
@@ -121,6 +138,8 @@ func (u *usecase) Respond(ctx context.Context, assignmentID string, in RespondIn
 	u.event(ctx, req.ID, &assignmentID, domain.RelayEvtResponded, "Доод platform хариулав: "+status)
 	if fulfilled {
 		u.event(ctx, req.ID, nil, domain.RelayEvtFulfilled, "Бүх байгууллага хариулж, хүсэлт биелэгдлээ")
+		// Эх нь бүртгэлтэй дээд platform бол нэгтгэсэн хариуг webhook-оор дээш илгээнэ.
+		u.notifyUpstream(ctx, req, domain.RelayEvtFulfilled, "биелэгдлээ")
 	}
 	return nil
 }
@@ -170,6 +189,10 @@ func (u *usecase) SLASweep(ctx context.Context) error {
 				breachSeen[a.RequestID] = true
 				if flipped, err := u.repo.MarkBreachNotified(ctx, a.RequestID); err == nil && flipped {
 					u.event(ctx, a.RequestID, nil, domain.RelayEvtBreachNotified, "Дээд platform-д SLA зөрчлийг мэдэгдэв")
+					// Эх нь бүртгэлтэй дээд platform бол зөрчлийг webhook-оор дээш мэдэгдэнэ.
+					if detail, derr := u.repo.GetRequestDetail(ctx, a.RequestID); derr == nil {
+						u.notifyUpstream(ctx, detail.Request, domain.RelayEvtBreachNotified, "SLA зөрчил")
+					}
 				}
 			}
 		}
@@ -257,9 +280,20 @@ func (u *usecase) CreatePlatform(ctx context.Context, in PlatformInput) (domain.
 	if code == "" || name == "" {
 		return domain.RelayPlatform{}, apperror.BadRequest("code болон name шаардлагатай")
 	}
+	direction := strings.TrimSpace(in.Direction)
+	if direction == "" {
+		direction = domain.RelayDirDownstream
+	}
+	if direction != domain.RelayDirUpstream && direction != domain.RelayDirDownstream {
+		return domain.RelayPlatform{}, apperror.BadRequest("direction нь upstream эсвэл downstream байх ёстой")
+	}
+	secret := strings.TrimSpace(in.WebhookSecret)
+	if secret == "" {
+		secret = domain.RelayNewWebhookSecret()
+	}
 	return u.repo.CreatePlatform(ctx, &domain.RelayPlatform{
-		Code: code, Name: name, EndpointURL: strings.TrimSpace(in.EndpointURL),
-		SupervisorContact: strings.TrimSpace(in.SupervisorContact), Enabled: in.Enabled,
+		Code: code, Name: name, Direction: direction, EndpointURL: strings.TrimSpace(in.EndpointURL),
+		SupervisorContact: strings.TrimSpace(in.SupervisorContact), WebhookSecret: secret, Enabled: in.Enabled,
 	})
 }
 

@@ -12,8 +12,9 @@ import (
 // RelayRepository нь platform-хоорондын хүсэлт дамжуулах + SLA хяналтын gateway.
 // gateway_postgres-ийн адил RLS-гүй (platform-хоорондын тохиргоо/telemetry).
 type RelayRepository interface {
-	// Platforms (downstream registry).
+	// Platforms (upstream/downstream peer registry).
 	ListPlatforms(ctx context.Context) ([]domain.RelayPlatform, error)
+	GetPlatformByCode(ctx context.Context, code string) (domain.RelayPlatform, error)
 	CreatePlatform(ctx context.Context, in *domain.RelayPlatform) (domain.RelayPlatform, error)
 	DeletePlatform(ctx context.Context, id string) error
 
