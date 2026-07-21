@@ -529,11 +529,15 @@ func (r *govRepository) GetApplicationAny(ctx context.Context, id string) (domai
 func (r *govRepository) AssignApplication(ctx context.Context, id, officerID string) (domain.GovApplication, error) {
 	var out domain.GovApplication
 	err := r.withRLS(ctx, func(tx pgx.Tx) error {
+		// Онгойлгосон (open) БА эзэнгүй хүсэлтийг менежер өөртөө авна. in_review-г
+		// мөн зөвшөөрнө: хүсэлт хянагдаж эхэлсэн ч эзэнгүй (жишээ workflow-оос өмнөх
+		// хуучин мөр, эсвэл эзнээ алдсан) бол дахин эзэмшүүлэх боломжтой. assigned_to
+		// guard нь өөр менежерийнхийг булаахаас сэргийлнэ.
 		a, scanErr := scanApplication(tx.QueryRow(ctx, `
 			UPDATE gov_applications
 			   SET assigned_to = $2, assigned_at = now(), status = 'in_review', updated_at = now()
 			 WHERE id = $1
-			   AND status IN ('submitted','registered')
+			   AND status IN ('submitted','registered','in_review')
 			   AND (assigned_to IS NULL OR assigned_to = $2)
 			 RETURNING `+appColumns, id, officerID))
 		if errors.Is(scanErr, pgx.ErrNoRows) {
