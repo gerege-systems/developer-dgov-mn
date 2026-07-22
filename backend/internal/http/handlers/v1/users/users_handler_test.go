@@ -1,4 +1,4 @@
-// Government Template Platform V3.0
+// Government Developer Portal V3.0
 // Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 
 package users_test
@@ -39,7 +39,7 @@ func TestGetUserDataHandler(t *testing.T) {
 	// build нь claim тарьсан /me route-той mux буцаана.
 	build := func(t *testing.T) (*mocks.UsersUsecase, http.Handler) {
 		uc := mocks.NewUsersUsecase(t)
-		h := usershandler.NewHandler(uc)
+		h := usershandler.NewHandler(uc, false)
 		mux := http.NewServeMux()
 		mux.Handle("GET /me", injectClaims("user-1", "patrick@example.com")(v1.Wrap(h.GetUserData)))
 		return uc, mux
@@ -72,7 +72,7 @@ func TestGetUserDataHandler(t *testing.T) {
 
 	t.Run("missing claims returns 401", func(t *testing.T) {
 		uc := mocks.NewUsersUsecase(t)
-		h := usershandler.NewHandler(uc)
+		h := usershandler.NewHandler(uc, false)
 		// claim тарихгүйгээр шууд handler-г холбоно — CurrentUserFromContext
 		// танигдах claim олохгүй тул handler нь 401 буцаах ёстой.
 		mux := http.NewServeMux()

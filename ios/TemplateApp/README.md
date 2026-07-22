@@ -1,15 +1,19 @@
-# Government Template Platform V3.0 — iOS App (TemplateApp)
+# Government Developer Portal V3.0 — iOS App (TemplateApp)
 
-Энэ template платформын **iOS хувилбар**. eID эсвэл dgov SSO-гоор нэвтэрч,
-хэрэглэгчийн профайл + eID PKI мэдээллийг харуулна. Native SwiftUI, гуравдагч
-хамааралгүй (SPM пакеж ашигладаггүй).
+> **Цахим засаглалыг бүтээх суурь** — _Нэг суурь — бүх төрийн үйлчилгээ._
+
+**Government Developer Portal V3.0**-ийн жишиг **iOS клиент**. eID эсвэл dgov
+SSO-гоор нэвтэрч, хэрэглэгчийн профайл + eID PKI мэдээллийг харуулна — суурь
+платформ дээр бүтээгдсэн native мобайл үйлчилгээг хэрхэн босгохын үлгэр жишээ.
+Native SwiftUI, гуравдагч хамааралгүй (SPM пакеж ашигладаггүй).
 
 > Тайлбар: энэ бол **Relying-Party консюмер** апп — иргэний eID **апп** (өөр төсөл)
-> биш. eID нэвтрэлтийг QR/РД-push урсгалаар template-ийн backend-ээр дамжуулж хийнэ.
+> биш. eID нэвтрэлтийг QR/РД-push урсгалаар платформын backend-ээр дамжуулж хийнэ.
+> Жишиг deployment нь **DAN-Government SSO** ([sso.dgov.mn](https://sso.dgov.mn)).
 
 ## Архитектур
 
-- Апп → `https://template.dgov.mn/api/*` (BFF) — backend-тэй шууд харьцахгүй.
+- Апп → `https://sso.dgov.mn/api/*` (BFF) — backend-тэй шууд харьцахгүй.
 - Session нь httpOnly cookie (`dgov_access`/`refresh`)-д. `URLSession` +
   `HTTPCookieStorage.shared` нь cookie-г автоматаар хадгалж/илгээнэ.
 - BFF-ийн mutating route `x-dgov-csrf: 1` header шаарддаг (Origin header
@@ -59,5 +63,5 @@ Xcode дотор:
 
 ## Тохиргоо
 
-- Backend хаяг: `APIClient.baseURL` (default `https://template.dgov.mn`).
+- Backend хаяг: `APIClient.baseURL` (default `https://sso.dgov.mn`).
   Локал BFF-д туршихад `http://localhost:3000` болгож, ATS exception нэмнэ.

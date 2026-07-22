@@ -1,4 +1,4 @@
-// eID based AI enabled Government Template Platform V3.0
+// eID based AI enabled Government Developer Portal V3.0
 // OIDC provider (RP-facing) login хуудас — Hydra нь browser-ыг энд login_challenge-
 // тэй чиглүүлнэ. dan-ий ӨӨРИЙН дизайнаар (SigninShell + LoginForm: eID РД/QR +
 // Google) нэвтрүүлж, буцаж ирэхэд challenge-ыг accept хийнэ. Дээр талд аль RP-ээс
@@ -42,7 +42,7 @@ export default async function OAuthLoginPage(props: {
             {rpName}
           </div>
           <div style={{ fontSize: 13, color: 'var(--muted)', marginTop: 3 }}>
-            DAN — нэгдсэн нэвтрэлтээр нэвтрэх гэж байна
+            Government SSO — нэгдсэн нэвтрэлтээр нэвтрэх гэж байна
           </div>
         </div>
       )}

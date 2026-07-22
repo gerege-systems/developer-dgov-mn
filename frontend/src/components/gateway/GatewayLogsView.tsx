@@ -31,20 +31,18 @@ export default function GatewayLogsView() {
         <table className="users-table">
           <thead>
             <tr>
-              <th>Статус</th><th>Method</th><th>Зам</th><th>Маршрут</th><th>Хэрэглэгч</th><th>Латент</th><th>IP</th><th>Огноо</th>
+              <th>Статус</th><th>Method</th><th>Зам</th><th>Латент</th><th>IP</th><th>Огноо</th>
             </tr>
           </thead>
           <tbody>
             {logs.map((l) => (
               <tr key={l.id}>
-                <td><StatusChip status={l.status} /></td>
-                <td><span className="badge badge--primary mono" style={{ fontSize: 11 }}>{l.method}</span></td>
-                <td className="mono">{l.path}</td>
-                <td>{l.route_name || <span className="muted">—</span>}</td>
-                <td>{l.consumer || <span className="muted">—</span>}</td>
-                <td className="mono">{l.latency_ms}ms</td>
-                <td className="mono muted">{l.client_ip || '—'}</td>
-                <td className="mono muted">{fmtDateTime(l.created_at)}</td>
+                <td data-label="Статус"><StatusChip status={l.status} /></td>
+                <td data-label="Method"><span className="badge badge--primary mono" style={{ fontSize: 11 }}>{l.method}</span></td>
+                <td className="mono" data-label="Зам">{l.path}</td>
+                <td className="mono" data-label="Латент">{l.latency_ms}ms</td>
+                <td className="mono muted" data-label="IP">{l.client_ip || '—'}</td>
+                <td className="mono muted" data-label="Огноо">{fmtDateTime(l.created_at)}</td>
               </tr>
             ))}
           </tbody>

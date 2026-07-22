@@ -1,17 +1,18 @@
-// Government Template Platform V3.0
+// Government Developer Portal V3.0
 // Gerege Systems Development Team & Claude AI, 2026
 import React from 'react';
 import { redirect } from 'next/navigation';
 import { hasSession } from '@/lib/session';
 import { safeNext } from '@/lib/navigation';
+import { fetchActiveTheme } from '@/lib/api';
 import LandingPage from '@/components/landing/LandingPage';
 
 export const dynamic = 'force-dynamic';
 
-// developer.dgov.mn нь хөгжүүлэгчийн портал — аппликейшндээ eID нэвтрэлтийг OAuth2 /
-// OIDC-ээр нэмэх. Нүүр хуудас нь порталын чадваруудыг харуулсан landing бөгөөд
-// нэвтрэх картыг (LoginForm) hero дотроо шигтгэсэн. Нэвтэрсэн хэрэглэгчийг /me
-// домэйн (консол) руу шилжүүлнэ.
+// developer.dgov.mn — Government Developer Portal-ын нүүр хуудас. Аппликейшндээ
+// үндэсний eID нэвтрэлтийг OAuth2 / OpenID Connect-ээр нэмэх хөгжүүлэгчийн
+// порталын landing бөгөөд нэвтрэх картыг (LoginForm) hero дотроо шигтгэсэн.
+// Нэвтэрсэн хэрэглэгчийг /me домэйн руу шилжүүлнэ.
 export default async function Home(props: {
   searchParams: Promise<{ next?: string; notice?: string; glink?: string; gerror?: string }>;
 }) {
@@ -24,12 +25,16 @@ export default async function Home(props: {
   const safe = safeNext(searchParams.next);
   const next = safe === '/' ? '/me/dashboard' : safe;
 
+  // Идэвхтэй theme-ийн landing текст/цэс — LandingPage copy.ts default дээр merge хийнэ.
+  const theme = await fetchActiveTheme();
+
   return (
     <LandingPage
       next={next}
       notice={searchParams.notice}
       googleLink={searchParams.glink === '1'}
       googleError={!!searchParams.gerror}
+      themeLanding={theme.landing}
     />
   );
 }

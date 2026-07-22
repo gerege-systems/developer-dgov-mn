@@ -1,6 +1,6 @@
 "use client";
 
-// Government Template Platform V3.0
+// Government Developer Portal V3.0
 // Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 
 import React from 'react';
@@ -18,10 +18,14 @@ import { pkiGet, type PkiSummary } from '@/lib/pki';
 export default function EidIdView({ me }: { me: SessionUser }) {
   const { T, lang } = useT();
   const eid = me.eid;
-  const q = useQuery({ queryKey: ['eid-pki-summary'], queryFn: () => pkiGet<PkiSummary>('/api/me/eid/summary'), enabled: !!eid });
+  // Локал eID linkage (me.eid) эсвэл SSO eID proxy идэвхтэй бол харуулна. Proxy
+  // хэрэглэгчид civil_id/national_id/kyc локалд байхгүй тул тэдгээрийг нөхцөлтэй
+  // харуулж, нэр/PKI тоог summary-аас авна.
+  const canView = !!eid || !!me.eidProxy;
+  const q = useQuery({ queryKey: ['eid-pki-summary'], queryFn: () => pkiGet<PkiSummary>('/api/me/eid/summary'), enabled: canView });
   const s = q.data?.data ?? null;
 
-  if (!eid) {
+  if (!canView) {
     return <section className="card"><p className="muted" style={{ padding: '4px 2px' }}>{T('eid.id.notEid')}</p></section>;
   }
 
@@ -37,8 +41,8 @@ export default function EidIdView({ me }: { me: SessionUser }) {
               <span className="badge badge--success">{T('eid.id.verified')}</span>
             </div>
             <div className="profile-card__sub">
-              {eid.nationalId && <><span className="mono">{eid.nationalId}</span><span className="dot" /></>}
-              <span>Civil ID: <span className="mono">{eid.civilId}</span></span>
+              {eid?.nationalId && <><span className="mono">{eid.nationalId}</span><span className="dot" /></>}
+              {eid?.civilId && <span>Civil ID: <span className="mono">{eid.civilId}</span></span>}
             </div>
           </div>
           <div className="profile-card__action">
@@ -65,8 +69,8 @@ export default function EidIdView({ me }: { me: SessionUser }) {
           <span className="card__sub"><span className="mono">eidmongolia.mn/v3</span></span>
         </div>
         <div>
-          {eid.kycLevel && <div className="defrow"><span className="defrow__label">{T('eid.id.kyc')}</span><span className="defrow__value"><span className="chip chip--neutral">{eid.kycLevel}</span></span></div>}
-          {eid.documentNumber && <div className="defrow"><span className="defrow__label">{T('eid.id.docNumber')}</span><span className="defrow__value mono">{eid.documentNumber.slice(0, 20)}…</span></div>}
+          {eid?.kycLevel && <div className="defrow"><span className="defrow__label">{T('eid.id.kyc')}</span><span className="defrow__value"><span className="chip chip--neutral">{eid.kycLevel}</span></span></div>}
+          {eid?.documentNumber && <div className="defrow"><span className="defrow__label">{T('eid.id.docNumber')}</span><span className="defrow__value mono">{eid.documentNumber.slice(0, 20)}…</span></div>}
           <div className="defrow"><span className="defrow__label"><KeyRound size={13} style={{ verticalAlign: 'middle', marginRight: 6 }} />{T('eid.id.certs')}</span><span className="defrow__value">{s ? `${s.certificates.valid}/${s.certificates.total}` : '—'}</span></div>
           <div className="defrow"><span className="defrow__label"><Smartphone size={13} style={{ verticalAlign: 'middle', marginRight: 6 }} />{T('eid.id.devices')}</span><span className="defrow__value">{s ? `${s.devices_active}/${s.devices_total}` : '—'}</span></div>
           <div className="defrow"><span className="defrow__label">{T('eid.id.created')}</span><span className="defrow__value mono">{formatTS(me.createdAt)}</span></div>

@@ -1,4 +1,4 @@
-// Government Template Platform V3.0
+// Government Developer Portal V3.0
 // Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 
 // BFF хамгаалалтын unit тест: checkOrigin (double-submit CSRF header + Origin
@@ -27,20 +27,20 @@ describe('checkOrigin', () => {
   });
 
   it('passes when Origin matches APP_ORIGIN', () => {
-    process.env.APP_ORIGIN = 'https://template.dgov.mn';
+    process.env.APP_ORIGIN = 'https://developer.dgov.mn';
     const res = checkOrigin(
-      req('https://template.dgov.mn/api/x', {
+      req('https://developer.dgov.mn/api/x', {
         'x-dgov-csrf': '1',
-        origin: 'https://template.dgov.mn',
+        origin: 'https://developer.dgov.mn',
       }),
     );
     expect(res).toBeNull();
   });
 
   it('rejects a mismatched Origin → 403', () => {
-    process.env.APP_ORIGIN = 'https://template.dgov.mn';
+    process.env.APP_ORIGIN = 'https://developer.dgov.mn';
     const res = checkOrigin(
-      req('https://template.dgov.mn/api/x', {
+      req('https://developer.dgov.mn/api/x', {
         'x-dgov-csrf': '1',
         origin: 'https://evil.example',
       }),

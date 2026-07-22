@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Government Template Platform V3.0
+# Government Developer Portal V3.0
 # Gerege Systems Development Team & Claude AI, 2026
 #
 # Remote deploy step, run ON the server by the CD workflow (.github/workflows/deploy.yml)
@@ -12,6 +12,16 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_DIR"
 
 echo "▶ Deploy commit: $(git rev-parse --short HEAD) — $(git log -1 --pretty=%s)"
+
+# INTEGRATION_ENC_KEY — superadmin MFA-ийн TOTP secret болон integrations OAuth
+# token-ийг AES-GCM-ээр шифрлэх түлхүүр. CD workflow нь GitHub secret-ээс энэ
+# скриптэд дамжуулна. backend.env-д БАЙХГҮЙ тохиолдолд Л нэг удаа бичнэ
+# (idempotent) — нэгэнт тавьсан түлхүүрийг дахин бичихгүй тул хэзээ ч
+# өөрчлөгдөхгүй (өөрчилвөл өмнөх шифрлэсэн бүх өгөгдөл эвдэрнэ).
+if [ -n "${INTEGRATION_ENC_KEY:-}" ] && ! grep -q '^INTEGRATION_ENC_KEY=' backend.env 2>/dev/null; then
+  printf 'INTEGRATION_ENC_KEY=%s\n' "$INTEGRATION_ENC_KEY" >> backend.env
+  echo "▶ INTEGRATION_ENC_KEY-г backend.env-д бичлээ (superadmin MFA идэвхжинэ)"
+fi
 
 echo "▶ Building images (api · web · migrate)…"
 docker compose build

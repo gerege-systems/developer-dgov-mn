@@ -1,4 +1,4 @@
-// Government Template Platform V3.0
+// Government Developer Portal V3.0
 // Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 
 // Package eid нь eID Mongolia (eidmongolia.mn) identity provider-ийн Relying
@@ -291,6 +291,11 @@ type authInitiateBody struct {
 	SignatureProtocol string        `json:"signatureProtocol"`
 	RPChallenge       string        `json:"rpChallenge"`
 	Interactions      []interaction `json:"interactions"`
+	// RPApp / RPAppURL — нэвтрэлт эхлүүлж буй RP апп-ийн нэр/домэйн. eID апп-ийн
+	// push дэлгэц ҮҮНИЙГ харуулна ("<апп> нэвтрэхийг хүсэж байна"). Шууд RP тул
+	// апп-ийн нэрээр RP-ийн нэрийг (EID_RP_NAME) илгээнэ.
+	RPApp    string `json:"rp_app,omitempty"`
+	RPAppURL string `json:"rp_app_url,omitempty"`
 	// InitialCallbackURL — SAME-DEVICE (mobile browser App2App) буцах URL. Хоосон бол CROSS-DEVICE
 	// (desktop QR/push): eID backend утас руу callback дамжуулахгүй, browser өөрөө poll хийнэ.
 	// eID backend үүнийг өөрийн стандарт зам (/auth/eid/callback) руу force-normalize хийдэг.
@@ -316,6 +321,7 @@ func (c *client) newAuthBody(displayText, callbackURL string) (authInitiateBody,
 		SignatureProtocol:  "ACSP_V2",
 		RPChallenge:        challenge,
 		Interactions:       []interaction{{Type: "displayTextAndPIN", DisplayText60: dt}},
+		RPApp:              c.rpName, // eID push дэлгэц дээр харагдах RP апп-ийн нэр
 		InitialCallbackURL: callbackURL,
 	}, nil
 }

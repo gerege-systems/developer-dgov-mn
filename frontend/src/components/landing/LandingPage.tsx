@@ -1,17 +1,27 @@
-// Government Template Platform V3.0
+// Government Developer Portal V3.0
 // Gerege Systems Development Team & Claude AI, 2026
 "use client";
 
 import React from 'react';
 import {
   Fingerprint, Sparkles, ShieldCheck, Network, Waypoints, Users,
-  Terminal, Layers, Bot, CheckCircle2, ArrowRight, ChevronRight,
+  Terminal, Layers, Bot, CheckCircle2, ArrowRight,
   LogIn, Languages, KeyRound, ScrollText, Globe, Gauge, ShieldAlert,
+  Menu, X,
 } from 'lucide-react';
 import { useLang } from '@/lib/lang';
-import AnonThemeToggle from '@/components/AnonThemeToggle';
-import LoginForm from '@/app/login/LoginForm';
-import { landingCopy } from './copy';
+import { landingCopy, type LandingCopy } from './copy';
+import { deepMerge } from '@/lib/theme';
+
+// Нээлттэй эх (Open Source) кодын GitHub репозитор.
+const GITHUB_URL = 'https://github.com/gerege-systems/developer-dgov-mn';
+
+// GitHub-ийн лого (lucide-react нь brand icon-уудыг гаргадаггүй тул inline SVG).
+const GitHubMark = ({ size = 18 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+  </svg>
+);
 
 // «Бүх боломж» хэсгийн жижиг картуудын icon-ууд (copy.ts-ийн items дараалалтай нэг эрэмбэ).
 const EVERYTHING_ICONS = [Fingerprint, Globe, KeyRound, ScrollText, CheckCircle2, Languages, Gauge, ShieldAlert];
@@ -22,17 +32,29 @@ interface Props {
   notice?: string;
   googleLink?: boolean;
   googleError?: boolean;
+  /** Идэвхтэй theme-ийн landing текст/цэс (mn/en) — copy.ts default дээр давхарлана. */
+  themeLanding?: { mn?: Partial<LandingCopy>; en?: Partial<LandingCopy> };
 }
 
 /**
- * DGOV-Developer Portal нүүр (landing) — нэвтрээгүй зочдод харагдах маркетингийн
- * нүүр. DAN-ий бүх чадварыг харуулж, hero-ийн баруун талд ОДОО БАЙГАА нэвтрэх
- * картыг (SigninShell доторх `.signin-card` + LoginForm) шигтгэв. Брэнд токен
- * (DAN blue + gold, light/dark) дээр найруулав.
+ * Government Developer Portal — хөгжүүлэгчийн порталын нүүр
+ * (landing). Нэвтрээгүй зочдод харагдах маркетингийн нүүр. Платформын бүх
+ * чадварыг харуулж, hero-ийн баруун талд Government SSO (sso.dgov.mn)-оор
+ * нэвтрэх картыг шигтгэв. Нэвтрэх товч дарахад sso.dgov.mn руу шилжиж, тэндээ
+ * нэвтэрч, буцаж ирнэ (OIDC RP урсгал). Брэнд токен (blue + gold) дээр найруулав.
  */
-export default function LandingPage({ next, notice, googleLink, googleError }: Props) {
+export default function LandingPage({ next, themeLanding }: Props) {
   const { lang, setLang } = useLang();
-  const t = landingCopy[lang];
+  // Mobile (<900px)-д хэсгүүдийн цэс inline харагдахгүй тул hamburger-ээр нээгдэх
+  // dropdown цэс.
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  // Идэвхтэй theme-ийн текст байвал copy.ts default дээр гүн merge хийнэ.
+  const override = themeLanding?.[lang];
+  const t = override ? deepMerge(landingCopy[lang], override) : landingCopy[lang];
+  const brand = t.brand || 'Government Developer Portal';
+  // Government SSO (sso.dgov.mn) руу нэвтрэлт эхлүүлэх — backend /sso/start руу
+  // прокси хийж, browser-ийг sso.dgov.mn-ий authorize URL руу шилжүүлнэ.
+  const ssoHref = `/api/auth/sso/start${next ? `?next=${encodeURIComponent(next)}` : ''}`;
 
   return (
     <div className="lp">
@@ -42,13 +64,14 @@ export default function LandingPage({ next, notice, googleLink, googleError }: P
           <a className="lp-nav__brand" href="#top">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img className="lp-nav__mark" src="/brand.webp" alt="" aria-hidden="true" />
-            <span className="lp-nav__name">DGOV-Developer Portal</span>
+            <span className="lp-nav__name">{brand}</span>
           </a>
 
           <nav className="lp-nav__links" aria-label="Хэсгүүд">
             <a href="#features">{t.nav.features}</a>
             <a href="#security">{t.nav.security}</a>
             <a href="#tech">{t.nav.tech}</a>
+            <a href="/docs/">{t.nav.docs}</a>
           </nav>
 
           <div className="lp-nav__actions">
@@ -61,18 +84,36 @@ export default function LandingPage({ next, notice, googleLink, googleError }: P
               <Languages size={15} strokeWidth={2} />
               <span>{lang === 'mn' ? 'EN' : 'МН'}</span>
             </button>
-            <AnonThemeToggle />
-            <a className="lp-btn lp-btn--gold lp-btn--sm" href="#login">
+            <a className="lp-btn lp-btn--gold lp-btn--sm" href={ssoHref}>
               <LogIn size={16} strokeWidth={2} />
               <span>{t.nav.login}</span>
             </a>
+            <button
+              type="button"
+              className="lp-nav__burger"
+              aria-label={lang === 'en' ? 'Menu' : 'Цэс'}
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen((o) => !o)}
+            >
+              {menuOpen ? <X size={20} strokeWidth={2} /> : <Menu size={20} strokeWidth={2} />}
+            </button>
           </div>
         </div>
+
+        {menuOpen && (
+          <nav className="lp-nav__mobile" aria-label="Хэсгүүд">
+            <a href="#features" onClick={() => setMenuOpen(false)}>{t.nav.features}</a>
+            <a href="#security" onClick={() => setMenuOpen(false)}>{t.nav.security}</a>
+            <a href="#tech" onClick={() => setMenuOpen(false)}>{t.nav.tech}</a>
+            <a href="/docs/" onClick={() => setMenuOpen(false)}>{t.nav.docs}</a>
+          </nav>
+        )}
       </header>
 
       <main id="top">
-        {/* ---------- Hero (login card шигтгэсэн) ---------- */}
+        {/* ---------- Hero (зүүн: текст · full-bleed чимэглэл) ---------- */}
         <section className="lp-hero">
+          <div className="lp-hero__art" aria-hidden="true" />
           <div className="lp-hero__pattern" aria-hidden="true" />
           <div className="lp-hero__inner">
             <div className="lp-hero__copy">
@@ -88,11 +129,12 @@ export default function LandingPage({ next, notice, googleLink, googleError }: P
               <p className="lp-hero__lede">{t.hero.lede}</p>
 
               <div className="lp-hero__cta">
-                <a className="lp-btn lp-btn--gold lp-btn--lg" href="#login">
+                <a className="lp-btn lp-btn--gold lp-btn--lg" href={ssoHref}>
                   {t.hero.ctaLogin}
                   <ArrowRight size={18} strokeWidth={2} />
                 </a>
-                <a className="lp-btn lp-btn--outline lp-btn--lg" href="#features">
+                <a className="lp-btn lp-btn--outline lp-btn--lg" href={GITHUB_URL} target="_blank" rel="noreferrer">
+                  <GitHubMark size={18} />
                   {t.hero.ctaExplore}
                 </a>
               </div>
@@ -105,18 +147,6 @@ export default function LandingPage({ next, notice, googleLink, googleError }: P
                   </div>
                 ))}
               </div>
-            </div>
-
-            {/* ОДОО БАЙГАА нэвтрэх карт — hero-ийн баруун талд шигтгэв */}
-            <div className="lp-hero__visual">
-              <section id="login" className="signin-card lp-hero__login" aria-labelledby="login-title">
-                <LoginForm
-                  next={next}
-                  notice={notice}
-                  googleLink={googleLink}
-                  googleError={googleError}
-                />
-              </section>
             </div>
           </div>
         </section>
@@ -271,12 +301,12 @@ export default function LandingPage({ next, notice, googleLink, googleError }: P
             <h2>{t.cta.title}</h2>
             <p>{t.cta.sub}</p>
             <div className="lp-cta__buttons">
-              <a className="lp-btn lp-btn--gold lp-btn--lg" href="#login">
+              <a className="lp-btn lp-btn--gold lp-btn--lg" href={ssoHref}>
                 {t.cta.ctaLogin}
                 <ArrowRight size={18} strokeWidth={2} />
               </a>
-              <a className="lp-btn lp-btn--glass lp-btn--lg" href="#features">
-                <ChevronRight size={18} strokeWidth={2} />
+              <a className="lp-btn lp-btn--glass lp-btn--lg" href={GITHUB_URL} target="_blank" rel="noreferrer">
+                <GitHubMark size={18} />
                 {t.cta.ctaExplore}
               </a>
             </div>
@@ -292,7 +322,7 @@ export default function LandingPage({ next, notice, googleLink, googleError }: P
             <div className="lp-footer__mark">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/brand.webp" alt="" aria-hidden="true" />
-              <span>DGOV-Developer Portal</span>
+              <span>{brand}</span>
             </div>
             <p>{t.footer.tagline}</p>
           </div>

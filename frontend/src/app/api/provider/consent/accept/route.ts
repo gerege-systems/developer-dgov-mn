@@ -1,4 +1,4 @@
-// eID based AI enabled Government Template Platform V3.0
+// eID based AI enabled Government Developer Portal V3.0
 import { authedFetch } from '@/lib/api';
 import { checkOrigin, proxyResult, readJson } from '@/lib/bff';
 

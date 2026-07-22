@@ -1,8 +1,9 @@
 import React from 'react';
-import { Inter, JetBrains_Mono } from 'next/font/google';
+import { Inter, JetBrains_Mono, Source_Serif_4 } from 'next/font/google';
 import './globals.css';
 import { LangProvider } from '@/lib/lang';
 import Providers from '@/components/Providers';
+import { fetchActiveTheme } from '@/lib/api';
 
 // Фонтыг build үед татаж next/font өөрөө host хийдэг тул CSP-г чанд 'self'-ээр
 // үлдээж болно (гадны фонт host хэрэггүй).
@@ -27,25 +28,46 @@ const jbMono = JetBrains_Mono({
   display: 'swap',
 });
 
+// Сонголттой serif гэр бүл — html[data-font="serif"] үед --font-serif-stack-аар
+// display/body-д тэжээгдэнэ. next/font build-time host хийдэг тул CSP 'self' хэвээр.
+const sourceSerif = Source_Serif_4({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-serif-stack',
+  display: 'swap',
+});
+
 export const metadata = {
-  title: 'DGOV-Developer Portal',
+  title: 'Government Developer Portal',
   description:
-    'eID based, AI enabled. DGOV-Developer Portal — аппликейшндээ үндэсний цахим үнэмлэг (eID)-ийн нэвтрэлтийг OAuth2 / OpenID Connect-ээр нэмэх хөгжүүлэгчийн портал: апп бүртгэх, client_id/secret, баталгаажсан claim.',
+    'eID based, AI enabled. Government Developer Portal — аппликейшндээ үндэсний цахим үнэмлэг (eID)-ийн нэвтрэлтийг OAuth2 / OpenID Connect-ээр нэмэх хөгжүүлэгчийн портал: апп бүртгэх, client_id/secret, баталгаажсан claim, гарын үсгийн API.',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Админы сайт-харагдацыг client рүү дамжуулна. Үүнийг ЗӨВХӨН нийтийн хуудсанд
+  // (landing/login) хэрэглэнэ — хэрэглэх/эс хэрэглэхийг theme-bootstrap.js зам
+  // (pathname) харгалзан шийднэ. SSR-д <html>-д bake хийхгүй: нэвтэрсэн апп-д
+  // админ утга анивчихаас сэргийлнэ; блоклогч bootstrap FOUC-ийг хамгаална.
+  // Утгууд backend-д баталгаажсан (preset/hex/enum) тул аюулгүй; '<'-г escape
+  // хийж </script> тасалдлаас сэргийлнэ.
+  const theme = await fetchActiveTheme();
+  const appearance = theme.appearance ?? {};
+  const siteJson = JSON.stringify(appearance).replace(/</g, '\\u003c');
+
   return (
     <html
       lang="mn"
-      className={`${inter.variable} ${interBody.variable} ${jbMono.variable}`}
-      // theme-bootstrap.js нь hydration-аас өмнө <html>-д data-theme-pref
-      // тавьдаг тул server/client attribute зөрүүгийн warning-ийг дарна.
+      className={`${inter.variable} ${interBody.variable} ${jbMono.variable} ${sourceSerif.variable}`}
+      // theme-bootstrap.js нь hydration-аас өмнө <html>-д data-* тавьдаг тул
+      // server/client attribute зөрүүгийн warning-ийг дарна.
       suppressHydrationWarning
     >
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="color-scheme" content="light dark" />
         <link rel="icon" type="image/webp" href="/brand.webp" />
+        {/* Идэвхтэй landing theme-ийн харагдац (зөвхөн нийтийн хуудсанд bootstrap хэрэглэнэ). */}
+        <script dangerouslySetInnerHTML={{ __html: `window.__SITE_THEME__=${siteJson};` }} />
         {/* FOUC-аас сэргийлэх — гадаад блоклогч script (public/theme-bootstrap.js).
             Статик, адил-origin, 0.5KB файл тул XSS / гуравдагч талын эрсдэлгүй;
             body зурахаас ӨМНӨ ажиллах ёстой тул async/defer хийхгүй (эс бөгөөс

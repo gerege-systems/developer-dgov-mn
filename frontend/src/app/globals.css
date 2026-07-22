@@ -6,6 +6,14 @@
    ============================================================================ */
 
 :root {
+  /* Landing (нүүр) hero-ийн navy дэвсгэрийн default. :root-д тавьсан тул admin
+     theme (theme-bootstrap.js) <html>-д --lp-navy-г override хийхэд .lp дотор
+     уламжлагдана. Landing light/dark аль алинд ижил (үргэлж гүн navy). */
+  --lp-navy:   oklch(24% 0.055 260);
+  /* --lp-header нь landing-ийн ДЭЭД цэс (nav)-ийн дэвсгэр — --lp-navy-гаас
+     ТУСДАА удирдана (admin theme lpHeader). Default нь ижил navy. */
+  --lp-header: oklch(24% 0.055 260);
+
   /* Гадаргуу */
   --bg:        oklch(98.5% 0.003 260);
   --surface:   oklch(100% 0 0);
@@ -85,6 +93,151 @@ html[data-theme="dark"] {
   --danger-hover: oklch(76% 0.19 25);
   --danger-soft:  oklch(28% 0.10 25);
   --shadow-menu: 0 12px 32px oklch(6% 0.005 260 / 0.55), 0 2px 6px oklch(2% 0 0 / 0.4);
+}
+
+/* ============================================================================
+   Өнгөний хослол (accent) — ЗӨВХӨН brand (--dan-blue*) токенуудыг сольдог.
+   Семантик өнгө (--gold итгэл, --success, --danger) хамаарахгүй — утга тогтмол.
+   Анхдагч "cobalt" нь :root/dark дахь утга тул тусдаа блок хэрэггүй.
+   Гэгээн загварын override-ууд эхэлж, дараа нь тод байдлаар тохируулсан
+   харанхуй загварын өндөр-тодорхойлолттой override-ууд ирнэ (эс тэгвээс
+   dark+accent дээр гэгээн утга давхцана).
+   ============================================================================ */
+html[data-accent="teal"] {
+  --dan-blue:        oklch(58% 0.13 195);
+  --dan-blue-hover:  oklch(53% 0.14 195);
+  --dan-blue-active: oklch(48% 0.15 195);
+  --dan-blue-soft:   oklch(95% 0.03 195);
+  --dan-blue-text:   oklch(52% 0.13 195);
+}
+html[data-accent="violet"] {
+  --dan-blue:        oklch(52% 0.20 292);
+  --dan-blue-hover:  oklch(47% 0.21 292);
+  --dan-blue-active: oklch(42% 0.22 292);
+  --dan-blue-soft:   oklch(95% 0.035 292);
+  --dan-blue-text:   oklch(50% 0.21 292);
+}
+html[data-accent="emerald"] {
+  --dan-blue:        oklch(56% 0.14 158);
+  --dan-blue-hover:  oklch(51% 0.15 158);
+  --dan-blue-active: oklch(46% 0.16 158);
+  --dan-blue-soft:   oklch(95% 0.035 158);
+  --dan-blue-text:   oklch(52% 0.14 158);
+}
+html[data-accent="amber"] {
+  --dan-blue:        oklch(58% 0.15 62);
+  --dan-blue-hover:  oklch(53% 0.16 62);
+  --dan-blue-active: oklch(48% 0.16 62);
+  --dan-blue-soft:   oklch(94% 0.04 68);
+  --dan-blue-text:   oklch(50% 0.13 62);
+}
+html[data-theme="dark"][data-accent="teal"] {
+  --dan-blue:        oklch(70% 0.13 195);
+  --dan-blue-hover:  oklch(76% 0.13 195);
+  --dan-blue-active: oklch(82% 0.12 195);
+  --dan-blue-soft:   oklch(28% 0.07 195);
+  --dan-blue-text:   oklch(78% 0.12 195);
+}
+html[data-theme="dark"][data-accent="violet"] {
+  --dan-blue:        oklch(68% 0.18 292);
+  --dan-blue-hover:  oklch(74% 0.18 292);
+  --dan-blue-active: oklch(80% 0.17 292);
+  --dan-blue-soft:   oklch(30% 0.12 292);
+  --dan-blue-text:   oklch(78% 0.17 292);
+}
+html[data-theme="dark"][data-accent="emerald"] {
+  --dan-blue:        oklch(70% 0.15 158);
+  --dan-blue-hover:  oklch(76% 0.15 158);
+  --dan-blue-active: oklch(82% 0.14 158);
+  --dan-blue-soft:   oklch(28% 0.09 158);
+  --dan-blue-text:   oklch(78% 0.14 158);
+}
+html[data-theme="dark"][data-accent="amber"] {
+  --dan-blue:        oklch(76% 0.14 70);
+  --dan-blue-hover:  oklch(82% 0.14 70);
+  --dan-blue-active: oklch(86% 0.13 70);
+  --dan-blue-soft:   oklch(30% 0.08 68);
+  --dan-blue-text:   oklch(80% 0.13 72);
+}
+
+/* Custom accent — админы сонгосон дурын brand hex (--dan-blue-base-г <html>-д
+   inline тавина). hover/active/soft/text хувилбаруудыг color-mix-ээр гаргана
+   (oklab — ойлголтын хувьд жигд). --on-dan-blue цагаан хэвээр. */
+html[data-accent="custom"] {
+  --dan-blue:        var(--dan-blue-base);
+  --dan-blue-hover:  color-mix(in oklab, var(--dan-blue-base), black 12%);
+  --dan-blue-active: color-mix(in oklab, var(--dan-blue-base), black 22%);
+  --dan-blue-soft:   color-mix(in oklab, var(--dan-blue-base), white 88%);
+  --dan-blue-text:   color-mix(in oklab, var(--dan-blue-base), black 10%);
+}
+html[data-theme="dark"][data-accent="custom"] {
+  --dan-blue:        color-mix(in oklab, var(--dan-blue-base), white 18%);
+  --dan-blue-hover:  color-mix(in oklab, var(--dan-blue-base), white 28%);
+  --dan-blue-active: color-mix(in oklab, var(--dan-blue-base), white 38%);
+  --dan-blue-soft:   color-mix(in oklab, var(--dan-blue-base), black 62%);
+  --dan-blue-text:   color-mix(in oklab, var(--dan-blue-base), white 30%);
+}
+
+/* ============================================================================
+   Landing theme — бүрэн палетр. Админ theme-ийн base токенуудыг (--bg --surface
+   --surface-2 --fg --muted --border --border-strong --dan-blue --gold --success
+   --danger) <html>-д inline тавихад hover/soft/text хувилбарыг эндээс color-mix-
+   ээр гаргана. ЗӨВХӨН нийтийн (landing/login) хуудсанд bootstrap data-theme-custom
+   тавина. --on-dan-blue цагаан хэвээр (админ хангалттай гүн danBlue сонгоно).
+   ============================================================================ */
+html[data-theme-custom] {
+  --dan-blue-hover:  color-mix(in oklab, var(--dan-blue), black 12%);
+  --dan-blue-active: color-mix(in oklab, var(--dan-blue), black 22%);
+  --dan-blue-soft:   color-mix(in oklab, var(--dan-blue), white 88%);
+  --dan-blue-text:   color-mix(in oklab, var(--dan-blue), black 10%);
+  --gold-soft:       color-mix(in oklab, var(--gold), white 88%);
+  --gold-text:       color-mix(in oklab, var(--gold), black 22%);
+  --success-soft:    color-mix(in oklab, var(--success), white 88%);
+  --danger-hover:    color-mix(in oklab, var(--danger), black 12%);
+  --danger-soft:     color-mix(in oklab, var(--danger), white 88%);
+  --faint:           color-mix(in oklab, var(--muted), var(--surface) 45%);
+}
+html[data-theme="dark"][data-theme-custom] {
+  --dan-blue-hover:  color-mix(in oklab, var(--dan-blue), white 12%);
+  --dan-blue-active: color-mix(in oklab, var(--dan-blue), white 24%);
+  --dan-blue-soft:   color-mix(in oklab, var(--dan-blue), black 62%);
+  --dan-blue-text:   color-mix(in oklab, var(--dan-blue), white 26%);
+  --gold-soft:       color-mix(in oklab, var(--gold), black 62%);
+  --gold-text:       color-mix(in oklab, var(--gold), white 20%);
+  --success-soft:    color-mix(in oklab, var(--success), black 62%);
+  --danger-hover:    color-mix(in oklab, var(--danger), white 12%);
+  --danger-soft:     color-mix(in oklab, var(--danger), black 62%);
+  --faint:           color-mix(in oklab, var(--muted), var(--surface) 45%);
+}
+
+/* ============================================================================
+   Фонт — data-font нь эцсийн --font-display / --font-body-г бүхэлд нь дарж
+   бичнэ. Гэр бүлүүд next/font-оор self-host (layout.tsx). Mono тогтмол.
+   Анхдагч "inter" нь :root-ийн утга тул тусдаа блок хэрэггүй.
+   ============================================================================ */
+html[data-font="serif"] {
+  --font-display: var(--font-serif-stack), Georgia, 'Times New Roman', serif;
+  --font-body:    var(--font-serif-stack), Georgia, 'Times New Roman', serif;
+}
+html[data-font="system"] {
+  --font-display: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-body:    -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+}
+
+/* ============================================================================
+   Стиль / нягтрал — геометр ба суурь хэмжээс. Анхдагч "comfortable" нь :root.
+   "compact" нь topbar/зай/радиусыг нягтруулж, суурь фонтыг бага зэрэг жижигрүүлнэ.
+   ============================================================================ */
+html[data-style="compact"] {
+  --topbar-h: 56px;
+  --content-pad-x: 24px;
+  --radius-card:  8px;
+  --radius-input: 6px;
+  --radius-chip:  5px;
+}
+html[data-style="compact"] body {
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 html { color-scheme: light; }
@@ -563,6 +716,21 @@ html[lang="en"] .i18n-banner { display: block; }
 .dlg-title { font-size: 17px; font-weight: 700; color: var(--fg); margin: 0; }
 .dlg-desc { font-size: 13px; color: var(--muted); margin: 0; }
 
+/* Popup/modal mobile дээр — гар утсанд бараг бүтэн өргөнтэй, дээрээсээ эхэлж
+   (төвд байрлуулбал өндөр контент дээд талаараа тасардаг), урт форм overlay
+   дотроо гүйлгэгдэнэ. Хаах X товч томроод хүрэхэд амар болно. */
+@media (max-width: 640px) {
+  .dlg-overlay { align-items: flex-start; padding: 12px; }
+  .dlg-content {
+    max-width: none;
+    border-radius: 16px;
+    padding: 20px;
+    /* overlay-д доод зай + iOS safe-area */
+    margin-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  }
+  .dlg-close { width: 34px; height: 34px; top: 12px; right: 12px; }
+}
+
 /* ---------- Form ---------- */
 
 .form-grid { display: grid; gap: 16px; }
@@ -598,6 +766,8 @@ html[lang="en"] .i18n-banner { display: block; }
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   padding: 10px 16px;
+  /* Бүх товч нэвтрэх товчтой (btn--lg ≈ 44px) ижил өндөртэй — апп даяар нэгдсэн. */
+  min-height: 44px;
   font-size: 14px;
   font-weight: 500;
   border-radius: var(--radius-input);
@@ -698,8 +868,11 @@ html[lang="en"] .i18n-banner { display: block; }
 }
 .profile-card__body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
 .profile-card__name { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.profile-card__name-text { font-family: var(--font-display); font-size: 18px; font-weight: 600; }
-.profile-card__sub { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.profile-card__name-text { font-family: var(--font-display); font-size: 18px; font-weight: 600; overflow-wrap: anywhere; }
+.profile-card__sub { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-width: 0; }
+/* Урт таслагдашгүй мөр (SSO имэйл sso_…@sso.local) mobile дээр хэвтээ гүйлгэлт
+   үүсгэхээс сэргийлж таслана. */
+.profile-card__sub .mono { overflow-wrap: anywhere; min-width: 0; }
 .profile-card__sub .dot::before { content: "·"; padding: 0 4px; color: var(--faint); }
 .profile-card__action { align-self: flex-start; }
 
@@ -943,9 +1116,12 @@ html[lang="en"] .i18n-banner { display: block; }
   .field-row { grid-template-columns: 1fr; }
   .grid-2 { grid-template-columns: 1fr; }
   .card { padding: 20px; }
-  .profile-card { gap: 14px; }
+  /* avatar + нэр эхний мөрөнд, "Профайл харах" товч бүтэн өргөнтэй доор нь
+     буулгаж мобайл дээр эмх цэгцтэй харагдуулна. */
+  .profile-card { gap: 14px; flex-wrap: wrap; }
   .profile-card__avatar { width: 48px; height: 48px; font-size: 17px; border-radius: 12px; }
-  .profile-card__action { align-self: stretch; }
+  .profile-card__body { flex: 1 1 auto; }
+  .profile-card__action { flex: 1 1 100%; align-self: stretch; }
   .profile-card__action .btn { width: 100%; }
   .footer { flex-direction: column; align-items: flex-start; gap: 8px; }
   .signin-shell__nav { padding: 14px 20px; }
@@ -1068,19 +1244,48 @@ html[lang="en"] .i18n-banner { display: block; }
 .sidepanel__head { display: flex; flex-direction: column; justify-content: center; gap: 1px; height: var(--topbar-h, 64px); padding: 0 16px; border-bottom: 1px solid var(--border); }
 .sidepanel__brand-name { font-size: 12px; color: var(--muted); }
 .sidepanel__title { font-family: var(--font-display); font-size: 16px; font-weight: 650; color: var(--fg); }
-.sidepanel__nav { display: flex; flex-direction: column; gap: 14px; padding: 14px 10px; overflow-y: auto; }
-.sidepanel__group { display: flex; flex-direction: column; gap: 3px; }
-.sidepanel__group-label { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--faint); padding: 4px 10px; }
+/* Гурван түвшний зүүн цэс: Систем (icon rail) → Дэд систем (accordion бар) →
+   Цэс (холбоос). Дэд систем бүр дарж нээх/хаах толгойтой — зөвхөн НЭГ нь
+   нээлттэй; нээгдэхэд chevron эргэж, доор нь цэсүүд гарна. */
+.sidepanel__nav { display: flex; flex-direction: column; gap: 0; padding: 6px 8px 16px; overflow-y: auto; }
+.sidepanel__group { display: flex; flex-direction: column; }
+/* Дэд системийн хооронд тусгаарлагч. */
+.sidepanel__group + .sidepanel__group { border-top: 1px solid var(--border); }
+/* Дэд системийн толгой — дарж нээх/хаах бар. */
+.sidepanel__group-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  width: 100%; padding: 11px 10px; border-radius: 8px;
+  background: transparent; border: 0; cursor: pointer;
+  font-family: var(--font-body); text-align: left; color: var(--muted);
+  transition: background .15s, color .15s;
+}
+.sidepanel__group-head:hover { background: var(--surface-2); color: var(--fg); }
+.sidepanel__group.is-open > .sidepanel__group-head { color: var(--fg); }
+.sidepanel__group-label {
+  font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .055em;
+}
+.sidepanel__chev { flex: 0 0 auto; color: var(--faint); transition: transform .2s ease; }
+.sidepanel__group.is-open .sidepanel__chev { transform: rotate(180deg); color: var(--muted); }
+.sidepanel__group-items { display: flex; flex-direction: column; gap: 2px; padding: 1px 0 8px; }
 .sidepanel__link {
+  position: relative;
   display: flex; align-items: center; gap: 10px;
-  padding: 9px 10px; border-radius: 10px;
+  padding: 9px 10px 9px 12px; border-radius: 9px;
   color: var(--secondary); font-size: 14px; text-decoration: none;
   transition: background .15s, color .15s;
 }
 .sidepanel__link:hover { background: var(--surface-2); color: var(--fg); }
-.sidepanel__link.is-active { background: var(--surface-2); color: var(--dan-blue); font-weight: 600; }
+.sidepanel__link.is-active { background: var(--dan-blue-soft); color: var(--dan-blue-text); font-weight: 600; }
+/* Идэвхтэй цэсийн зүүн ирмэгийн accent — байрлалыг тодоор илэрхийлнэ. */
+.sidepanel__link.is-active::before {
+  content: ""; position: absolute; left: 0; top: 7px; bottom: 7px; width: 3px;
+  border-radius: 0 3px 3px 0; background: var(--dan-blue);
+}
 
 .maincol { display: flex; flex-direction: column; min-width: 0; min-height: 100vh; }
+
+/* Mobile drawer backdrop — зөвхөн ≤900px дээр (доор), нээлттэй үед харагдана. */
+.shell2__backdrop { display: none; position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, 0.45); border: 0; padding: 0; cursor: pointer; }
 .topbar2 {
   display: flex; align-items: center; gap: 12px;
   height: var(--topbar-h, 60px); padding: 0 20px;
@@ -1091,6 +1296,14 @@ html[lang="en"] .i18n-banner { display: block; }
 .topbar2__toggle:hover { background: var(--surface-2); color: var(--fg); }
 .topbar2__spacer { flex: 1; }
 .topbar2__actions { display: flex; align-items: center; gap: 10px; }
+.topbar2__docs {
+  display: flex; align-items: center; gap: 7px;
+  height: 38px; padding: 0 14px; border-radius: 10px;
+  border: 1px solid var(--border); background: transparent;
+  color: var(--muted); font-size: 13px; font-weight: 600; text-decoration: none;
+}
+.topbar2__docs:hover { background: var(--surface-2); color: var(--fg); }
+@media (max-width: 720px) { .topbar2__docs span { display: none; } }
 .topbar2__search {
   display: flex; align-items: center; gap: 8px;
   flex: 0 1 360px; min-width: 0;
@@ -1138,12 +1351,62 @@ html[lang="en"] .i18n-banner { display: block; }
 .rbac-perm-label { display: flex; flex-direction: column; gap: 1px; align-items: flex-start; }
 .rbac-perm-label small { color: var(--faint); font-size: 11px; }
 
+/* ---------- Responsive tables ---------- */
+/* >640px: хүснэгт өөрийн саван дотор (.users-table-wrap / overflowX:auto .card)
+   хэвтээ гүйлгэгдэнэ. dtable (eID) болон rbac-matrix нь энэ горимоор үлдэнэ. */
+.users-table-wrap { -webkit-overflow-scrolling: touch; }
+
+/* ---- Хүснэгт mobile дээр — мөр бүр "шошго: утга" хосуудын карт болно ----
+   Багана олонтой хүснэгтийг хэвтээ гүйлгэхийн оронд босоо задлана. Шошгыг
+   `td[data-label]`-ээс уншина (толгойн нүдтэй ижил текст) — тиймээс шинэ
+   хүснэгт нэмэхдээ td бүрд data-label өгнө. Үйлдлийн багана нь data-label-гүй
+   (эсвэл хоосон) тул шошгогүй, бүтэн өргөнтэй мөр болно. */
+@media (max-width: 640px) {
+  .users-table-wrap { overflow-x: visible; }
+  .users-table, .users-table tbody, .users-table tr, .users-table td { display: block; width: 100%; }
+  /* Толгойг зөвхөн нүдээр нуух — дэлгэц уншигчид хэвээр хүртээмжтэй. */
+  .users-table thead {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+  .users-table tr { padding: 12px 2px; border-bottom: 1px solid var(--border); }
+  .users-table tbody tr:last-child { border-bottom: 0; }
+  .users-table td {
+    display: grid;
+    grid-template-columns: minmax(84px, 38%) 1fr;
+    gap: 10px;
+    align-items: baseline;
+    /* badge/chip нь баганаа дүүргэж сунахаас сэргийлнэ. */
+    justify-items: start;
+    padding: 6px 14px;
+    border-bottom: 0;
+  }
+  .users-table td::before {
+    content: attr(data-label);
+    color: var(--muted);
+    font-size: 11.5px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .03em;
+    overflow-wrap: anywhere;
+  }
+  /* Шошгогүй нүд (үйлдлийн багана) — бүтэн өргөн, зүүн тийш эгнэнэ. */
+  .users-table td:not([data-label]),
+  .users-table td[data-label=""] { display: block; }
+  .users-table td:not([data-label])::before,
+  .users-table td[data-label=""]::before { content: none; }
+  .users-table__actions { text-align: left; white-space: normal; padding-top: 10px; }
+  /* Урт таслагдашгүй утга (client_id, имэйл) мөрийг тэлэхээс сэргийлнэ. */
+  .users-table td .mono, .users-table td code { overflow-wrap: anywhere; }
+}
+
 .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 22px; }
 .stat-card { padding: 18px; }
 .stat-card__value { font-family: var(--font-display); font-size: 30px; font-weight: 700; color: var(--fg); }
 .stat-card__label { color: var(--muted); font-size: 13px; margin-top: 4px; }
 
-.btn--sm { padding: 5px 9px; font-size: 13px; gap: 5px; }
+/* --sm нь зөвхөн жижиг padding/фонттой; өндөр нь суурь .btn-тэй адил 44px —
+   бүх товч (нэвтрэх товч ч мөн) апп даяар ижил өндөртэй. */
+.btn--sm { padding: 5px 9px; font-size: 13px; gap: 5px; min-height: 44px; }
 
 /* Dashboard картын тор — мөр доторх картууд жигд (тэнцүү) өндөртэй. */
 .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; align-items: stretch; }
@@ -1157,9 +1420,98 @@ html[lang="en"] .i18n-banner { display: block; }
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* ---------- Mobile bottom tab bar (систем сэлгэгч) ---------- */
+/* Desktop дээр нуугдана — зөвхөн ≤900px үед iconrail-ийг орлоно. */
+:root { --bottombar-h: 60px; }
+.bottombar { display: none; }
+.bottombar__tab {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 7px 4px;
+  transition: color 0.15s ease;
+}
+.bottombar__tab.is-active { color: var(--dan-blue); }
+.bottombar__tab svg { flex: 0 0 auto; }
+.bottombar__tab span {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 @media (max-width: 900px) {
-  .shell2 { grid-template-columns: 64px 0 1fr; }
-  .shell2:not(.is-collapsed) { grid-template-columns: 64px 232px 1fr; }
+  /* Mobile: maincol нь бүтэн өргөн; iconrail-ийг доод tab bar орлоно, sidepanel
+     нь идэвхтэй системийн хуудсуудыг зүүн дээд hamburger-ээр нээгддэг зүүн drawer
+     болно — контентыг шахахгүй (өмнө нь grid шахагдаж контент харагдахгүй байсан).
+     .is-collapsed-ийн (0,2,0) specificity-г давахын тулд хоёуланг нь дурдана —
+     эс бол mobile дээр maincol нарийн зурвас болж контент шахагддаг. */
+  .shell2,
+  .shell2.is-collapsed { grid-template-columns: 1fr; }
+  /* Хэвтээ гүйлгэлтээс сэргийлэх сүүлчийн хамгаалалт — дотоод гүйлгэдэг сав
+     (жишээ нь .users-table-wrap) өөрийн overflow-x-оор ажиллана. Доод tab bar-т
+     дарагдахгүйн тулд доор нь зай үлдээнэ. */
+  .maincol .main {
+    overflow-x: clip;
+    padding-bottom: calc(var(--bottombar-h) + env(safe-area-inset-bottom, 0px) + 28px);
+  }
+  .iconrail { display: none; }
+  /* зүүн дээд булангийн hamburger — идэвхтэй системийн хуудсын цэсийг нээнэ.
+     (base дээр аль хэдийн display:flex — desktop-т grid баганыг toggle-дэнэ.) */
+
+  /* sidepanel → зүүн дээд буланд байрлах ☰ (topbar2__toggle)-оор нээгддэг зүүн
+     талын drawer. Доод tab bar-ыг бүрхэхгүйн тулд доороосоо түүний өндрөөр
+     тасарна. */
+  .sidepanel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: auto;
+    bottom: auto;
+    /* Доод tab bar-аас дээш дүүрэн өндөр. base rule-ийн height:100vh-г дарж
+       бичнэ; top+bottom-оор сунгах нь grid item-ийн align-self:start-аас болж
+       ажиллахгүй тул өндрийг шууд тооцно. dvh нь mobile хаягийн мөрийг тооцно. */
+    height: calc(100vh - var(--bottombar-h) - env(safe-area-inset-bottom, 0px));
+    height: calc(100dvh - var(--bottombar-h) - env(safe-area-inset-bottom, 0px));
+    width: min(80vw, 288px);
+    overflow-y: auto;
+    z-index: 65;
+    border-right: 1px solid var(--border);
+    border-top: 0;
+    border-radius: 0;
+    box-shadow: 8px 0 28px rgba(0, 0, 0, 0.16);
+    transform: translateX(-100%);
+    transition: transform 0.24s ease;
+  }
+  .shell2:not(.is-collapsed) .sidepanel { transform: translateX(0); }
+  .shell2:not(.is-collapsed) .shell2__backdrop { display: block; }
+
+  /* доод tab bar — фиксэд, viewport-ийн доод ирмэгт */
+  .bottombar {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 70;
+    height: calc(var(--bottombar-h) + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    align-items: stretch;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.05);
+  }
 }
 
 /* ---- AI туслахын чат (/me/ai) ---- */
@@ -1409,14 +1761,15 @@ html[lang="en"] .i18n-banner { display: block; }
 .navsearch__empty { padding: 12px; font-size: 13px; color: var(--muted, #6b7280); text-align: center; }
 
 /* ============================================================================
-   Landing (нүүр) — DGOV-Developer Portal маркетингийн хуудас (.lp-*)
+   Landing (нүүр) — Government Developer Portal V3.0 маркетингийн хуудас (.lp-*)
    Брэнд токен (--dan-blue, --gold, --surface, light/dark) дээр найруулав.
    Hero-ийн баруун талд ОДОО БАЙГАА нэвтрэх карт (.signin-card) шигтгэнэ.
    ============================================================================ */
 .lp {
-  /* Landing-д зориулсан гүн navy + алт */
-  --lp-navy:       oklch(24% 0.055 260);
-  --lp-navy-2:     oklch(29% 0.062 260);
+  /* Landing-д зориулсан гүн navy + алт. --lp-navy нь :root-д тодорхойлогдсон
+     (admin theme үүнийг <html>-д override хийж болно); --lp-navy-2 нь түүнээс
+     деривэ хийгдэх тул ганц утга солиход нав/hero/cta/footer бүгд өөрчлөгдөнө. */
+  --lp-navy-2:     color-mix(in oklab, var(--lp-navy), white 7%);
   --lp-navy-line:  oklch(100% 0 0 / 0.12);
   --lp-navy-line2: oklch(100% 0 0 / 0.22);
   --lp-on-navy:    oklch(98% 0.004 260);
@@ -1478,7 +1831,7 @@ html[lang="en"] .i18n-banner { display: block; }
 /* ---------- Nav ---------- */
 .lp-nav {
   position: sticky; top: 0; z-index: 50;
-  background: var(--lp-navy);
+  background: var(--lp-header);
   border-bottom: 1px solid var(--lp-navy-line);
 }
 .lp-nav__inner {
@@ -1493,14 +1846,18 @@ html[lang="en"] .i18n-banner { display: block; }
   font-family: var(--font-display);
   font-weight: 700; font-size: 16px; letter-spacing: -0.01em;
   color: var(--lp-on-navy); white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; min-width: 0;
 }
+/* Жижиг дэлгэц дээр урт брэнд нэрийг нуух (тугны лого хэвээр) — товчтой
+   давхцахаас сэргийлнэ. */
+@media (max-width: 560px) { .lp-nav__name { display: none; } }
 .lp-nav__links { display: none; align-items: center; gap: 30px; }
 .lp-nav__links a {
   font-size: 14.5px; font-weight: 500; color: var(--lp-on-navy-70);
   text-decoration: none; transition: color 0.14s ease;
 }
 .lp-nav__links a:hover { color: var(--lp-gold); }
-.lp-nav__actions { display: flex; align-items: center; gap: 12px; }
+.lp-nav__actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 .lp-lang {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 7px 11px;
@@ -1516,8 +1873,41 @@ html[lang="en"] .i18n-banner { display: block; }
 .lp-nav__actions .segmented { background: oklch(100% 0 0 / 0.08); border-color: var(--lp-navy-line); }
 .lp-nav__actions .segmented__item { color: var(--lp-on-navy-70); }
 
+/* Mobile hamburger + dropdown цэс (<900px). ≥900px дээр inline links харагдана. */
+.lp-nav__burger {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; padding: 0; flex-shrink: 0;
+  color: var(--lp-on-navy); background: oklch(100% 0 0 / 0.06);
+  border: 1px solid var(--lp-navy-line); border-radius: 9px; cursor: pointer;
+  transition: background 0.14s ease;
+}
+.lp-nav__burger:hover { background: oklch(100% 0 0 / 0.12); }
+.lp-nav__mobile {
+  display: flex; flex-direction: column;
+  padding: 4px var(--lp-pad) 12px;
+  border-top: 1px solid var(--lp-navy-line);
+  background: var(--lp-header);
+}
+.lp-nav__mobile a {
+  padding: 13px 4px; font-size: 15px; font-weight: 500;
+  color: var(--lp-on-navy-70); text-decoration: none;
+  border-bottom: 1px solid var(--lp-navy-line);
+}
+.lp-nav__mobile a:last-child { border-bottom: 0; }
+.lp-nav__mobile a:hover { color: var(--lp-gold); }
+@media (min-width: 900px) {
+  .lp-nav__burger, .lp-nav__mobile { display: none; }
+}
+
 /* ---------- Hero ---------- */
 .lp-hero { position: relative; background: var(--lp-navy); overflow: hidden; }
+/* Утга бүхий hero чимэглэл (full-bleed) — hero-г бүтэн дүүргэнэ */
+.lp-hero__art {
+  position: absolute; inset: 0;
+  background: url(/hero-art.svg) center center / cover no-repeat;
+  opacity: 0.95;
+  pointer-events: none;
+}
 .lp-hero__pattern {
   position: absolute; inset: 0;
   background-image: radial-gradient(circle at 1px 1px, oklch(100% 0 0 / 0.06) 1px, transparent 0);
@@ -1727,3 +2117,195 @@ html[lang="en"] .i18n-banner { display: block; }
   .lp-btn, .lp-card, .lp-mini { transition: none; }
   .lp-card:hover, .lp-mini:hover, .lp-btn:active { transform: none; }
 }
+
+/* ============================================================================
+   Харагдацын удирдлагууд (AppearanceControls) — өнгө/фонт/нягтрал
+   ============================================================================ */
+.appearance { display: grid; gap: 16px; }
+.appearance__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.appearance__label { font-size: 14px; font-weight: 500; color: var(--fg); }
+
+.accent-swatches { display: flex; gap: 8px; }
+.accent-swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  border: 2px solid var(--border);
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--on-dan-blue);
+  transition: transform 0.12s ease, border-color 0.12s ease;
+}
+.accent-swatch:hover { transform: scale(1.08); }
+.accent-swatch.is-active { border-color: var(--fg); }
+.accent-swatch:focus-visible {
+  outline: 2px solid var(--dan-blue);
+  outline-offset: 2px;
+}
+/* Swatch өнгө нь тухайн accent-ийн гэгээн загварын --dan-blue-тэй тэнцүү.
+   Токен биш тогтмол утга (тухайн swatch-ийн танигдах өнгө) — accent-аас
+   хамааралгүй байх ёстой тул зориуд энд хатуу бичив. */
+.accent-swatch[data-swatch="cobalt"]  { background: oklch(53% 0.21 257); }
+.accent-swatch[data-swatch="teal"]    { background: oklch(58% 0.13 195); }
+.accent-swatch[data-swatch="violet"]  { background: oklch(52% 0.20 292); }
+.accent-swatch[data-swatch="emerald"] { background: oklch(56% 0.14 158); }
+.accent-swatch[data-swatch="amber"]   { background: oklch(58% 0.15 62); }
+/* Custom swatch — сонгоогүй үед солонго conic, сонгосон үед inline hex өнгө. */
+.accent-swatch--custom {
+  background: conic-gradient(from 0deg,
+    oklch(60% 0.2 20), oklch(70% 0.18 90), oklch(65% 0.15 160),
+    oklch(60% 0.2 260), oklch(55% 0.22 320), oklch(60% 0.2 20));
+}
+
+/* Админы харагдац тохиргооны өнгө сонгогч (input[type=color]). */
+.color-input {
+  width: 44px;
+  height: 30px;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  background: var(--surface);
+  cursor: pointer;
+}
+.color-input::-webkit-color-swatch-wrapper { padding: 0; }
+.color-input::-webkit-color-swatch { border: none; border-radius: 4px; }
+
+/* Нэвтрэхээс өмнөх topbar — харагдац цэс + загвар солигчийг зэрэгцүүлнэ */
+.signin-shell__actions { display: flex; align-items: center; gap: 8px; }
+
+.anon-appearance { position: relative; }
+.anon-appearance__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-input);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  transition: color 0.12s ease, border-color 0.12s ease;
+}
+.anon-appearance__trigger:hover { color: var(--fg); border-color: var(--border-strong); }
+.anon-appearance.is-open .anon-appearance__trigger { color: var(--dan-blue-text); border-color: var(--dan-blue); }
+.anon-appearance__trigger:focus-visible { outline: 2px solid var(--dan-blue); outline-offset: 2px; }
+
+.anon-appearance__popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 280px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-menu);
+  padding: 16px;
+  z-index: 60;
+  transform-origin: top right;
+  animation: user-menu-in 0.14s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.anon-appearance__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fg);
+  margin-bottom: 14px;
+}
+
+/* ============================================================================
+   Landing theme builder (админ) — жагсаалт, засварлагч, preview
+   ============================================================================ */
+.icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: var(--radius-input);
+  border: 1px solid var(--border); background: var(--surface); color: var(--muted);
+  transition: color 0.12s ease, border-color 0.12s ease;
+}
+.icon-btn:hover { color: var(--fg); border-color: var(--border-strong); }
+.icon-btn--danger:hover { color: var(--danger); border-color: var(--danger); }
+
+.theme-list { display: grid; gap: 8px; }
+.theme-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-card);
+  background: var(--surface); flex-wrap: wrap;
+}
+.theme-row.is-active { border-color: var(--dan-blue); background: var(--dan-blue-soft); }
+.theme-row__main { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.theme-row__name { font-weight: 600; font-size: 14px; color: var(--fg); }
+.theme-row__badge {
+  display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; font-weight: 600;
+  color: var(--dan-blue-text); background: var(--surface); border-radius: var(--radius-chip);
+  padding: 2px 8px; border: 1px solid var(--dan-blue);
+}
+.theme-row__actions { display: flex; align-items: center; gap: 6px; }
+
+.theme-editor__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 900px) { .theme-editor__grid { grid-template-columns: 1fr; } }
+
+.theme-section { border: 1px solid var(--border); border-radius: var(--radius-card); padding: 16px; display: grid; gap: 12px; }
+.theme-section > h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+
+.color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.color-field { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--fg); }
+
+.copy-group { display: grid; gap: 10px; }
+.copy-nest { border-left: 2px solid var(--border); padding-left: 12px; display: grid; gap: 8px; }
+.copy-nest__label { font-size: 12px; font-weight: 600; color: var(--dan-blue-text); text-transform: capitalize; }
+.copy-textarea { resize: vertical; font-size: 13px; line-height: 1.4; }
+.copy-array { display: grid; gap: 8px; }
+.copy-array__item { border: 1px dashed var(--border); border-radius: var(--radius-input); padding: 10px; display: grid; gap: 8px; }
+.copy-array__head { display: flex; align-items: center; justify-content: space-between; font-size: 11.5px; color: var(--muted); }
+
+/* Preview — draft палетрыг inline хувьсагчаар тусгана (sticky) */
+.theme-preview {
+  position: sticky; top: 16px; border: 1px solid var(--border-strong); border-radius: var(--radius-card);
+  overflow: hidden; background: var(--bg); color: var(--fg);
+}
+.theme-preview__bar { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); background: var(--surface-2); padding: 8px 14px; border-bottom: 1px solid var(--border); }
+.theme-preview__body { padding: 22px; display: grid; gap: 12px; }
+.theme-preview__brand { font-weight: 700; font-size: 15px; }
+.theme-preview__hero { font-size: 26px; font-weight: 600; line-height: 1.15; letter-spacing: -0.01em; }
+.theme-preview__lede { font-size: 13.5px; color: var(--muted); line-height: 1.5; margin: 0; }
+.theme-preview__btn { display: inline-flex; align-items: center; padding: 9px 16px; border-radius: var(--radius-input); font-size: 13px; font-weight: 600; }
+.theme-preview__nav { font-size: 12.5px; color: var(--dan-blue-text); }
+
+/* ============================================================================
+   ColorField — найдвартай өнгө сонгогч (1 дарж палитр, хос дарж OS сонгогч)
+   ============================================================================ */
+.cfield { position: relative; display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--fg); }
+.cfield__swatch {
+  width: 34px; height: 26px; border-radius: 7px; border: 1px solid var(--border-strong);
+  padding: 0; cursor: pointer; flex-shrink: 0; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.35);
+  transition: transform 0.1s ease;
+}
+.cfield__swatch:hover { transform: scale(1.06); }
+.cfield.is-open .cfield__swatch { outline: 2px solid var(--dan-blue); outline-offset: 1px; }
+.cfield__label { line-height: 1.2; }
+.cfield__native { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; left: 0; bottom: 0; }
+
+.cfield__pop {
+  position: absolute; top: calc(100% + 6px); left: 0; z-index: 70;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  box-shadow: var(--shadow-menu); padding: 10px; width: max-content;
+  animation: user-menu-in 0.12s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.cfield__grid { display: grid; grid-template-columns: repeat(8, 20px); gap: 6px; }
+.cfield__preset {
+  width: 20px; height: 20px; border-radius: 5px; border: 1px solid var(--border);
+  padding: 0; cursor: pointer; transition: transform 0.1s ease;
+}
+.cfield__preset:hover { transform: scale(1.18); border-color: var(--fg); }
+.cfield__more {
+  display: block; width: 100%; margin-top: 10px; padding: 7px 10px; font-size: 12.5px;
+  border: 1px solid var(--border); border-radius: var(--radius-input); background: var(--surface-2);
+  color: var(--fg); cursor: pointer;
+}
+.cfield__more:hover { border-color: var(--border-strong); }

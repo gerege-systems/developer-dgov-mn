@@ -5,7 +5,7 @@ import EidSecurityView from '@/components/me/eid/EidSecurityView';
 import { fetchMe } from '@/lib/api';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'eID аюулгүй байдал — Government Template v3.0' };
+export const metadata = { title: 'eID аюулгүй байдал — Government Developer Portal V3.0' };
 
 export default async function EidSecurityPage() {
   const me = await fetchMe();
@@ -13,7 +13,7 @@ export default async function EidSecurityPage() {
   return (
     <>
       <PageHead eyebrowKey="sys.user" titleKey="eid.security.title" subKey="eid.security.sub" />
-      <EidSecurityView show={!!me.eid} />
+      <EidSecurityView show={!!me.eid || !!me.eidProxy} />
     </>
   );
 }

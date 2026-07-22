@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
-# Government Template Platform V3.0
+# Government Developer Portal V3.0
 # Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 #
-# Live smoke test — template.dgov.mn (эсвэл BASE=... өөр хост).
+# Live smoke test — developer.dgov.mn (эсвэл BASE=... өөр хост).
 # Production дээр deploy хийсний дараа гол зам ажиллаж байгааг гаднаас нь
 # (black-box) шалгана: TLS + HTTPS redirect, security header-ууд, eID QR/РД
 # нэвтрэлт эхлүүлэлт, CSRF хамгаалалт, нэвтрэлт шаардсан endpoint-ийн хамгаалалт.
 #
-# Хэрэглээ:  BASE=https://template.dgov.mn scripts/smoke-test.sh
+# Хэрэглээ:  BASE=https://developer.dgov.mn scripts/smoke-test.sh
 # Гаралт: PASS/FAIL мөрүүд; ямар нэг FAIL байвал exit code 1.
 
 set -uo pipefail
 
-BASE="${BASE:-https://template.dgov.mn}"
+BASE="${BASE:-https://developer.dgov.mn}"
 ORIGIN="${BASE}"
 PASS=0
 FAIL=0
@@ -32,7 +32,7 @@ echo "── TLS + HTTPS ──"
 root_code=$(curl -s -m 15 -o /dev/null -w '%{http_code}' "$BASE/")
 assert_status "root HTTPS 200" 200 "$root_code"
 
-redirect_code=$(curl -s -m 15 -o /dev/null -w '%{http_code}' "http://template.dgov.mn/")
+redirect_code=$(curl -s -m 15 -o /dev/null -w '%{http_code}' "http://developer.dgov.mn/")
 if [ "$redirect_code" = "301" ] || [ "$redirect_code" = "308" ]; then
   pass "HTTP→HTTPS redirect ($redirect_code)"
 else

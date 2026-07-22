@@ -1,4 +1,4 @@
-// Government Template Platform V3.0
+// Government Developer Portal V3.0
 // Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 
 // login COMPLETE-ийн cert.value (base64 DER)-ээс сертификатыг задлах тест.

@@ -1,66 +1,82 @@
-# DGOV-Developer Portal
+# Government Developer Portal
 
-> **eID based · AI enabled** — Засгийн газрын үйлчилгээний нэгдсэн нэвтрэлт (Single Sign-On)
+> **Аппдаа үндэсний eID нэвтрэлт нэм** — **eID-д суурилсан · AI-аар хүчирхэгжсэн** —
+> OAuth2 / OpenID Connect-ээр хөгжүүлэгчдэд identity үйлчилгээ хүргэх портал.
 
-Built on the **Government Template Platform V3.0** stack (Clean-Architecture Go
-backend + Next.js BFF frontend + Gemini AI pipeline), branded and deployed as
-**DGOV-Developer Portal** at [developer.dgov.mn](https://developer.dgov.mn).
+**Government Developer Portal** нь аппликейшндээ үндэсний цахим үнэмлэг (eID)-ийн
+нэвтрэлтийг OAuth2 / OpenID Connect-ээр нэмэх хөгжүүлэгчийн портал: аппаа бүртгэж,
+client_id / нууц түлхүүрээ аваад баталгаажсан хэрэглэгчийн мэдээллийг стандарт
+claim-ээр хүлээн авна. Суурь нь Clean-Architecture Go backend + Next.js BFF
+frontend + Gemini AI pipeline — аюулгүй байдлыг хатууруулсан, үйлдвэрлэлд бэлэн.
+Portal нь [developer.dgov.mn](https://developer.dgov.mn)-д ажиллаж, eID
+нэвтрэлт болон OIDC provider урсгалыг production-д харуулж байна.
 
-> 🌐 **English** · [Монгол](docs/README_MN.md)
+> 🌐 **Монгол** · [English](docs/README_EN.md)
 
 [![Go](https://img.shields.io/badge/Go-1.26-blue.svg)](https://golang.org/)
 [![chi](https://img.shields.io/badge/chi-v5-00ADD8.svg)](https://github.com/go-chi/chi)
 [![pgx](https://img.shields.io/badge/pgx-v5-336791.svg)](https://github.com/jackc/pgx)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-A production-ready, security-hardened **full-stack template** built on Clean
-Architecture. It pairs a Go (**chi · net/http + pgx (pgxpool) + PostgreSQL + Redis**)
-backend with a Next.js (**BFF**) frontend, wired together and ready to extend into
-any system. The backend uses the standard library `net/http` with the
-[go-chi/chi](https://github.com/go-chi/chi) router and the
-[jackc/pgx](https://github.com/jackc/pgx) driver with hand-written SQL — no ORM.
+Clean Architecture зарчмаар бүтээгдсэн, аюулгүй байдлыг хатууруулсан,
+production-д бэлэн **full-stack суурь** — цахим засаглалыг бүтээх тулгуур давхарга.
+Go (**chi · net/http + pgx (pgxpool) + PostgreSQL + Redis**) backend болон Next.js
+(**BFF**) frontend-ийг хослуулсан —
+хооронд нь холбож, ямар ч систем рүү өргөтгөхөд бэлэн. Backend нь стандарт сангийн
+`net/http`-ийг [go-chi/chi](https://github.com/go-chi/chi) router болон гар бичмэл
+SQL-тэй [jackc/pgx](https://github.com/jackc/pgx) драйвертэй хослуулдаг — ORM
+ашиглахгүй.
 
-## 📌 Origin & Open Source
+## 📌 Эх сурвалж ба нээлттэй эх
 
-The **backend** is derived from the open-source
+**Backend** нь нээлттэй эх
 [snykk/go-rest-boilerplate](https://github.com/snykk/go-rest-boilerplate)
-(MIT, by Najib Fikri); we ported the HTTP layer **Gin → chi (net/http)** and the
-data layer **sqlx → pgx (pgxpool, hand-written SQL)**, keeping the full feature
-set. Upstream attribution is retained in [AUTHORS](AUTHORS). This project is
-**MIT-licensed** — see [LICENSE](LICENSE).
+(MIT, Najib Fikri)-аас гаралтай; HTTP давхаргыг **Gin → chi (net/http)**, өгөгдлийн
+давхаргыг **sqlx → pgx (pgxpool, гар бичмэл SQL)** болгож хөрвүүлсэн, бүх фичерийг
+хадгалсан. Эх төслийн attribution-г [AUTHORS](AUTHORS)-д хадгалсан. Энэ төсөл **MIT
+лицензтэй** — [LICENSE](LICENSE).
 
-## Monorepo structure
+## Monorepo бүтэц
 
 ```
-gerege-template/
-├── backend/           # Go · chi (net/http) · pgx (pgxpool) · PostgreSQL · Redis · JWT/OTP auth
+government-template-platform/
+├── backend/           # Go · chi (net/http) · pgx (pgxpool) · PostgreSQL · Redis · eID/Google/SSO танилт
 │   └── docs/          # ARCHITECTURE · DEVELOPMENT · API_CONTRACT · SECURITY (EN/MN)
-└── frontend/          # Next.js BFF (server-side proxy to the backend; cookie sessions)
+└── frontend/          # Next.js BFF (backend руу server талаас прокси; cookie session)
 ```
 
-- **[backend/README.md](backend/README.md)** — Clean Architecture Go API.
+- **[backend/README_MN.md](backend/README_MN.md)** — Clean Architecture Go API.
 - **[frontend/README.md](frontend/README.md)** — Next.js Backend-for-Frontend.
 
-## Features
+## Онцлог
 
-- **Clean Architecture** — `handler → usecase → repository → domain`, no back-imports; the business core never imports the web framework.
-- **Auth** — JWT access + refresh (rotation), OTP-verified registration, bcrypt, login lockout; logout revokes both tokens (refresh + access deny-list).
-- **AI pipeline (Gemini)** — SDK-free REST client with function calling: text/voice chat, speech-to-text, text-to-speech, live translation. Layered system prompt (hardcoded guardrails + admin-configurable scope/instructions in the DB) keeps the assistant inside its configured domain; a `search_knowledge` tool grounds answers in the `ai_knowledge` table.
-- **Security-hardened** — strict security headers (CSP, HSTS, COOP/COEP/CORP), CORS allow-list, rate limiting, full HTTP server timeouts, parameterized queries, Postgres Row-Level Security with a boot-time enforceability guard. See [SECURITY.md](SECURITY.md).
-- **Observability** — OpenTelemetry tracing + Prometheus metrics + structured Zap logs.
-- **Frontend BFF** — the browser talks only to same-origin Next.js routes, which proxy to the backend server-side (tokens never reach client JS); double CSRF defense (custom header + origin check), TanStack Query data layer.
-- **Tested** — unit tests + testcontainers integration tests.
+- **Clean Architecture** — `handler → usecase → repository → domain`, back-import байхгүй; business core нь web framework-ийг import хийдэггүй.
+- **Танилт — eID + Google** — цорын ганц нэвтрэх арга бол **eID-ээр нэвтрэх** (eID Mongolia Relying Party: QR код / мобайл deep-link / иргэний РД push + long-poll session). Түүний зэрэгцээ **Google OAuth** account холболт. Session нь JWT access + refresh (rotation); logout хоёуланг хүчингүй болгоно (refresh + access deny-list). Нууц үг / и-мэйл-OTP нэвтрэлт байхгүй.
+- **eID PKI профайл** — нэвтэрсэн иргэний eID identity-г IdP-ээс уншина: холбоотой байгууллага ба эрх бүхий гарын үсэг зурагчид, гэрчилгээ, бүртгэлтэй төхөөрөмж, идэвх.
+- **Байгууллага ба гишүүнчлэл** — байгууллага үүсгэх/хайх (улсын бүртгэлээс Gerege Verify/XYP-ээр лавлах) + гишүүд/эрх удирдах, хэрэглэгч тус бүрт RLS-ээр хамгаалагдсан.
+- **Төрийн үйлчилгээний портал** — иргэн рүү харсан `Төрийн үйлчилгээ` гадаргуу: үйлчилгээний каталог, хүсэлт, лавлагаа, мэдэгдэл, төлбөр, цаг захиалга.
+- **API gateway** — админ удирддаг services / routes / consumers / API key / policy + хүсэлтийн телеметр (overview + logs).
+- **OIDC provider (SSO)** — платформ өөрөө identity provider болж чадна: өөрийн Go OAuth2/OIDC provider-ээр login/consent/logout урсгалыг жолоодох тул relying party-ууд түүгээр дамжин нэвтэрнэ (жишээ deployment дээр `Sign in with Government SSO`). `OAUTH_ISSUER` тохируулагдсан үед идэвхжинэ.
+- **Баримт бичгийн гарын үсэг (PAdES)** — eID Mongolia `/v3`-ээр PDF-д server талаас гарын үсэг зурна, байнгын Document-Signer гэрчилгээтэй; sign-relay нь 3 дагч RP-уудыг платформын eID креденшлээр дамжуулан гарын үсэг зурах боломж олгоно.
+- **Гуравдагч этгээдийн интеграци** — хэрэглэгч тус бүрийн OAuth холболт (Google Drive/Meet, Dropbox), токеныг шифрлэн (AES-256-GCM) хадгална; мөн **Gerege Space** апп-ын өөрийн SFTP хадгалалт.
+- **AI pipeline (Gemini)** — SDK-гүй REST client + function calling: текст/дуут чат, яриа→текст (STT), текст→яриа (TTS), шууд орчуулга. Давхаргат system prompt (кодод хатуу суурь дүрэм + админ DB-ээс тохируулдаг хамрах хүрээ/заавар) туслахыг зөвхөн заасан хүрээнд барина; `search_knowledge` tool нь хариултыг `ai_knowledge` хүснэгтийн өгөгдөлд тулгуурлуулна.
+- **Audit log** — hash-chain холбоост, зөвхөн-нэмэх audit бүртгэл (админ-л унших + бүрэн бүтэн байдлыг шалгах).
+- **RBAC ба super admin** — динамик role + permission каталог; 4-үүрэгт загвар (**superadmin → admin → manager → user**), super admin нь админ хэрэглэгчдийг удирдах цорын ганц үүрэг.
+- **Сайтын харагдац** — админ тохируулдаг сайт-даяар харагдац (accent / font / density / theme) нийтийн хуудсанд, мөн хэрэглэгч тус бүрийн override.
+- **Аюулгүй хатууруулсан** — security headers (CSP, HSTS, COOP/COEP/CORP), CORS allow-list, rate limiting, серверийн бүрэн timeout-ууд, parameterized query, Postgres Row-Level Security + boot-үеийн мөрдөлтийн guard. [SECURITY.md](SECURITY.md)-г үз.
+- **Observability** — OpenTelemetry trace + Prometheus metrics + Zap structured log; production-д `/metrics` ба `/swagger` bearer token-оор хаагдана.
+- **Frontend BFF** — браузер зөвхөн ижил-origin Next.js route рүү залгаж, тэр нь server талаас backend руу проксиолдог (токен client JS-д хүрэхгүй); давхар CSRF хамгаалалт (custom header + origin), TanStack Query өгөгдлийн давхарга.
+- **Тесттэй** — unit + testcontainers integration тест.
 
-## Quick start
+## Түргэн эхлүүлэх
 
-**Prerequisites:** Go 1.26+, Node 20+, PostgreSQL 15+, Redis 7+.
+**Шаардлага:** Go 1.26+, Node 20+, PostgreSQL 15+, Redis 7+ (бүтэн стекийг Docker-оор ажиллуулахыг зөвлөнө).
 
 ```bash
 # 1) Backend  →  http://localhost:8080
 cd backend
-cp internal/config/.env.example internal/config/.env   # set JWT_SECRET (≥32 chars), DB, Redis
+cp internal/config/.env.example internal/config/.env   # JWT_SECRET (≥32), DB, Redis, EID_* RP креденшл тохируул
 
 # 2) Frontend →  http://localhost:3000
 cd ../frontend
@@ -69,34 +85,40 @@ npm install
 npm run dev
 ```
 
-Open **http://localhost:3000** and register / log in.
+Эсвэл бүтэн стекийг өргө (db + redis + migrate + api + web):
 
-## Documentation
+```bash
+docker compose up -d --build
+```
 
-| Doc | What |
+**http://localhost:3000** нээж **eID-ээр нэвтрэх**-ийг сонго (QR уншуулах / eID мобайл апп нээх, эсвэл иргэний РД оруулж push хүлээж авах). Google холболт нь түүний креденшл тохируулагдсан үед харагдана.
+
+## Баримтжуулалт
+
+| Doc | Юу |
 |-----|------|
-| [backend/docs/ARCHITECTURE.md](backend/docs/ARCHITECTURE.md) | Layers, dependency flow, components |
-| [backend/docs/DEVELOPMENT.md](backend/docs/DEVELOPMENT.md) | Add-a-feature guide, testing, code style |
-| [backend/docs/API_CONTRACT.md](backend/docs/API_CONTRACT.md) | REST endpoints, request/response shapes |
-| [backend/docs/AI_PIPELINE.md](backend/docs/AI_PIPELINE.md) | AI assistant internals: flows, prompt layers, tools, voice, how to extend |
-| [backend/docs/SECURITY.md](backend/docs/SECURITY.md) | Implemented controls + ASVS roadmap |
-| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | VPS deployment runbook (compose, env files, nginx, updates, rollback) |
-| [SECURITY.md](SECURITY.md) | How to report a vulnerability |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | How to contribute |
+| [backend/docs/ARCHITECTURE_MN.md](backend/docs/ARCHITECTURE_MN.md) | Давхаргууд, dependency flow |
+| [backend/docs/DEVELOPMENT_MN.md](backend/docs/DEVELOPMENT_MN.md) | Фичер нэмэх заавар, тест, code style |
+| [backend/docs/API_CONTRACT_MN.md](backend/docs/API_CONTRACT_MN.md) | REST endpoint, request/response |
+| [backend/docs/AI_PIPELINE_MN.md](backend/docs/AI_PIPELINE_MN.md) | AI туслахын дотоод бүтэц: урсгал, prompt давхарга, tools, voice, өргөтгөх заавар |
+| [backend/docs/SERVICE_WORKFLOW_MN.md](backend/docs/SERVICE_WORKFLOW_MN.md) | Үйлчилгээний регистр (CPSV-AP паспорт) → ажлын каталог, хүсэлтийн төлөвийн машин, SLA, officer дараалал |
+| [backend/docs/SECURITY.md](backend/docs/SECURITY.md) | Хэрэгжсэн хяналт + ASVS roadmap |
+| [docs/DEPLOYMENT_MN.md](docs/DEPLOYMENT_MN.md) | VPS deploy runbook (compose, env файлууд, nginx, шинэчлэх, rollback) |
+| [ROADMAP.md](ROADMAP.md) | Юу хийгдсэн, юу дараагийнх |
+| [SECURITY.md](SECURITY.md) | Эмзэг байдлыг хэрхэн мэдээлэх |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Хэрхэн хувь нэмэр оруулах |
 
-## Contributing
+## Хувь нэмэр
 
-Contributions are welcome — please read [CONTRIBUTING.md](CONTRIBUTING.md) and
-the [Code of Conduct](docs/CODE_OF_CONDUCT.md).
+Хувь нэмэр оруулахыг урьж байна — [CONTRIBUTING.md](CONTRIBUTING.md) болон
+[Code of Conduct](docs/CODE_OF_CONDUCT.md)-ийг уншина уу.
 
-## License
+## Лиценз
 
-[MIT](LICENSE) — derivative of snykk/go-rest-boilerplate (MIT); upstream
-attribution is retained in [AUTHORS](AUTHORS).
+[MIT](LICENSE) — snykk/go-rest-boilerplate (MIT)-ийн derivative; эх төслийн
+attribution-г [AUTHORS](AUTHORS)-д хадгалсан.
 
 ---
 
-**Government Template Platform V3.0** — Co-developed by the **Gerege Systems
-Development Team** and **Claude AI**, 2026.
-
-<!-- submodule sync test: dgov-mn-projects -->
+**Government Developer Portal V3.0** — **Gerege Systems Development Team** болон
+**Claude AI** хамтран бүтээв, 2026.

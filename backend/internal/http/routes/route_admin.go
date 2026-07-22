@@ -1,4 +1,4 @@
-// Government Template Platform V3.0
+// Government Developer Portal V3.0
 // Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 
 package routes
@@ -44,6 +44,7 @@ func (rt *adminRoute) Routes() {
 		r.Use(rt.authMiddleware)
 		manage := middlewares.RequirePermission(rt.rbacUC, domain.PermUsersManage)
 		r.With(manage).Get("/users", v1.Wrap(rt.handler.ListUsers))
+		r.With(manage).Post("/users", v1.Wrap(rt.handler.CreateUser))
 		r.With(manage).Put("/users/{id}/role", v1.Wrap(rt.handler.UpdateUserRole))
 		r.With(manage).Put("/users/{id}/active", v1.Wrap(rt.handler.SetUserActive))
 		r.With(manage).Delete("/users/{id}", v1.Wrap(rt.handler.DeleteUser))

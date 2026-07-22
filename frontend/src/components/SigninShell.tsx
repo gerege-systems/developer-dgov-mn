@@ -1,9 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
-import AnonThemeToggle from './AnonThemeToggle';
 
 interface Props {
-  /** topbar баруун талын нэмэлт навигаци (анхдагч: загвар солигч). */
+  /** topbar баруун талын нэмэлт навигаци (сонголттой). Нийтийн хуудасны
+   *  харагдацыг админ удирддаг тул энд per-user харагдац солигч байхгүй. */
   rightNav?: React.ReactNode;
   hideFooter?: boolean;
   children: React.ReactNode;
@@ -19,19 +19,19 @@ export default function SigninShell({ rightNav, hideFooter, children }: Props) {
       <header className="signin-shell__nav">
         <Link className="topbar__brand" href="/">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="topbar__brand-mark" src="/brand.webp" alt="DGOV-Developer Portal" />
+          <img className="topbar__brand-mark" src="/brand.webp" alt="Government Developer Portal V3.0" />
           <div className="topbar__brand-text">
-            <span className="topbar__brand-name">DGOV-Developer Portal</span>
+            <span className="topbar__brand-name">Government Developer Portal V3.0</span>
           </div>
         </Link>
-        {rightNav ?? <AnonThemeToggle />}
+        {rightNav}
       </header>
 
       <main className="signin-shell__body">{children}</main>
 
       {!hideFooter && (
         <footer className="signin-footer" style={{ justifyContent: 'center', textAlign: 'center' }}>
-          <span>© 2026 Gerege Systems · <span className="mono">DGOV-Developer Portal</span></span>
+          <span>© 2026 Gerege Systems · <span className="mono">Government Developer Portal V3.0</span></span>
         </footer>
       )}
     </div>

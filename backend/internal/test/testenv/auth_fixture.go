@@ -1,6 +1,6 @@
 //go:build integration
 
-// Government Template Platform V3.0
+// Government Developer Portal V3.0
 // Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 
 package testenv
@@ -248,8 +248,8 @@ func NewAuthFixture(t *testing.T) *AuthFixture {
 		LoginLockoutTTL:   15 * time.Minute,
 		ForgotMaxAttempts: 3,
 		ForgotLockoutTTL:  15 * time.Minute,
-		EIDCallbackURL:    "https://template.dgov.mn/login/verify",
-		EIDDisplayText:    "template.dgov.mn",
+		EIDCallbackURL:    "https://developer.dgov.mn/login/verify",
+		EIDDisplayText:    "developer.dgov.mn",
 	})
 
 	return &AuthFixture{

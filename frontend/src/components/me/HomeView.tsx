@@ -97,7 +97,7 @@ export default function HomeView({ me }: { me: SessionUser }) {
       </section>
 
       {/* eID PKI-ийн нэгдсэн тоо (гэрчилгээ/нэвтрэлт/төхөөрөмж) — бодит өгөгдөл */}
-      <EidSummaryCard show={!!me.eid} />
+      <EidSummaryCard show={!!me.eid || !!me.eidProxy} />
 
       <div className="trust-strip" style={{ marginTop: 22 }}>
         <span className="trust-strip__item">
@@ -113,7 +113,7 @@ export default function HomeView({ me }: { me: SessionUser }) {
       </div>
 
       <footer className="footer" style={{ justifyContent: 'center', textAlign: 'center', marginTop: 12 }}>
-        <span>© 2026 Gerege Systems · <span className="mono">Government Template Platform V3.0</span></span>
+        <span>© 2026 Gerege Systems · <span className="mono">Government Developer Portal V3.0</span></span>
       </footer>
     </>
   );

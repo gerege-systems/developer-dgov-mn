@@ -4,7 +4,7 @@
 <dict>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:template.dgov.mn</string>
+		<string>applinks:developer.dgov.mn</string>
 		<string>applinks:sso.dgov.mn</string>
 	</array>
 </dict>
