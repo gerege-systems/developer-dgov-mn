@@ -1,60 +1,59 @@
-# Government Developer Portal V3.0
+# Government Developer Portal
 
-> **The foundation to build digital governance** — a production-ready,
-> security-hardened full stack for building any digital-government service on top.
+> **Add national eID sign-in to your app** — register your app, grab your
+> `client_id`, and receive verified user identity as standard OpenID Connect claims.
 
-**Government Developer Portal V3.0** is the *foundation on which digital
-governance is built*. You build the value, not the plumbing — identity, security,
-AI and service scaffolding come solved from day one.
+**Government Developer Portal** ([developer.dgov.mn](https://developer.dgov.mn))
+is the developer portal for adding national electronic-ID (eID) sign-in to your
+application over **OAuth2 / OpenID Connect**. Store no passwords, collect no PII
+— receive only verified identity.
 
 !!! tip "Open Source"
     This platform is an **open-source** project — read the full source, fork it,
-    and run it for your own organization.
+    and use it in your own organization.
     :material-github: [View on GitHub](https://github.com/gerege-systems/developer-dgov-mn)
 
 <div class="grid cards" markdown>
 
-- :material-shield-key: **eID + Government SSO**  
-  Electronic-ID (eID) based sign-in + an OpenID Connect (built-in Go provider)
-  SSO provider. Apps connect with a single tap.
+- :material-rocket-launch: **[Quickstart](quickstart.md)**  
+  From app registration to your first verified claim — in 5 minutes, with `curl`
+  examples.
 
-- :material-layers: **Clean Architecture**  
-  Go (chi · net/http · pgx, no ORM) backend + Next.js 15 BFF frontend. Clear
-  layers, easy to extend.
+- :material-shield-key: **[App integration (OAuth2 / OIDC)](sso-integration.md)**  
+  Authorization code + PKCE flow, refresh tokens, logout — the complete
+  integration guide.
 
-- :material-account-network: **eID Service Proxy**  
-  Registered apps call the SSO's eID services by authorization (proxy) — they
-  never need to hold eID credentials themselves.
+- :material-api: **[API reference](api-reference.md)**  
+  Endpoints, scopes, claims, token introspection, rate limits and the error format.
 
-- :material-tune: **Admin-managed API Gateway**  
-  Service catalog, per-app authorization, telemetry — all from the admin system.
+- :material-draw-pen: **[eID Service Proxy & signing](eid-services.md)**  
+  Fetch users' eID data through the proxy and have documents e-signed (PAdES)
+  via the signature API.
 
 </div>
 
-## The ecosystem
+## What you get
 
-The platform is composed of several independent services:
+| Capability | Description |
+|---|---|
+| **eID sign-in** | Users approve with a push to the eID app or a QR scan |
+| **Standard OIDC** | Discovery, JWKS, RS256 id_tokens — works with any OIDC library |
+| **PKCE (S256)** | PKCE enforced for public (mobile/SPA) clients per RFC 9700 |
+| **Verified claims** | `name`, `email`, `national_id`, `register_number` and more |
+| **Signature API** | PAdES PDF signing via eID credentials — without your own certificates |
+| **Consent screen** | The consent prompt and remember-me logic are built in |
+
+## Ecosystem
 
 | Domain | Role |
 |---|---|
-| **sso.dgov.mn** | Government SSO — OIDC provider + eID Relying Party (holds the eID credentials) |
-| **developer.dgov.mn** | Example app — a relying party of Government SSO (signs in via SSO) |
+| **developer.dgov.mn** | This portal — developer console + OIDC provider (issuer) |
+| **sso.dgov.mn** | Government SSO — the eID Relying Party core (holds eID credentials) |
+| **eidmongolia.mn** | The national eID service (citizen's eID app) |
 
-Apps (such as `developer.dgov.mn`) sign in through **sso.dgov.mn** and call the
-authorized eID services via a proxy. Only the SSO holds the RP credentials that
-talk to eID Mongolia, so apps are freed from that security burden.
+Your app authenticates through **developer.dgov.mn**'s OIDC flow; the portal
+handles all communication with eID Mongolia, so you never hold eID credentials.
 
-## Key capabilities
-
-- **Authentication** — eID (QR / App2App / national-ID push) + Google linking + Government SSO (OIDC).
-- **OIDC provider** — built on its own Go code; apps `Sign in with Government SSO`.
-- **eID PKI profile** — organizations, certificates, devices, activity.
-- **Document signing (PAdES)** — third-party apps sign through the eID sign relay.
-- **eID Service Proxy** — personal (`eid-proxy`) and organization (`eid-org-proxy`), separately.
-- **API Gateway** — service catalog, per-app authorization, request telemetry.
-- **AI assistant (Gemini)** — chat, voice, translation.
-- **RBAC & super admin**, **audit log**, **security hardening** (RLS, CSP, HSTS, CSRF).
-
-!!! tip "Where to start?"
-    To connect your app to Government SSO, see [App integration](sso-integration.md).
-    To fetch eID data through the proxy, see [eID Service Proxy](eid-services.md).
+!!! tip "Where to start"
+    [Quickstart](quickstart.md) — sign in to the console, register an app and
+    get your first token in 5 minutes.

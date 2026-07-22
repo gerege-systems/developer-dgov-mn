@@ -1,66 +1,134 @@
-# Апп холбох (Government SSO / OIDC RP)
+# Апп холбох (OAuth2 / OIDC)
 
-Апп-аа **Government SSO (sso.dgov.mn)**-ий relying party болгож холбоно. Нэвтрэх
-товч дарахад хэрэглэгч sso.dgov.mn руу шилжиж, eID-ээр нэвтэрч, апп руугаа буцна.
+Аппаа **Government Developer Portal** (issuer `https://developer.dgov.mn`)-ийн
+relying party (RP) болгож холбоно. «Нэвтрэх» товч дарахад хэрэглэгч портал руу
+шилжиж, eID-ээр баталгаажиж, апп руугаа буцна.
 
-## 1. Апп-аа RP client болгож бүртгүүлэх
+## 1. Апп бүртгэх
 
-Хоёр арга:
+[Консол](https://developer.dgov.mn) дээр eID-ээрээ нэвтэрч **Applications →
+Шинэ апп** дээр нэр, redirect URI-гаа бүртгэнэ. `client_id` (confidential бол
+`client_secret` хамт) олгогдоно — [Түргэн эхлэл](quickstart.md)-ийг үз.
 
-=== "Admin UI"
+**Confidential уу, public уу?**
 
-    **Admin → Applications → Шинэ апп** дээр нэр, redirect URI, tag оруулж
-    хадгална. Хэрэгтэй eID service-үүдийг (eid-proxy г.м.) checkbox-оор олгоно.
-    `client_id` / `client_secret` буцна.
+| Төрөл | Хэзээ | Баталгаажуулалт |
+|---|---|---|
+| Confidential | Сервертэй web апп | `client_secret` (basic auth) |
+| Public | Mobile апп, SPA | Secret байхгүй — **PKCE (S256) заавал** |
 
-=== "CLI helper"
+## 2. Authorization code урсгал
 
-    Сервер дээр `register-rp.sh` нь login redirect **болон** post-logout redirect
-    URI-г хамт зөв тавьдаг (logout алдаа гарахгүй):
-
-    ```bash
-    cd /srv/sso-dgov-mn
-    ./scripts/register-rp.sh "Миний апп" https://myapp.dgov.mn
-    # → client_id + client_secret хэвлэнэ
-    #   redirect_uri            = https://myapp.dgov.mn/sso/callback
-    #   post_logout_redirect_uri= https://myapp.dgov.mn/
-    ```
-
-## 2. Апп-ын тохиргоо
-
-RP апп (энэ template-ийг ашиглаж байвал) `backend.env`-д:
-
-```env
-SSO_ISSUER=https://sso.dgov.mn
-SSO_CLIENT_ID=<client_id>
-SSO_CLIENT_SECRET=<client_secret>
-SSO_REDIRECT_URI=https://myapp.dgov.mn/sso/callback
-SSO_SCOPE=openid profile email
+```mermaid
+sequenceDiagram
+  participant User as Хэрэглэгч
+  participant App as Таны апп
+  participant Portal as developer.dgov.mn
+  participant eID as eID Mongolia
+  User->>App: «Нэвтрэх» дарна
+  App->>Portal: /oauth2/auth?client_id&redirect_uri&scope&state&nonce
+  Portal->>eID: eID баталгаажуулалт (push / QR)
+  eID-->>Portal: иргэн баталгаажлаа
+  Portal-->>App: redirect_uri?code&state
+  App->>Portal: POST /oauth2/token (code + client auth)
+  Portal-->>App: access_token + id_token (+ refresh_token)
+  App->>Portal: GET /userinfo (Bearer access_token)
+  Portal-->>App: баталгаажсан claim-ууд
 ```
 
-## 3. Нэвтрэлтийн урсгал
+### Authorize хүсэлт
 
-1. Хэрэглэгч апп дээр **«Government SSO-оор нэвтрэх»** дарна → `/api/auth/sso/start`.
-2. Backend `/sso/start` нь state үүсгэж (Redis), `sso.dgov.mn/oauth2/auth` руу
-   authorize URL байгуулна; браузер тийш шилжинэ.
-3. Хэрэглэгч sso.dgov.mn дээр eID-ээр нэвтэрнэ.
-4. sso.dgov.mn нь `https://myapp.dgov.mn/sso/callback?code&state` руу буцаана.
-5. Backend `/sso/callback` нь code-ийг токен болгож солин, иргэнийг `sso_sub`-ээр
-   upsert хийж, апп-ын өөрийн session (JWT) олгоно.
+```text
+GET https://developer.dgov.mn/oauth2/auth
+  ?response_type=code
+  &client_id=<CLIENT_ID>
+  &redirect_uri=<БҮРТГЭСЭН_URI>
+  &scope=openid profile email
+  &state=<санамсаргүй>          ← CSRF хамгаалалт, callback дээр шалга
+  &nonce=<санамсаргүй>          ← id_token-д буцна, шалга
+```
+
+Public client нэмж илгээнэ:
+
+```text
+  &code_challenge=<BASE64URL(SHA256(code_verifier))>
+  &code_challenge_method=S256
+```
+
+### Token солилцоо
+
+=== "Confidential (secret)"
+
+    ```bash
+    curl -s https://developer.dgov.mn/oauth2/token \
+      -u "<CLIENT_ID>:<CLIENT_SECRET>" \
+      -d grant_type=authorization_code \
+      -d code=<CODE> \
+      -d redirect_uri=<БҮРТГЭСЭН_URI>
+    ```
+
+=== "Public (PKCE)"
+
+    ```bash
+    curl -s https://developer.dgov.mn/oauth2/token \
+      -d grant_type=authorization_code \
+      -d client_id=<CLIENT_ID> \
+      -d code=<CODE> \
+      -d redirect_uri=<БҮРТГЭСЭН_URI> \
+      -d code_verifier=<CODE_VERIFIER>
+    ```
+
+### id_token шалгах
+
+RS256 гарын үсгийг [JWKS](https://developer.dgov.mn/.well-known/jwks.json)-ээр,
+мөн `iss == https://developer.dgov.mn`, `aud == client_id`, `exp`, `nonce`-ийг
+шалга. OIDC сан (openid-client, Spring Security, AppAuth…) автоматаар хийдэг.
+
+## 3. Refresh token
+
+`offline_access` scope хүссэн бол token хариунд `refresh_token` ирнэ:
+
+```bash
+curl -s https://developer.dgov.mn/oauth2/token \
+  -u "<CLIENT_ID>:<CLIENT_SECRET>" \
+  -d grant_type=refresh_token \
+  -d refresh_token=<REFRESH_TOKEN>
+```
+
+!!! warning "Refresh token эргэлддэг (rotation)"
+    Refresh бүрт **шинэ** refresh_token ирж, хуучин нь хүчингүй болно. Шинийг нь
+    үргэлж хадгал; хуучныг давхар хэрэглэвэл token гэр бүл бүхэлдээ цуцлагдана
+    (хулгайн хамгаалалт).
 
 ## 4. Гарах (logout)
 
-RP-initiated logout нь `sso.dgov.mn/oauth2/sessions/logout` руу `id_token_hint` +
-`post_logout_redirect_uri`-тай шилжинэ. Тухайн post-logout URI **client-д
-бүртгэгдсэн** байх ёстой (`register-rp.sh` автоматаар тавьдаг).
+RP-initiated logout — хэрэглэгчийг end-session руу шилжүүл:
 
-!!! warning "Post-logout redirect бүртгэл"
-    Апп-ыг зөвхөн login redirect-тэй бүртгэвэл logout нь *"post_logout_redirect_uri
-    is not whitelisted"* алдаа өгнө. `register-rp.sh` эсвэл Admin UI нь login **ба**
-    post-logout URI-г хамт тавьдаг тул энэ алдаа гарахгүй.
+```text
+GET https://developer.dgov.mn/oauth2/sessions/logout
+  ?id_token_hint=<ID_TOKEN>
+  &post_logout_redirect_uri=<БҮРТГЭСЭН_POST_LOGOUT_URI>
+```
 
-## Нэмэлт service олгох
+!!! warning "Post-logout URI бүртгэлтэй байх ёстой"
+    `post_logout_redirect_uri` нь client-д **бүртгэгдсэн** байх ёстой — эс бөгөөс
+    *"post_logout_redirect_uri is not whitelisted"* алдаа гарна. Консол login
+    болон post-logout URI-г хамт бүртгэдэг.
 
-Апп нь нэвтэрснээс гадна SSO-ий **нэмэлт** service-үүдийг (eID proxy г.м.) ашиглахыг
-хүсвэл Admin-аас тухайн service-ийг апп-д олгоно. Дэлгэрэнгүйг
-[eID Service Proxy](eid-services.md) болон [API Gateway](api-gateway.md)-аас үзнэ үү.
+## 5. Аюулгүй байдлын шаардлага
+
+- `state`-ийг session-д хадгалж callback дээр **заавал** тулга (CSRF).
+- `nonce`-ийг id_token-ий claim-тай тулга (replay).
+- Токенуудыг **зөвхөн сервер талд** (httpOnly cookie / session) хадгал — браузерын
+  JS-д бүү өг.
+- `client_secret`-ийг репод бүү commit хий — secret manager ашигла.
+- Redirect URI-г HTTPS-ээр, яг таг бүртгэ (wildcard байхгүй).
+
+## Түгээмэл асуудал
+
+| Шинж тэмдэг | Учир |
+|---|---|
+| `invalid_grant` token дээр | Code 1 удаа л хэрэглэгдэнэ / хугацаа дууссан / redirect_uri зөрсөн |
+| `invalid_client` | Basic auth буруу — `-u "id:secret"` форматыг шалга |
+| Callback дээр `access_denied` | Хэрэглэгч зөвшөөрөл өгөөгүй |
+| PKCE алдаа | `code_verifier` нь challenge-ээ үүсгэсэн утга мөн эсэхийг шалга |

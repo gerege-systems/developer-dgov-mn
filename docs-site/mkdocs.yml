@@ -1,7 +1,7 @@
-site_name: Government Developer Portal V3.0
-site_description: Цахим засаглалыг бүтээх суурь — Government Developer Portal V3.0 documentation
-site_url: https://developer.dgov.mn/docs/
-copyright: © 2026 Gerege Systems · Government Developer Portal V3.0
+site_name: Government Developer Portal
+site_description: Аппдаа үндэсний eID нэвтрэлт нэмэх хөгжүүлэгчийн портал — Government Developer Portal documentation
+site_url: https://gerege-systems.github.io/developer-dgov-mn/
+copyright: © 2026 Gerege Systems · Government Developer Portal
 docs_dir: docs
 site_dir: site
 use_directory_urls: true
@@ -58,12 +58,14 @@ plugins:
         - locale: en
           name: English
           build: true
-          site_name: Government Developer Portal V3.0
+          site_name: Government Developer Portal
           nav_translations:
             Танилцуулга: Overview
+            Түргэн эхлэл: Quickstart
+            "API лавлагаа": "API reference"
             Архитектур: Architecture
-            "Нэвтрэлт (eID + SSO)": "Authentication (eID + SSO)"
-            "Апп холбох (SSO / OIDC RP)": "App integration (OIDC RP)"
+            "Нэвтрэлт (eID + OIDC)": "Authentication (eID + OIDC)"
+            "Апп холбох (OAuth2 / OIDC)": "App integration (OAuth2 / OIDC)"
             "eID Service Proxy": "eID Service Proxy"
             "API Gateway": "API Gateway"
             "Байршуулалт (Deployment)": "Deployment"
@@ -98,9 +100,11 @@ extra:
 
 nav:
   - Танилцуулга: index.md
+  - Түргэн эхлэл: quickstart.md
+  - Апп холбох (OAuth2 / OIDC): sso-integration.md
+  - API лавлагаа: api-reference.md
+  - Нэвтрэлт (eID + OIDC): authentication.md
   - Архитектур: architecture.md
-  - Нэвтрэлт (eID + SSO): authentication.md
-  - Апп холбох (SSO / OIDC RP): sso-integration.md
   - eID Service Proxy: eid-services.md
   - API Gateway: api-gateway.md
   - Байршуулалт (Deployment): deployment.md

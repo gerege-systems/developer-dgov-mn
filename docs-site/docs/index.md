@@ -1,11 +1,12 @@
-# Government Developer Portal V3.0
+# Government Developer Portal
 
-> **Цахим засаглалыг бүтээх суурь** — төрийн аливаа цахим үйлчилгээг дээр нь
-> босгох, үйлдвэрлэлд бэлэн, аюулгүй байдлаар хатуужуулсан бүрэн стек.
+> **Аппдаа үндэсний eID нэвтрэлт нэм** — аппаа бүртгэж, `client_id`-гаа аваад,
+> баталгаажсан хэрэглэгчийн мэдээллийг стандарт OpenID Connect claim-аар хүлээн ав.
 
-**Government Developer Portal V3.0** нь цахим засаглалыг бүтээх *суурь* юм. Та дэд
-бүтцийг бус, үнэ цэнийг л бүтээнэ — identity, аюулгүй байдал, AI, үйлчилгээний
-тулгуур эхний өдрөөс шийдэгдсэн ирнэ.
+**Government Developer Portal** ([developer.dgov.mn](https://developer.dgov.mn))
+нь аппликейшндээ үндэсний цахим үнэмлэг (eID)-ийн нэвтрэлтийг **OAuth2 /
+OpenID Connect**-ээр нэмэх хөгжүүлэгчийн портал юм. Нэг ч нууц үг хадгалахгүй,
+хувийн мэдээлэл цуглуулахгүй — зөвхөн баталгаажсан identity-г хүлээн авна.
 
 !!! tip "Нээлттэй эх (Open Source)"
     Энэхүү платформ бол **нээлттэй эх** төсөл — эх кодыг бүрэн эхээр нь үзэж,
@@ -14,47 +15,45 @@
 
 <div class="grid cards" markdown>
 
-- :material-shield-key: **eID + Government SSO**  
-  Цахим үнэмлэх (eID)-т суурилсан нэвтрэлт + OpenID Connect (өөрийн Go provider)
-  SSO провайдер. Апп-ууд нэг товшилтоор холбогдоно.
+- :material-rocket-launch: **[Түргэн эхлэл](quickstart.md)**  
+  Апп бүртгэлээс эхний баталгаажсан claim хүртэл — 5 минутад. `curl` жишээтэй.
 
-- :material-layers: **Цэвэр архитектур**  
-  Go (chi · net/http · pgx, ORM-гүй) backend + Next.js 15 BFF frontend. Давхаргууд
-  тод ялгаатай, өргөтгөхөд бэлэн.
+- :material-shield-key: **[Апп холбох (OAuth2 / OIDC)](sso-integration.md)**  
+  Authorization code + PKCE урсгал, refresh token, logout — бүрэн интеграцийн
+  гарын авлага.
 
-- :material-account-network: **eID Service Proxy**  
-  Бүртгэгдсэн апп-ууд SSO-ий eID service-үүдийг зөвшөөрлөөр (proxy) дуудна — өөрсдөө
-  eID креденшл эзэмших шаардлагагүй.
+- :material-api: **[API лавлагаа](api-reference.md)**  
+  Endpoint-ууд, scope, claim, токены шалгалт (introspection), rate limit, алдааны формат.
 
-- :material-tune: **Admin-аас удирдах API Gateway**  
-  Service catalog, per-app зөвшөөрөл, телеметр — бүгд admin системээс.
+- :material-draw-pen: **[eID Service Proxy ба гарын үсэг](eid-services.md)**  
+  Хэрэглэгчийн eID мэдээллийг proxy-оор авах, баримтад цахим гарын үсэг (PAdES)
+  зуруулах API.
 
 </div>
 
-## Экосистем
+## Юу авах вэ?
 
-Энэхүү платформ нь хэд хэдэн бие даасан үйлчилгээнээс бүрдэнэ:
+| Чадвар | Тайлбар |
+|---|---|
+| **eID нэвтрэлт** | Хэрэглэгч eID апп руу push мэдэгдэл эсвэл QR-аар баталгаажина |
+| **Стандарт OIDC** | Discovery, JWKS, RS256 id_token — дурын OIDC сантай нийцнэ |
+| **PKCE (S256)** | Public (mobile/SPA) client-д RFC 9700 дагуу PKCE заавал |
+| **Баталгаат claim** | `name`, `email`, `national_id`, `register_number` гэх мэт |
+| **Гарын үсгийн API** | eID итгэмжлэлээр PAdES PDF гарын үсэг — өөрийн гэрчилгээгүйгээр |
+| **Зөвшөөрлийн дэлгэц** | Consent + санах логик бэлэн — та юу ч хийхгүй |
+
+## Экосистем
 
 | Домэйн | Үүрэг |
 |---|---|
-| **sso.dgov.mn** | Government SSO — OIDC провайдер + eID Relying Party (eID креденшл эзэмшдэг) |
-| **developer.dgov.mn** | Жишээ апп — Government SSO-ий relying party (SSO-оор нэвтэрдэг) |
+| **developer.dgov.mn** | Энэ портал — хөгжүүлэгчийн консол + OIDC провайдер (issuer) |
+| **sso.dgov.mn** | Government SSO — eID Relying Party цөм (eID креденшл эзэмшдэг) |
+| **eidmongolia.mn** | Үндэсний eID үйлчилгээ (цахим үнэмлэхийн апп) |
 
-Апп-ууд (`developer.dgov.mn` гэх мэт) **sso.dgov.mn**-ээр дамжин нэвтэрч, зөвшөөрөгдсөн
-eID service-үүдийг proxy-оор дуудна. eID Mongolia-тай харилцах RP креденшлийг зөвхөн
-SSO эзэмшдэг тул апп-ууд аюулгүй байдлын ачааллаас чөлөөлөгддөг.
-
-## Гол чадварууд
-
-- **Нэвтрэлт** — eID (QR / App2App / РД push) + Google холболт + Government SSO (OIDC).
-- **OIDC провайдер** — өөрийн Go код дээр суурилсан; апп-ууд `Sign in with Government SSO`.
-- **eID PKI профайл** — байгууллага, гэрчилгээ, төхөөрөмж, идэвх.
-- **Цахим гарын үсэг (PAdES)** — eID sign relay-ээр 3 дагч апп-ууд гарын үсэг зурна.
-- **eID Service Proxy** — хувь хүн (`eid-proxy`) ба байгууллага (`eid-org-proxy`) тусад нь.
-- **API Gateway** — service catalog, per-app зөвшөөрөл, хүсэлтийн телеметр.
-- **AI туслах (Gemini)** — чат, дуу хоолой, орчуулга.
-- **RBAC & super admin**, **аудит бүртгэл**, **аюулгүй байдлын хатуужуулалт** (RLS, CSP, HSTS, CSRF).
+Таны апп **developer.dgov.mn**-ий OIDC урсгалаар нэвтрэлт авна; портал нь eID
+Mongolia-тай харилцах ажлыг бүрэн хариуцдаг тул та eID креденшл эзэмших
+шаардлагагүй.
 
 !!! tip "Хаанаас эхлэх вэ?"
-    Апп-аа Government SSO-д холбохыг хүсвэл [Апп холбох](sso-integration.md)-ыг үзнэ үү.
-    eID мэдээллийг proxy-оор авахыг хүсвэл [eID Service Proxy](eid-services.md).
+    [Түргэн эхлэл](quickstart.md) — консолд нэвтэрч аппаа бүртгээд эхний
+    токеноо 5 минутад аваарай.

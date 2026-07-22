@@ -71,7 +71,7 @@ export default function LandingPage({ next, themeLanding }: Props) {
             <a href="#features">{t.nav.features}</a>
             <a href="#security">{t.nav.security}</a>
             <a href="#tech">{t.nav.tech}</a>
-            <a href="/docs/">{t.nav.docs}</a>
+            <a href="https://gerege-systems.github.io/developer-dgov-mn/" target="_blank" rel="noopener">{t.nav.docs}</a>
           </nav>
 
           <div className="lp-nav__actions">
@@ -105,7 +105,7 @@ export default function LandingPage({ next, themeLanding }: Props) {
             <a href="#features" onClick={() => setMenuOpen(false)}>{t.nav.features}</a>
             <a href="#security" onClick={() => setMenuOpen(false)}>{t.nav.security}</a>
             <a href="#tech" onClick={() => setMenuOpen(false)}>{t.nav.tech}</a>
-            <a href="/docs/" onClick={() => setMenuOpen(false)}>{t.nav.docs}</a>
+            <a href="https://gerege-systems.github.io/developer-dgov-mn/" target="_blank" rel="noopener" onClick={() => setMenuOpen(false)}>{t.nav.docs}</a>
           </nav>
         )}
       </header>

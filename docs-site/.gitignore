@@ -1,0 +1,3 @@
+# build гаралт ба локал venv — commit хийхгүй
+site/
+.venv/

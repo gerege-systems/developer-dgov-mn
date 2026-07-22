@@ -96,6 +96,10 @@ Open **http://localhost:3000** and choose **Login with eID** (scan the QR / open
 
 ## Documentation
 
+> 📘 **Developer guide:**
+> [gerege-systems.github.io/developer-dgov-mn](https://gerege-systems.github.io/developer-dgov-mn/)
+> — Quickstart, OAuth2/OIDC integration, API reference (mn/en).
+
 | Doc | What |
 |-----|------|
 | [backend/docs/ARCHITECTURE.md](../backend/docs/ARCHITECTURE.md) | Layers, dependency flow, components |

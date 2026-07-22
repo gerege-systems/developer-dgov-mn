@@ -95,6 +95,10 @@ docker compose up -d --build
 
 ## Баримтжуулалт
 
+> 📘 **Хөгжүүлэгчийн гарын авлага:**
+> [gerege-systems.github.io/developer-dgov-mn](https://gerege-systems.github.io/developer-dgov-mn/)
+> — Түргэн эхлэл, OAuth2/OIDC интеграци, API лавлагаа (mn/en).
+
 | Doc | Юу |
 |-----|------|
 | [backend/docs/ARCHITECTURE_MN.md](backend/docs/ARCHITECTURE_MN.md) | Давхаргууд, dependency flow |

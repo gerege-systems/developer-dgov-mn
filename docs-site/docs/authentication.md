@@ -1,44 +1,46 @@
-# Нэвтрэлт (eID + Government SSO)
+# Нэвтрэлт (eID + OIDC)
 
-Платформ дараах нэвтрэлтийг дэмжинэ:
+Хэрэглэгч тань порталаар хэрхэн баталгаажих вэ:
 
 - **eID нэвтрэлт** — цахим үнэмлэхээр (QR / App2App / РД push).
-- **Google холболт** — eID баталгаажуулалтын дараа Google дансаа холбоно.
-- **Government SSO (OIDC)** — платформ өөрөө OpenID Connect провайдер болж, апп-ууд
-  түүгээр дамжин нэвтэрнэ.
+- **Google холболт** — eID баталгаажуулалтын дараа Google дансаа холбож, цаашид
+  нэг товшилтоор нэвтэрнэ.
+- **OIDC провайдер** — портал өөрөө OpenID Connect провайдер; таны апп
+  баталгаажсан identity-г стандарт claim-аар авна.
 
 ## eID нэвтрэлт
 
 Цахим үнэмлэхийн апп руу шууд мэдэгдэл (App2App) илгээх, эсвэл QR код уншуулна.
-Session нь JWT access + refresh (rotation); logout хоёуланг хүчингүй болгоно
-(refresh + access deny-list). Нууц үг / и-мэйл-OTP нэвтрэлт байхгүй.
+Порталын session нь JWT access + refresh (rotation); logout хоёуланг хүчингүй
+болгоно (refresh + access deny-list). Нууц үг / и-мэйл-OTP нэвтрэлт огт байхгүй.
 
-`sub` (subject) нь платформын **тогтвортой, opaque per-citizen танигч** (user UUID)
-бөгөөд OIDC провайдер урсгалд өөрийн провайдер цөмд дамждаг.
+`sub` (subject) нь порталын **тогтвортой, opaque per-citizen танигч** (user UUID)
+— нэг хэрэглэгч таны апп-д үргэлж ижил `sub`-тай ирнэ.
 
-## Government SSO (OIDC провайдер)
+## OIDC провайдер
 
-Платформ нь **өөрийн Go код** дээр суурилсан OpenID Connect провайдер. Relying party
-(RP) апп-ууд нэвтрэлтээ платформд даатган, хэрэглэгчийн баталгаажсан мэдээллийг
-стандарт claim-аар авна.
+Портал нь **өөрийн Go код** дээр суурилсан OpenID Connect провайдер (гадны OAuth
+сервергүй). Relying party (RP) апп-ууд нэвтрэлтээ порталд даатган, хэрэглэгчийн
+баталгаажсан мэдээллийг стандарт claim-аар авна.
 
 ```mermaid
 sequenceDiagram
-  participant App as Апп (RP)
-  participant SSO as sso.dgov.mn (Government SSO)
+  participant App as Таны апп (RP)
+  participant Portal as developer.dgov.mn
   participant eID as eID Mongolia
-  App->>SSO: /oauth2/auth?client_id&redirect_uri&scope
-  SSO->>eID: eID-ээр баталгаажуулах
-  eID-->>SSO: иргэн баталгаажлаа
-  SSO-->>App: redirect_uri?code&state
-  App->>SSO: /oauth2/token (code → access + id token)
-  SSO-->>App: access_token, id_token
+  App->>Portal: /oauth2/auth?client_id&redirect_uri&scope
+  Portal->>eID: eID-ээр баталгаажуулах
+  eID-->>Portal: иргэн баталгаажлаа
+  Portal-->>App: redirect_uri?code&state
+  App->>Portal: /oauth2/token (code → access + id token)
+  Portal-->>App: access_token, id_token
 ```
 
-!!! tip "SSO бол суурь (built-in) үйлчилгээ"
-    SSO нэвтрэлт нь **бүх бүртгэгдсэн апп**-д base OIDC scope (`openid profile
+!!! tip "Нэвтрэлт бол суурь (built-in) үйлчилгээ"
+    OIDC нэвтрэлт нь **бүх бүртгэгдсэн апп**-д base scope (`openid profile
     email`)-оор автоматаар үйлчилнэ. Нэвтрэлтийг per-app checkbox-оор олгодоггүй,
     хаадаггүй. Харин **нэмэлт** service-үүд (eID proxy гэх мэт) нь per-app
     зөвшөөрөл шаарддаг — [eID Service Proxy](eid-services.md)-г үз.
 
-Апп-аа RP болгож холбохыг [Апп холбох](sso-integration.md)-оос үзнэ үү.
+Апп-аа холбохын тулд [Апп холбох](sso-integration.md), эсвэл
+[Түргэн эхлэл](quickstart.md)-ээс эхэл.
