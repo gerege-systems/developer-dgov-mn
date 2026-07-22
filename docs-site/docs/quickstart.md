@@ -73,7 +73,7 @@ curl -s https://developer.dgov.mn/oauth2/token \
 ```json
 {
   "access_token": "...",
-  "id_token": "eyJhbGciOiJSUzI1NiIs...",
+  "id_token": "eyJhbGc...",
   "token_type": "bearer",
   "expires_in": 3600
 }
