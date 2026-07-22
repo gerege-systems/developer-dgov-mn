@@ -81,8 +81,8 @@ WHERE NOT EXISTS (SELECT 1 FROM gateway_services);
 
 INSERT INTO applications (client_id, name, app_type, tags, redirect_uris, enabled, created_by)
 SELECT * FROM (VALUES
-    ('developer-dgov-mn',  'developer.dgov.mn',  'web', ARRAY['rp']::text[],
-        ARRAY['https://developer.dgov.mn/auth/callback']::text[], true, 'seed-rp'),
+    ('template-dgov-mn',  'template.dgov.mn',  'web', ARRAY['rp']::text[],
+        ARRAY['https://template.dgov.mn/auth/callback']::text[], true, 'seed-rp'),
     ('developer-dgov-mn', 'developer.dgov.mn', 'web', ARRAY['rp', 'developer']::text[],
         ARRAY['https://developer.dgov.mn/auth/callback']::text[], true, 'seed-rp')
 ) AS v(client_id, name, app_type, tags, redirect_uris, enabled, created_by)
