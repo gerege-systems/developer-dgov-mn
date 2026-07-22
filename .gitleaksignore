@@ -1,0 +1,3 @@
+# Gitleaks false positives (fingerprint format: commit:file:rule:line).
+# logger_test.go uses a hardcoded fake trace id ("trace-123-456") as test data.
+b4bb25415e8b0a831f9828f1cfa715fcb0a572d4:backend/pkg/logger/logger_test.go:generic-api-key:40
