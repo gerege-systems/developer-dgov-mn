@@ -1,0 +1,105 @@
+# Government Developer Portal V3.0
+# CI хаалгууд — push (main) болон бүх PR дээр ажиллана. Backend (gofmt · vet ·
+# golangci-lint · race test · swag drift · build · integration compile),
+# frontend (lint · build · test), нууц түлхүүрийн скан (gitleaks). Локал дээр
+# `make pre-push` (backend/) энэ багцыг тольдоно.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+          cache-dependency-path: backend/go.sum
+
+      # gofmt — `gofmt -l .` хоосон байх ёстой (CLAUDE.md CI gate).
+      - name: gofmt
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            echo "::error::gofmt-аар форматлагдаагүй файлууд байна. 'gofmt -w .' ажиллуулаад commit хийнэ үү:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: go vet
+        run: go vet ./...
+
+      # golangci-lint — Makefile ci-lint зөв хувилбарыг (v2) суулгана.
+      - name: Lint
+        run: make ci-lint
+
+      - name: Unit tests (race + coverage)
+        run: make ci-test
+
+      # swag drift — handler annotation өөрчлөгдсөн бол docs/ дахин үүсгэж commit
+      # хийсэн эсэхийг шалгана.
+      - name: Swagger drift
+        run: make ci-swag-check
+
+      - name: Build API binary
+        run: make ci-build
+
+      # Integration тестүүдийн compile шалгалт (Docker шаардахгүй — vet зөвхөн
+      # хөрвүүлж, ажиллуулахгүй).
+      - name: Integration compile check
+        run: go vet -tags=integration ./...
+
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Build
+        run: npm run build
+      - name: Test
+        run: npm test
+
+  secrets-scan:
+    name: Secrets scan (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+          cache: false
+      - name: Install gitleaks
+        # Модулийн canonical зам нь zricethezav хэвээр (repo нэр өөрчлөгдсөн ч).
+        run: go install github.com/zricethezav/gitleaks/v8@latest
+      - name: Scan repository history
+        run: gitleaks detect --source . --redact --no-banner --exit-code 1
