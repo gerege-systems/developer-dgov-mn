@@ -62,9 +62,10 @@ The system prompt is assembled per request from three layers:
 3. **Instructions** — likewise configured from the database.
 
 !!! tip "Reply language"
-    The frontend sends its UI language (`mn`/`en`/`zh`/`ru`) in the `lang` field and
-    the assistant answers in it. If the user writes in another language, the model
-    follows the user; the `degraded` fallback reply is localized the same way.
+    The frontend sends its UI language (`mn`/`en`/`zh`/`ru`) in the `lang` field and the
+    assistant answers **only** in it — the language the user typed in, the conversation
+    history, the knowledge base and tool results never override it (other-language
+    sources are translated). The `degraded` fallback reply is localized the same way.
 
 !!! warning "Never make the guardrail layer configurable"
     The guardrail layer belongs in code only. Just `scope` and `instructions`

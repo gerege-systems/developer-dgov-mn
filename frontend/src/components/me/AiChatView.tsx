@@ -6,6 +6,7 @@ import PageHead from '@/components/PageHead';
 import { useT } from '@/lib/lang';
 import { postJSON } from '@/lib/client';
 import { recordSegment, playBase64Audio, type RecordedAudio } from '@/lib/audio';
+import type { Lang } from '@/lib/i18n';
 
 interface ChatMsg {
   role: 'user' | 'model';
@@ -16,6 +17,9 @@ interface ChatMsg {
   degraded?: boolean;
   /** Дуут мессеж байсан эсэх (history-д placeholder текстээр явна). */
   voice?: boolean;
+  /** Аль хэл дээр үүссэн ээлж бэ — хэл солиход өөр хэлний түүхийг
+   *  дараагийн хүсэлтэд илгээхгүйн тулд. */
+  lang?: Lang;
 }
 
 interface ChatData {
@@ -54,9 +58,11 @@ export default function AiChatView() {
     };
   }, []);
 
+  // Түүхэнд зөвхөн ОДООГИЙН хэл дээрх ээлжүүдийг явуулна: хэл солиход өмнөх
+  // хэл дээрх харилцаа model-ыг татаж, хариултын хэл хазайх эрсдэлтэй.
   function historyOf(msgs: ChatMsg[]) {
     return msgs
-      .filter((m) => !m.degraded)
+      .filter((m) => !m.degraded && (m.lang ?? lang) === lang)
       .map((m) => ({ role: m.role, text: m.text }))
       .slice(-20);
   }
@@ -74,7 +80,7 @@ export default function AiChatView() {
           .filter((t): t is string => typeof t === 'string' && t.length > 0);
         setMessages((m) => [
           ...m,
-          { role: 'model', text: body.data?.reply ?? '', tools, degraded: body.data?.degraded },
+          { role: 'model', text: body.data?.reply ?? '', tools, degraded: body.data?.degraded, lang },
         ]);
       } else {
         setMessages((m) => [
@@ -94,7 +100,7 @@ export default function AiChatView() {
     const text = input.trim();
     if (!text || busy || recording) return;
     setInput('');
-    await dispatch({ message: text }, { role: 'user', text });
+    await dispatch({ message: text }, { role: 'user', text, lang });
   }
 
   async function toggleRecord() {
@@ -114,7 +120,7 @@ export default function AiChatView() {
       stream.getTracks().forEach((t) => t.stop());
       streamRef.current = null;
       if (audio) {
-        await dispatch({ audio }, { role: 'user', text: T('ai.voiceMsg'), voice: true });
+        await dispatch({ audio }, { role: 'user', text: T('ai.voiceMsg'), voice: true, lang });
       }
     } catch {
       setRecording(false);
