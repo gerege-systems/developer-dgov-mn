@@ -18,13 +18,57 @@ import (
 
 // fakeAIRepo нь AIRepository-ийн in-memory fake.
 type fakeAIRepo struct {
-	prompts    map[string]string
-	knowledge  []domain.AIKnowledge
-	listErr    error
-	listCalls  int
-	lastQuery  string
+	prompts   map[string]string
+	knowledge []domain.AIKnowledge
+	// vectorHits нь SearchKnowledgeByVector-ийн буцаах үр дүн (score-той).
+	vectorHits []domain.AIKnowledge
+	vectorErr  error
+	// pending нь embedding хүлээж буй бичлэгүүд; saved нь хадгалагдсан вектор.
+	pending   []domain.AIKnowledgeChunk
+	saved     map[int][]float32
+	savedHash map[int]string
+	listErr   error
+	listCalls int
+	lastQuery string
+	// queries нь ILIKE-д оролдсон бүх нэр томьёо (задлагдсан үгс).
+	queries    []string
+	lastVector []float32
 	setCalls   int
 	lastSetKey string
+}
+
+func (f *fakeAIRepo) SearchKnowledgeByVector(_ context.Context, embedding []float32, _ int) ([]domain.AIKnowledge, error) {
+	f.lastVector = embedding
+	if f.vectorErr != nil {
+		return nil, f.vectorErr
+	}
+	return f.vectorHits, nil
+}
+
+// ListKnowledgeForEmbedding нь pending-ийг нэг удаа өгөөд хоослоно — backfill
+// давталт төгсгөлгүй эргэлдэхгүй.
+func (f *fakeAIRepo) ListKnowledgeForEmbedding(_ context.Context, limit int) ([]domain.AIKnowledgeChunk, error) {
+	if len(f.pending) == 0 {
+		return nil, nil
+	}
+	if limit > 0 && limit < len(f.pending) {
+		out := f.pending[:limit]
+		f.pending = f.pending[limit:]
+		return out, nil
+	}
+	out := f.pending
+	f.pending = nil
+	return out, nil
+}
+
+func (f *fakeAIRepo) SaveKnowledgeEmbedding(_ context.Context, id int, embedding []float32, hash string) error {
+	if f.saved == nil {
+		f.saved = map[int][]float32{}
+		f.savedHash = map[int]string{}
+	}
+	f.saved[id] = embedding
+	f.savedHash[id] = hash
+	return nil
 }
 
 func (f *fakeAIRepo) ListPrompts(_ context.Context) ([]domain.AIPrompt, error) {
@@ -51,6 +95,7 @@ func (f *fakeAIRepo) SetPrompt(_ context.Context, key, content string) error {
 
 func (f *fakeAIRepo) SearchKnowledge(_ context.Context, query string, _ int) ([]domain.AIKnowledge, error) {
 	f.lastQuery = query
+	f.queries = append(f.queries, query)
 	return f.knowledge, nil
 }
 
@@ -75,6 +120,36 @@ func TestSystemInstructionLayers(t *testing.T) {
 	// 3-р давхарга: нэмэлт заавар.
 	assert.Contains(t, sys, "[НЭМЭЛТ ЗААВАР]")
 	assert.Contains(t, sys, "эх сурвалж")
+}
+
+// Нээлттэй (нэвтрэлтгүй) чатад зочны хориг нэмэгдэнэ; нэвтэрсэн чатад
+// нэмэгдэхгүй — ижил usecase хоёр горимд ажиллана.
+func TestSystemInstructionAnonymousLayer(t *testing.T) {
+	tests := []struct {
+		name      string
+		anonymous bool
+		wants     bool
+	}{
+		{name: "зочин", anonymous: true, wants: true},
+		{name: "нэвтэрсэн", anonymous: false, wants: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gen := &fakeGenerator{responses: []gemini.Response{textResponse("за")}}
+			uc := NewUsecase(gen, gen, nil, nil, Config{})
+
+			_, err := uc.Run(context.Background(), RunRequest{Prompt: "сайн уу", Anonymous: tt.anonymous})
+			require.NoError(t, err)
+
+			sys := gen.requests[0].SystemInstruction.Parts[0].Text
+			if tt.wants {
+				assert.Contains(t, sys, "[ЗОЧИН / НЭВТРЭЭГҮЙ]")
+				assert.Contains(t, sys, "регистрийн дугаар")
+			} else {
+				assert.NotContains(t, sys, "[ЗОЧИН / НЭВТРЭЭГҮЙ]")
+			}
+		})
+	}
 }
 
 func TestSystemInstructionFallbacks(t *testing.T) {
@@ -130,13 +205,14 @@ func TestKnowledgeSearchTool(t *testing.T) {
 	repo := &fakeAIRepo{knowledge: []domain.AIKnowledge{
 		{ID: 1, Title: "Нууц үг сэргээх", Content: "«Нууц үгээ мартсан» холбоосыг ашиглана."},
 	}}
-	tool := KnowledgeSearchTool(repo)
+	tool := KnowledgeSearchTool(repo, nil)
 	assert.Equal(t, "search_knowledge", tool.Declaration.Name)
 
 	res, err := tool.Execute(context.Background(), map[string]any{"query": "нууц үг"})
 	require.NoError(t, err)
-	assert.Equal(t, "нууц үг", repo.lastQuery)
-	assert.Equal(t, 1, res["count"])
+	require.NotEmpty(t, repo.queries)
+	assert.Equal(t, "нууц үг", repo.queries[0], "эхлээд бүтэн мөрөөр хайна")
+	assert.Equal(t, 1, res["count"], "давхардсан бичлэгийг дахин нэмэхгүй")
 
 	results, ok := res["results"].([]map[string]any)
 	require.True(t, ok)
@@ -145,7 +221,7 @@ func TestKnowledgeSearchTool(t *testing.T) {
 }
 
 func TestKnowledgeSearchToolEmptyQuery(t *testing.T) {
-	tool := KnowledgeSearchTool(&fakeAIRepo{})
+	tool := KnowledgeSearchTool(&fakeAIRepo{}, nil)
 	res, err := tool.Execute(context.Background(), nil)
 	require.NoError(t, err)
 	assert.NotNil(t, res["note"])

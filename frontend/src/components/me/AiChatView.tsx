@@ -5,7 +5,8 @@ import { Bot, Mic, Send, Square, Volume2, Wrench } from 'lucide-react';
 import PageHead from '@/components/PageHead';
 import { useT } from '@/lib/lang';
 import { postJSON } from '@/lib/client';
-import { recordSegment, playBase64Audio, type RecordedAudio } from '@/lib/audio';
+import { recordSegment, playBase64Audio, unlockAudio, type RecordedAudio } from '@/lib/audio';
+import type { Lang } from '@/lib/i18n';
 
 interface ChatMsg {
   role: 'user' | 'model';
@@ -16,6 +17,9 @@ interface ChatMsg {
   degraded?: boolean;
   /** Дуут мессеж байсан эсэх (history-д placeholder текстээр явна). */
   voice?: boolean;
+  /** Аль хэл дээр үүссэн ээлж бэ — хэл солиход өөр хэлний түүхийг
+   *  дараагийн хүсэлтэд илгээхгүйн тулд. */
+  lang?: Lang;
 }
 
 interface ChatData {
@@ -32,12 +36,13 @@ const MAX_VOICE_MS = 30000;
  * /api/ai/* BFF route-уудаар Gemini pipeline руу илгээнэ.
  */
 export default function AiChatView() {
-  const { T } = useT();
+  const { T, lang } = useT();
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
   const [recording, setRecording] = useState(false);
   const [speakingIdx, setSpeakingIdx] = useState<number | null>(null);
+  const [ttsError, setTtsError] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
   const segmentRef = useRef<{ stop: () => void } | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -54,9 +59,11 @@ export default function AiChatView() {
     };
   }, []);
 
+  // Түүхэнд зөвхөн ОДООГИЙН хэл дээрх ээлжүүдийг явуулна: хэл солиход өмнөх
+  // хэл дээрх харилцаа model-ыг татаж, хариултын хэл хазайх эрсдэлтэй.
   function historyOf(msgs: ChatMsg[]) {
     return msgs
-      .filter((m) => !m.degraded)
+      .filter((m) => !m.degraded && (m.lang ?? lang) === lang)
       .map((m) => ({ role: m.role, text: m.text }))
       .slice(-20);
   }
@@ -66,14 +73,15 @@ export default function AiChatView() {
     setMessages((m) => [...m, userBubble]);
     setBusy(true);
     try {
-      const body = await postJSON<ChatData>('/api/ai/chat', { ...payload, history });
+      // lang — туслах хэрэглэгчийн UI хэлээр хариулна (backend-ийн prompt давхарга).
+      const body = await postJSON<ChatData>('/api/ai/chat', { ...payload, history, lang });
       if (body?.ok && body.data?.reply) {
         const tools = (body.data.steps ?? [])
           .map((s) => s.tool)
           .filter((t): t is string => typeof t === 'string' && t.length > 0);
         setMessages((m) => [
           ...m,
-          { role: 'model', text: body.data?.reply ?? '', tools, degraded: body.data?.degraded },
+          { role: 'model', text: body.data?.reply ?? '', tools, degraded: body.data?.degraded, lang },
         ]);
       } else {
         setMessages((m) => [
@@ -93,7 +101,7 @@ export default function AiChatView() {
     const text = input.trim();
     if (!text || busy || recording) return;
     setInput('');
-    await dispatch({ message: text }, { role: 'user', text });
+    await dispatch({ message: text }, { role: 'user', text, lang });
   }
 
   async function toggleRecord() {
@@ -113,7 +121,7 @@ export default function AiChatView() {
       stream.getTracks().forEach((t) => t.stop());
       streamRef.current = null;
       if (audio) {
-        await dispatch({ audio }, { role: 'user', text: T('ai.voiceMsg'), voice: true });
+        await dispatch({ audio }, { role: 'user', text: T('ai.voiceMsg'), voice: true, lang });
       }
     } catch {
       setRecording(false);
@@ -123,16 +131,24 @@ export default function AiChatView() {
 
   async function speak(idx: number, text: string) {
     if (speakingIdx !== null) return;
+    // await-аас өмнө — iOS Safari-гийн аудио түгжээг даралтын дотор тайлна.
+    const el = unlockAudio();
     setSpeakingIdx(idx);
+    setTtsError(false);
     try {
       const body = await postJSON<{ mime?: string; data?: string }>('/api/ai/tts', {
         text: text.slice(0, 2000),
       });
-      if (body.ok && body.data?.mime && body.data?.data) {
-        await playBase64Audio(body.data.mime, body.data.data);
-      }
+      const played =
+        body.ok && body.data?.mime && body.data?.data
+          ? await playBase64Audio(body.data.mime, body.data.data, el)
+          : false;
+      if (!played) setTtsError(true);
     } catch {
-      /* TTS унавал чимээгүй өнгөрнө */
+      // Дуут хувилбар бэлдэх нь Gemini дээр 10-20 секунд авдаг тул заримдаа
+      // хугацаа хэтэрдэг (backend 503). Чимээгүй өнгөрвөл товч дарсан
+      // хэрэглэгч юу болсныг мэдэхгүй тул богино мэдэгдэл харуулна.
+      setTtsError(true);
     } finally {
       setSpeakingIdx(null);
     }
@@ -180,6 +196,11 @@ export default function AiChatView() {
           {busy && (
             <div className="aichat__msg aichat__msg--model">
               <div className="aichat__bubble aichat__bubble--pending">{T('ai.thinking')}</div>
+            </div>
+          )}
+          {ttsError && (
+            <div className="aichat__msg aichat__msg--model is-degraded">
+              <div className="aichat__bubble">{T('ai.ttsError')}</div>
             </div>
           )}
           <div ref={endRef} />

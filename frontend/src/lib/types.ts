@@ -1,6 +1,8 @@
 // Backend-ийн REST API-тай нийцсэн хуваалцсан типүүд.
 // Эх сурвалж: docs/API_CONTRACT_MN.md болон responses.users.go.
 
+import { pickLang, prefersLatinName, type Lang } from './i18n';
+
 /** Бүх backend хариу ороодог дугтуй (envelope). */
 export interface Envelope<T = unknown> {
   status: boolean;
@@ -114,9 +116,10 @@ export function fullNameOf(u: { firstName?: string; lastName?: string; full_name
   return (u.full_name?.trim() || composed) || u.username;
 }
 
-/** Одоогийн хэлээр харуулах нэр: en үед англи нэр (байхгүй бол монгол/username). */
-export function displayName(u: { fullName: string; fullNameEn?: string; username: string }, lang: 'mn' | 'en'): string {
-  if (lang === 'en') return u.fullNameEn?.trim() || u.fullName || u.username;
+/** Одоогийн хэлээр харуулах нэр: кирилл бус (en/zh) үед латин нэр (байхгүй бол
+ *  монгол/username). */
+export function displayName(u: { fullName: string; fullNameEn?: string; username: string }, lang: Lang): string {
+  if (prefersLatinName(lang)) return u.fullNameEn?.trim() || u.fullName || u.username;
   return u.fullName || u.username;
 }
 
@@ -193,9 +196,12 @@ export function isAdminLevel(roleId: number): boolean {
   return roleId === ROLE_SUPERADMIN || roleId === ROLE_ADMIN;
 }
 
-/** role_id → хүний унших нэр. */
-export function roleLabel(roleId: number, lang: 'mn' | 'en' = 'mn'): string {
+/** role_id → хүний унших нэр (mn/en/zh/ru). */
+export function roleLabel(roleId: number, lang: Lang = 'mn'): string {
   const mn: Record<number, string> = { 1: 'Супер админ', 2: 'Админ', 3: 'Менежер', 4: 'Хэрэглэгч' };
   const en: Record<number, string> = { 1: 'Superadmin', 2: 'Admin', 3: 'Manager', 4: 'User' };
-  return (lang === 'en' ? en : mn)[roleId] ?? (lang === 'en' ? 'User' : 'Хэрэглэгч');
+  const zh: Record<number, string> = { 1: '超级管理员', 2: '管理员', 3: '经理', 4: '用户' };
+  const ru: Record<number, string> = { 1: 'Суперадмин', 2: 'Администратор', 3: 'Менеджер', 4: 'Пользователь' };
+  const table = pickLang(lang, { mn, en, zh, ru });
+  return table[roleId] ?? pickLang(lang, { mn: 'Хэрэглэгч', en: 'User', zh: '用户', ru: 'Пользователь' });
 }

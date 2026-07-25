@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { t, permLabel, roleName, type DictKey, type Lang } from './i18n';
+import { t, permLabel, roleName, LANGS, type DictKey, type Lang } from './i18n';
 
 const LANG_KEY = 'gerege.lang';
 
@@ -13,7 +13,7 @@ interface LangCtx {
 const Ctx = createContext<LangCtx>({ lang: 'mn', setLang: () => {} });
 
 /**
- * LangProvider нь хэлийг (mn/en) бүхэл аппд хуваалцана. Компонент бүр тусдаа
+ * LangProvider нь хэлийг (mn/en/zh/ru) бүхэл аппд хуваалцана. Компонент бүр тусдаа
  * state барих биш, нэг context-оос уншдаг тул UserMenu-д хэл солиход цэс болон
  * бүх контент шууд шинэчлэгдэнэ. localStorage 'gerege.lang'-д хадгална.
  */
@@ -24,7 +24,7 @@ export function LangProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const v = localStorage.getItem(LANG_KEY);
-      if (v === 'mn' || v === 'en') setLangState(v);
+      if (v && (LANGS as readonly string[]).includes(v)) setLangState(v as Lang);
     } catch {
       /* localStorage хүрэхгүй — өгөгдмөл mn */
     }

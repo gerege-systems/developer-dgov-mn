@@ -61,6 +61,49 @@
                 }
             }
         },
+        "/admin/ai/knowledge/reindex": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "ai_knowledge хүснэгтийн embedding дутуу эсвэл агуулга нь өөрчлөгдсөн (hash зөрсөн) бичлэгүүдийг Gemini-ээр дахин вектор болгож хадгална. Мэдлэгийн сангаа засварласны дараа дуудна — семантик хайлт шууд шинэчлэгдэнэ. GEMINI_API_KEY тохируулаагүй бол 0 буцаана (алдаа биш).",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Мэдлэгийн сангийн embedding-ийг шинэчлэх",
+                "responses": {
+                    "200": {
+                        "description": "Embedded count",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Missing/invalid token",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Missing settings.manage permission",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Embedding failed",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/ai/prompts": {
             "get": {
                 "security": [
@@ -329,6 +372,12 @@
                         "schema": {
                             "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
                         }
+                    },
+                    "503": {
+                        "description": "Upstream (Gemini) timed out or unavailable — retry",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
                     }
                 }
             }
@@ -476,6 +525,12 @@
                     },
                     "429": {
                         "description": "Rate limit exceeded",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    },
+                    "503": {
+                        "description": "Upstream (Gemini) timed out or unavailable — retry",
                         "schema": {
                             "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
                         }
@@ -3031,6 +3086,140 @@
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/public/ai/chat": {
+            "post": {
+                "description": "Нүүр хуудасны чат виджетэд зориулсан НЭВТРЭЛТГҮЙ чат. Текст эсвэл богино дуут мессеж (push-to-talk, ~250 KB base64 ≈ 15 сек), мессеж 1000 тэмдэгт, түүх 6 ээлж. Дуут мессежийг эхлээд STT-ээр текст болгож, хариунд transcript талбараар буцаана; яриа таниагүй бол degraded=true, хоосон reply. Туслах нь платформын мэдлэгийн санд тулгуурлан хариулах бөгөөд хэрэглэгчийн бүртгэлийн өгөгдөлд ХАНДАХГҮЙ (тусдаа tool багц + нэмэлт guardrail). IP тус бүрт минутанд ~6 хүсэлт.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ai"
+                ],
+                "summary": "Нээлттэй AI туслах (нэвтрэлтгүй)",
+                "parameters": [
+                    {
+                        "description": "Chat message + optional short history",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_datatransfers_requests.AIPublicChatRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "AI reply",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/template_internal_http_datatransfers_responses.AIChatResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Malformed JSON body",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/public/ai/tts": {
+            "post": {
+                "description": "Нүүр хуудасны нээлттэй чатын хариултыг дуут (audio/wav, base64) болгоно. Нэвтрэлт шаардахгүй; текст 800 тэмдэгтээр, IP тус бүрт минутанд ~6 хүсэлтээр хязгаарлагдана.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ai"
+                ],
+                "summary": "Нээлттэй TTS (нэвтрэлтгүй) — «сонсох» товч",
+                "parameters": [
+                    {
+                        "description": "Text",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_datatransfers_requests.AIPublicTTSRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "WAV audio (base64)",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/template_internal_http_datatransfers_responses.AIAudioOut"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Malformed JSON body",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
+                        }
+                    },
+                    "503": {
+                        "description": "Upstream (Gemini) timed out or unavailable — retry",
+                        "schema": {
+                            "$ref": "#/definitions/template_internal_http_handlers_v1.BaseResponse"
                         }
                     }
                 }
@@ -7449,6 +7638,16 @@
                         "$ref": "#/definitions/template_internal_http_datatransfers_requests.AIChatTurn"
                     }
                 },
+                "lang": {
+                    "description": "Lang нь frontend-ийн UI хэл — туслах ЭНЭ хэлээр хариулна. Хоосон бол\nсервер өгөгдмөл (mn) хэрэглэнэ; цагаан жагсаалтаас гадуур утга орохгүй.",
+                    "type": "string",
+                    "enum": [
+                        "mn",
+                        "en",
+                        "zh",
+                        "ru"
+                    ]
+                },
                 "message": {
                     "type": "string",
                     "maxLength": 4000
@@ -7481,6 +7680,94 @@
                 "content": {
                     "type": "string",
                     "maxLength": 4000
+                }
+            }
+        },
+        "template_internal_http_datatransfers_requests.AIPublicAudio": {
+            "type": "object",
+            "required": [
+                "data",
+                "mime"
+            ],
+            "properties": {
+                "data": {
+                    "type": "string",
+                    "maxLength": 256000
+                },
+                "mime": {
+                    "type": "string",
+                    "enum": [
+                        "audio/webm",
+                        "audio/ogg",
+                        "audio/wav",
+                        "audio/mpeg",
+                        "audio/mp3",
+                        "audio/mp4",
+                        "audio/m4a",
+                        "audio/aac",
+                        "audio/flac"
+                    ]
+                }
+            }
+        },
+        "template_internal_http_datatransfers_requests.AIPublicChatRequest": {
+            "type": "object",
+            "properties": {
+                "audio": {
+                    "$ref": "#/definitions/template_internal_http_datatransfers_requests.AIPublicAudio"
+                },
+                "history": {
+                    "type": "array",
+                    "maxItems": 6,
+                    "items": {
+                        "$ref": "#/definitions/template_internal_http_datatransfers_requests.AIPublicChatTurn"
+                    }
+                },
+                "lang": {
+                    "type": "string",
+                    "enum": [
+                        "mn",
+                        "en",
+                        "zh",
+                        "ru"
+                    ]
+                },
+                "message": {
+                    "description": "Message нь audio байхгүй үед заавал (handler шалгана) — push-to-talk\nгоримд зөвхөн audio ирнэ.",
+                    "type": "string",
+                    "maxLength": 1000
+                }
+            }
+        },
+        "template_internal_http_datatransfers_requests.AIPublicChatTurn": {
+            "type": "object",
+            "required": [
+                "role",
+                "text"
+            ],
+            "properties": {
+                "role": {
+                    "type": "string",
+                    "enum": [
+                        "user",
+                        "model"
+                    ]
+                },
+                "text": {
+                    "type": "string",
+                    "maxLength": 1000
+                }
+            }
+        },
+        "template_internal_http_datatransfers_requests.AIPublicTTSRequest": {
+            "type": "object",
+            "required": [
+                "text"
+            ],
+            "properties": {
+                "text": {
+                    "type": "string",
+                    "maxLength": 800
                 }
             }
         },
@@ -8856,6 +9143,10 @@
                     "items": {
                         "$ref": "#/definitions/template_internal_http_datatransfers_responses.AIChatStep"
                     }
+                },
+                "transcript": {
+                    "description": "Transcript нь дуут мессежийн текст хуулбар (зөвхөн audio илгээсэн үед).\nFrontend үүнийг хэрэглэгчийн бөмбөлөгт харуулна — «Дуут мессеж» гэсэн\nорлуулагчаас хамаагүй ойлгомжтой бөгөөд юу сонсогдсоныг ил болгоно.",
+                    "type": "string"
                 }
             }
         },

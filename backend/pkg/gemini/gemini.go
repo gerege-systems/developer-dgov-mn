@@ -20,6 +20,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -27,6 +28,11 @@ import (
 // template нь Gemini-гүйгээр boot хийгдэх боломжтой хэвээр (verify.Client-тэй
 // ижил загвар).
 var ErrNotConfigured = errors.New("gemini: API key not configured (GEMINI_API_KEY)")
+
+// ErrUnavailable нь ТҮР ЗУУРЫН саатлыг заана: сүлжээ тасарсан, 429/5xx дээр
+// бүх дахин оролдлого дууссан. Дуудагч үүнийг хараад 503 буцаах / fallback
+// хариулт өгөх шийдвэрээ гаргана (байнгын алдаанаас ялгаж).
+var ErrUnavailable = errors.New("gemini: service unavailable")
 
 const (
 	defaultBase  = "https://generativelanguage.googleapis.com/v1beta"
@@ -98,7 +104,10 @@ type Tool struct {
 // GenerationConfig нь generation-ий сонголттой тохиргоо. ResponseModalities
 // + SpeechConfig нь TTS model-уудад ("AUDIO" modality) хэрэглэгдэнэ.
 type GenerationConfig struct {
-	Temperature        *float64      `json:"temperature,omitempty"`
+	Temperature *float64 `json:"temperature,omitempty"`
+	// TopP нь nucleus sampling — Temperature-тэй хамт хариултын олон
+	// янз байдлыг тохируулна (1.0 = бүх боломжит үг).
+	TopP               *float64      `json:"topP,omitempty"`
 	MaxOutputTokens    int           `json:"maxOutputTokens,omitempty"`
 	ResponseModalities []string      `json:"responseModalities,omitempty"`
 	SpeechConfig       *SpeechConfig `json:"speechConfig,omitempty"`
@@ -200,7 +209,15 @@ type Client struct {
 	base   string
 	apiKey string
 	model  string
-	http   *http.Client
+	// embedModel нь мэдлэгийн сангийн вектор (embedding) үүсгэх model —
+	// chat model-оос тусдаа (embed.go). Хоосон бол fallback жагсаалтын эхнийх.
+	embedModel string
+	// embedResolved нь ажиллаж байгаа нь батлагдсан embedding model
+	// (embedMu-гээр хамгаалагдана) — 404 дээр fallback хийсний дараа
+	// дараагийн дуудалтууд шууд түүн рүү очно.
+	embedMu       sync.Mutex
+	embedResolved string
+	http          *http.Client
 	// sleep-ийг тестэд override хийнэ (бодит backoff хүлээхгүйн тулд).
 	sleep func(ctx context.Context, d time.Duration) error
 }
@@ -221,6 +238,15 @@ func NewClient(base, apiKey, model string) *Client {
 		http:   &http.Client{Timeout: 60 * time.Second},
 		sleep:  sleepCtx,
 	}
+}
+
+// WithEmbedModel нь embedding-ийн model-ыг сольж, тухайн client-ийг буцаана
+// (сүлжсэн тохиргоо). Хоосон утга нь өгөгдмөлийг хэвээр үлдээнэ.
+func (c *Client) WithEmbedModel(model string) *Client {
+	if model != "" {
+		c.embedModel = model
+	}
+	return c
 }
 
 // GenerateContent нь generateContent-ийг дуудаж, түр зуурын алдаан дээр
@@ -250,7 +276,7 @@ func (c *Client) GenerateContent(ctx context.Context, req Request) (Response, er
 			return Response{}, err
 		}
 	}
-	return Response{}, fmt.Errorf("gemini: %d attempts failed: %w", maxAttempts, lastErr)
+	return Response{}, fmt.Errorf("%w: %d attempts failed: %v", ErrUnavailable, maxAttempts, lastErr)
 }
 
 // generateOnce нь нэг HTTP оролдлого хийнэ. retryable нь алдааг дахин
@@ -275,7 +301,7 @@ func (c *Client) generateOnce(ctx context.Context, req Request) (Response, bool,
 		if ctx.Err() != nil {
 			return Response{}, false, fmt.Errorf("gemini: http: %w", err)
 		}
-		return Response{}, true, fmt.Errorf("gemini: http: %w", err)
+		return Response{}, true, fmt.Errorf("%w: http: %v", ErrUnavailable, err)
 	}
 	defer func() { _ = httpResp.Body.Close() }()
 

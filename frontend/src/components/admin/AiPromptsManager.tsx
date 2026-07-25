@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Bot, Loader2, Save } from 'lucide-react';
+import { Bot, Loader2, Save, RefreshCw } from 'lucide-react';
 import { useT } from '@/lib/lang';
-import { getJSON, sendJSON } from '@/lib/client';
+import { getJSON, sendJSON, postJSON } from '@/lib/client';
 
 interface PromptItem {
   key: string;
@@ -25,6 +25,28 @@ export default function AiPromptsManager() {
   const [savingKey, setSavingKey] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [savedKey, setSavedKey] = useState<string | null>(null);
+  // Мэдлэгийн сангийн вектор индекс — агуулга засварласны дараа гараар шинэчлэх.
+  const [reindexing, setReindexing] = useState(false);
+  const [reindexMsg, setReindexMsg] = useState('');
+
+  async function reindex() {
+    setReindexing(true);
+    setReindexMsg('');
+    setError('');
+    try {
+      const body = await postJSON<{ embedded?: number }>('/api/admin/ai/knowledge/reindex', {});
+      if (body?.ok) {
+        const n = body.data?.embedded ?? 0;
+        setReindexMsg(n > 0 ? T('aiPrompts.reindexed').replace('{count}', String(n)) : T('aiPrompts.reindexNone'));
+      } else {
+        setError(body?.message || T('aiPrompts.reindexError'));
+      }
+    } catch {
+      setError(T('aiPrompts.reindexError'));
+    } finally {
+      setReindexing(false);
+    }
+  }
 
   const promptsQuery = useQuery({
     queryKey: ['admin-ai-prompts'],
@@ -108,6 +130,19 @@ export default function AiPromptsManager() {
           </div>
         </div>
       ))}
+
+      <div style={{ borderTop: '1px solid var(--border)', marginTop: 4, paddingTop: 12 }}>
+        <p className="muted" style={{ margin: '0 0 8px', fontSize: 13 }}>{T('aiPrompts.reindexHint')}</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button className="btn btn--sm" type="button" disabled={reindexing} onClick={reindex}>
+            {reindexing
+              ? <Loader2 size={14} strokeWidth={2} className="spin" />
+              : <RefreshCw size={14} strokeWidth={2} />}
+            <span>{reindexing ? T('aiPrompts.reindexing') : T('aiPrompts.reindex')}</span>
+          </button>
+          {reindexMsg && <span className="muted" style={{ fontSize: 13 }}>{reindexMsg}</span>}
+        </div>
+      </div>
     </div>
   );
 }

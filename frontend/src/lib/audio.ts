@@ -76,12 +76,74 @@ export function recordSegment(
   };
 }
 
-/** base64 audio-г тоглуулна; дууссаны дараа resolve хийнэ. */
-export function playBase64Audio(mime: string, data: string): Promise<void> {
+// SILENT_WAV — 0.05 секундын чимээгүй бичлэг (8kHz, 8-bit). iOS Safari-гийн
+// «түгжээ тайлахад» хэрэглэнэ (доорх unlockAudio-г үзнэ үү).
+const SILENT_WAV =
+  'data:audio/wav;base64,UklGRrQBAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YZABAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA';
+
+// Нэг л <audio> элементийг дахин ашиглана: iOS Safari нь ХЭРЭГЛЭГЧИЙН
+// ДАРАЛТЫН дотор play() дуудагдсан элементэд л дараа нь програмаар тоглуулах
+// эрх өгдөг. Шинэ Audio() бүрд энэ эрх дахин шаардагдана.
+let sharedAudio: HTMLAudioElement | null = null;
+
+/**
+ * unlockAudio — хэрэглэгчийн даралтын дотор (await-аас ӨМНӨ) дуудна.
+ *
+ * Яагаад: TTS-ийн аудио сервер дээр 3-12 секунд бэлдэгддэг. Тэр хугацааны
+ * дараа `new Audio(...).play()` дуудахад iOS Safari «хэрэглэгчийн үйлдэлгүй»
+ * гэж үзээд татгалздаг (desktop Chrome нь sticky activation-тай тул ажилладаг).
+ * Иймд даралтын мөчид чимээгүй клипээр элементийг «нээж» аваад, аудио бэлэн
+ * болмогц ижил элемент дээр src-г солино.
+ */
+export function unlockAudio(): HTMLAudioElement | null {
+  if (typeof Audio === 'undefined') return null;
+  if (!sharedAudio) sharedAudio = new Audio();
+  try {
+    sharedAudio.src = SILENT_WAV;
+    void sharedAudio.play().catch(() => {});
+  } catch {
+    /* тоглуулах боломжгүй — доор play() дахин оролдоно */
+  }
+  return sharedAudio;
+}
+
+/** base64 мөрийг Blob болгоно (том аудионд data: URI-аас найдвартай). */
+function base64ToBlob(mime: string, data: string): Blob {
+  const bin = atob(data);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new Blob([bytes], { type: mime });
+}
+
+/**
+ * base64 audio-г тоглуулна; дуустал хүлээгээд ТОГЛОСОН ЭСЭХИЙГ буцаана
+ * (false бол дуудагч хэрэглэгчид мэдэгдэнэ — чимээгүй бүтэлгүйтэл нь «товч
+ * ажиллахгүй байна» мэт харагддаг).
+ *
+ * data: URI биш blob: URL хэрэглэнэ: Safari/iOS нь хэдэн зуун KB-ын data:
+ * URI-г заримдаа татгалздаг. CSP-д media-src blob: зөвшөөрөгдсөн.
+ */
+export function playBase64Audio(mime: string, data: string, el?: HTMLAudioElement | null): Promise<boolean> {
   return new Promise((resolve) => {
-    const audio = new Audio(`data:${mime};base64,${data}`);
-    audio.onended = () => resolve();
-    audio.onerror = () => resolve();
-    void audio.play().catch(() => resolve());
+    let url: string;
+    try {
+      url = URL.createObjectURL(base64ToBlob(mime, data));
+    } catch {
+      resolve(false);
+      return;
+    }
+    // unlockAudio-оос ирсэн элемент байвал түүнийг дахин ашиглана (iOS).
+    const audio = el ?? new Audio();
+    audio.src = url;
+    let done = false;
+    const finish = (ok: boolean) => {
+      if (done) return;
+      done = true;
+      URL.revokeObjectURL(url);
+      resolve(ok);
+    };
+    audio.onended = () => finish(true);
+    audio.onerror = () => finish(false);
+    void audio.play().catch(() => finish(false));
   });
 }

@@ -64,6 +64,9 @@ interface NavSystem {
 }
 
 // BPMN, translator, AI зэрэг хэсгүүдийг хассан — зөвхөн generic admin цөм.
+// Баримтжуулалт — MkDocs Material сайт, апп-ын өөрийн домэйн дор (/docs/).
+const DOCS_URL = '/docs/';
+
 const SYSTEMS: NavSystem[] = [
   {
     // Super Admin — админ системээс ТУСДАА, дээд түвшний систем (зөвхөн super admin
@@ -203,7 +206,7 @@ const SYSTEMS: NavSystem[] = [
 /**
  * Хоёр түвшний бүрхүүл — icon rail дахь "систем" (Админ / Менежер / Хэрэглэгч)
  * тус бүр өөрийн дэд цэстэй. Хэрэглэгчийн эрхээр (/api/rbac/me) цэсийг шүүж,
- * хэлийг useT()-ээр (mn/en) орчуулна.
+ * хэлийг useT()-ээр (mn/en/zh/ru) орчуулна.
  */
 export default function AppShell({ user, children }: Props) {
   const pathname = usePathname() ?? '/';
@@ -249,25 +252,18 @@ export default function AppShell({ user, children }: Props) {
     { label: T('nav.settings'), href: '/me/settings', group: T('sys.user') },
   ];
 
-  // Идэвхтэй цэсийг ХАМГИЙН УРТ таарсан замаар нь сонгоно.
-  //
-  // Энгийн startsWith нь үүрлэсэн замуудад ХОЁУЛАНГ нь идэвхжүүлдэг:
-  // /admin/relay/routes дээр байхад '/admin/relay' (Хяналтын самбар) ба
-  // '/admin/relay/routes' (Чиглүүлэлт) хоёулаа таарч, хоёр цэс зэрэг
-  // сонгогдсон харагдана. Тиймээс бүх цэснээс таарсан хамгийн уртыг нь олж,
-  // зөвхөн түүнийг идэвхтэй гэж үзнэ.
-  //
-  // Мөн зөвхөн сегментийн зааг дээр таарна ('/admin/relay' нь
-  // '/admin/relayfoo'-г таарууллаа гэж үзэхгүй).
-  const matches = (href: string) =>
-    href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(`${href}/`);
-
-  const bestHref = systems
-    .flatMap((s) => visibleSubsystems(s).flatMap((g) => g.items.map((i) => i.href)))
-    .filter(matches)
+  // Зам таарах эсэх — зөвхөн сегментийн ЗААГ дээр (startsWith нь '/admin/relay'-г
+  // '/admin/relayfoo'-д ч таарууллаа гэж үзэх байсан).
+  const matchesPath = (href: string) =>
+    href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(href + '/');
+  // Таарсан замуудаас ХАМГИЙН УРТ нь л идэвхтэй. Энгийн startsWith нь эцэг зам
+  // ('/admin/relay') болон хүүхэд зам ('/admin/relay/config') хоёрыг ЗЭРЭГ
+  // идэвхжүүлж, sidebar дээр хоёр мөр сонгогдсон харагдаж байв.
+  const activeHref = searchItems
+    .map((i) => i.href)
+    .filter(matchesPath)
     .reduce((best, href) => (href.length > best.length ? href : best), '');
-
-  const isActive = (href: string) => (bestHref !== '' ? href === bestHref : matches(href));
+  const isActive = (href: string) => activeHref !== '' && href === activeHref;
   // Нүүр '/' нь "me" системд багтдаг ч default панелийг түүгээр сонгохгүй —
   // ингэснээр admin/manager нэвтрэхдээ нүүрэн дээр өөрийн дээд системээ нээлттэй
   // хардаг; гүн холбоос (/admin/*, /manager/*) хэвээр зөв.
@@ -349,7 +345,7 @@ export default function AppShell({ user, children }: Props) {
           })}
         </nav>
         <div className="iconrail__bottom">
-          <a className="iconrail__btn" href="/docs/" target="_blank" rel="noreferrer" title={T('nav.docs')} aria-label={T('nav.docs')}>
+          <a className="iconrail__btn" href={DOCS_URL} title={T('nav.docs')} aria-label={T('nav.docs')}>
             <BookOpen size={20} strokeWidth={2} />
           </a>
           <a className="iconrail__btn" href="https://dgov.mn/help" target="_blank" rel="noreferrer" title={T('nav.help')} aria-label={T('nav.help')}>
@@ -411,9 +407,9 @@ export default function AppShell({ user, children }: Props) {
             <Menu size={20} strokeWidth={2} />
           </button>
           <div className="topbar2__spacer" />
-          <NavSearch items={searchItems} placeholder={T('shell.search')} emptyText={lang === 'en' ? 'No results' : 'Илэрц алга'} />
+          <NavSearch items={searchItems} placeholder={T('shell.search')} emptyText={T('shell.noResults')} />
           <div className="topbar2__actions">
-            <a className="topbar2__docs" href="/docs/" target="_blank" rel="noreferrer" title={T('nav.docs')} aria-label={T('nav.docs')}>
+            <a className="topbar2__docs" href={DOCS_URL} title={T('nav.docs')} aria-label={T('nav.docs')}>
               <BookOpen size={16} strokeWidth={2} />
               <span>{T('nav.docs')}</span>
             </a>

@@ -10,11 +10,22 @@ import {
   Menu, X,
 } from 'lucide-react';
 import { useLang } from '@/lib/lang';
+import { pickLang, type Lang } from '@/lib/i18n';
 import { landingCopy, type LandingCopy } from './copy';
+import LandingChat from './LandingChat';
 import { deepMerge } from '@/lib/theme';
+
+// Нүүрэн дээрх хэлний товч нь mn → en → zh → ru → mn гэж эргэлдэнэ (дараагийн
+// хэлийг шошгонд харуулна).
+const NEXT_LANG: Record<Lang, Lang> = { mn: 'en', en: 'zh', zh: 'ru', ru: 'mn' };
+const LANG_SHORT: Record<Lang, string> = { mn: 'МН', en: 'EN', zh: '中文', ru: 'RU' };
 
 // Нээлттэй эх (Open Source) кодын GitHub репозитор.
 const GITHUB_URL = 'https://github.com/gerege-systems/template-dgov-mn';
+
+// Баримтжуулалт — MkDocs Material сайт, апп-ын өөрийн домэйн дор (/docs/).
+// Эх код нь docs-site/; docs-site/deploy-docs.sh нь build хийж сервер рүү тавина.
+const DOCS_URL = '/docs/';
 
 // GitHub-ийн лого (lucide-react нь brand icon-уудыг гаргадаггүй тул inline SVG).
 const GitHubMark = ({ size = 18 }: { size?: number }) => (
@@ -32,8 +43,13 @@ interface Props {
   notice?: string;
   googleLink?: boolean;
   googleError?: boolean;
-  /** Идэвхтэй theme-ийн landing текст/цэс (mn/en) — copy.ts default дээр давхарлана. */
-  themeLanding?: { mn?: Partial<LandingCopy>; en?: Partial<LandingCopy> };
+  /** Идэвхтэй theme-ийн landing текст/цэс (mn/en/zh/ru) — copy.ts default дээр давхарлана. */
+  themeLanding?: {
+    mn?: Partial<LandingCopy>;
+    en?: Partial<LandingCopy>;
+    zh?: Partial<LandingCopy>;
+    ru?: Partial<LandingCopy>;
+  };
 }
 
 /**
@@ -71,18 +87,18 @@ export default function LandingPage({ next, themeLanding }: Props) {
             <a href="#features">{t.nav.features}</a>
             <a href="#security">{t.nav.security}</a>
             <a href="#tech">{t.nav.tech}</a>
-            <a href="/docs/">{t.nav.docs}</a>
+            <a href={DOCS_URL}>{t.nav.docs}</a>
           </nav>
 
           <div className="lp-nav__actions">
             <button
               type="button"
               className="lp-lang"
-              onClick={() => setLang(lang === 'mn' ? 'en' : 'mn')}
-              aria-label="Хэл солих"
+              onClick={() => setLang(NEXT_LANG[lang])}
+              aria-label={pickLang(lang, { mn: 'Хэл солих', en: 'Switch language', zh: '切换语言', ru: 'Сменить язык' })}
             >
               <Languages size={15} strokeWidth={2} />
-              <span>{lang === 'mn' ? 'EN' : 'МН'}</span>
+              <span>{LANG_SHORT[NEXT_LANG[lang]]}</span>
             </button>
             <a className="lp-btn lp-btn--gold lp-btn--sm" href={ssoHref}>
               <LogIn size={16} strokeWidth={2} />
@@ -91,7 +107,7 @@ export default function LandingPage({ next, themeLanding }: Props) {
             <button
               type="button"
               className="lp-nav__burger"
-              aria-label={lang === 'en' ? 'Menu' : 'Цэс'}
+              aria-label={pickLang(lang, { mn: 'Цэс', en: 'Menu', zh: '菜单', ru: 'Меню' })}
               aria-expanded={menuOpen}
               onClick={() => setMenuOpen((o) => !o)}
             >
@@ -105,7 +121,7 @@ export default function LandingPage({ next, themeLanding }: Props) {
             <a href="#features" onClick={() => setMenuOpen(false)}>{t.nav.features}</a>
             <a href="#security" onClick={() => setMenuOpen(false)}>{t.nav.security}</a>
             <a href="#tech" onClick={() => setMenuOpen(false)}>{t.nav.tech}</a>
-            <a href="/docs/" onClick={() => setMenuOpen(false)}>{t.nav.docs}</a>
+            <a href={DOCS_URL} onClick={() => setMenuOpen(false)}>{t.nav.docs}</a>
           </nav>
         )}
       </header>
@@ -314,6 +330,9 @@ export default function LandingPage({ next, themeLanding }: Props) {
           </div>
         </section>
       </main>
+
+      {/* ---------- Хөвөгч AI туслах (нэвтрэлтгүй) ---------- */}
+      <LandingChat copy={t.chat} lang={lang} />
 
       {/* ---------- Footer ---------- */}
       <footer className="lp-footer">

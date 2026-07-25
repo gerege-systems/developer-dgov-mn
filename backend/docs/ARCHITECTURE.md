@@ -1,6 +1,6 @@
 # Architecture Overview
 
-> 🌐 **English** · [Монгол](ARCHITECTURE_MN.md)
+> 🌐 **English** · [Монгол](ARCHITECTURE_MN.md) · [中文](ARCHITECTURE_ZH.md) · [Русский](ARCHITECTURE_RU.md)
 
 This document describes the high-level architecture of the **Government Template
 Platform V3.0** (Цахим засаглалыг бүтээх суурь) — a production-ready foundation on
@@ -11,7 +11,7 @@ government service platform** — a Relying Party of Government SSO. The backend
 Architecture lines and fronted by a Next.js BFF.
 
 In that reference deployment the platform serves as both an **eID Relying Party**
-(users log in with eID) and an **OIDC Identity Provider** (other government apps
+(users log in with eID) and an **OIDC Identity Provider** (other relying-party apps
 log in *through* it via the built-in Go provider). Row-Level Security in PostgreSQL is the
 load-bearing per-user isolation boundary — see
 [Row-Level Security](#row-level-security-rls).
@@ -52,7 +52,7 @@ load-bearing per-user isolation boundary — see
 The platform is composed of **19 usecase modules** under
 `internal/business/usecases/`, each an interface + implementation wired by hand in
 the composition root. Beyond the boilerplate core (`auth`, `users`, `rbac`, `ai`)
-the platform adds the eID/SSO/government-service surface:
+the platform adds the eID/SSO/service-delivery surface:
 
 | Module         | Responsibility |
 |----------------|----------------|
@@ -183,7 +183,7 @@ Request ID so panics downstream are caught and the recovery response carries a
 6. **CORS** (`CORSMiddleware`) — origins from `ALLOWED_ORIGINS` (wildcard only in dev).
 7. **Body Size Limit** (`BodySizeLimitMiddleware`) — global ceiling (per-route tighter caps).
 8. **Access Log** (`AccessLogMiddleware`) — structured one-line access log.
-9. **Timeout** (`TimeoutMiddleware`) — per-request deadline (server `WriteTimeout` is set longer so it can fire first).
+9. **Timeout** (`TimeoutMiddleware`) — per-request deadline, 30s by default and 50s on `/api/v1/ai/*` (Gemini TTS/STT take 10–20s); the server `WriteTimeout` is derived from the longest of these so the middleware fires first.
 
 **Per-group / per-route middleware:**
 - **Auth** (`NewAuthMiddleware`) — validates the JWT bearer token, stashes `CurrentUser` in context, and **sets the RLS identity** on the context: `rls.WithAdmin` for admins, `rls.WithUser` otherwise (`middleware_auth.go`).
@@ -341,7 +341,7 @@ connecting role at startup:
 
 ## OIDC Provider (Ory Hydra)
 
-The platform can itself act as an **Identity Provider**: other government apps
+The platform can itself act as an **Identity Provider**: other relying-party apps
 delegate login to dan via **Ory Hydra**. This surface activates only when
 `ProviderConfigured()` is true (`HYDRA_ADMIN_URL` + `HYDRA_PUBLIC_URL` +
 `SSO_STATE_KEY ≥ 32 bytes`); otherwise it is inert and its routes are never

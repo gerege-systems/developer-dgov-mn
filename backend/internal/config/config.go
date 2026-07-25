@@ -105,6 +105,13 @@ type Config struct {
 	GeminiTTSModel string `mapstructure:"GEMINI_TTS_MODEL"`
 	GeminiVoice    string `mapstructure:"GEMINI_VOICE"`
 	GeminiAPIBase  string `mapstructure:"GEMINI_API_BASE"`
+	// GeminiEmbedModel нь мэдлэгийн сангийн вектор (embedding) үүсгэх model.
+	// ХООСОН орхих нь зөв: client нь боломжтой model-ыг өөрөө сонгоно
+	// (gemini-embedding-001 → text-embedding-004 → embedding-001), учир нь
+	// нэр бүр бүх API түлхүүрт байдаггүй (404). Гаралтын хэмжээг client
+	// 768 болгож шууд захиалдаг тул ai_knowledge.embedding (vector(768))-той
+	// үргэлж таарна.
+	GeminiEmbedModel string `mapstructure:"GEMINI_EMBED_MODEL"`
 	// AIScopePrompt нь AI туслахын хамрах хүрээний env fallback — DB-ийн
 	// 'scope' prompt давхарга хоосон/уншигдахгүй үед хэрэглэгдэнэ.
 	AIScopePrompt string `mapstructure:"AI_SCOPE_PROMPT"`
