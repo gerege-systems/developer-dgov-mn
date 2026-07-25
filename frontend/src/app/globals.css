@@ -1903,12 +1903,44 @@ html[lang="en"] .i18n-banner { display: block; }
 
 /* ---------- Hero ---------- */
 .lp-hero { position: relative; background: var(--lp-navy); overflow: hidden; }
-/* Утга бүхий hero чимэглэл (full-bleed) — hero-г бүтэн дүүргэнэ */
+/* Утга бүхий hero чимэглэл (full-bleed) — hero-г бүтэн дүүргэнэ.
+   Зураг: Gerege-ийн цахим үйлчилгээний дүрслэл (eID · OIDC · AI туслах).
+   Босоо байрлалыг 28% болгосон нь cover-ийн улмаас доод/дээд тал
+   хайчлагдахад дүрсийн нүүр, hologram харагдсаар байх учиртай. */
 .lp-hero__art {
   position: absolute; inset: 0;
-  background: url(/hero-art.svg) center center / cover no-repeat;
-  opacity: 0.95;
+  background: url(/hero-photo.webp) 50% 28% / cover no-repeat;
   pointer-events: none;
+}
+/* Navy хөшиг — зүүн талын текстийг зураг дээр уншигдахуйц болгоно.
+   Зүүн ирмэг нь --lp-navy-тэй бүрэн нийлж, баруун тийш зураг нээгдэнэ. */
+.lp-hero__art::after {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    /* зүүнээс баруун тийш: бүрэн navy → зураг нээгдэнэ */
+    linear-gradient(90deg,
+      var(--lp-navy) 0%,
+      color-mix(in oklab, var(--lp-navy), transparent 14%) 24%,
+      color-mix(in oklab, var(--lp-navy), transparent 62%) 48%,
+      color-mix(in oklab, var(--lp-navy), transparent 92%) 74%,
+      transparent 100%),
+    /* дээд/доод ирмэгийн гүн сүүдэр — өнгийг цэнхэрлэхгүйгээр гүнзгийрүүлнэ */
+    linear-gradient(180deg,
+      oklch(16% 0.05 260 / 0.44) 0%,
+      oklch(16% 0.05 260 / 0.06) 30%,
+      oklch(16% 0.05 260 / 0.10) 62%,
+      oklch(16% 0.05 260 / 0.44) 100%);
+}
+/* Нарийн дэлгэц: текст зургийн голыг дайран өнгөрдөг тул хөшгийг өтгөрүүлнэ */
+@media (max-width: 900px) {
+  .lp-hero__art { background-position: 62% 24%; }
+  .lp-hero__art::after {
+    background: linear-gradient(180deg,
+      color-mix(in oklab, var(--lp-navy), transparent 6%) 0%,
+      color-mix(in oklab, var(--lp-navy), transparent 20%) 55%,
+      color-mix(in oklab, var(--lp-navy), transparent 4%) 100%);
+  }
 }
 .lp-hero__pattern {
   position: absolute; inset: 0;
