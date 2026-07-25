@@ -10,6 +10,9 @@
 #                           authorized_keys-д нэмнэ)
 #   DEPLOY_PATH           — серверт repo checkout хийсэн зам (ж: /root/template-dgov-mn)
 #   INTEGRATION_ENC_KEY   — AES-GCM түлхүүр (deploy.sh backend.env-д нэг удаа бичнэ)
+#   GEMINI_API_KEY        — заавал биш; тохируулбал deploy.sh backend.env-д бичнэ
+#                           (эргүүлж солихыг дэмжинэ). Хоосон бол серверийн
+#                           одоогийн утгыг ХӨНДӨХГҮЙ.
 #   DEPLOY_SSH_PORT       — заавал биш; хоосон бол 22
 name: Deploy
 
@@ -53,6 +56,7 @@ jobs:
           DEPLOY_PORT: ${{ secrets.DEPLOY_SSH_PORT }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
           INTEGRATION_ENC_KEY: ${{ secrets.INTEGRATION_ENC_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           # Нууц утгуудыг argv-д биш, stdin (heredoc)-оор дамжуулна — серверийн
           # process listing-д харагдахгүй.
@@ -61,6 +65,7 @@ jobs:
               "$DEPLOY_USER@$DEPLOY_HOST" 'bash -s' <<REMOTE
           set -euo pipefail
           export INTEGRATION_ENC_KEY='${INTEGRATION_ENC_KEY}'
+          export GEMINI_API_KEY='${GEMINI_API_KEY}'
           cd '${DEPLOY_PATH}'
           echo "▶ main-ийн сүүлийн commit-ийг татаж байна…"
           git fetch --all --prune
