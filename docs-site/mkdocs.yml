@@ -83,6 +83,28 @@ plugins:
             "Аюулгүй байдал": "Security"
             Байршуулалт: Deployment
             "Тохиргоо (env)": "Configuration (env)"
+        - locale: ru
+          name: Русский
+          build: true
+          site_name: Gerege Template Platform V3.0
+          nav_translations:
+            # Хэсгийн нэрс
+            Танилцуулга: Начало работы
+            Архитектур: Архитектура
+            Нэвтрэлт: Аутентификация
+            Ажиллагаа: Эксплуатация
+            # Хуудсууд
+            Тойм: Обзор
+            Түргэн эхлэл: Быстрый старт
+            Ерөнхий бүтэц: Clean Architecture
+            "AI pipeline": "AI-конвейер"
+            "eID + SSO": "eID + SSO"
+            "Апп холбох (OIDC RP)": "Подключение приложения (OIDC RP)"
+            "eID Service Proxy": "Прокси сервисов eID"
+            "API Gateway": "API-шлюз"
+            "Аюулгүй байдал": "Безопасность"
+            Байршуулалт: Развёртывание
+            "Тохиргоо (env)": "Конфигурация (env)"
         - locale: zh
           name: 中文
           build: true

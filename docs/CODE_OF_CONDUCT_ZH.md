@@ -1,6 +1,6 @@
 # 行为准则
 
-> 🌐 [English](CODE_OF_CONDUCT.md) · **中文**
+> 🌐 [English](CODE_OF_CONDUCT.md) · **中文** · [Русский](CODE_OF_CONDUCT_RU.md)
 
 ## 我们的承诺
 

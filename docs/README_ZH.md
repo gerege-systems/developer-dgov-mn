@@ -14,7 +14,7 @@
 *「以简便的方式把政府与私营部门的服务送达公民」*。同一套基础既承载政府机构的服务，
 也以同等保障水平承载银行、保险、金融科技、医院或学校的产品。
 
-> 🌐 [Монгол](../README.md) · [English](README_EN.md) · **中文**
+> 🌐 [Монгол](../README.md) · [English](README_EN.md) · **中文** · [Русский](README_RU.md)
 
 [![Go](https://img.shields.io/badge/Go-1.26-blue.svg)](https://golang.org/)
 [![chi](https://img.shields.io/badge/chi-v5-00ADD8.svg)](https://github.com/go-chi/chi)

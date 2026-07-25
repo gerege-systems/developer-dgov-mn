@@ -2,9 +2,9 @@
 // Gerege Systems Development Team & Claude AI, 2026
 //
 // Gerege Template Platform V3.0 — «Цахим үйлчилгээг бүтээх суурь» нүүр
-// (landing) хуудасны маркетингийн текст — mn / en / zh гурвуулаа. Апп-ын үндсэн
-// dict (lib/i18n.ts)-ийг бөглөхгүйн тулд landing-ийн урт мөрүүдийг энд
-// төвлөрүүлэв. Бүх түлхүүр гурван хэлэнд адил байх ёстой (i18n.ts-тэй нэг
+// (landing) хуудасны маркетингийн текст — mn / en / zh / ru дөрвүүлээ. Апп-ын
+// үндсэн dict (lib/i18n.ts)-ийг бөглөхгүйн тулд landing-ийн урт мөрүүдийг энд
+// төвлөрүүлэв. Бүх түлхүүр дөрвөн хэлэнд адил байх ёстой (i18n.ts-тэй нэг
 // зарчим).
 
 import type { Lang } from '@/lib/i18n';
@@ -109,7 +109,7 @@ const mn: LandingCopy = {
       'Цэвэр архитектур бүхий Go (chi · net/http) сервер, ORM-гүй гар бичмэл SQL (pgx) дээр PostgreSQL, Redis түргэн санах ой. Давхаргууд тод ялгаатай тул шинэ боломжийг эмх цэгцтэй нэмнэ. OAuth2/OIDC-ийг платформ өөрөө (өөрийн Go provider) хангадаг.',
     frontendTitle: 'Хэрэглэгчийн тал — Next.js BFF',
     frontendBody:
-      'Хөтч зөвхөн өөрийн эх сурвалжтай харилцаж, серверийн тал нь дотоод системтэй холбогдоно (BFF загвар). Нэвтрэлтийн түлхүүр хэрэглэгчийн код руу хэзээ ч гардаггүй. TanStack Query өгөгдлийн давхарга, mn/en/zh гурван хэл, гэрэл/харанхуй загвар бэлэн.',
+      'Хөтч зөвхөн өөрийн эх сурвалжтай харилцаж, серверийн тал нь дотоод системтэй холбогдоно (BFF загвар). Нэвтрэлтийн түлхүүр хэрэглэгчийн код руу хэзээ ч гардаггүй. TanStack Query өгөгдлийн давхарга, mn/en/zh/ru дөрвөн хэл, гэрэл/харанхуй загвар бэлэн.',
     aiTitle: 'Gemini хиймэл оюун туслах',
     aiBody:
       'SDK-гүй REST урсгал, серверийн талд ажиллах хэрэгслүүд (function calling), өгөгдлийн сангаас тохируулах цар хүрээ/зааврууд. Асуултад хариулж, шаардлагатай үед монгол хэлээр найдвартай нөөц хариу өгнө.',
@@ -133,7 +133,7 @@ const mn: LandingCopy = {
       { title: 'Цахим гарын үсэг', body: 'PAdES PDF гарын үсэг, eID зуучлалаар.' },
       { title: 'Gemini AI туслах', body: 'Чат, дуу хоолой, орчуулга — серверийн хэрэгслүүдтэй.' },
       { title: 'RBAC & супер админ', body: '4 түвшний эрх, динамик роль, аудит бүртгэл.' },
-      { title: 'Гурван хэл · загвар', body: 'Бүх дэлгэц mn/en/zh, гэрэл/харанхуй горим.' },
+      { title: 'Дөрвөн хэл · загвар', body: 'Бүх дэлгэц mn/en/zh/ru, гэрэл/харанхуй горим.' },
       { title: 'Олон давхар хамгаалалт', body: 'RLS, CSP/HSTS, CSRF, хүсэлт бүрийн шалгалт.' },
     ],
   },
@@ -201,7 +201,7 @@ const en: LandingCopy = {
       'A Clean-Architecture Go (chi · net/http) backend with hand-written SQL (pgx, no ORM) over PostgreSQL and Redis caching. Clear layers make new features easy to add. OAuth2/OIDC is served by a built-in Go provider — no external OAuth server.',
     frontendTitle: 'Next.js frontend (BFF)',
     frontendBody:
-      'The browser talks only to same-origin Next.js routes, which proxy to the backend server-side. Tokens never reach client JS. TanStack Query data layer, trilingual mn/en/zh, light/dark themes — all included.',
+      'The browser talks only to same-origin Next.js routes, which proxy to the backend server-side. Tokens never reach client JS. TanStack Query data layer, four languages (mn/en/zh/ru), light/dark themes — all included.',
     aiTitle: 'Gemini AI assistant',
     aiBody:
       'An SDK-free REST pipeline with server-side tools (function calling), DB-configurable scope/instructions and a resilient Mongolian fallback on failure.',
@@ -225,7 +225,7 @@ const en: LandingCopy = {
       { title: 'Document signing', body: 'PAdES PDF signing via the eID relay.' },
       { title: 'Gemini AI assistant', body: 'Chat, voice, translation — with server-side tools.' },
       { title: 'RBAC & super admin', body: '4-role model, dynamic roles, hash-chained audit.' },
-      { title: 'Trilingual · theming', body: 'Every screen mn/en/zh, light/dark modes.' },
+      { title: 'Four languages · theming', body: 'Every screen mn/en/zh/ru, light/dark modes.' },
       { title: 'Security headers', body: 'RLS, CSP, HSTS, CSRF and origin checks.' },
     ],
   },
@@ -293,7 +293,7 @@ const zh: LandingCopy = {
       '采用整洁架构的 Go（chi · net/http）后端，无 ORM 的手写 SQL（pgx）搭配 PostgreSQL，并以 Redis 做缓存。分层清晰，新功能易于有序扩展。OAuth2/OIDC 由平台自带的 Go provider 提供，无需外部 OAuth 服务器。',
     frontendTitle: '前端 — Next.js BFF',
     frontendBody:
-      '浏览器只与同源的 Next.js 路由通信，由服务端代理到内部后端（BFF 模式）。令牌绝不进入客户端 JS。内置 TanStack Query 数据层、蒙/英/中三语和明暗主题。',
+      '浏览器只与同源的 Next.js 路由通信，由服务端代理到内部后端（BFF 模式）。令牌绝不进入客户端 JS。内置 TanStack Query 数据层、蒙/英/中/俄四种语言和明暗主题。',
     aiTitle: 'Gemini 人工智能助手',
     aiBody:
       '免 SDK 的 REST 流水线、服务端运行的工具（function calling）、可从数据库配置的适用范围与指令。能够回答提问，并在必要时以蒙古语给出可靠的兜底回复。',
@@ -317,7 +317,7 @@ const zh: LandingCopy = {
       { title: '电子签名', body: '通过 eID 中继完成 PAdES PDF 签署。' },
       { title: 'Gemini AI 助手', body: '聊天、语音、翻译 — 配合服务端工具。' },
       { title: 'RBAC 与超级管理员', body: '四级权限模型、动态角色、哈希链审计日志。' },
-      { title: '三语 · 主题', body: '所有页面支持蒙/英/中，明暗两种模式。' },
+      { title: '四语 · 主题', body: '所有页面支持蒙/英/中/俄，明暗两种模式。' },
       { title: '多层防护', body: 'RLS、CSP、HSTS、CSRF 及来源校验。' },
     ],
   },
@@ -335,4 +335,96 @@ const zh: LandingCopy = {
   },
 };
 
-export const landingCopy: Record<Lang, LandingCopy> = { mn, en, zh };
+const ru: LandingCopy = {
+  brand: 'Gerege Template Platform V3.0',
+  nav: { features: 'Возможности', security: 'Безопасность', tech: 'Технологии', docs: 'Документация', login: 'Войти' },
+  hero: {
+    badge: 'Gerege Template Platform V3.0 · на базе eID · с AI · Open Source',
+    titleLead: 'Основа для',
+    titleAccent: 'создания',
+    titleTail: 'цифровых услуг',
+    lede:
+      'Gerege Template Platform V3.0 — готовый к продакшену, усиленный по безопасности full-stack для создания цифровых услуг как государственных органов, так и частного сектора. Подтверждённая личность гражданина (eID), единый вход, электронная подпись и AI-ассистент — одна и та же основа для банков, страхования, финтеха, здравоохранения, образования и госуслуг.',
+    ctaLogin: 'Войти через Gerege SSO',
+    ctaExplore: 'Посмотреть на GitHub',
+    stackLabel: 'Поддерживаемые стандарты',
+    stats: [
+      { value: 'Clean Arch', label: 'Чёткие слои, готово к расширению' },
+      { value: 'eID · OIDC', label: 'Электронное удостоверение + открытые стандарты' },
+      { value: 'AI', label: 'Встроенный ассистент Gemini' },
+    ],
+  },
+  advantages: {
+    heading: 'Прочная основа, готовая к застройке',
+    sub: 'Усилена под требования надёжности государственных услуг и настроена под скорость продуктовых команд частного сектора — вы создаёте ценность, а не инфраструктуру идентификации, безопасности и соответствия.',
+    eidTag: 'Аутентификация',
+    eidTitle: 'Мгновенный вход по электронному удостоверению',
+    eidBody:
+      'Push прямо в приложение eID или сканирование QR-кода — вход за секунды. Работает и на одном телефоне, и в связке компьютер—телефон. Не нужно запоминать ни одного пароля — надёжный вход с первого дня.',
+    googleTitle: 'Привязка Google',
+    googleBody:
+      'Один раз подтвердите себя через eID и привяжите аккаунт Google. Дальше вход в одно касание — без потери уровня доверия.',
+    secTitle: 'Защита высокого уровня',
+    secBody:
+      'Токены хранятся только на сервере и никогда не попадают в код браузера. Двойная защита от CSRF, построчный контроль доступа к данным (RLS), заголовки CSP/HSTS и разумные ограничения на количество запросов — заложены изначально.',
+    ssoTitle: 'Единый вход как сервис (SSO / OIDC)',
+    ssoBody:
+      'Платформа сама может выступать провайдером OpenID Connect. Подключённые приложения делегируют ей вход и получают подтверждённые данные пользователя по международным открытым стандартам. Пользователь входит один раз — и попадает во все подключённые системы.',
+    signTitle: 'Ретрансляция электронной подписи',
+    signBody:
+      'Подключённые системы могут подписывать документы электронной подписью (PAdES) через eID-полномочия платформы — без собственных сертификатов.',
+    consentTitle: 'Помнит согласие',
+    consentBody:
+      'Каждое приложение спрашивает ваше согласие только в первый раз. Дальше оно больше не беспокоит — ровный, непрерывный опыт.',
+  },
+  tech: {
+    heading: 'На современном, проверенном стеке',
+    sub: 'Компоненты выбраны ради скорости, надёжности и безопасности — и с расчётом на долгую жизнь.',
+    backendTitle: 'Серверная часть — Go, Clean Architecture',
+    backendBody:
+      'Go-бэкенд (chi · net/http) с чистой архитектурой, рукописный SQL без ORM (pgx) поверх PostgreSQL и кэш Redis. Слои чётко разделены, поэтому новые возможности добавляются аккуратно. OAuth2/OIDC обеспечивает сама платформа (собственный Go-провайдер).',
+    frontendTitle: 'Клиентская часть — Next.js BFF',
+    frontendBody:
+      'Браузер общается только со своим origin, а серверная часть ходит во внутренние системы (модель BFF). Токены никогда не попадают в клиентский код. Слой данных TanStack Query, четыре языка (mn/en/zh/ru), светлая и тёмная темы — уже включены.',
+    aiTitle: 'AI-ассистент Gemini',
+    aiBody:
+      'REST-конвейер без SDK, инструменты, выполняемые на сервере (function calling), настраиваемые из базы область применения и инструкции. Отвечает на вопросы, а при сбоях даёт надёжный резервный ответ на монгольском.',
+    trustTitle: 'Гарантии надёжности',
+    trustBadge: 'ГОТОВО К ПРОДАКШЕНУ',
+    trustItems: [
+      'Чистая архитектура · SQL на pgx без ORM',
+      'Аутентификация eID + OAuth2/OIDC',
+      'Токены остаются только на сервере',
+      'Построчный контроль доступа (RLS)',
+      'CSP · HSTS · CSRF · ограничение запросов',
+    ],
+  },
+  everything: {
+    heading: 'Все возможности на одной основе',
+    sub: 'Госорганы, банки, страхование, здравоохранение, образование — команды любой отрасли начинают с первого дня. Не нужно строить фундамент заново.',
+    items: [
+      { title: 'Вход через eID', body: 'Push в приложение гражданина по регистрационному номеру, QR, App2App.' },
+      { title: 'Провайдер SSO / OIDC', body: 'Платформа сама выдаёт вход и подключает RP.' },
+      { title: 'Привязка Google', body: 'После первого подтверждения через eID — быстрый вход.' },
+      { title: 'Электронная подпись', body: 'Подписание PDF (PAdES) через ретрансляцию eID.' },
+      { title: 'AI-ассистент Gemini', body: 'Чат, голос, перевод — с серверными инструментами.' },
+      { title: 'RBAC и суперадмин', body: '4 уровня ролей, динамические роли, журнал аудита.' },
+      { title: 'Четыре языка · темы', body: 'Все экраны на mn/en/zh/ru, светлый и тёмный режимы.' },
+      { title: 'Многослойная защита', body: 'RLS, CSP/HSTS, CSRF и проверка каждого запроса.' },
+    ],
+  },
+  cta: {
+    title: 'Начните создавать свою цифровую услугу сегодня',
+    sub: 'Gerege Template Platform V3.0 даёт готовую инфраструктуру идентификации, безопасности и соответствия — вы сосредотачиваетесь только на своей услуге. Войдите через eID и попробуйте встроенные возможности сами.',
+    ctaLogin: 'Войти через Gerege SSO',
+    ctaExplore: 'Посмотреть на GitHub',
+    tagline: 'Чистая архитектура · Открытые стандарты · Надёжная защита',
+  },
+  footer: {
+    tagline: 'Gerege Template Platform V3.0 — готовая к продакшену основа для создания цифровых услуг. Gerege Systems, 2026.',
+    links: ['Условия использования', 'Политика конфиденциальности', 'Контакты'],
+    copyright: '© 2026 Gerege Systems · Gerege Template Platform V3.0',
+  },
+};
+
+export const landingCopy: Record<Lang, LandingCopy> = { mn, en, zh, ru };

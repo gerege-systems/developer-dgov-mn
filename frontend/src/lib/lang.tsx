@@ -13,7 +13,7 @@ interface LangCtx {
 const Ctx = createContext<LangCtx>({ lang: 'mn', setLang: () => {} });
 
 /**
- * LangProvider нь хэлийг (mn/en/zh) бүхэл аппд хуваалцана. Компонент бүр тусдаа
+ * LangProvider нь хэлийг (mn/en/zh/ru) бүхэл аппд хуваалцана. Компонент бүр тусдаа
  * state барих биш, нэг context-оос уншдаг тул UserMenu-д хэл солиход цэс болон
  * бүх контент шууд шинэчлэгдэнэ. localStorage 'gerege.lang'-д хадгална.
  */

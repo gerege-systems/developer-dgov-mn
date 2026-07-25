@@ -1,6 +1,6 @@
 # Code of Conduct
 
-> 🌐 **English** · [中文](CODE_OF_CONDUCT_ZH.md)
+> 🌐 **English** · [中文](CODE_OF_CONDUCT_ZH.md) · [Русский](CODE_OF_CONDUCT_RU.md)
 
 ## Our Pledge
 

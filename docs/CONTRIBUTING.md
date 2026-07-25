@@ -1,6 +1,6 @@
 # Contributing · Хувь нэмэр оруулах
 
-> 🌐 **English · Монгол** · [中文](CONTRIBUTING_ZH.md)
+> 🌐 **English · Монгол** · [中文](CONTRIBUTING_ZH.md) · [Русский](CONTRIBUTING_RU.md)
 
 Thanks for your interest in improving **Gerege Template Platform V3.0**! / **Gerege Template Platform V3.0** (Цахим үйлчилгээг бүтээх суурь)-ийг сайжруулах сонирхолд тань баярлалаа!
 

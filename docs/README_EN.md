@@ -17,7 +17,7 @@ The platform is the code expression of **Gerege Systems LLC**'s stated mission �
 One foundation carries a government agency's service and a bank, insurer,
 fintech, hospital or school product at the same assurance level.
 
-> 🌐 [Монгол](../README.md) · **English** · [中文](README_ZH.md)
+> 🌐 [Монгол](../README.md) · **English** · [中文](README_ZH.md) · [Русский](README_RU.md)
 
 [![Go](https://img.shields.io/badge/Go-1.26-blue.svg)](https://golang.org/)
 [![chi](https://img.shields.io/badge/chi-v5-00ADD8.svg)](https://github.com/go-chi/chi)

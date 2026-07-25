@@ -1,6 +1,6 @@
 # Gerege Template Platform V3.0 — iOS 应用（TemplateApp）
 
-> 🌐 [Монгол](README.md) · **中文**
+> 🌐 [Монгол](README.md) · **中文** · [Русский](README_RU.md)
 
 > **构建数字服务的基础** — _一套基础 — 承载政府与私营部门的所有服务。_
 

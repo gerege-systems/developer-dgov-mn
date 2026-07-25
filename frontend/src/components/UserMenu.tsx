@@ -113,6 +113,7 @@ export default function UserMenu({ username, email, initials, picture }: Props) 
                 { value: 'mn', label: 'МН',   ariaLabel: LANG_LABELS.mn },
                 { value: 'en', label: 'EN',   ariaLabel: LANG_LABELS.en },
                 { value: 'zh', label: '中文', ariaLabel: LANG_LABELS.zh },
+                { value: 'ru', label: 'RU',   ariaLabel: LANG_LABELS.ru },
               ]}
             />
           </div>

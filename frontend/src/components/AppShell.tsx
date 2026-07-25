@@ -206,7 +206,7 @@ const SYSTEMS: NavSystem[] = [
 /**
  * Хоёр түвшний бүрхүүл — icon rail дахь "систем" (Админ / Менежер / Хэрэглэгч)
  * тус бүр өөрийн дэд цэстэй. Хэрэглэгчийн эрхээр (/api/rbac/me) цэсийг шүүж,
- * хэлийг useT()-ээр (mn/en/zh) орчуулна.
+ * хэлийг useT()-ээр (mn/en/zh/ru) орчуулна.
  */
 export default function AppShell({ user, children }: Props) {
   const pathname = usePathname() ?? '/';

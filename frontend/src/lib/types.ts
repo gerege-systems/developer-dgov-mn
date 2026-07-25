@@ -196,11 +196,12 @@ export function isAdminLevel(roleId: number): boolean {
   return roleId === ROLE_SUPERADMIN || roleId === ROLE_ADMIN;
 }
 
-/** role_id → хүний унших нэр (mn/en/zh). */
+/** role_id → хүний унших нэр (mn/en/zh/ru). */
 export function roleLabel(roleId: number, lang: Lang = 'mn'): string {
   const mn: Record<number, string> = { 1: 'Супер админ', 2: 'Админ', 3: 'Менежер', 4: 'Хэрэглэгч' };
   const en: Record<number, string> = { 1: 'Superadmin', 2: 'Admin', 3: 'Manager', 4: 'User' };
   const zh: Record<number, string> = { 1: '超级管理员', 2: '管理员', 3: '经理', 4: '用户' };
-  const table = pickLang(lang, { mn, en, zh });
-  return table[roleId] ?? pickLang(lang, { mn: 'Хэрэглэгч', en: 'User', zh: '用户' });
+  const ru: Record<number, string> = { 1: 'Суперадмин', 2: 'Администратор', 3: 'Менеджер', 4: 'Пользователь' };
+  const table = pickLang(lang, { mn, en, zh, ru });
+  return table[roleId] ?? pickLang(lang, { mn: 'Хэрэглэгч', en: 'User', zh: '用户', ru: 'Пользователь' });
 }

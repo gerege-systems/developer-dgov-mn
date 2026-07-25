@@ -1,6 +1,6 @@
 # Gerege Template Platform V3.0 — 前端
 
-> 🌐 [Монгол](README.md) · **中文**
+> 🌐 [Монгол](README.md) · **中文** · [Русский](README_RU.md)
 
 > **构建数字服务的基础** — _一套基础 — 承载政府与私营部门的所有服务。_
 
@@ -84,7 +84,7 @@ src/
     client.ts       # 浏览器→BFF fetch（CSRF 头 + getJSON/postJSON/sendJSON）
     session.ts      # httpOnly 令牌 cookie 的 set/get/clear + canPersistSession
     cookies.ts      # cookie 名称/选项（dgov_access/refresh/sso_logout）
-    i18n.ts, lang.tsx   # mn/en/zh 词典 + useT() hook
+    i18n.ts, lang.tsx   # mn/en/zh/ru 词典 + useT() hook
     aiBff.ts, audio.ts  # AI 路由音频白名单 + MediaRecorder 录制/播放
     pki.ts, integrations.ts, driveClient.ts, dropboxClient.ts
     govTypes.ts, gatewayTypes.ts, preferences.ts, format.ts, navigation.ts, types.ts
@@ -295,7 +295,7 @@ npm run test                     # vitest（bff/i18n/navigation 单元测试）
 `api/admin/site/appearance` 设置站点级默认值；公开（无需认证）的取值由
 `api/site/appearance` 返回。
 
-UI 字符串通过 `useT()` + `src/lib/i18n.ts`（mn + en + zh）的键输出。
+UI 字符串通过 `useT()` + `src/lib/i18n.ts`（mn + en + zh + ru）的键输出。
 
 AI 功能的内部机制请见
 [../backend/docs/AI_PIPELINE_ZH.md](../backend/docs/AI_PIPELINE_ZH.md)。

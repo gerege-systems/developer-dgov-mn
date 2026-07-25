@@ -19,12 +19,12 @@ export interface Application {
   updated_at?: string;
 }
 
-/** app_type сонголтын mn/en/zh шошго. */
-export const APP_TYPES: { value: AppType; mn: string; en: string; zh: string }[] = [
-  { value: 'web', mn: 'Веб апп', en: 'Web app', zh: 'Web 应用' },
-  { value: 'spa', mn: 'SPA', en: 'SPA', zh: '单页应用 (SPA)' },
-  { value: 'native', mn: 'Мобайл/Native', en: 'Mobile / Native', zh: '移动端 / 原生应用' },
-  { value: 'm2m', mn: 'Сервер-хоорондын (M2M)', en: 'Server-to-server (M2M)', zh: '服务器间 (M2M)' },
+/** app_type сонголтын mn/en/zh/ru шошго. */
+export const APP_TYPES: { value: AppType; mn: string; en: string; zh: string; ru: string }[] = [
+  { value: 'web', mn: 'Веб апп', en: 'Web app', zh: 'Web 应用', ru: 'Веб-приложение' },
+  { value: 'spa', mn: 'SPA', en: 'SPA', zh: '单页应用 (SPA)', ru: 'SPA' },
+  { value: 'native', mn: 'Мобайл/Native', en: 'Mobile / Native', zh: '移动端 / 原生应用', ru: 'Мобильное / нативное' },
+  { value: 'm2m', mn: 'Сервер-хоорондын (M2M)', en: 'Server-to-server (M2M)', zh: '服务器间 (M2M)', ru: 'Сервер-сервер (M2M)' },
 ];
 
 /** app_type нь redirect URI шаарддаг (OAuth redirect flow) эсэх. */

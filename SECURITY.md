@@ -1,10 +1,11 @@
-# Security Policy · Аюулгүй байдлын бодлого · 安全策略
+# Security Policy · Аюулгүй байдлын бодлого · 安全策略 · Политика безопасности
 
 ## Reporting a vulnerability · Эмзэг байдлыг мэдээлэх
 
 **Please do NOT open a public issue for security vulnerabilities.**
 **Аюулгүй байдлын эмзэг байдлыг олон нийтийн issue-гээр бүү нээнэ үү.**
 **请勿为安全漏洞公开提交 issue。**
+**Пожалуйста, НЕ открывайте публичный issue для уязвимостей безопасности.**
 
 Instead, report privately via one of:
 - GitHub **Private vulnerability reporting** — the *Security* tab → *Report a vulnerability*.
@@ -24,6 +25,13 @@ description, reproduction steps, and impact. We aim to acknowledge within
 版本/commit、问题描述、复现步骤与影响。我们力争在 **72 小时**内确认收到，
 并在初步分类后给出修复时间表。
 
+Сообщайте приватно одним из способов: **Private vulnerability reporting** на GitHub
+(вкладка *Security* → *Report a vulnerability*) либо письмом сопровождающим
+(команде разработки Gerege Systems). Укажите: затронутый компонент
+(`backend`/`frontend`), версию/коммит, описание, шаги воспроизведения и влияние.
+Мы стремимся подтвердить получение в течение **72 часов** и после разбора дать
+сроки устранения.
+
 ## Supported versions · Дэмжигдэх хувилбар
 
 | Version | Supported |
@@ -31,13 +39,16 @@ description, reproduction steps, and impact. We aim to acknowledge within
 | `main` (latest) | ✅ |
 | older tags | ❌ |
 
-## Scope · Хамрах хүрээ · 范围
+## Scope · Хамрах хүрээ · 范围 · Область
 
 In scope: code in `backend/` and `frontend/`. Out of scope: third-party
 dependencies (report upstream), and deployment/infrastructure you operate.
 
 范围内：`backend/` 与 `frontend/` 中的代码。范围外：第三方依赖
 （请向上游报告），以及由您自己运维的部署/基础设施。
+
+В области: код в `backend/` и `frontend/`. Вне области: сторонние зависимости
+(сообщайте вышестоящим проектам) и развёртывание/инфраструктура, которыми вы управляете сами.
 
 ## Our security posture · Бидний аюулгүй байдлын байдал
 
@@ -52,12 +63,21 @@ DB roles, WAF, monitoring).
 **[backend/docs/SECURITY_ZH.md](backend/docs/SECURITY_ZH.md)**。
 运维方仍需自行负责生产加固（TLS、密钥管理、最小权限数据库角色、WAF、监控）。
 
-## Disclosure · Ил болгох · 披露
+Этот шаблон усилен по базовым уровням OWASP ASVS / API Top 10 и NIST 800-63B —
+реализованные меры, дорожная карта ASVS и известные пробелы описаны в
+**[backend/docs/SECURITY_RU.md](backend/docs/SECURITY_RU.md)**. Ответственность за
+продакшен-усиление (TLS, управление секретами, роли БД с минимальными правами,
+WAF, мониторинг) остаётся на операторе.
+
+## Disclosure · Ил болгох · 披露 · Раскрытие
 
 We follow coordinated disclosure: we will work with you on a fix and credit you
 (if you wish) once a patch is released.
 
 我们遵循协同披露：我们会与您一起完成修复，并在补丁发布后按您的意愿致谢。
+
+Мы придерживаемся скоординированного раскрытия: мы вместе с вами доведём
+исправление и, по вашему желанию, укажем вас в благодарностях после выпуска патча.
 
 ---
 

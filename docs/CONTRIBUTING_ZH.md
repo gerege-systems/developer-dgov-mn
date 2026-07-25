@@ -1,6 +1,6 @@
 # 参与贡献
 
-> 🌐 [English · Монгол](CONTRIBUTING.md) · **中文**
+> 🌐 [English · Монгол](CONTRIBUTING.md) · **中文** · [Русский](CONTRIBUTING_RU.md)
 
 感谢您有意改进 **Gerege Template Platform V3.0**
 （Цахим үйлчилгээг бүтээх суурь，即「构建数字服务的基础」）！

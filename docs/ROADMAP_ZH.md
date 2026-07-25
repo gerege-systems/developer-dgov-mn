@@ -1,6 +1,6 @@
 # 路线图 — Gerege Template Platform V3.0（构建数字服务的基础）
 
-> 🌐 [Монгол](../ROADMAP.md) · **中文**
+> 🌐 [Монгол](../ROADMAP.md) · **中文** · [Русский](ROADMAP_RU.md)
 
 > **Gerege Template Platform V3.0**（*Цахим үйлчилгээг бүтээх суурь*，
 > 即「构建数字服务的基础」）— 一套生产就绪的基础平台：
@@ -25,7 +25,7 @@ PAdES 签名、第三方集成、审计、RBAC/超级管理员、站点外观 �
 - 整洁架构的 Go 后端：chi (net/http) + pgx（无 ORM）+ PostgreSQL + Redis
 - RBAC：动态角色/权限 + 目录；Postgres RLS（ENABLE+FORCE，非超级用户应用角色）
 - 可观测性：OTel 追踪 + Prometheus + Zap；安全响应头、CORS、限流、服务器超时
-- Next.js 15 BFF 前端：httpOnly cookie 会话、mn/en/zh 多语言、TanStack Query
+- Next.js 15 BFF 前端：httpOnly cookie 会话、mn/en/zh/ru 多语言、TanStack Query
 - CI：gofmt + vet + race 测试 + swag 漂移检查 + 前端 lint/build + gitleaks；CI 之后再 Deploy
 
 ### AI 流水线（Gemini）

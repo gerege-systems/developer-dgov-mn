@@ -1,6 +1,6 @@
 # 部署指南
 
-> 🌐 [English](DEPLOYMENT.md) · [Монгол](DEPLOYMENT_MN.md) · **中文**
+> 🌐 [English](DEPLOYMENT.md) · [Монгол](DEPLOYMENT_MN.md) · **中文** · [Русский](DEPLOYMENT_RU.md)
 
 本文说明如何把 **Gerege Template Platform V3.0**（Төр, хувийн хэвшлийн
 үйлчилгээний суурь платформ）— 一套用于构建数字服务的生产就绪基础平台 —

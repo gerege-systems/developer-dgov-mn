@@ -20,7 +20,7 @@ type View = { kind: 'list' } | { kind: 'edit'; theme: Theme | null };
 export default function ThemeManager() {
   const { T } = useT();
   const { lang } = useLang();
-  const L = (mn: string, en: string, zh?: string) => pickLang(lang, { mn, en, zh });
+  const L = (mn: string, en: string, zh?: string, ru?: string) => pickLang(lang, { mn, en, zh, ru });
   const qc = useQueryClient();
   const [view, setView] = useState<View>({ kind: 'list' });
   const [error, setError] = useState('');
@@ -32,16 +32,16 @@ export default function ThemeManager() {
   const activate = async (t: Theme) => {
     setError('');
     const res = await sendJSON(`/api/admin/themes/${t.id}/active`, 'PUT');
-    if (res.ok) refresh(); else setError(res.message || L('Идэвхжүүлэхэд алдаа.', 'Failed to activate.', '启用失败。'));
+    if (res.ok) refresh(); else setError(res.message || L('Идэвхжүүлэхэд алдаа.', 'Failed to activate.', '启用失败。', 'Не удалось активировать.'));
   };
   const remove = async (t: Theme) => {
     setError('');
-    if (!confirm(L(`"${t.name}" theme-ийг устгах уу?`, `Delete theme "${t.name}"?`, `确定删除主题“${t.name}”吗？`))) return;
+    if (!confirm(L(`"${t.name}" theme-ийг устгах уу?`, `Delete theme "${t.name}"?`, `确定删除主题“${t.name}”吗？`, `Удалить тему «${t.name}»?`))) return;
     const res = await sendJSON(`/api/admin/themes/${t.id}`, 'DELETE');
-    if (res.ok) refresh(); else setError(res.message || L('Устгахад алдаа.', 'Failed to delete.', '删除失败。'));
+    if (res.ok) refresh(); else setError(res.message || L('Устгахад алдаа.', 'Failed to delete.', '删除失败。', 'Не удалось удалить.'));
   };
   const clone = (t: Theme): Theme => ({
-    ...t, id: '', name: `${t.name} (${L('хуулбар', 'copy', '副本')})`, is_active: false,
+    ...t, id: '', name: `${t.name} (${L('хуулбар', 'copy', '副本', 'копия')})`, is_active: false,
   });
 
   if (view.kind === 'edit') {

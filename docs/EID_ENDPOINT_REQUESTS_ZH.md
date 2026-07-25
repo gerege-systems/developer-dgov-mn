@@ -1,6 +1,6 @@
 # eID Mongolia — 新增 RP 侧端点的请求
 
-> 🌐 [Монгол](EID_ENDPOINT_REQUESTS.md) · **中文**
+> 🌐 [Монгол](EID_ENDPOINT_REQUESTS.md) · **中文** · [Русский](EID_ENDPOINT_REQUESTS_RU.md)
 
 > ✅ **已实现 · 历史存档（2026-07-17）。** 本文档所请求的 RP 侧端点已在上游 eID
 > 平台实现，并已在 RP 侧投入使用。实时客户端调用位于

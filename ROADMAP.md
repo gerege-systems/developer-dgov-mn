@@ -1,6 +1,6 @@
 # ROADMAP — Gerege Template Platform V3.0 (Цахим үйлчилгээг бүтээх суурь)
 
-> 🌐 **Монгол** · [中文](docs/ROADMAP_ZH.md)
+> 🌐 **Монгол** · [中文](docs/ROADMAP_ZH.md) · [Русский](docs/ROADMAP_RU.md)
 
 > **Gerege Template Platform V3.0** (*Цахим үйлчилгээг бүтээх суурь*) —
 > production-ready суурь платформ: түүн дээр төрийн байгууллагын ч, хувийн

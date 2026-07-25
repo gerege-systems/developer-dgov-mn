@@ -1,6 +1,6 @@
 # 构建安全的 Web + Mobile + API 系统指南
 
-> 🌐 [Монгол](secure_system_guide_mn.md) · **中文**
+> 🌐 [Монгол](secure_system_guide_mn.md) · **中文** · [Русский](secure_system_guide_ru.md)
 
 **技术栈：** Go（后端）· PostgreSQL（数据库）· Next.js（Web）· iOS/Android（移动端）
 **立场：** 面向可直接投入生产的多租户 SaaS。如果你做的是单租户或内部工具，
