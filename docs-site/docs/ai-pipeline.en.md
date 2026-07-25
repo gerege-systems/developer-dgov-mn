@@ -45,7 +45,7 @@ ToolDef.Execute()  ← runs ON THE BACKEND with the request context
 
 | Case | Result |
 |---|---|
-| Transient Gemini failure (after the client's own 3× retry) | **Not a 5xx** — a Mongolian fallback reply with `degraded: true` |
+| Transient Gemini failure (after the client's own 3× retry) | **Not a 5xx** — a fallback reply in the user's language with `degraded: true` |
 | `GEMINI_API_KEY` missing | A real error — 500, cause logged |
 | Unknown or failing tool | Reported back to the model as `{"error": …}` — never surfaces directly to the client |
 
@@ -60,6 +60,11 @@ The system prompt is assembled per request from three layers:
 1. **Hardcoded guardrails** — fixed in code, never configurable.
 2. **Scope** — from the `ai_prompts` table, editable by admins.
 3. **Instructions** — likewise configured from the database.
+
+!!! tip "Reply language"
+    The frontend sends its UI language (`mn`/`en`/`zh`/`ru`) in the `lang` field and
+    the assistant answers in it. If the user writes in another language, the model
+    follows the user; the `degraded` fallback reply is localized the same way.
 
 !!! warning "Never make the guardrail layer configurable"
     The guardrail layer belongs in code only. Just `scope` and `instructions`

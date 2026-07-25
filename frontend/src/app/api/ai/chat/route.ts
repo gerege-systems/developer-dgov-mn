@@ -4,6 +4,9 @@ import { sanitizeAudio, badRequest } from '@/lib/aiBff';
 
 export const dynamic = 'force-dynamic';
 
+// Backend-ийн AIChatRequest.Lang-тай ижил цагаан жагсаалт.
+const LANGS: string[] = ['mn', 'en', 'zh', 'ru'];
+
 interface ChatTurn {
   role?: unknown;
   text?: unknown;
@@ -16,10 +19,11 @@ export async function POST(req: Request) {
   const bad = checkOrigin(req);
   if (bad) return bad;
 
-  const { message, audio, history } = await readJson<{
+  const { message, audio, history, lang } = await readJson<{
     message?: unknown;
     audio?: unknown;
     history?: ChatTurn[];
+    lang?: unknown;
   }>(req);
 
   const text = typeof message === 'string' ? message.trim() : '';
@@ -27,6 +31,10 @@ export async function POST(req: Request) {
   if ((!text && !safeAudio) || text.length > 4000) {
     return badRequest('Мессеж хоосон эсвэл хэт урт байна.');
   }
+
+  // UI-ийн хэл — туслах үүгээр хариулна. Backend DTO-той ижил цагаан жагсаалт;
+  // танихгүй утгыг огт дамжуулахгүй (сервер өгөгдмөл mn-ээ хэрэглэнэ).
+  const safeLang = LANGS.includes(lang as string) ? (lang as string) : '';
 
   const safeHistory = (Array.isArray(history) ? history : [])
     .filter((t) => (t?.role === 'user' || t?.role === 'model') && typeof t?.text === 'string')
@@ -39,6 +47,7 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         message: text,
         ...(safeAudio ? { audio: safeAudio } : {}),
+        ...(safeLang ? { lang: safeLang } : {}),
         history: safeHistory,
       }),
     }),

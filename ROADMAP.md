@@ -29,7 +29,7 @@
 - CI: gofmt + vet + race tests + swag drift + frontend lint/build + gitleaks; CI дараа Deploy
 
 ### AI pipeline (Gemini)
-- `pkg/gemini` — SDK-гүй REST client (retry + backoff); function-calling чат (Монгол fallback)
+- `pkg/gemini` — SDK-гүй REST client (retry + backoff); function-calling чат (хэрэглэгчийн хэл дээрх fallback)
 - Voice: audio ойлголт (дуут мессеж), STT, TTS (PCM→WAV), live орчуулга
 - 3 давхаргат system prompt: hardcoded guardrails + DB scope/instructions; `search_knowledge` tool (`ai_knowledge`)
 - Admin UI + API (`/admin/ai/prompts`, `settings.manage`)

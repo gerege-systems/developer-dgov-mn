@@ -30,7 +30,7 @@ PAdES 签名、第三方集成、审计、RBAC/超级管理员、站点外观 �
 
 ### AI 流水线（Gemini）
 
-- `pkg/gemini` — 免 SDK 的 REST 客户端（重试 + 退避）；function-calling 聊天（蒙古语兜底）
+- `pkg/gemini` — 免 SDK 的 REST 客户端（重试 + 退避）；function-calling 聊天（按用户语言兜底）
 - 语音：音频理解（语音消息）、STT、TTS（PCM→WAV）、实时翻译
 - 三层系统提示词：硬编码防护规则 + 数据库 scope/instructions；
   `search_knowledge` 工具（`ai_knowledge`）

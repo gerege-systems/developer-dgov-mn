@@ -32,7 +32,7 @@ const MAX_VOICE_MS = 30000;
  * /api/ai/* BFF route-уудаар Gemini pipeline руу илгээнэ.
  */
 export default function AiChatView() {
-  const { T } = useT();
+  const { T, lang } = useT();
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
@@ -66,7 +66,8 @@ export default function AiChatView() {
     setMessages((m) => [...m, userBubble]);
     setBusy(true);
     try {
-      const body = await postJSON<ChatData>('/api/ai/chat', { ...payload, history });
+      // lang — туслах хэрэглэгчийн UI хэлээр хариулна (backend-ийн prompt давхарга).
+      const body = await postJSON<ChatData>('/api/ai/chat', { ...payload, history, lang });
       if (body?.ok && body.data?.reply) {
         const tools = (body.data.steps ?? [])
           .map((s) => s.tool)

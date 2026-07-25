@@ -31,7 +31,7 @@
 
 ### AI-конвейер (Gemini)
 
-- `pkg/gemini` — REST-клиент без SDK (повторы + backoff); чат с function calling (резервный ответ на монгольском)
+- `pkg/gemini` — REST-клиент без SDK (повторы + backoff); чат с function calling (резервный ответ на языке пользователя)
 - Голос: понимание аудио (голосовые сообщения), STT, TTS (PCM→WAV), синхронный перевод
 - Трёхслойный системный промпт: жёстко заданные ограничения + scope/instructions из базы; инструмент `search_knowledge` (`ai_knowledge`)
 - Интерфейс админа + API (`/admin/ai/prompts`, `settings.manage`)

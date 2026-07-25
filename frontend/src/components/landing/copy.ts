@@ -112,7 +112,7 @@ const mn: LandingCopy = {
       'Хөтч зөвхөн өөрийн эх сурвалжтай харилцаж, серверийн тал нь дотоод системтэй холбогдоно (BFF загвар). Нэвтрэлтийн түлхүүр хэрэглэгчийн код руу хэзээ ч гардаггүй. TanStack Query өгөгдлийн давхарга, mn/en/zh/ru дөрвөн хэл, гэрэл/харанхуй загвар бэлэн.',
     aiTitle: 'Gemini хиймэл оюун туслах',
     aiBody:
-      'SDK-гүй REST урсгал, серверийн талд ажиллах хэрэгслүүд (function calling), өгөгдлийн сангаас тохируулах цар хүрээ/зааврууд. Асуултад хариулж, шаардлагатай үед монгол хэлээр найдвартай нөөц хариу өгнө.',
+      'SDK-гүй REST урсгал, серверийн талд ажиллах хэрэгслүүд (function calling), өгөгдлийн сангаас тохируулах цар хүрээ/зааврууд. Асуултад хариулж, хэрэглэгчийн хэл дээр (mn/en/zh/ru) найдвартай нөөц хариу өгнө.',
     trustTitle: 'Найдварын баталгаа',
     trustBadge: 'ҮЙЛДВЭРЛЭЛД БЭЛЭН',
     trustItems: [
@@ -204,7 +204,7 @@ const en: LandingCopy = {
       'The browser talks only to same-origin Next.js routes, which proxy to the backend server-side. Tokens never reach client JS. TanStack Query data layer, four languages (mn/en/zh/ru), light/dark themes — all included.',
     aiTitle: 'Gemini AI assistant',
     aiBody:
-      'An SDK-free REST pipeline with server-side tools (function calling), DB-configurable scope/instructions and a resilient Mongolian fallback on failure.',
+      'An SDK-free REST pipeline with server-side tools (function calling), DB-configurable scope/instructions and a resilient fallback in the user’s language on failure.',
     trustTitle: 'Trust guarantees',
     trustBadge: 'PRODUCTION-READY',
     trustItems: [
@@ -296,7 +296,7 @@ const zh: LandingCopy = {
       '浏览器只与同源的 Next.js 路由通信，由服务端代理到内部后端（BFF 模式）。令牌绝不进入客户端 JS。内置 TanStack Query 数据层、蒙/英/中/俄四种语言和明暗主题。',
     aiTitle: 'Gemini 人工智能助手',
     aiBody:
-      '免 SDK 的 REST 流水线、服务端运行的工具（function calling）、可从数据库配置的适用范围与指令。能够回答提问，并在必要时以蒙古语给出可靠的兜底回复。',
+      '免 SDK 的 REST 流水线、服务端运行的工具（function calling）、可从数据库配置的适用范围与指令。能够回答提问，并在必要时以用户所用语言给出可靠的兜底回复。',
     trustTitle: '可信保障',
     trustBadge: '生产就绪',
     trustItems: [
@@ -388,7 +388,7 @@ const ru: LandingCopy = {
       'Браузер общается только со своим origin, а серверная часть ходит во внутренние системы (модель BFF). Токены никогда не попадают в клиентский код. Слой данных TanStack Query, четыре языка (mn/en/zh/ru), светлая и тёмная темы — уже включены.',
     aiTitle: 'AI-ассистент Gemini',
     aiBody:
-      'REST-конвейер без SDK, инструменты, выполняемые на сервере (function calling), настраиваемые из базы область применения и инструкции. Отвечает на вопросы, а при сбоях даёт надёжный резервный ответ на монгольском.',
+      'REST-конвейер без SDK, инструменты, выполняемые на сервере (function calling), настраиваемые из базы область применения и инструкции. Отвечает на вопросы, а при сбоях даёт надёжный резервный ответ на языке пользователя.',
     trustTitle: 'Гарантии надёжности',
     trustBadge: 'ГОТОВО К ПРОДАКШЕНУ',
     trustItems: [

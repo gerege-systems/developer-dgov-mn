@@ -73,7 +73,7 @@ docker compose up -d --build   # db + redis + migrate (one-off) + api + web
   layer configurable.
 - Tools (`ai.ToolDef`) run server-side with the request context; register in
   `server.go`. Knowledge base lives in `ai_knowledge`.
-- Chat degrades to a Mongolian fallback reply (`degraded: true`) on transient
+- Chat degrades to a localized fallback reply (`degraded: true`) on transient
   Gemini failures — don't turn that into a 5xx.
 
 ## Frontend rules
