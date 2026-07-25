@@ -117,9 +117,13 @@ aiTools := append(ai.DefaultTools(), ai.KnowledgeSearchTool(aiRepo), myTool)
     with no token. It runs on a separate usecase instance wired with the
     knowledge-base tool only, so it cannot reach user data. ~6 req/min per IP,
     message ≤ 1000 chars, history ≤ 6 turns; the system prompt gains an extra
-    "anonymous visitor" guardrail. Push-to-talk (hold the mic) sends a ~250 KB
-    base64 clip (≈ 15 s) through the same call, and a per-message "listen"
-    button speaks the reply via `POST /public/ai/tts`.
+    "anonymous visitor" guardrail. The widget talks to
+    `POST /public/ai/chat/stream` (SSE), so the answer appears as it is written.
+    Push-to-talk (hold the big round button) sends a ~250 KB base64 clip
+    (≈ 15 s) and **one** model call returns both the transcript (a `transcript`
+    event) and the answer. Voice questions are answered aloud sentence by
+    sentence via `POST /public/ai/tts`, so speech starts after the first
+    sentence.
 
 ## Voice
 

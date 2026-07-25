@@ -16,6 +16,14 @@ const BASE = (process.env.BACKEND_URL ?? 'http://localhost:8080').replace(/\/$/,
 // нэг bucket-д уначихна. api-ийн clientIP() нь TRUSTED_PROXIES-ийн дор XFF-г
 // баруунаас нь (сүүлийн итгэмжгүй hop) уншдаг тул spoofing-д тэсвэртэй хэвээр —
 // nginx client-ийн жинхэнэ RemoteAddr-г мөрийн төгсгөлд залгасан байдаг.
+/** Backend-ийн суурь URL (…/api/v1) — SSE прокси зэрэг тусгай route-д. */
+export const BACKEND_BASE = BASE;
+
+/** Клиентийн IP-г backend руу дамжуулах толгойнууд (per-IP rate limit). */
+export async function clientIPHeaders(): Promise<Record<string, string>> {
+  return forwardedForHeaders();
+}
+
 async function forwardedForHeaders(): Promise<Record<string, string>> {
   try {
     const h = await headers();
