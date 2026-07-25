@@ -28,6 +28,8 @@ const MAX_TEXT = 1000;
 const MAX_TURNS = 6;
 /** Push-to-talk бичлэгийн дээд урт — backend-ийн ~250 KB base64-д багтана. */
 const MAX_VOICE_MS = 15000;
+/** Үүнээс богино даралт нь санамсаргүй товшилт — илгээхгүй. */
+const MIN_VOICE_MS = 400;
 
 /**
  * Нүүр хуудасны баруун доод буланд хөвөх AI туслах — НЭВТРЭЛТГҮЙ ажиллана.
@@ -52,8 +54,12 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
   const inputRef = useRef<HTMLInputElement>(null);
   const segmentRef = useRef<{ stop: () => void } | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  /** Бичлэг аль хэдийн илгээгдсэн эсэх — pointerup/leave давхар ажиллахаас хамгаална. */
-  const stoppingRef = useRef(false);
+  /** Хуруу ОДОО дарж байгаа эсэх — зөвшөөрөл асуух хугацаанд салгасныг барина. */
+  const holdingRef = useRef(false);
+  /** Бичлэг эхэлсэн мөч — хэт богино даралтыг (санамсаргүй товшилт) шүүнэ. */
+  const startedAtRef = useRef(0);
+  /** Товчны доор гарах богино зөвлөмж (зөвшөөрөл өгсний дараа г.м.). */
+  const [hint, setHint] = useState('');
 
   useEffect(() => {
     if (open) endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -73,9 +79,11 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
   // Хаах / unmount үед микрофоныг заавал суллана.
   useEffect(() => {
     if (open) return;
+    holdingRef.current = false;
     segmentRef.current?.stop();
     streamRef.current?.getTracks().forEach((t) => t.stop());
     streamRef.current = null;
+    setHint('');
   }, [open]);
 
   useEffect(() => {
@@ -118,45 +126,67 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
     await dispatch({ message: text }, { role: 'user', text });
   }
 
-  // --- push-to-talk: дарж барих хугацаанд бичнэ ---
+  // --- push-to-talk (walkie-talkie): товчийг дарж барих хугацаанд бичнэ ---
 
-  async function startRecording() {
-    if (busy || recording) return;
-    stoppingRef.current = false;
+  /**
+   * Микрофоны урсгал авна. Эхний удаа хөтөч зөвшөөрөл асуух бөгөөд тэр
+   * хугацаанд хэрэглэгч хуруугаа авчихдаг — тэр тохиолдлыг доор барина.
+   * Урсгалыг бичлэг бүрийн дараа хаана: нээлттэй үлдээвэл гар утсан дээр
+   * «бичиж байна» гэсэн улаан заалт байнга асаастай байх нь зочныг эвгүйрүүлнэ.
+   */
+  async function openMic(): Promise<MediaStream | null> {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      // Барихаа больчихсон байж магадгүй (зөвшөөрөл асуух хооронд) — тэгвэл болино.
-      if (stoppingRef.current) {
-        stream.getTracks().forEach((t) => t.stop());
-        return;
-      }
-      streamRef.current = stream;
-      setRecording(true);
-
-      const seg = recordSegment(stream, MAX_VOICE_MS);
-      segmentRef.current = seg;
-      const audio = await seg.done;
-
-      setRecording(false);
-      segmentRef.current = null;
-      stream.getTracks().forEach((t) => t.stop());
-      streamRef.current = null;
-
-      if (audio) {
-        await dispatch({ audio }, { role: 'user', text: copy.voiceMsg, voice: true });
-      }
+      return await navigator.mediaDevices.getUserMedia({ audio: true });
     } catch (err) {
-      setRecording(false);
-      // NotAllowedError = хэрэглэгч татгалзсан эсвэл бодлогоор хаагдсан;
-      // NotFoundError = төхөөрөмж алга. Хоёулаа ижил зөвлөмжтэй тул нэг мессеж.
       const name = (err as { name?: string } | null)?.name ?? '';
-      const text = name === 'NotAllowedError' ? copy.micDenied : copy.micError;
-      setMessages((m) => [...m, { role: 'model', text, degraded: true }]);
+      noteError(name === 'NotAllowedError' ? copy.micDenied : copy.micError);
+      return null;
     }
   }
 
-  function stopRecording() {
-    stoppingRef.current = true;
+  function releaseMic() {
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+    streamRef.current = null;
+  }
+
+  async function beginHold() {
+    if (busy || recording) return;
+    setHint('');
+
+    const stream = await openMic();
+    if (!stream) return;
+
+    // Зөвшөөрлийн цонх нээлттэй байх зуур хуруу салсан бол бичлэг эхлүүлэхгүй —
+    // оронд нь «одоо дарж барина уу» гэж зөвлөнө (зөвшөөрөл нь өгөгдсөн).
+    if (!holdingRef.current) {
+      stream.getTracks().forEach((t) => t.stop());
+      setHint(copy.micReady);
+      return;
+    }
+
+    streamRef.current = stream;
+    setRecording(true);
+    startedAtRef.current = performance.now();
+
+    const seg = recordSegment(stream, MAX_VOICE_MS);
+    segmentRef.current = seg;
+    const audio = await seg.done;
+    const heldMs = performance.now() - startedAtRef.current;
+
+    setRecording(false);
+    segmentRef.current = null;
+    releaseMic();
+
+    // Санамсаргүй товшилт — илгээхгүй, юу хийхийг сануулна.
+    if (!audio || heldMs < MIN_VOICE_MS) {
+      setHint(copy.tooShort);
+      return;
+    }
+    await dispatch({ audio }, { role: 'user', text: copy.voiceMsg, voice: true });
+  }
+
+  function endHold() {
+    holdingRef.current = false;
     segmentRef.current?.stop();
   }
 
@@ -258,6 +288,34 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
             <div ref={endRef} />
           </div>
 
+          {/* Walkie-talkie: том дугуй товчийг дарж барих хугацаанд бичээд
+              тавихад илгээнэ. setPointerCapture нь хуруу товчноос гулсахад ч
+              pointerup-ыг ижил элемент дээр барих тул бичлэг санамсаргүй
+              тасрахгүй (iOS дээр түгээмэл асуудал). */}
+          <div className="lp-chat__ptt-row">
+            <button
+              type="button"
+              className={`lp-chat__ptt${recording ? ' is-recording' : ''}`}
+              onPointerDown={(e) => {
+                e.preventDefault();
+                e.currentTarget.setPointerCapture?.(e.pointerId);
+                holdingRef.current = true;
+                void beginHold();
+              }}
+              onPointerUp={endHold}
+              onPointerCancel={endHold}
+              onContextMenu={(e) => e.preventDefault()}
+              disabled={busy}
+              aria-label={recording ? copy.recording : copy.hold}
+              aria-pressed={recording}
+            >
+              <Mic size={26} strokeWidth={2} />
+            </button>
+            <span className="lp-chat__ptt-hint">
+              {recording ? copy.recording : hint || copy.hold}
+            </span>
+          </div>
+
           <form
             className="lp-chat__form"
             onSubmit={(e) => {
@@ -265,25 +323,6 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
               void sendText(input);
             }}
           >
-            {/* Push-to-talk: дарж барих хугацаанд бичнэ, тавихад илгээнэ.
-                Pointer event-үүд нь хулгана болон хүрэлт хоёуланд ажиллана;
-                pointerleave нь товчноос гулсаад гарахад бичлэгийг хаана. */}
-            <button
-              type="button"
-              className={`lp-chat__mic${recording ? ' is-recording' : ''}`}
-              onPointerDown={(e) => {
-                e.preventDefault();
-                void startRecording();
-              }}
-              onPointerUp={stopRecording}
-              onPointerLeave={stopRecording}
-              onPointerCancel={stopRecording}
-              disabled={busy}
-              aria-label={recording ? copy.recording : copy.hold}
-              title={recording ? copy.recording : copy.hold}
-            >
-              <Mic size={16} strokeWidth={2} />
-            </button>
             <input
               ref={inputRef}
               className="lp-chat__input"

@@ -2213,22 +2213,36 @@ html[lang="en"] .i18n-banner { display: block; }
 
 .lp-chat__form { display: flex; gap: 8px; padding: 10px 12px 6px; background: var(--surface); }
 
-/* Push-to-talk микрофон — дарж барих хугацаанд бичнэ. is-recording үед
-   товч улаавтар болж, зөөлөн цохилтоор бичиж байгааг илэрхийлнэ. */
-.lp-chat__mic {
-  flex: none; width: 38px; border-radius: var(--radius-input); display: grid; place-items: center;
-  border: 1px solid var(--border); background: var(--surface-2); color: var(--fg);
-  cursor: pointer; touch-action: none; user-select: none; -webkit-user-select: none;
+/* Walkie-talkie товч — хуруугаар дарж барих том дугуй. Хүрэлтэнд эвтэйхэн
+   байхаар 72px (Apple-ийн зөвлөмж 44px-ээс том); барьж байх үед улаан болж
+   цохилно. touch-action: none нь барих хөдөлгөөнийг гүйлгэлт гэж
+   тайлбарлахаас сэргийлнэ (эс тэгвээс бичлэг дунд нь тасарна). */
+.lp-chat__ptt-row {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 12px 12px 4px; background: var(--surface);
 }
-.lp-chat__mic:hover:not(:disabled) { border-color: var(--border-strong); }
-.lp-chat__mic:disabled { opacity: 0.5; cursor: default; }
-.lp-chat__mic.is-recording {
-  background: var(--danger, oklch(58% 0.19 25)); color: oklch(99% 0 0); border-color: transparent;
-  animation: lp-chat-rec 1s ease-in-out infinite;
+.lp-chat__ptt {
+  width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center;
+  border: 1px solid transparent; background: var(--lp-navy); color: var(--lp-on-navy);
+  box-shadow: 0 6px 18px oklch(0% 0 0 / 0.18);
+  cursor: pointer; touch-action: none; user-select: none; -webkit-user-select: none;
+  -webkit-touch-callout: none; transition: transform 0.12s ease, background 0.12s ease;
+}
+.lp-chat__ptt:hover:not(:disabled) { background: var(--lp-navy-2); }
+.lp-chat__ptt:active:not(:disabled) { transform: scale(0.96); }
+.lp-chat__ptt:focus-visible { outline: 2px solid var(--lp-gold); outline-offset: 3px; }
+.lp-chat__ptt:disabled { opacity: 0.45; cursor: default; }
+.lp-chat__ptt.is-recording {
+  background: var(--danger, oklch(58% 0.19 25)); color: oklch(99% 0 0);
+  animation: lp-chat-rec 1.1s ease-in-out infinite;
+}
+.lp-chat__ptt-hint {
+  font-size: 12px; line-height: 1.35; text-align: center;
+  color: var(--fg-muted, inherit); opacity: 0.8; min-height: 16px;
 }
 @keyframes lp-chat-rec {
-  0%, 100% { box-shadow: 0 0 0 0 oklch(58% 0.19 25 / 0.45); }
-  50%      { box-shadow: 0 0 0 6px oklch(58% 0.19 25 / 0); }
+  0%, 100% { box-shadow: 0 0 0 0 oklch(58% 0.19 25 / 0.5); }
+  50%      { box-shadow: 0 0 0 14px oklch(58% 0.19 25 / 0); }
 }
 
 /* Дуут мессежийн бөмбөлөгт микрофоны жижиг тэмдэг. */
@@ -2250,7 +2264,7 @@ html[lang="en"] .i18n-banner { display: block; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .lp-chat__mic.is-recording, .lp-chat__speaking { animation: none; }
+  .lp-chat__ptt.is-recording, .lp-chat__speaking { animation: none; }
 }
 .lp-chat__input {
   flex: 1; min-width: 0; padding: 9px 12px; font-size: 13.5px;
