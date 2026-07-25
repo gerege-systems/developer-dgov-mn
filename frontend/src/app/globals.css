@@ -1909,7 +1909,7 @@ html[lang="en"] .i18n-banner { display: block; }
    хайчлагдахад дүрсийн нүүр, hologram харагдсаар байх учиртай. */
 .lp-hero__art {
   position: absolute; inset: 0;
-  background: url(/hero-photo.png) 50% 32% / cover no-repeat;
+  background: url(/hero-gerege-ai.jpg) 50% 32% / cover no-repeat;
   pointer-events: none;
 }
 /* Navy хөшиг — зүүн талын текстийг зураг дээр уншигдахуйц болгоно.
