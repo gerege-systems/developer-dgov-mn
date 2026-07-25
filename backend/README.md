@@ -1,8 +1,8 @@
 # Government Template Platform V3.0 — Backend (Go)
 
-> _One foundation — every government service._
+> _One foundation — every public and private service._
 
-> 🌐 **English** · [Монгол](README_MN.md)
+> 🌐 **English** · [Монгол](README_MN.md) · [中文](README_ZH.md) · [Русский](README_RU.md)
 
 [![Go](https://img.shields.io/badge/Go-1.26-blue.svg)](https://golang.org/)
 [![chi](https://img.shields.io/badge/chi-v5-00ADD8.svg)](https://github.com/go-chi/chi)
@@ -207,6 +207,7 @@ GEMINI_API_KEY=                  # empty = AI disabled (endpoints return 500)
 GEMINI_MODEL=gemini-2.5-flash    # optional override (chat / STT / translate)
 GEMINI_TTS_MODEL=gemini-2.5-flash-preview-tts  # optional override (TTS)
 GEMINI_VOICE=Kore                # optional prebuilt TTS voice
+GEMINI_EMBED_MODEL=              # knowledge-base embeddings; empty = auto-pick (gemini-embedding-001 → text-embedding-004 → embedding-001), always requested at 768 dims
 GEMINI_API_BASE=                 # optional override (default: Google generativelanguage v1beta)
 AI_SCOPE_PROMPT=                 # AI scope fallback when the DB 'scope' prompt layer is empty
 
@@ -235,7 +236,7 @@ user who has already signed in via eID (promoted on the next boot) or by updatin
 ### AI prompt layers
 
 The AI assistant runs on a layered system prompt: **base guardrails**
-(hardcoded — Mongolian-only, scope enforcement, prompt-injection resistance)
+(hardcoded — reply language, scope enforcement, prompt-injection resistance)
 + **scope** (what the assistant helps with) + **instructions** (optional
 tone/rules). Scope and instructions live in the `ai_prompts` table and are
 editable at runtime via `GET/PUT /api/v1/admin/ai/prompts` (requires

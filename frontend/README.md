@@ -1,5 +1,7 @@
 # Government Template Platform V3.0 — Frontend
 
+> 🌐 **Монгол** · [中文](README_ZH.md) · [Русский](README_RU.md)
+
 > **Цахим засаглалыг бүтээх суурь** — _Нэг суурь — бүх төрийн үйлчилгээ._
 
 **Government Template Platform V3.0**-ийн Next.js 15 frontend — аль ч цахим төрийн

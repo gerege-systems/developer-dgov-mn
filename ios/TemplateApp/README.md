@@ -1,5 +1,7 @@
 # Government Template Platform V3.0 — iOS App (TemplateApp)
 
+> 🌐 **Монгол** · [中文](README_ZH.md) · [Русский](README_RU.md)
+
 > **Цахим засаглалыг бүтээх суурь** — _Нэг суурь — бүх төрийн үйлчилгээ._
 
 **Government Template Platform V3.0**-ийн жишиг **iOS клиент**. eID эсвэл dgov

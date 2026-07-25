@@ -3,7 +3,7 @@
 Government Template Platform V3.0 (eID based, AI enabled) — production-ready full-stack template: Go backend (chi ·
 net/http + pgx + PostgreSQL + Redis) + Next.js 15 BFF frontend + Gemini AI
 pipeline. Docs index is in [README.md](README.md#documentation); deep dives in
-`backend/docs/` (EN/MN pairs) and `docs/DEPLOYMENT.md`.
+`backend/docs/` (EN/MN/ZH/RU sets) and `docs/DEPLOYMENT.md`.
 
 ## Commands
 
@@ -37,9 +37,11 @@ docker compose up -d --build   # db + redis + migrate (one-off) + api + web
   UI strings in Mongolian. Every source file starts with the two-line
   `Government Template Platform V3.0` header (copy from any existing file).
 - **Commits:** conventional commits (`feat:`, `fix:`, `chore:`, `docs:`…).
-- **EN/MN doc pairs:** when you touch `backend/docs/X.md`, update `X_MN.md`
-  too (same for READMEs and `frontend/src/lib/i18n.ts` — every key exists in
-  both `mn` and `en`).
+- **EN/MN/ZH/RU doc sets:** when you touch `backend/docs/X.md`, update
+  `X_MN.md`, `X_ZH.md` and `X_RU.md` too (same for READMEs and
+  `frontend/src/lib/i18n.ts` — every key exists in `mn`, `en`, `zh` and `ru`;
+  `docs-site` pages are `X.md` (mn) + `X.en.md` + `X.zh.md` + `X.ru.md`).
+  `frontend/src/lib/i18n.test.ts` enforces the dictionary + landing-copy parity.
 
 ## Backend architecture rules
 
@@ -71,7 +73,14 @@ docker compose up -d --build   # db + redis + migrate (one-off) + api + web
   layer configurable.
 - Tools (`ai.ToolDef`) run server-side with the request context; register in
   `server.go`. Knowledge base lives in `ai_knowledge`.
-- Chat degrades to a Mongolian fallback reply (`degraded: true`) on transient
+- Knowledge base = `ai_knowledge` (corpus in migration 50). Search is semantic:
+  Gemini embeddings + **pgvector** cosine (`SearchKnowledgeByVector`), falling
+  back to ILIKE. The `db` compose service is built from
+  `backend/deploy/db/Dockerfile` (alpine + pgvector) — don't switch it to the
+  Debian pgvector image (collation change on the existing volume). Editing the
+  corpus? Keep the `slug`; embeddings refresh on boot or via
+  `POST /admin/ai/knowledge/reindex`.
+- Chat degrades to a localized fallback reply (`degraded: true`) on transient
   Gemini failures — don't turn that into a 5xx.
 
 ## Frontend rules
