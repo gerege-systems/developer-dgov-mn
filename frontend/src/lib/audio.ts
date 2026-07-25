@@ -76,12 +76,41 @@ export function recordSegment(
   };
 }
 
-/** base64 audio-г тоглуулна; дууссаны дараа resolve хийнэ. */
-export function playBase64Audio(mime: string, data: string): Promise<void> {
+/** base64 мөрийг Blob болгоно (том аудионд data: URI-аас найдвартай). */
+function base64ToBlob(mime: string, data: string): Blob {
+  const bin = atob(data);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new Blob([bytes], { type: mime });
+}
+
+/**
+ * base64 audio-г тоглуулна; дуустал хүлээгээд ТОГЛОСОН ЭСЭХИЙГ буцаана
+ * (false бол дуудагч хэрэглэгчид мэдэгдэнэ — чимээгүй бүтэлгүйтэл нь «товч
+ * ажиллахгүй байна» мэт харагддаг).
+ *
+ * data: URI биш blob: URL хэрэглэнэ: Safari/iOS нь хэдэн зуун KB-ын data:
+ * URI-г заримдаа татгалздаг. CSP-д media-src blob: зөвшөөрөгдсөн.
+ */
+export function playBase64Audio(mime: string, data: string): Promise<boolean> {
   return new Promise((resolve) => {
-    const audio = new Audio(`data:${mime};base64,${data}`);
-    audio.onended = () => resolve();
-    audio.onerror = () => resolve();
-    void audio.play().catch(() => resolve());
+    let url: string;
+    try {
+      url = URL.createObjectURL(base64ToBlob(mime, data));
+    } catch {
+      resolve(false);
+      return;
+    }
+    const audio = new Audio(url);
+    let done = false;
+    const finish = (ok: boolean) => {
+      if (done) return;
+      done = true;
+      URL.revokeObjectURL(url);
+      resolve(ok);
+    };
+    audio.onended = () => finish(true);
+    audio.onerror = () => finish(false);
+    void audio.play().catch(() => finish(false));
   });
 }

@@ -145,9 +145,13 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
       if (audio) {
         await dispatch({ audio }, { role: 'user', text: copy.voiceMsg, voice: true });
       }
-    } catch {
+    } catch (err) {
       setRecording(false);
-      setMessages((m) => [...m, { role: 'model', text: copy.micError, degraded: true }]);
+      // NotAllowedError = хэрэглэгч татгалзсан эсвэл бодлогоор хаагдсан;
+      // NotFoundError = төхөөрөмж алга. Хоёулаа ижил зөвлөмжтэй тул нэг мессеж.
+      const name = (err as { name?: string } | null)?.name ?? '';
+      const text = name === 'NotAllowedError' ? copy.micDenied : copy.micError;
+      setMessages((m) => [...m, { role: 'model', text, degraded: true }]);
     }
   }
 
@@ -163,9 +167,13 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
     setSpeakingIdx(idx);
     try {
       const body = await postJSON<{ mime?: string; data?: string }>('/api/public/ai/tts', { text });
-      if (body.ok && body.data?.mime && body.data?.data) {
-        await playBase64Audio(body.data.mime, body.data.data);
-      } else {
+      // Тоглуулалт өөрөө ч бүтэлгүйтэж болно (хөтчийн бодлого, буруу формат) —
+      // чимээгүй өнгөрвөл «товч ажиллахгүй байна» мэт харагдана.
+      const played =
+        body.ok && body.data?.mime && body.data?.data
+          ? await playBase64Audio(body.data.mime, body.data.data)
+          : false;
+      if (!played) {
         setMessages((m) => [...m, { role: 'model', text: copy.ttsError, degraded: true }]);
       }
     } catch {

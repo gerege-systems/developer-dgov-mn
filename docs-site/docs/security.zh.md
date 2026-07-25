@@ -57,6 +57,9 @@
   `Idle` 120 秒、`MaxHeaderBytes` 16 KiB（防 slowloris / 超大请求头）。
 - **限流** — `/auth` 约 5 次/分钟，`/ai/*` 约 20 次/分钟，首页的匿名聊天
   `/public/ai/chat` 约 6 次/分钟，均按 IP 计。
+- **Permissions-Policy** — `camera=(), microphone=(self), geolocation=()`。
+  麦克风仅对本 origin 开放（AI 语音聊天需要 `getUserMedia`）；若写成
+  `microphone=()`，浏览器会直接拒绝，连授权提示都不会出现。
 
 ### 前端（BFF 模式）
 

@@ -56,8 +56,14 @@ const nextConfig = {
       { key: 'X-Content-Type-Options', value: 'nosniff' },
       { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
       {
+        // microphone=(self): AI-ийн дуут боломжууд (нүүрийн push-to-talk чат,
+        // /me/ai дуут мессеж, амьд орчуулга) нь getUserMedia({audio}) дууддаг.
+        // `microphone=()` байхад хөтөч үүнийг БАРИМТЫН түвшинд хааж, зөвшөөрөл
+        // асуухгүйгээр шууд унагаадаг байв. Camera/geolocation хэвээр хаалттай
+        // — апп тэднийг хэрэглэдэггүй. (self) нь зөвхөн энэ origin-д зөвшөөрч,
+        // гуравдагч талын iframe-д олгохгүй.
         key: 'Permissions-Policy',
-        value: 'camera=(), microphone=(), geolocation=()',
+        value: 'camera=(), microphone=(self), geolocation=()',
       },
       { key: 'Content-Security-Policy', value: CSP },
     ];

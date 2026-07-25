@@ -60,6 +60,10 @@
   routinely takes 10–20s, which did not fit the 30s cap).
 - **Rate limiting** — `/auth` ~5/min, `/ai/*` ~20/min, and the anonymous
   landing chat `/public/ai/chat` ~6/min — per IP.
+- **Permissions-Policy** — `camera=(), microphone=(self), geolocation=()`.
+  The microphone is allowed for this origin only (the AI voice chat calls
+  `getUserMedia`); with `microphone=()` the browser rejects it outright,
+  without even prompting.
 
 ### Frontend (BFF model)
 

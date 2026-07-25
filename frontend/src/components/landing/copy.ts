@@ -87,6 +87,8 @@ export interface LandingCopy {
     listen: string;
     /** Микрофон боломжгүй үеийн алдаа. */
     micError: string;
+    /** Микрофоны зөвшөөрөл татгалзсан үеийн алдаа. */
+    micDenied: string;
     /** Дуут хувилбар бэлдэж чадаагүй үеийн алдаа. */
     ttsError: string;
   };
@@ -200,6 +202,7 @@ const mn: LandingCopy = {
     voiceMsg: 'Дуут мессеж',
     listen: 'Хариултыг сонсох',
     micError: 'Микрофон ашиглах боломжгүй байна.',
+    micDenied: 'Микрофоны зөвшөөрөл олгогдоогүй байна. Хөтчийн хаяг мөрний зүүн талын тэмдэглэгээнээс микрофоныг зөвшөөрөөд дахин оролдоно уу.',
     ttsError: 'Дуут хувилбарыг бэлдэж чадсангүй. Дараа дахин оролдоно уу.',
   },
 };
@@ -312,6 +315,7 @@ const en: LandingCopy = {
     voiceMsg: 'Voice message',
     listen: 'Listen to the reply',
     micError: 'Microphone is not available.',
+    micDenied: 'Microphone permission was denied. Allow the microphone from the icon in your browser address bar and try again.',
     ttsError: 'Could not generate the audio. Please try again.',
   },
 };
@@ -424,6 +428,7 @@ const zh: LandingCopy = {
     voiceMsg: '语音消息',
     listen: '朗读回复',
     micError: '麦克风不可用。',
+    micDenied: '麦克风权限被拒绝。请在浏览器地址栏的图标中允许麦克风后重试。',
     ttsError: '语音合成失败，请稍后再试。',
   },
 };
@@ -536,6 +541,7 @@ const ru: LandingCopy = {
     voiceMsg: 'Голосовое сообщение',
     listen: 'Прослушать ответ',
     micError: 'Микрофон недоступен.',
+    micDenied: 'Доступ к микрофону запрещён. Разрешите микрофон в значке адресной строки браузера и попробуйте снова.',
     ttsError: 'Не удалось озвучить ответ. Попробуйте ещё раз.',
   },
 };

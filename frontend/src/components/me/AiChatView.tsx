@@ -137,11 +137,11 @@ export default function AiChatView() {
       const body = await postJSON<{ mime?: string; data?: string }>('/api/ai/tts', {
         text: text.slice(0, 2000),
       });
-      if (body.ok && body.data?.mime && body.data?.data) {
-        await playBase64Audio(body.data.mime, body.data.data);
-      } else {
-        setTtsError(true);
-      }
+      const played =
+        body.ok && body.data?.mime && body.data?.data
+          ? await playBase64Audio(body.data.mime, body.data.data)
+          : false;
+      if (!played) setTtsError(true);
     } catch {
       // Дуут хувилбар бэлдэх нь Gemini дээр 10-20 секунд авдаг тул заримдаа
       // хугацаа хэтэрдэг (backend 503). Чимээгүй өнгөрвөл товч дарсан

@@ -59,6 +59,9 @@
   ердийн үед 10–20с зарцуулдаг тул 30с-д багтахгүй байв).
 - **Rate limiting** — `/auth` ~5/мин, `/ai/*` ~20/мин, нүүрийн нээлттэй чат
   `/public/ai/chat` ~6/мин (IP тус бүрд).
+- **Permissions-Policy** — `camera=(), microphone=(self), geolocation=()`.
+  Микрофон нь ЗӨВХӨН энэ origin-д нээлттэй (AI-ийн дуут чат `getUserMedia`
+  дууддаг); `microphone=()` байхад хөтөч зөвшөөрөл асуулгүй шууд унагаадаг.
 
 ### Frontend (BFF загвар)
 
