@@ -103,7 +103,7 @@ aiTools := append(ai.DefaultTools(), ai.KnowledgeSearchTool(aiRepo), myTool)
 
 - **`search_knowledge`** — semantic search over `ai_knowledge`: the question is
   embedded, the top 8 pgvector matches are fetched, then filtered **relative to
-  the best hit** (anything more than 0.06 below it is dropped; at most 4 kept).
+  the best hit** (anything more than 0.03 below it is dropped; 2–4 kept).
   A fixed threshold does not work here — even unrelated chunks in this corpus sit
   at 0.64+ similarity. When vectors are unavailable it falls back to `ILIKE`,
   splitting the question into words and searching the longest ones by stem. The
