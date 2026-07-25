@@ -51,7 +51,9 @@
   `X-Frame-Options: DENY`、Referrer-Policy、Permissions-Policy、COOP/CORP/COEP。
 - **CORS** — 严格的来源白名单；绝不将 `*` 与凭据组合使用。
 - **请求体大小限制** — 全局上限，另加 `/auth` 上的 4 KiB 限制。
-- **完整的服务器超时** — `ReadHeader` 10 秒、`Read` 30 秒、`Write` 60 秒、
+- **每请求超时** — 一般为 30 秒；`/ai/*` 为 50 秒（Gemini 的 TTS/STT 通常需要
+  10–20 秒，放不进 30 秒的上限）。
+- **完整的服务器超时** — `ReadHeader` 10 秒、`Read` 30 秒、`Write` 70 秒、
   `Idle` 120 秒、`MaxHeaderBytes` 16 KiB（防 slowloris / 超大请求头）。
 - **限流** — `/auth` 约 5 次/分钟，`/ai/*` 约 20 次/分钟，按 IP 计。
 

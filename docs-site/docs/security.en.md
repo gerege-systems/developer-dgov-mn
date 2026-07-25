@@ -54,8 +54,10 @@
   `X-Frame-Options: DENY`, Referrer-Policy, Permissions-Policy, COOP/CORP/COEP.
 - **CORS** — strict origin allow-list; never `*` combined with credentials.
 - **Body size limits** — global cap plus 4 KiB on `/auth`.
-- **Full server timeouts** — `ReadHeader` 10s, `Read` 30s, `Write` 60s,
+- **Full server timeouts** — `ReadHeader` 10s, `Read` 30s, `Write` 70s,
   `Idle` 120s, `MaxHeaderBytes` 16 KiB (slowloris / oversized-header defence).
+- **Per-request timeout** — 30s in general; `/ai/*` gets 50s (Gemini TTS/STT
+  routinely takes 10–20s, which did not fit the 30s cap).
 - **Rate limiting** — `/auth` ~5/min, `/ai/*` ~20/min, per IP.
 
 ### Frontend (BFF model)

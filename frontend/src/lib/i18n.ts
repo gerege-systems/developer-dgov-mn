@@ -510,6 +510,7 @@ export const dict = {
     'ai.recording': 'Бичиж байна… (зогсоохдоо дөрвөлжин товчийг дар)',
     'ai.listen': 'Хариуг сонсох',
     'ai.micError': 'Микрофон ашиглах боломжгүй байна.',
+    'ai.ttsError': 'Дуут хувилбарыг бэлдэж чадсангүй. Дараа дахин оролдоно уу.',
     // eID иргэний хуудсууд
     'group.eid': 'eID',
     'nav.eidId': 'Миний үнэмлэх',
@@ -1346,6 +1347,7 @@ export const dict = {
     'ai.recording': 'Recording… (press the square button to stop)',
     'ai.listen': 'Listen to the reply',
     'ai.micError': 'Microphone is not available.',
+    'ai.ttsError': 'Could not generate the audio. Please try again.',
     // eID citizen pages
     'group.eid': 'eID',
     'nav.eidId': 'My ID',
@@ -2177,6 +2179,7 @@ export const dict = {
     'ai.recording': '录音中…（按方块按钮停止）',
     'ai.listen': '收听回复',
     'ai.micError': '麦克风不可用。',
+    'ai.ttsError': '语音合成失败，请稍后再试。',
     // eID citizen pages
     'group.eid': 'eID',
     'nav.eidId': '我的身份',
@@ -3008,6 +3011,7 @@ export const dict = {
     'ai.recording': 'Идёт запись… (нажмите квадратную кнопку, чтобы остановить)',
     'ai.listen': 'Прослушать ответ',
     'ai.micError': 'Микрофон недоступен.',
+    'ai.ttsError': 'Не удалось озвучить ответ. Попробуйте ещё раз.',
     // eID citizen pages
     'group.eid': 'eID',
     'nav.eidId': 'Моё удостоверение',

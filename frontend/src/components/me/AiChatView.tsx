@@ -42,6 +42,7 @@ export default function AiChatView() {
   const [busy, setBusy] = useState(false);
   const [recording, setRecording] = useState(false);
   const [speakingIdx, setSpeakingIdx] = useState<number | null>(null);
+  const [ttsError, setTtsError] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
   const segmentRef = useRef<{ stop: () => void } | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -131,15 +132,21 @@ export default function AiChatView() {
   async function speak(idx: number, text: string) {
     if (speakingIdx !== null) return;
     setSpeakingIdx(idx);
+    setTtsError(false);
     try {
       const body = await postJSON<{ mime?: string; data?: string }>('/api/ai/tts', {
         text: text.slice(0, 2000),
       });
       if (body.ok && body.data?.mime && body.data?.data) {
         await playBase64Audio(body.data.mime, body.data.data);
+      } else {
+        setTtsError(true);
       }
     } catch {
-      /* TTS унавал чимээгүй өнгөрнө */
+      // Дуут хувилбар бэлдэх нь Gemini дээр 10-20 секунд авдаг тул заримдаа
+      // хугацаа хэтэрдэг (backend 503). Чимээгүй өнгөрвөл товч дарсан
+      // хэрэглэгч юу болсныг мэдэхгүй тул богино мэдэгдэл харуулна.
+      setTtsError(true);
     } finally {
       setSpeakingIdx(null);
     }
@@ -187,6 +194,11 @@ export default function AiChatView() {
           {busy && (
             <div className="aichat__msg aichat__msg--model">
               <div className="aichat__bubble aichat__bubble--pending">{T('ai.thinking')}</div>
+            </div>
+          )}
+          {ttsError && (
+            <div className="aichat__msg aichat__msg--model is-degraded">
+              <div className="aichat__bubble">{T('ai.ttsError')}</div>
             </div>
           )}
           <div ref={endRef} />

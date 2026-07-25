@@ -53,8 +53,10 @@
   `X-Frame-Options: DENY`, Referrer-Policy, Permissions-Policy, COOP/CORP/COEP.
 - **CORS** — хатуу origin жагсаалт; `*` + credentials хослолыг хэзээ ч зөвшөөрөхгүй.
 - **Хүсэлтийн биеийн хязгаар** — глобал хязгаар + `/auth` дээр 4 KiB.
-- **Серверийн бүрэн timeout** — `ReadHeader` 10с, `Read` 30с, `Write` 60с,
+- **Серверийн бүрэн timeout** — `ReadHeader` 10с, `Read` 30с, `Write` 70с,
   `Idle` 120с, `MaxHeaderBytes` 16 KiB (slowloris / хэт том толгойн хамгаалалт).
+- **Хүсэлтийн timeout** — ерөнхийдөө 30с; `/ai/*` нь 50с (Gemini-ийн TTS/STT
+  ердийн үед 10–20с зарцуулдаг тул 30с-д багтахгүй байв).
 - **Rate limiting** — `/auth` ~5/мин, `/ai/*` ~20/мин (IP тус бүрд).
 
 ### Frontend (BFF загвар)
