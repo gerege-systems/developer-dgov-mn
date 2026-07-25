@@ -2,7 +2,7 @@
 
 > **Цахим засаглалыг бүтээх суурь** — _Нэг суурь — бүх төрийн үйлчилгээ._
 
-> 🌐 [English](README.md) · **Монгол**
+> 🌐 [English](README.md) · **Монгол** · [中文](README_ZH.md) · [Русский](README_RU.md)
 
 [![Go](https://img.shields.io/badge/Go-1.26-blue.svg)](https://golang.org/)
 [![chi](https://img.shields.io/badge/chi-v5-00ADD8.svg)](https://github.com/go-chi/chi)
@@ -207,6 +207,7 @@ GEMINI_API_KEY=                  # хоосон = AI идэвхгүй (endpoint 
 GEMINI_MODEL=gemini-2.5-flash    # сонголттой override (чат / STT / орчуулга)
 GEMINI_TTS_MODEL=gemini-2.5-flash-preview-tts  # сонголттой override (TTS)
 GEMINI_VOICE=Kore                # сонголттой prebuilt TTS дуу хоолой
+GEMINI_EMBED_MODEL=              # мэдлэгийн сангийн вектор model; хоосон = автоматаар сонгоно (gemini-embedding-001 → text-embedding-004 → embedding-001), үргэлж 768 хэмжээгээр
 GEMINI_API_BASE=                 # сонголттой override (өгөгдмөл: Google generativelanguage v1beta)
 AI_SCOPE_PROMPT=                 # DB-ийн 'scope' давхарга хоосон үеийн хамрах хүрээний fallback
 

@@ -25,6 +25,45 @@ type AIChatRequest struct {
 	Message string       `json:"message" validate:"omitempty,max=4000"`
 	Audio   *AIAudio     `json:"audio" validate:"omitempty"`
 	History []AIChatTurn `json:"history" validate:"omitempty,max=20,dive"`
+	// Lang нь frontend-ийн UI хэл — туслах ЭНЭ хэлээр хариулна. Хоосон бол
+	// сервер өгөгдмөл (mn) хэрэглэнэ; цагаан жагсаалтаас гадуур утга орохгүй.
+	Lang string `json:"lang" validate:"omitempty,oneof=mn en zh ru"`
+}
+
+// AIPublicChatRequest нь POST /public/ai/chat-ийн body — нүүр хуудасны
+// нээлттэй (нэвтрэлтгүй) чат виджет. Нэвтэрсэн чатаас ЯЛГААТАЙ нь:
+//   - audio байхгүй (нэргүй гадаргуугаас 700 KB upload авахгүй),
+//   - мессеж ба ээлж бүр 1000 тэмдэгт, түүх 6 ээлж — Gemini-ийн зардлыг
+//     нэргүй хэрэглэгчийн хувьд хатуу хязгаарлана.
+type AIPublicChatRequest struct {
+	// Message нь audio байхгүй үед заавал (handler шалгана) — push-to-talk
+	// горимд зөвхөн audio ирнэ.
+	Message string             `json:"message" validate:"omitempty,max=1000"`
+	Audio   *AIPublicAudio     `json:"audio" validate:"omitempty"`
+	History []AIPublicChatTurn `json:"history" validate:"omitempty,max=6,dive"`
+	Lang    string             `json:"lang" validate:"omitempty,oneof=mn en zh ru"`
+}
+
+// AIPublicAudio нь нээлттэй чатын push-to-talk бичлэг. Нэвтэрсэн чатын
+// AIAudio-гаас ЯЛГААТАЙ нь хэмжээ: ~250 KB base64 (~15 секунд opus) —
+// нэргүй гадаргуугаас ирэх upload-ыг богино байлгана.
+type AIPublicAudio struct {
+	Mime string `json:"mime" validate:"required,oneof=audio/webm audio/ogg audio/wav audio/mpeg audio/mp3 audio/mp4 audio/m4a audio/aac audio/flac"`
+	Data string `json:"data" validate:"required,base64,max=256000"`
+}
+
+// AIPublicTTSRequest нь нээлттэй чатын «сонсох» товч — AI-ийн хариултыг
+// дуут болгоно. Текстийн хязгаар нэвтэрсэн TTS-ээс (2000) богино: нэргүй
+// гадаргуу дээр нэг дуудалтын зардлыг таазлана.
+type AIPublicTTSRequest struct {
+	Text string `json:"text" validate:"required,max=800"`
+}
+
+// AIPublicChatTurn нь нээлттэй чатын нэг ээлж — AIChatTurn-тэй ижил боловч
+// текстийн хязгаар богино (нэргүй гадаргуугийн зардлын хамгаалалт).
+type AIPublicChatTurn struct {
+	Role string `json:"role" validate:"required,oneof=user model"`
+	Text string `json:"text" validate:"required,max=1000"`
 }
 
 // AISTTRequest нь POST /ai/stt-ийн body — audio-г текст болгоно.

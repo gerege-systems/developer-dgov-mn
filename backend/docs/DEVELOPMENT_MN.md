@@ -1,9 +1,9 @@
 # Development Guide
 
-> 🌐 [English](DEVELOPMENT.md) · **Монгол**
+> 🌐 [English](DEVELOPMENT.md) · **Монгол** · [中文](DEVELOPMENT_ZH.md) · [Русский](DEVELOPMENT_RU.md)
 
 Энэ заавар нь хөгжүүлэгчдэд **Government Template Platform V3.0** (Цахим
-засаглалыг бүтээх суурь) кодын бааз — аливаа цахим засаглалын үйлчилгээг дээр нь
+засаглалыг бүтээх суурь) кодын бааз — төрийн аливаа цахим үйлчилгээг дээр нь
 босгох production-ready суурь — дээр тохиргоо хийж, ажиллахад туслана. Түүний
 жишиг лавлагаа deployment нь энэ стек дээр бүтээгдсэн eID-д суурилсан төрийн
 үйлчилгээний платформ буюу **Government Template Platform** (template.dgov.mn) юм.

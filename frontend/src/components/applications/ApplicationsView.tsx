@@ -8,6 +8,7 @@ import type { GwService } from '@/lib/gatewayTypes';
 import type { Application, AppType } from '@/lib/applicationTypes';
 import { APP_TYPES, needsRedirect, isConfidential, downloadClientConfig } from '@/lib/applicationTypes';
 import { useT } from '@/lib/lang';
+import { pickLang } from '@/lib/i18n';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../ui/dialog';
 import { Loading, EnabledChip, Tags, splitList } from '../gateway/gwShared';
 
@@ -42,7 +43,7 @@ export default function ApplicationsView() {
 
   const typeLabel = (t: AppType) => {
     const found = APP_TYPES.find((x) => x.value === t);
-    return found ? (lang === 'en' ? found.en : found.mn) : t;
+    return found ? pickLang(lang, found) : t;
   };
 
   const refresh = () => qc.invalidateQueries({ queryKey: ['applications'] });
@@ -95,7 +96,7 @@ export default function ApplicationsView() {
             </label>
             <label>{T('apps.type')}
               <select className="input" value={form.app_type} onChange={(e) => setForm({ ...form, app_type: e.target.value as AppType })}>
-                {APP_TYPES.map((t) => <option key={t.value} value={t.value}>{lang === 'en' ? t.en : t.mn}</option>)}
+                {APP_TYPES.map((t) => <option key={t.value} value={t.value}>{pickLang(lang, t)}</option>)}
               </select>
             </label>
             <label>{T('apps.tags')}
@@ -298,7 +299,7 @@ function EditDialog({ app, services, servicesLoading, onClose, onChanged, onSetS
           </label>
           <label>{T('apps.type')}
             <select className="input" value={appType} onChange={(e) => setAppType(e.target.value as AppType)}>
-              {APP_TYPES.map((t) => <option key={t.value} value={t.value}>{lang === 'en' ? t.en : t.mn}</option>)}
+              {APP_TYPES.map((t) => <option key={t.value} value={t.value}>{pickLang(lang, t)}</option>)}
             </select>
           </label>
           <label>{T('apps.tags')}

@@ -1,12 +1,12 @@
 # API Contract
 
-> 🌐 **English** · [Монгол](API_CONTRACT_MN.md)
+> 🌐 **English** · [Монгол](API_CONTRACT_MN.md) · [中文](API_CONTRACT_ZH.md) · [Русский](API_CONTRACT_RU.md)
 
-REST API reference for the **Government Template Platform V3.0** (Цахим засаглалыг
-бүтээх суурь) — a production-ready foundation for building digital-government
-services (Clean-Architecture Go backend + Next.js BFF + Gemini AI). This contract
-tracks its reference deployment, **Government Template Platform** (template.dgov.mn), an
-eID-based government service platform. The live, auto-generated spec is served at `GET
+REST API reference for the **Government Template Platform V3.0** (Цахим засаглалыг бүтээх суурь) — a production-ready foundation for
+building digital services (Clean-Architecture Go backend +
+Next.js BFF + Gemini AI). This contract tracks its reference deployment,
+**Government Template Platform** (template.dgov.mn), an eID-based public and
+private service platform. The live, auto-generated spec is served at `GET
 /swagger/` (source: `docs/swagger.json`).
 
 > **Note on paths.** Every module below mounts under the `/api` group, and each
@@ -330,6 +330,7 @@ ID).
 | DELETE | `/admin/users/{id}` | 🛡️ `users.manage` | Delete a user. |
 | GET | `/admin/ai/prompts` | 🛡️ `settings.manage` | List the configurable AI prompt layers. |
 | PUT | `/admin/ai/prompts/{key}` | 🛡️ `settings.manage` | Update a prompt layer (`key` ∈ `scope` \| `instructions`). |
+| POST | `/admin/ai/knowledge/reindex` | 🛡️ `settings.manage` | Re-embed knowledge-base rows whose vector is missing or stale; returns `{ "embedded": n }`. No-op without `GEMINI_API_KEY`. |
 
 > **Naming note.** This in-app `/api/v1/admin` group is unrelated to the
 > top-level `/admin` Hydra operator surface documented under *Non-`/api`
@@ -413,6 +414,7 @@ directly), or both. Stateless — pass prior turns in `history`.
 | `message` | optional (required if no `audio`), ≤ 4000 chars |
 | `audio` | optional; `mime` ∈ webm/ogg/wav/mpeg/mp3/mp4/m4a/aac/flac, `data` base64 ≤ ~700 KB |
 | `history` | optional, ≤ 20 turns |
+| `lang` | optional UI language — `mn` \| `en` \| `zh` \| `ru`; the assistant replies in it (empty ⇒ `mn`) |
 
 **Response `200`**
 ```json
@@ -423,7 +425,7 @@ directly), or both. Stateless — pass prior turns in `history`.
 ```
 `steps` lists the function calls the model executed (pipeline trace). When
 Gemini is temporarily unavailable the endpoint still returns `200` with a
-Mongolian fallback `reply` and `degraded: true`.
+localized fallback `reply` and `degraded: true`.
 
 ### POST `/ai/stt` 🔒
 Speech-to-text. **Request** `{ "audio": { "mime": "audio/webm", "data": "<base64>" } }`
@@ -442,6 +444,35 @@ recorded segments here.
 **Request** `{ "audio": { … }, "target_lang": "en", "speak": false }`
 (`target_lang`: required, e.g. `mn|en|ru|zh|ja|ko|de`)
 **Response `200`** — `data: { "source_text": "Сайн уу", "translated": "Hello", "audio": { … } }`.
+
+### POST `/public/ai/chat` 🌐
+**No authentication.** Powers the floating chat widget on the landing page, so
+anyone can ask about the platform before signing in. Same pipeline as
+`/ai/chat`, hardened for an open surface:
+
+| Guard | Value |
+|-------|-------|
+| Rate limit | ~6 req/min per IP (burst 3) — separate from the `/ai/*` limiter |
+| `message` | required, ≤ 1000 chars |
+| `history` | optional, ≤ 6 turns, ≤ 1000 chars each |
+| `lang` | optional — `mn` \| `en` \| `zh` \| `ru` |
+| `audio` | optional push-to-talk clip — same mime whitelist as `/ai/chat`, but `data` base64 ≤ ~250 KB (≈ 15 s of opus). Either `message` or `audio` is required |
+| Tools | knowledge-base search only — the usecase is wired with a restricted tool set, so no tool that reads user data is reachable |
+| Prompt | an extra hardcoded guardrail layer: never ask for personal data, never claim access to an account |
+
+**Response `200`** — `/ai/chat`'s shape plus `transcript`. A voice message is
+transcribed first (STT) and the chat then runs on that text, so the widget can
+show what was actually heard instead of a "voice message" placeholder. When no
+speech is recognised the endpoint returns `200` with an empty `reply` and
+`degraded: true` (no second Gemini call).
+
+### POST `/public/ai/tts` 🌐
+**No authentication.** The "listen" button in the landing widget — turns one
+assistant reply into speech. Shares the `/public/ai/*` rate limiter (~6 req/min
+per IP), `text` ≤ 800 chars, and the voice is server-side (callers cannot pick a
+model or voice).
+
+**Request** `{ "text": "…" }` · **Response `200`** — `data: { "mime": "audio/wav", "data": "<base64 WAV>" }`
 
 > Prompt-layer configuration lives under **Admin — users & AI prompts** above
 > (`GET`/`PUT /api/v1/admin/ai/prompts`). The base guardrail layer is hardcoded

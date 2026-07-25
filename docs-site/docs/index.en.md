@@ -1,11 +1,11 @@
 # Government Template Platform V3.0
 
-> **The foundation to build digital governance** — a production-ready,
+> **The foundation to build digital services** — a production-ready,
 > security-hardened full stack for building any digital-government service on top.
 
 **Government Template Platform V3.0** is the *foundation on which digital
-governance is built*. You build the value, not the plumbing — identity, security,
-AI and service scaffolding come solved from day one.
+government services are built*. You build the value, not the plumbing —
+identity, security, AI and service scaffolding come solved from day one.
 
 !!! tip "Open Source"
     This platform is an **open-source** project — read the full source, fork it,

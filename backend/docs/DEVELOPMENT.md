@@ -1,12 +1,12 @@
 # Development Guide
 
-> 🌐 **English** · [Монгол](DEVELOPMENT_MN.md)
+> 🌐 **English** · [Монгол](DEVELOPMENT_MN.md) · [中文](DEVELOPMENT_ZH.md) · [Русский](DEVELOPMENT_RU.md)
 
 This guide helps developers set up and work with the **Government Template
 Platform V3.0** (Цахим засаглалыг бүтээх суурь) codebase — a production-ready
 foundation on which any digital-government service can be built. Its flagship
 reference deployment is **Government Template Platform** (template.dgov.mn), an eID-based
-government service platform built on this stack.
+public and private service platform built on this stack.
 
 > **Origin.** Derived from the open-source
 > [snykk/go-rest-boilerplate](https://github.com/snykk/go-rest-boilerplate)

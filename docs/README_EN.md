@@ -11,7 +11,7 @@ service scaffolding come solved from day one. A reference deployment runs as
 **Government Template Platform** at [template.dgov.mn](https://template.dgov.mn), showcasing the
 platform's eID single sign-on in production.
 
-> 🌐 [Монгол](../README.md) · **English**
+> 🌐 [Монгол](../README.md) · **English** · [中文](README_ZH.md) · [Русский](README_RU.md)
 
 [![Go](https://img.shields.io/badge/Go-1.26-blue.svg)](https://golang.org/)
 [![chi](https://img.shields.io/badge/chi-v5-00ADD8.svg)](https://github.com/go-chi/chi)

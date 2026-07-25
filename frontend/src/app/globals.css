@@ -749,6 +749,15 @@ html[lang="en"] .i18n-banner { display: block; }
   width: 100%;
   transition: border-color 0.12s ease, box-shadow 0.12s ease;
 }
+/* iOS Safari нь фонт нь 16px-ЭЭС ЖИЖИГ оролтод фокус хийхэд хуудсыг
+   автоматаар томруулдаг (auto-zoom). Тэр үед layout viewport өөрчлөгдөж,
+   fixed элементүүд (чат виджет, цэс) дэлгэцээс халин хайчлагддаг. Иймд ЗӨВХӨН
+   жижиг дэлгэц дээр form талбаруудыг 16px болгоно — desktop-ийн харагдац
+   өөрчлөгдөхгүй. */
+@media (max-width: 600px) {
+  .input, .select, textarea { font-size: 16px; }
+}
+
 .input:hover, .select:hover { border-color: var(--border-strong); }
 .input:focus, .select:focus {
   outline: none;
@@ -2098,6 +2107,161 @@ html[lang="en"] .i18n-banner { display: block; }
 .lp-footer__links a { font-size: 13.5px; color: var(--lp-on-navy-70); text-decoration: none; transition: color 0.14s ease; }
 .lp-footer__links a:hover { color: var(--lp-gold); }
 .lp-footer__copy { font-size: 12.5px; color: var(--lp-on-navy-45); margin: 0; }
+
+/* ---------- Хөвөгч AI туслах (нэвтрэлтгүй) ---------- */
+/* Виджет нь .lp дотор биш, гадна нь (fixed) байрлана — гэхдээ landing-ийн
+   алт/navy токеныг өвлөхийн тулд .lp дотор render хийгддэг тул --lp-* хүчинтэй. */
+.lp-chat__fab {
+  position: fixed; right: 20px; bottom: 20px; z-index: 60;
+  width: 56px; height: 56px; border-radius: 50%;
+  display: grid; place-items: center;
+  border: 1px solid var(--lp-navy-line2);
+  background: var(--lp-navy); color: var(--lp-on-navy);
+  box-shadow: 0 10px 30px oklch(0% 0 0 / 0.28);
+  cursor: pointer; transition: transform 0.14s ease, background 0.14s ease;
+}
+.lp-chat__fab:hover { transform: translateY(-2px); background: var(--lp-navy-2); }
+.lp-chat__fab:focus-visible { outline: 2px solid var(--lp-gold); outline-offset: 3px; }
+.lp-chat__fab.is-open { background: var(--lp-gold-btn); color: var(--lp-on-gold); border-color: transparent; }
+
+.lp-chat__panel {
+  position: fixed; right: 20px; bottom: 88px; z-index: 60;
+  width: min(380px, calc(100vw - 32px)); max-width: 100vw;
+  /* dvh — iOS дээр хаягийн мөр нуугдах/гарахад vh нь буруу утга өгдөг. */
+  max-height: min(560px, calc(100dvh - 130px));
+  display: flex; flex-direction: column; overflow: hidden;
+  background: var(--surface); color: var(--fg);
+  border: 1px solid var(--border); border-radius: 16px;
+  box-shadow: 0 18px 48px oklch(0% 0 0 / 0.28);
+  animation: user-menu-in 0.14s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.lp-chat__head {
+  display: flex; align-items: center; gap: 10px; padding: 12px 14px;
+  background: var(--lp-navy); color: var(--lp-on-navy);
+}
+.lp-chat__mark {
+  width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center;
+  background: oklch(100% 0 0 / 0.12); color: var(--lp-gold); flex: none;
+}
+.lp-chat__titles { display: flex; flex-direction: column; line-height: 1.25; flex: 1; min-width: 0; }
+.lp-chat__titles strong { font-size: 14px; font-weight: 650; }
+.lp-chat__titles small { font-size: 11.5px; color: var(--lp-on-navy-70); }
+.lp-chat__x {
+  flex: none; width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center;
+  border: 1px solid transparent; background: transparent; color: var(--lp-on-navy-70); cursor: pointer;
+}
+.lp-chat__x:hover { background: oklch(100% 0 0 / 0.12); color: var(--lp-on-navy); }
+
+.lp-chat__scroll {
+  flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px;
+  background: var(--surface-2);
+}
+.lp-chat__msg { display: flex; }
+.lp-chat__msg--user { justify-content: flex-end; }
+.lp-chat__bubble {
+  max-width: 85%; padding: 9px 12px; border-radius: 14px; font-size: 13.5px; line-height: 1.5;
+  white-space: pre-wrap; overflow-wrap: anywhere;
+  background: var(--surface); border: 1px solid var(--border);
+}
+.lp-chat__msg--user .lp-chat__bubble {
+  background: var(--lp-navy); color: var(--lp-on-navy); border-color: transparent;
+}
+.lp-chat__msg.is-degraded .lp-chat__bubble { border-style: dashed; color: var(--fg-muted, inherit); opacity: 0.85; }
+.lp-chat__bubble--pending { opacity: 0.7; font-style: italic; }
+
+.lp-chat__chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.lp-chat__chip {
+  padding: 6px 10px; border-radius: 999px; font-size: 12.5px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--surface); color: var(--fg);
+}
+.lp-chat__chip:hover { border-color: var(--border-strong); }
+
+.lp-chat__form { display: flex; gap: 8px; padding: 10px 12px 6px; background: var(--surface); }
+
+/* Walkie-talkie товч — хуруугаар дарж барих том дугуй. Хүрэлтэнд эвтэйхэн
+   байхаар 72px (Apple-ийн зөвлөмж 44px-ээс том); барьж байх үед улаан болж
+   цохилно. touch-action: none нь барих хөдөлгөөнийг гүйлгэлт гэж
+   тайлбарлахаас сэргийлнэ (эс тэгвээс бичлэг дунд нь тасарна). */
+.lp-chat__ptt-row {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 12px 12px 4px; background: var(--surface);
+}
+.lp-chat__ptt {
+  width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center;
+  border: 1px solid transparent; background: var(--lp-navy); color: var(--lp-on-navy);
+  box-shadow: 0 6px 18px oklch(0% 0 0 / 0.18);
+  cursor: pointer; touch-action: none; user-select: none; -webkit-user-select: none;
+  -webkit-touch-callout: none; transition: transform 0.12s ease, background 0.12s ease;
+}
+.lp-chat__ptt:hover:not(:disabled) { background: var(--lp-navy-2); }
+.lp-chat__ptt:active:not(:disabled) { transform: scale(0.96); }
+.lp-chat__ptt:focus-visible { outline: 2px solid var(--lp-gold); outline-offset: 3px; }
+.lp-chat__ptt:disabled { opacity: 0.45; cursor: default; }
+.lp-chat__ptt.is-recording {
+  background: var(--danger, oklch(58% 0.19 25)); color: oklch(99% 0 0);
+  animation: lp-chat-rec 1.1s ease-in-out infinite;
+}
+.lp-chat__ptt-hint {
+  font-size: 12px; line-height: 1.35; text-align: center;
+  color: var(--fg-muted, inherit); opacity: 0.8; min-height: 16px;
+}
+@keyframes lp-chat-rec {
+  0%, 100% { box-shadow: 0 0 0 0 oklch(58% 0.19 25 / 0.5); }
+  50%      { box-shadow: 0 0 0 14px oklch(58% 0.19 25 / 0); }
+}
+
+/* Дуут мессежийн бөмбөлөгт микрофоны жижиг тэмдэг. */
+.lp-chat__voiceico { display: inline-block; vertical-align: -1px; margin-right: 5px; opacity: 0.8; }
+
+/* Хариултыг сонсох товч — бөмбөлөгийн хажууд. */
+.lp-chat__listen {
+  align-self: flex-end; flex: none; width: 26px; height: 26px; margin-left: 4px;
+  border-radius: 8px; display: grid; place-items: center;
+  border: 1px solid var(--border); background: var(--surface); color: var(--fg);
+  cursor: pointer; opacity: 0.75;
+}
+.lp-chat__listen:hover:not(:disabled) { opacity: 1; border-color: var(--border-strong); }
+.lp-chat__listen:disabled { opacity: 0.35; cursor: default; }
+.lp-chat__speaking { animation: lp-chat-speak 0.9s ease-in-out infinite; }
+@keyframes lp-chat-speak {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.18); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-chat__ptt.is-recording, .lp-chat__speaking { animation: none; }
+}
+.lp-chat__input {
+  flex: 1; min-width: 0; padding: 9px 12px; font-size: 13.5px;
+  border: 1px solid var(--border); border-radius: var(--radius-input);
+  background: var(--surface-2); color: var(--fg);
+}
+.lp-chat__input:focus { outline: none; border-color: var(--border-strong); }
+.lp-chat__send {
+  flex: none; width: 38px; border-radius: var(--radius-input); display: grid; place-items: center;
+  border: 1px solid transparent; background: var(--lp-gold-btn); color: var(--lp-on-gold); cursor: pointer;
+}
+.lp-chat__send:hover:not(:disabled) { background: var(--lp-gold-btn-h); }
+.lp-chat__send:disabled { opacity: 0.5; cursor: default; }
+
+.lp-chat__privacy {
+  margin: 0; padding: 0 12px 10px; font-size: 11px; line-height: 1.45;
+  color: var(--fg-muted, inherit); opacity: 0.75; background: var(--surface);
+}
+
+@media (max-width: 600px) {
+  .lp-chat__panel {
+    right: 10px; left: 10px; width: auto; bottom: 78px;
+    max-height: calc(100dvh - 120px);
+  }
+  .lp-chat__fab { right: 14px; bottom: 14px; }
+  /* iOS Safari нь 16px-ээс ЖИЖИГ фонттой оролтод фокус хийхэд хуудсыг
+     автоматаар томруулдаг (auto-zoom). Тэр үед fixed панел дэлгэцээс халин
+     хайчлагддаг тул гар утсан дээр оролтын фонтыг 16px байлгана. */
+  .lp-chat__input { font-size: 16px; }
+}
+
 
 /* ---------- Responsive ---------- */
 @media (min-width: 720px) {

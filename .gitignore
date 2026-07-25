@@ -12,12 +12,14 @@ backend.env
 .DS_Store
 .idea/
 .vscode/
+*.swp
 *.log
 
 # Build / deps (belt-and-suspenders; subdir ignores also cover these)
 node_modules/
 **/node_modules/
 frontend/.next/
+frontend/out/
 backend/bin/
 backend/tmp/
 

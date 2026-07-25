@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math/rand/v2"
 
 	"template/internal/apperror"
 	"template/internal/constants"
@@ -15,11 +16,28 @@ import (
 	"template/pkg/logger"
 )
 
-// fallbackReply нь Gemini бүх оролдлогын дараа ч амжилтгүй үед хэрэглэгчид
-// очих Монгол мессеж — хүсэлтийг 5xx болгож унагахын оронд degraded хариу өгнө.
-const fallbackReply = "Уучлаарай, AI үйлчилгээ түр ачаалалтай байна. Та хэсэг хугацааны дараа дахин оролдоно уу."
+// fallbackReplies нь Gemini бүх оролдлогын дараа ч амжилтгүй үед хэрэглэгчид
+// очих мессеж — хүсэлтийг 5xx болгож унагахын оронд degraded хариу өгнө.
+// Хэрэглэгчийн хэлээр (UI-ийн хэл) буцаана; тодорхойгүй бол DefaultLang.
+var fallbackReplies = map[string]string{
+	"mn": "Уучлаарай, AI үйлчилгээ түр ачаалалтай байна. Та хэсэг хугацааны дараа дахин оролдоно уу.",
+	"en": "Sorry, the AI service is temporarily busy. Please try again in a moment.",
+	"zh": "抱歉，AI 服务暂时繁忙，请稍后再试。",
+	"ru": "Извините, сервис AI временно перегружен. Пожалуйста, попробуйте ещё раз чуть позже.",
+}
+
+// fallbackReply нь хэлэнд тохирсон degraded мессежийг буцаана.
+func fallbackReply(lang string) string {
+	return fallbackReplies[normalizeLang(lang)]
+}
 
 const (
+	// chatTemperature / chatTopP — чатын sampling. 1.0 нь Gemini-гийн өгөгдмөл
+	// бөгөөд ижил асуултад үг сонголтыг хэлбэлзүүлдэг; topP 0.95 нь хэт ховор
+	// (утга алдагдуулж болзошгүй) үгсийг хасна.
+	chatTemperature = 1.0
+	chatTopP        = 0.95
+
 	defaultMaxSteps = 4
 	maxHistoryTurns = 20
 	// defaultVoice нь Gemini TTS-ийн prebuilt дуу хоолой.
@@ -37,6 +55,14 @@ type Config struct {
 	// ScopePrompt нь хамрах хүрээний env fallback (AI_SCOPE_PROMPT) —
 	// DB-ийн 'scope' давхарга хоосон/уншигдахгүй үед хэрэглэгдэнэ.
 	ScopePrompt string
+	// Embedder нь мэдлэгийн сангийн вектор хайлт болон backfill-д
+	// хэрэглэгдэх Gemini embedding client. nil бол семантик хайлт унтарч,
+	// ILIKE (түлхүүр үг) хайлт ажиллана.
+	Embedder gemini.Embedder
+	// Rand нь [0,n) завсрын санамсаргүй тоо буцаана — хариултын найруулгын
+	// хувилбар сонгоход. nil бол math/rand-ийн глобал эх сурвалж; тестэд
+	// тогтмол утга өгч детерминистик болгоно.
+	Rand func(n int) int
 }
 
 type usecase struct {
@@ -46,7 +72,10 @@ type usecase struct {
 	ttsClient gemini.Generator
 	// repo нь тохируулдаг prompt давхаргууд + мэдлэгийн сангийн gateway.
 	// nil байж болно (тест) — тэр үед env/default prompt-ууд хэрэглэгдэнэ.
-	repo        repointerface.AIRepository
+	repo repointerface.AIRepository
+	// embedder нь мэдлэгийн сангийн семантик хайлт болон backfill-д
+	// хэрэглэгдэнэ. nil (эсвэл түлхүүргүй) бол хайлт ILIKE рүү унана.
+	embedder    gemini.Embedder
 	tools       map[string]ToolDef
 	decls       []gemini.FunctionDeclaration
 	cfg         Config
@@ -64,23 +93,43 @@ func NewUsecase(client, ttsClient gemini.Generator, repo repointerface.AIReposit
 	if cfg.Voice == "" {
 		cfg.Voice = defaultVoice
 	}
+	if cfg.Rand == nil {
+		cfg.Rand = rand.IntN
+	}
 	byName := make(map[string]ToolDef, len(tools))
 	decls := make([]gemini.FunctionDeclaration, 0, len(tools))
 	for _, t := range tools {
 		byName[t.Declaration.Name] = t
 		decls = append(decls, t.Declaration)
 	}
-	return &usecase{client: client, ttsClient: ttsClient, repo: repo, tools: byName, decls: decls, cfg: cfg}
+	return &usecase{
+		client:    client,
+		ttsClient: ttsClient,
+		repo:      repo,
+		embedder:  cfg.Embedder,
+		tools:     byName,
+		decls:     decls,
+		cfg:       cfg,
+	}
 }
 
 func (uc *usecase) Run(ctx context.Context, req RunRequest) (RunResult, error) {
 	contents := buildContents(req)
 
 	var geminiReq gemini.Request
+	// Найруулгын хувилбарыг хүсэлт бүрд сонгоно — ижил асуулт үг үсгээрээ
+	// давтагдахгүй байх нэг талын хамгаалалт (нөгөө нь GenerationConfig).
 	geminiReq.SystemInstruction = &gemini.Content{
-		Parts: []gemini.Part{{Text: uc.systemInstruction(ctx)}},
+		Parts: []gemini.Part{{Text: uc.systemInstruction(ctx, req.Lang, uc.styleHint(), req.Anonymous)}},
 	}
 	geminiReq.Contents = contents
+	// Sampling — олон янз байдлыг өгнө. Агуулга биш найруулга л хэлбэлзэнэ:
+	// баримтыг мэдлэгийн сан болон tool-ийн үр дүн тогтоож өгдөг.
+	temperature, topP := chatTemperature, chatTopP
+	geminiReq.GenerationConfig = &gemini.GenerationConfig{
+		Temperature: &temperature,
+		TopP:        &topP,
+	}
 	if len(uc.decls) > 0 {
 		geminiReq.Tools = []gemini.Tool{{FunctionDeclarations: uc.decls}}
 	}
@@ -101,14 +150,14 @@ func (uc *usecase) Run(ctx context.Context, req RunRequest) (RunResult, error) {
 				"error":                  err.Error(),
 				"step":                   step,
 			})
-			return RunResult{Reply: fallbackReply, Steps: steps, Degraded: true}, nil
+			return RunResult{Reply: fallbackReply(req.Lang), Steps: steps, Degraded: true}, nil
 		}
 
 		calls := resp.FunctionCalls()
 		if len(calls) == 0 {
 			reply := resp.Text()
 			if reply == "" {
-				return RunResult{Reply: fallbackReply, Steps: steps, Degraded: true}, nil
+				return RunResult{Reply: fallbackReply(req.Lang), Steps: steps, Degraded: true}, nil
 			}
 			return RunResult{Reply: reply, Steps: steps}, nil
 		}
@@ -132,7 +181,7 @@ func (uc *usecase) Run(ctx context.Context, req RunRequest) (RunResult, error) {
 		constants.LoggerCategory: constants.LoggerCategoryAI,
 		"max_steps":              uc.cfg.MaxSteps,
 	})
-	return RunResult{Reply: fallbackReply, Steps: steps, Degraded: true}, nil
+	return RunResult{Reply: fallbackReply(req.Lang), Steps: steps, Degraded: true}, nil
 }
 
 // executeTool нь нэг function дуудлагыг гүйцэтгэнэ. Алдааг model руу

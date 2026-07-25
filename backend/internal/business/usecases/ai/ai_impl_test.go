@@ -6,6 +6,7 @@ package ai
 import (
 	"context"
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -104,7 +105,7 @@ func TestRun(t *testing.T) {
 			name:         "transient gemini failure returns fallback",
 			gen:          &fakeGenerator{errs: []error{errors.New("gemini: 3 attempts failed")}},
 			req:          RunRequest{Prompt: "сайн уу"},
-			wantReply:    fallbackReply,
+			wantReply:    fallbackReply("mn"),
 			wantDegraded: true,
 		},
 		{
@@ -121,7 +122,7 @@ func TestRun(t *testing.T) {
 			}},
 			tools:        []ToolDef{echoTool("echo_tool")},
 			req:          RunRequest{Prompt: "loop"},
-			wantReply:    fallbackReply,
+			wantReply:    fallbackReply("mn"),
 			wantDegraded: true,
 			wantSteps:    2,
 		},
@@ -129,7 +130,7 @@ func TestRun(t *testing.T) {
 			name:         "empty model reply returns fallback",
 			gen:          &fakeGenerator{responses: []gemini.Response{textResponse("")}},
 			req:          RunRequest{Prompt: "сайн уу"},
-			wantReply:    fallbackReply,
+			wantReply:    fallbackReply("mn"),
 			wantDegraded: true,
 		},
 	}
@@ -171,7 +172,8 @@ func TestRunSendsSystemInstructionAndHistory(t *testing.T) {
 
 	req := gen.requests[0]
 	require.NotNil(t, req.SystemInstruction)
-	assert.Contains(t, req.SystemInstruction.Parts[0].Text, "Монгол хэлээр")
+	// Хэл заагаагүй бол өгөгдмөл (mn) хэлний дүрэм орно.
+	assert.Contains(t, req.SystemInstruction.Parts[0].Text, uiLangNames[DefaultLang])
 	// history 2 + шинэ prompt 1
 	require.Len(t, req.Contents, 3)
 	assert.Equal(t, "user", req.Contents[0].Role)
@@ -202,4 +204,114 @@ func TestServerTimeTool(t *testing.T) {
 	require.NoError(t, err)
 	assert.NotEmpty(t, res["datetime"])
 	assert.Equal(t, "Asia/Ulaanbaatar", res["timezone"])
+}
+
+// Хэрэглэгчийн хэл нь system prompt болон degraded мессежид тусна.
+func TestRun_UsesRequestLanguage(t *testing.T) {
+	for _, tt := range []struct {
+		name     string
+		lang     string
+		wantLang string
+	}{
+		{name: "chinese", lang: "zh", wantLang: "zh"},
+		{name: "russian", lang: "ru", wantLang: "ru"},
+		{name: "english", lang: "en", wantLang: "en"},
+		{name: "unknown falls back to default", lang: "xx", wantLang: DefaultLang},
+		{name: "empty falls back to default", lang: "", wantLang: DefaultLang},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			gen := &fakeGenerator{responses: []gemini.Response{textResponse("ok")}}
+			uc := NewUsecase(gen, gen, nil, nil, Config{})
+
+			_, err := uc.Run(context.Background(), RunRequest{Prompt: "hi", Lang: tt.lang})
+			require.NoError(t, err)
+			require.Len(t, gen.requests, 1)
+
+			prompt := gen.requests[0].SystemInstruction.Parts[0].Text
+			assert.Contains(t, prompt, uiLangNames[tt.wantLang])
+			// Зорилтот хэл дээрх заавар prompt-ын ТӨГСГӨЛД байх ёстой.
+			assert.True(t, strings.HasSuffix(prompt, langDirectives[tt.wantLang]),
+				"prompt нь %q-ээр төгсөх ёстой", langDirectives[tt.wantLang])
+			// Зөвхөн нэг хэлний дүрэм орсон байх ёстой — өөр хэлний нэр ч,
+			// өөр хэлний заавар ч prompt-д огт байхгүй.
+			for code, name := range uiLangNames {
+				if code != tt.wantLang {
+					assert.NotContains(t, prompt, name)
+					assert.NotContains(t, prompt, langDirectives[code])
+				}
+			}
+			// Заавар нь эхний дүрэмд болон төгсгөлд — нийт хоёр удаа давтагдана
+			// (primacy + recency): system prompt монголоор бичигдсэн тул
+			// зорилтот хэл дээрх заавар л model-ыг барина.
+			assert.Equal(t, 2, strings.Count(prompt, langDirectives[tt.wantLang]))
+		})
+	}
+}
+
+// Gemini унасан үед degraded мессеж нь хэрэглэгчийн хэл дээр байна.
+func TestRun_FallbackIsLocalised(t *testing.T) {
+	for _, lang := range []string{"mn", "en", "zh", "ru"} {
+		t.Run(lang, func(t *testing.T) {
+			gen := &fakeGenerator{errs: []error{errors.New("gemini: 3 attempts failed")}}
+			uc := NewUsecase(gen, gen, nil, nil, Config{})
+
+			res, err := uc.Run(context.Background(), RunRequest{Prompt: "hi", Lang: lang})
+			require.NoError(t, err)
+			assert.True(t, res.Degraded)
+			assert.Equal(t, fallbackReplies[lang], res.Reply)
+		})
+	}
+}
+
+// Хариултын олон янз байдал: ижил асуултад ижил үг хэллэг давтагдахгүй байх
+// prompt давхарга + sampling тохиргоо.
+func TestRun_VarietyLayer(t *testing.T) {
+	gen := &fakeGenerator{responses: []gemini.Response{textResponse("ok"), textResponse("ok")}}
+	// Rand-ыг детерминистик болгож дараалсан хувилбар сонгуулна.
+	var seq int
+	uc := NewUsecase(gen, gen, nil, nil, Config{Rand: func(n int) int {
+		v := seq % n
+		seq++
+		return v
+	}})
+
+	for i := 0; i < 2; i++ {
+		_, err := uc.Run(context.Background(), RunRequest{Prompt: "нэвтрэлт яаж хийх вэ?"})
+		require.NoError(t, err)
+	}
+	require.Len(t, gen.requests, 2)
+
+	first := gen.requests[0].SystemInstruction.Parts[0].Text
+	second := gen.requests[1].SystemInstruction.Parts[0].Text
+
+	// Давтагдлаас сэргийлэх дүрэм байнга орно...
+	assert.Contains(t, first, "[НАЙРУУЛГА]")
+	assert.Contains(t, first, varietyRule)
+	assert.Contains(t, second, varietyRule)
+	// ...харин найруулгын хувилбар хүсэлт бүрд өөр байна.
+	assert.Contains(t, first, styleHints[0])
+	assert.Contains(t, second, styleHints[1])
+	assert.NotEqual(t, first, second)
+
+	// Sampling — олон янз байдлыг model түвшинд ч өгнө.
+	cfg := gen.requests[0].GenerationConfig
+	require.NotNil(t, cfg)
+	require.NotNil(t, cfg.Temperature)
+	require.NotNil(t, cfg.TopP)
+	assert.InDelta(t, chatTemperature, *cfg.Temperature, 0.0001)
+	assert.InDelta(t, chatTopP, *cfg.TopP, 0.0001)
+}
+
+// Найруулга солигдох нь ФАКТЫГ өөрчлөх зөвшөөрөл биш — дүрэмд агуулга
+// тогтвортой байх шаардлага заавал орсон байна.
+func TestRun_VarietyKeepsFactsStable(t *testing.T) {
+	gen := &fakeGenerator{responses: []gemini.Response{textResponse("ok")}}
+	uc := NewUsecase(gen, gen, nil, nil, Config{})
+
+	_, err := uc.Run(context.Background(), RunRequest{Prompt: "x"})
+	require.NoError(t, err)
+
+	sys := gen.requests[0].SystemInstruction.Parts[0].Text
+	assert.Contains(t, sys, "БАРИМТ")
+	assert.Contains(t, sys, "зөвхөн найруулга")
 }

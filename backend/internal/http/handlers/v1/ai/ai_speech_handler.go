@@ -34,6 +34,7 @@ func toAudio(a *requests.AIAudio) *aiuc.Audio {
 // @Failure      401      {object}  v1.BaseResponse  "Missing/invalid token"
 // @Failure      422      {object}  v1.BaseResponse  "Validation error"
 // @Failure      429      {object}  v1.BaseResponse  "Rate limit exceeded"
+// @Failure      503      {object}  v1.BaseResponse  "Upstream (Gemini) timed out or unavailable — retry"
 // @Router       /ai/stt [post]
 func (h Handler) Transcribe(w http.ResponseWriter, r *http.Request) error {
 	var req requests.AISTTRequest
@@ -66,6 +67,7 @@ func (h Handler) Transcribe(w http.ResponseWriter, r *http.Request) error {
 // @Failure      401      {object}  v1.BaseResponse  "Missing/invalid token"
 // @Failure      422      {object}  v1.BaseResponse  "Validation error"
 // @Failure      429      {object}  v1.BaseResponse  "Rate limit exceeded"
+// @Failure      503      {object}  v1.BaseResponse  "Upstream (Gemini) timed out or unavailable — retry"
 // @Router       /ai/tts [post]
 func (h Handler) Speak(w http.ResponseWriter, r *http.Request) error {
 	var req requests.AITTSRequest
@@ -81,6 +83,37 @@ func (h Handler) Speak(w http.ResponseWriter, r *http.Request) error {
 		return v1.RespondWithError(w, r, err)
 	}
 	return v1.NewSuccessResponse(w, r, http.StatusOK, "speech generated", responses.AIAudioOut{Mime: result.Mime, Data: result.Data})
+}
+
+// PublicSpeak godoc
+// @Summary      Нээлттэй TTS (нэвтрэлтгүй) — «сонсох» товч
+// @Description  Нүүр хуудасны нээлттэй чатын хариултыг дуут (audio/wav, base64) болгоно. Нэвтрэлт шаардахгүй; текст 800 тэмдэгтээр, IP тус бүрт минутанд ~6 хүсэлтээр хязгаарлагдана.
+// @Tags         ai
+// @Accept       json
+// @Produce      json
+// @Param        request  body      requests.AIPublicTTSRequest  true  "Text"
+// @Success      200      {object}  v1.BaseResponse{data=responses.AIAudioOut}  "WAV audio (base64)"
+// @Failure      400      {object}  v1.BaseResponse  "Malformed JSON body"
+// @Failure      422      {object}  v1.BaseResponse  "Validation error"
+// @Failure      429      {object}  v1.BaseResponse  "Rate limit exceeded"
+// @Failure      503      {object}  v1.BaseResponse  "Upstream (Gemini) timed out or unavailable — retry"
+// @Router       /public/ai/tts [post]
+func (h Handler) PublicSpeak(w http.ResponseWriter, r *http.Request) error {
+	var req requests.AIPublicTTSRequest
+	if err := v1.DecodeBody(r, &req); err != nil {
+		return v1.NewErrorResponse(w, r, http.StatusBadRequest, "invalid request body")
+	}
+	if err := validators.ValidatePayloads(req); err != nil {
+		return v1.RespondWithError(w, r, err)
+	}
+
+	// Дуу хоолой нь серверийн өгөгдмөл — нэргүй дуудагч model/voice сонгохгүй.
+	result, err := h.usecase.Speak(r.Context(), aiuc.SpeakRequest{Text: req.Text})
+	if err != nil {
+		return v1.RespondWithError(w, r, err)
+	}
+	return v1.NewSuccessResponse(w, r, http.StatusOK, "audio generated",
+		responses.AIAudioOut{Mime: result.Mime, Data: result.Data})
 }
 
 // Translate godoc

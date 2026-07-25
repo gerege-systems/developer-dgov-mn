@@ -1,9 +1,9 @@
 # API Contract
 
-> 🌐 [English](API_CONTRACT.md) · **Монгол**
+> 🌐 [English](API_CONTRACT.md) · **Монгол** · [中文](API_CONTRACT_ZH.md) · [Русский](API_CONTRACT_RU.md)
 
 **Government Template Platform V3.0** (Цахим засаглалыг бүтээх суурь)-ийн REST API
-лавлагаа — цахим засаглалын үйлчилгээг дээр нь босгох production-д бэлэн суурь
+лавлагаа — төрийн үйлчилгээг дээр нь босгох production-д бэлэн суурь
 (Clean-Architecture Go backend + Next.js BFF + Gemini AI). Энэ лавлагаа нь түүний
 жишиг deployment болох **Government Template Platform** (template.dgov.mn) — eID-д
 суурилсан төрийн үйлчилгээний платформыг тусгана. Амьд, автоматаар
@@ -326,6 +326,7 @@ Gerege Core (core.gerege.mn)-ийн хайлтын wrap; service токен back
 | DELETE | `/admin/users/{id}` | 🛡️ `users.manage` | Хэрэглэгч устгах. |
 | GET | `/admin/ai/prompts` | 🛡️ `settings.manage` | Тохируулж болох AI prompt давхаргуудыг жагсаах. |
 | PUT | `/admin/ai/prompts/{key}` | 🛡️ `settings.manage` | Prompt давхарга шинэчлэх (`key` ∈ `scope` \| `instructions`). |
+| POST | `/admin/ai/knowledge/reindex` | 🛡️ `settings.manage` | Мэдлэгийн сангийн вектор дутуу/хуучирсан мөрүүдийг дахин embed хийнэ; `{ "embedded": n }` буцаана. `GEMINI_API_KEY`-гүй бол юу ч хийхгүй. |
 
 > **Нэрийн тэмдэглэл.** Апп доторх энэ `/api/v1/admin` бүлэг нь доор *Non-`/api`
 > mounts*-д баримтжуулсан дээд түвшний `/admin` Hydra оператор гадаргуутай огт
@@ -409,6 +410,7 @@ IP тус бүр) хуваалцана. `GEMINI_API_KEY` тохируулах х
 | `message` | сонголтот (`audio` байхгүй бол заавал), ≤ 4000 тэмдэгт |
 | `audio` | сонголтот; `mime` ∈ webm/ogg/wav/mpeg/mp3/mp4/m4a/aac/flac, `data` base64 ≤ ~700 KB |
 | `history` | сонголтот, ≤ 20 ээлж |
+| `lang` | сонголтот UI хэл — `mn` \| `en` \| `zh` \| `ru`; туслах энэ хэлээр хариулна (хоосон ⇒ `mn`) |
 
 **Хариулт `200`**
 ```json
@@ -438,6 +440,35 @@ chunk хоосон талбар буцаана — амьд орчуулгын U
 **Хүсэлт** `{ "audio": { … }, "target_lang": "en", "speak": false }`
 (`target_lang`: заавал, ж: `mn|en|ru|zh|ja|ko|de`)
 **Хариулт `200`** — `data: { "source_text": "Сайн уу", "translated": "Hello", "audio": { … } }`.
+
+### POST `/public/ai/chat` 🌐
+**Нэвтрэлт шаардахгүй.** Нүүр хуудасны хөвөгч чат виджетийг тэжээнэ — зочин
+нэвтрэхээсээ өмнө платформын талаар асууж чадна. Pipeline нь `/ai/chat`-тай
+ижил, гэхдээ нээлттэй гадаргуунд зориулж чангалсан:
+
+| Хамгаалалт | Утга |
+|-----------|------|
+| Rate limit | IP тус бүрт ~6/мин (burst 3) — `/ai/*`-ийн лимитээс тусдаа |
+| `message` | заавал, ≤ 1000 тэмдэгт |
+| `history` | сонголттой, ≤ 6 ээлж, тус бүр ≤ 1000 тэмдэгт |
+| `lang` | сонголттой — `mn` \| `en` \| `zh` \| `ru` |
+| `audio` | сонголттой push-to-talk бичлэг — mime whitelist нь `/ai/chat`-тай ижил, гэхдээ `data` base64 ≤ ~250 KB (≈ 15 сек opus). `message` эсвэл `audio`-гийн ядаж нэг нь заавал |
+| Tool | зөвхөн мэдлэгийн сангийн хайлт — usecase нь хязгаарлагдмал tool багцтай холбогдсон тул хэрэглэгчийн өгөгдөл уншдаг tool хүрэхгүй |
+| Prompt | нэмэлт hardcoded guardrail: хувийн мэдээлэл асуухгүй, бүртгэлд хандах дүр үзүүлэхгүй |
+
+**Хариулт `200`** — `/ai/chat`-ийн хэлбэр дээр `transcript` нэмэгдэнэ. Дуут
+мессежийг эхлээд текст болгож (STT), дараа нь тэр текстээр чатладаг тул виджет
+«дуут мессеж» гэсэн орлуулагчийн оронд ЮУ СОНСОГДСОНЫГ харуулна. Яриа
+таниагүй бол `200` буцаах ба `reply` хоосон, `degraded: true` (Gemini-г
+хоёр дахь удаа дуудахгүй).
+
+### POST `/public/ai/tts` 🌐
+**Нэвтрэлт шаардахгүй.** Нүүрийн виджетийн «сонсох» товч — туслахын нэг
+хариултыг дуут болгоно. `/public/ai/*`-ийн rate limiter-ийг хуваалцана (IP тус
+бүрт ~6/мин), `text` ≤ 800 тэмдэгт, дуу хоолойг сервер сонгоно (дуудагч model
+эсвэл voice заах боломжгүй).
+
+**Хүсэлт** `{ "text": "…" }` · **Хариулт `200`** — `data: { "mime": "audio/wav", "data": "<base64 WAV>" }`
 
 > Prompt давхаргын тохиргоо нь дээрх **Админ — хэрэглэгч & AI prompt**-д байрлана
 > (`GET`/`PUT /api/v1/admin/ai/prompts`). Суурь guardrail давхарга нь hardcoded

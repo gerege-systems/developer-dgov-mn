@@ -11,7 +11,7 @@ Architecture Go backend + Next.js BFF frontend + Gemini AI pipeline-ийг хо�
 нэрээр [template.dgov.mn](https://template.dgov.mn)-д ажиллаж, платформын eID
 нэвтрэлтийг production-д харуулж байна.
 
-> 🌐 **Монгол** · [English](docs/README_EN.md)
+> 🌐 **Монгол** · [English](docs/README_EN.md) · [中文](docs/README_ZH.md) · [Русский](docs/README_RU.md)
 
 [![Go](https://img.shields.io/badge/Go-1.26-blue.svg)](https://golang.org/)
 [![chi](https://img.shields.io/badge/chi-v5-00ADD8.svg)](https://github.com/go-chi/chi)

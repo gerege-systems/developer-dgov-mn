@@ -10,6 +10,8 @@ export default defineConfig({
       // `server-only` нь server component-аас гадуур import хийхэд алдаа шиддэг;
       // unit тестэд no-op болгож солино.
       'server-only': path.resolve(__dirname, 'src/test/server-only-stub.ts'),
+      // tsconfig-ийн `@/*` → src/* alias-ыг тестэд мөн таниулна.
+      '@': path.resolve(__dirname, 'src'),
     },
   },
   test: {

@@ -1,67 +1,107 @@
-/* Government Template Platform V3.0 — брэнд өнгө (navy + gold) */
+/* Government Template Platform V3.0 — docs брэнд.
+   Өнгө нь апп-ын globals.css-тэй нэг эх сурвалжтай: гүн navy (--lp-navy
+   #0f1f39 толгой, --dan-blue #1767e7 брэнд) + алт нь ЗӨВХӨН онцлох/итгэлийн
+   тэмдэгт. Шинэ hex-ийг энэ блокоос гадуур бүү нэм. */
 :root {
-  --gtp-navy: #111f3e;
-  --gtp-navy-2: #1b2f5a;
-  --gtp-navy-deep: #0b1730;
-  --gtp-gold: #e4b24a;
-  --gtp-gold-2: #cf9c34;
+  --gtp-navy:       #111f3e; /* толгой / гүн navy (app --lp-navy) */
+  --gtp-blue:       #1767e7; /* брэнд (app --dan-blue) */
+  --gtp-navy-deep:  #0b1730;
+  --gtp-blue-light: #8fb2f4; /* харанхуй горимын линк */
+  --gtp-gold:       #e4b24a;
+  --gtp-gold-2:     #cf9c34;
 }
 
 /* Гэрэл горим */
 [data-md-color-scheme="default"] {
-  --md-primary-fg-color: var(--gtp-navy);
-  --md-primary-fg-color--light: var(--gtp-navy-2);
-  --md-primary-fg-color--dark: var(--gtp-navy-deep);
-  --md-primary-bg-color: #ffffff;
-  --md-accent-fg-color: var(--gtp-gold-2);
-  --md-typeset-a-color: #1c3a72;
+  --md-primary-fg-color:        var(--gtp-navy);
+  --md-primary-fg-color--light: var(--gtp-blue);
+  --md-primary-fg-color--dark:  var(--gtp-navy-deep);
+  --md-primary-bg-color:        #ffffff;
+  --md-accent-fg-color:         var(--gtp-blue);
+  --md-typeset-a-color:         var(--gtp-blue);
 }
 
 /* Харанхуй горим */
 [data-md-color-scheme="slate"] {
-  --md-primary-fg-color: var(--gtp-navy-deep);
-  --md-primary-fg-color--light: var(--gtp-navy-2);
-  --md-primary-fg-color--dark: #070f22;
-  --md-accent-fg-color: var(--gtp-gold);
-  --md-typeset-a-color: #8fb2f4;
-  --md-default-bg-color: #0d1730;
+  --md-primary-fg-color:        var(--gtp-navy-deep);
+  --md-primary-fg-color--light: var(--gtp-blue);
+  --md-primary-fg-color--dark:  #070f22;
+  --md-accent-fg-color:         var(--gtp-blue-light);
+  --md-typeset-a-color:         var(--gtp-blue-light);
+  --md-default-bg-color:        #0d1730;
 }
 
-/* Header — navy gradient + gold доод зураас */
+/* Толгой — кобальт градиент + алтан доод зураас */
 .md-header {
   background: linear-gradient(90deg, var(--gtp-navy-deep), var(--gtp-navy));
   box-shadow: 0 2px 0 var(--gtp-gold), 0 4px 18px rgba(6, 12, 28, 0.35);
 }
 .md-tabs { background: transparent; }
 
-/* Идэвхтэй nav / accent-ууд gold-оор */
-.md-nav__link--active,
-.md-nav__item .md-nav__link--active { color: var(--gtp-gold-2); font-weight: 600; }
-.md-typeset .md-button--primary {
-  background: var(--gtp-gold); border-color: var(--gtp-gold); color: var(--gtp-navy-deep);
+/* Лого — дугуй эмблемийг зөөлөн булантайгаар */
+.md-header__button.md-logo img,
+.md-nav__button.md-logo img {
+  height: 1.6rem;
+  width: 1.6rem;
+  border-radius: 22%;
 }
-.md-typeset h1, .md-typeset h2 { letter-spacing: -0.01em; }
-.md-typeset h2 { border-bottom: 1px solid rgba(128,128,128,0.18); padding-bottom: 0.3rem; }
 
-/* Код блок — брэнд accent */
-.md-typeset .highlight span.filename,
+/* Идэвхтэй nav */
+.md-nav__link--active,
+.md-nav__item .md-nav__link--active { color: var(--gtp-blue); font-weight: 600; }
+[data-md-color-scheme="slate"] .md-nav__link--active { color: var(--gtp-blue-light); }
+
+.md-typeset h1, .md-typeset h2 { letter-spacing: -0.01em; }
+.md-typeset h2 { border-bottom: 1px solid rgba(128, 128, 128, 0.18); padding-bottom: 0.3rem; }
 .md-typeset code { border-radius: 6px; }
 .md-typeset a:hover { text-decoration: underline; }
 
-/* Search accent */
-.md-search__input:focus { box-shadow: 0 0 0 2px var(--gtp-gold); }
-
-/* Table толгой */
-.md-typeset table:not([class]) th {
-  background: var(--gtp-navy); color: #fff;
+/* Үндсэн товч */
+.md-typeset .md-button--primary {
+  background: var(--gtp-blue);
+  border-color: var(--gtp-blue);
+  color: #ffffff;
 }
-[data-md-color-scheme="slate"] .md-typeset table:not([class]) th { background: var(--gtp-navy-2); }
+.md-typeset .md-button--primary:hover {
+  background: var(--gtp-navy);
+  border-color: var(--gtp-navy);
+}
 
-/* Admonition (note/tip) accent-ийг gold-оор */
+/* Grid карт — брэнд захтай */
+.md-typeset .grid.cards > ul > li {
+  border: 1px solid rgba(23, 103, 231, 0.18);
+  border-radius: 10px;
+  transition: border-color 120ms, box-shadow 120ms;
+}
+.md-typeset .grid.cards > ul > li:hover {
+  border-color: var(--gtp-blue);
+  box-shadow: 0 4px 16px rgba(23, 103, 231, 0.14);
+}
+[data-md-color-scheme="slate"] .md-typeset .grid.cards > ul > li {
+  border-color: rgba(143, 178, 244, 0.22);
+}
+
+/* Хайлт */
+.md-search__input:focus { box-shadow: 0 0 0 2px var(--gtp-blue-light); }
+
+/* Хүснэгтийн толгой — өнгө дүүргэхийн оронд зөөлөн өнгөлөг */
+.md-typeset table:not([class]) th {
+  background: rgba(23, 103, 231, 0.06);
+  color: inherit;
+}
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) th {
+  background: rgba(143, 178, 244, 0.10);
+}
+
+/* Admonition — tip нь алт (итгэл), note нь брэнд цэнхэр */
 .md-typeset .admonition.tip, .md-typeset details.tip { border-color: var(--gtp-gold); }
 .md-typeset .tip > .admonition-title, .md-typeset .tip > summary {
   background-color: rgba(228, 178, 74, 0.12);
 }
+.md-typeset .admonition.note, .md-typeset details.note { border-color: var(--gtp-blue); }
+.md-typeset .note > .admonition-title, .md-typeset .note > summary {
+  background-color: rgba(0, 100, 225, 0.10);
+}
 
-/* Footer */
+/* Хөл */
 .md-footer-meta { background: var(--gtp-navy-deep); }

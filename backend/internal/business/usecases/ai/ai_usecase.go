@@ -4,11 +4,11 @@
 // Package ai нь Gemini-д суурилсан AI pipeline-ийг хэрэгжүүлнэ:
 //
 //	хэрэглэгчийн асуулт (текст/audio) → Gemini (function calling) →
-//	backend tool гүйцэтгэл → үр дүнг Gemini руу буцаах → эцсийн Монгол хариулт
+//	backend tool гүйцэтгэл → үр дүнг Gemini руу буцаах → хэрэглэгчийн хэл дээрх хариулт
 //
 // AI ямар tool дуудахаа ШИЙДНЭ, backend ГҮЙЦЭТГЭНЭ — model хэзээ ч өөрөө
 // код ажиллуулахгүй. Чатын хувьд Gemini бүх оролдлогын дараа ч амжилтгүй
-// бол хэрэглэгчид Монгол fallback мессеж буцаана (хүсэлт унагахгүй).
+// бол хэрэглэгчид түүний хэл дээрх fallback мессеж буцаана (хүсэлт унагахгүй).
 //
 // Мөн дуу хоолойн боломжууд: Transcribe (STT), Speak (TTS), Translate
 // (текст/audio → зорилтот хэл, сонголтоор дуут гаралт) — live орчуулгын
@@ -27,6 +27,14 @@ type Usecase interface {
 	// хариултыг буцаана. Gemini-ийн түр зуурын алдааг fallback мессежээр
 	// (Degraded=true) намжаана; зөвхөн тохиргооны алдааг error болгоно.
 	Run(ctx context.Context, req RunRequest) (RunResult, error)
+
+	// EmbedKnowledge нь мэдлэгийн сангийн embedding дутуу / хуучирсан
+	// бичлэгүүдийг вектор болгож хадгална. Буцаах утга нь шинэчлэгдсэн
+	// бичлэгийн тоо. Embedder тохируулаагүй бол 0, алдаагүй.
+	EmbedKnowledge(ctx context.Context) (int, error)
+	// WarmKnowledgeEmbeddings нь EmbedKnowledge-ийг арын дэвсгэрт ажиллуулж
+	// зөвхөн логдоно (ачаалалтын дараа дуудна).
+	WarmKnowledgeEmbeddings(ctx context.Context)
 
 	// ListPrompts нь тохируулдаг prompt давхаргуудыг буцаана (админ UI).
 	ListPrompts(ctx context.Context) ([]domain.AIPrompt, error)
@@ -62,6 +70,14 @@ type (
 		Prompt  string
 		Audio   *Audio // сонголттой — дуут мессеж (audio ойлголт)
 		History []Turn
+		// Lang нь хэрэглэгчийн интерфейсийн хэл (mn/en/zh/ru). Туслах энэ
+		// хэлээр хариулна; хэрэглэгч өөр хэлээр бичвэл түүнийг нь дагана.
+		// Хоосон/танихгүй бол DefaultLang.
+		Lang string
+		// Anonymous нь нэвтрээгүй зочны (нүүр хуудасны виджет) хүсэлтийг
+		// заана — system prompt дээр нэмэлт хориг тавина (хувийн мэдээлэл
+		// асуухгүй, бүртгэлийн өгөгдөл харж чадахгүй).
+		Anonymous bool
 	}
 
 	// Step нь pipeline-ийн гүйцэтгэсэн нэг tool дуудлагын ул мөр —
@@ -81,6 +97,12 @@ type (
 
 	TranscribeRequest struct {
 		Audio Audio
+		// Vocabulary нь тухайн салбарын нэр томьёоны сануулга (сонголттой).
+		// STT нь ойролцоо дуудлагатай үгсийг андуурахад (жишээ нь «нэвтрэх» →
+		// «нэрших») эдгээр үг таамаглалыг зөв тийш нь татна. Ерөнхий
+		// зориулалттай дуудагчид (амьд орчуулга) хоосон орхино — тэнд
+		// хязгаарлах нь эсрэгээрээ хортой.
+		Vocabulary string
 	}
 
 	TranscribeResult struct {

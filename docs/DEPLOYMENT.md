@@ -1,6 +1,6 @@
 # Deployment Guide
 
-> 🌐 **English** · [Монгол](DEPLOYMENT_MN.md)
+> 🌐 **English** · [Монгол](DEPLOYMENT_MN.md) · [中文](DEPLOYMENT_ZH.md) · [Русский](DEPLOYMENT_RU.md)
 
 How to deploy the **Government Template Platform V3.0** (Цахим засаглалыг бүтээх
 суурь) — a production-ready foundation for building digital-government services —

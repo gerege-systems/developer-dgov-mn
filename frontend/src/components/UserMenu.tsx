@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { ChevronDown, User, Settings, Globe, Moon, Sun, Monitor, HelpCircle, LogOut } from 'lucide-react';
 import SegmentedControl from './SegmentedControl';
 import { usePreferences, showToast } from '@/lib/preferences';
-import { useLang } from '@/lib/lang';
+import { useLang, useT } from '@/lib/lang';
+import { t as translate, LANG_LABELS, type Lang } from '@/lib/i18n';
 import { signOut } from '@/lib/signout';
 
 interface Props {
@@ -20,7 +21,8 @@ export default function UserMenu({ username, email, initials, picture }: Props) 
   const menuRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const { theme, setTheme } = usePreferences();
-  const { lang, setLang } = useLang();
+  const { setLang } = useLang();
+  const { lang, T } = useT();
 
   // Гадна дарах + Escape хаах
   useEffect(() => {
@@ -44,18 +46,13 @@ export default function UserMenu({ username, email, initials, picture }: Props) 
 
   const handleThemeChange = (value: 'light' | 'dark' | 'system') => {
     setTheme(value);
-    const labelMN = value === 'dark' ? 'Харанхуй загвар идэвхтэй'
-      : value === 'light' ? 'Гэгээн загвар идэвхтэй'
-      : 'Системийн загвар дагаж байна';
-    const labelEN = value === 'dark' ? 'Dark theme applied'
-      : value === 'light' ? 'Light theme applied'
-      : 'Following system theme';
-    showToast(lang === 'en' ? labelEN : labelMN);
+    showToast(T(`toast.theme.${value}`));
   };
 
-  const handleLangChange = (value: 'mn' | 'en') => {
+  // Шинэ хэл дээрээ мэдэгдэнэ (сонгосон хэлээр нь толь бичгээс шууд).
+  const handleLangChange = (value: Lang) => {
     setLang(value);
-    showToast(value === 'en' ? 'Language: English (partial)' : 'Хэл солигдлоо: Монгол');
+    showToast(translate(value, 'menu.langSwitched'));
   };
 
   return (
@@ -91,30 +88,32 @@ export default function UserMenu({ username, email, initials, picture }: Props) 
 
           <Link className="user-menu__item" role="menuitem" href="/me/profile" onClick={() => setOpen(false)}>
             <User size={16} strokeWidth={2} />
-            <span>{lang === 'en' ? 'Profile' : 'Профайл'}</span>
+            <span>{T('nav.profile')}</span>
           </Link>
           <Link className="user-menu__item" role="menuitem" href="/me/settings" onClick={() => setOpen(false)}>
             <Settings size={16} strokeWidth={2} />
-            <span>{lang === 'en' ? 'Settings' : 'Тохиргоо'}</span>
+            <span>{T('nav.settings')}</span>
           </Link>
 
           <div className="user-menu__divider" role="separator" />
           <div className="user-menu__section-label">
-            {lang === 'en' ? 'Preferences' : 'Тохиргоо'}
+            {T('menu.preferences')}
           </div>
 
           <div className="user-menu__control">
             <span className="user-menu__control-label">
               <Globe size={16} strokeWidth={2} />
-              <span>{lang === 'en' ? 'Language' : 'Хэл'}</span>
+              <span>{T('menu.language')}</span>
             </span>
             <SegmentedControl
-              ariaLabel="Хэл сонгох"
+              ariaLabel={T('menu.language')}
               value={lang}
               onChange={handleLangChange}
               options={[
-                { value: 'mn', label: 'МН' },
-                { value: 'en', label: 'EN' },
+                { value: 'mn', label: 'МН',   ariaLabel: LANG_LABELS.mn },
+                { value: 'en', label: 'EN',   ariaLabel: LANG_LABELS.en },
+                { value: 'zh', label: '中文', ariaLabel: LANG_LABELS.zh },
+                { value: 'ru', label: 'RU',   ariaLabel: LANG_LABELS.ru },
               ]}
             />
           </div>
@@ -122,16 +121,16 @@ export default function UserMenu({ username, email, initials, picture }: Props) 
           <div className="user-menu__control">
             <span className="user-menu__control-label">
               <Moon size={16} strokeWidth={2} />
-              <span>{lang === 'en' ? 'Appearance' : 'Загвар'}</span>
+              <span>{T('menu.appearance')}</span>
             </span>
             <SegmentedControl
-              ariaLabel="Загвар сонгох"
+              ariaLabel={T('menu.appearance')}
               value={theme}
               onChange={handleThemeChange}
               options={[
-                { value: 'light',  icon: <Sun     size={14} strokeWidth={2} />, ariaLabel: lang === 'en' ? 'Light'  : 'Гэгээн' },
-                { value: 'dark',   icon: <Moon    size={14} strokeWidth={2} />, ariaLabel: lang === 'en' ? 'Dark'   : 'Харанхуй' },
-                { value: 'system', icon: <Monitor size={14} strokeWidth={2} />, ariaLabel: lang === 'en' ? 'System' : 'Систем' },
+                { value: 'light',  icon: <Sun     size={14} strokeWidth={2} />, ariaLabel: T('theme.light') },
+                { value: 'dark',   icon: <Moon    size={14} strokeWidth={2} />, ariaLabel: T('theme.dark') },
+                { value: 'system', icon: <Monitor size={14} strokeWidth={2} />, ariaLabel: T('theme.system') },
               ]}
             />
           </div>
@@ -140,7 +139,7 @@ export default function UserMenu({ username, email, initials, picture }: Props) 
 
           <a className="user-menu__item" role="menuitem" href="https://dgov.mn/help" target="_blank" rel="noreferrer">
             <HelpCircle size={16} strokeWidth={2} />
-            <span>{lang === 'en' ? 'Help & support' : 'Тусламж'}</span>
+            <span>{T('nav.help')}</span>
           </a>
 
           <div className="user-menu__divider" role="separator" />
@@ -151,7 +150,7 @@ export default function UserMenu({ username, email, initials, picture }: Props) 
             onClick={() => signOut()}
           >
             <LogOut size={16} strokeWidth={2} />
-            <span>{lang === 'en' ? 'Sign out' : 'Гарах'}</span>
+            <span>{T('nav.signout')}</span>
           </button>
         </div>
       )}
