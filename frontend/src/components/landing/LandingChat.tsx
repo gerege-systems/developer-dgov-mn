@@ -5,7 +5,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Bot, Send, X, MessageCircle, Mic, Volume2 } from 'lucide-react';
 import { postJSON } from '@/lib/client';
-import { recordSegment, playBase64Audio, type RecordedAudio } from '@/lib/audio';
+import { recordSegment, playBase64Audio, unlockAudio, type RecordedAudio } from '@/lib/audio';
 import type { Lang } from '@/lib/i18n';
 import type { LandingCopy } from './copy';
 
@@ -162,8 +162,16 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
 
   // --- хариултыг сонсох (нэг мессеж = нэг TTS дуудалт) ---
 
+  /** Алдааны мессежийг давхардуулахгүй нэмнэ (дараалсан ижил мөр утгагүй). */
+  function noteError(text: string) {
+    setMessages((m) => (m[m.length - 1]?.text === text ? m : [...m, { role: 'model', text, degraded: true }]));
+  }
+
   async function speak(idx: number, text: string) {
     if (speakingIdx !== null || busy) return;
+    // ЗААВАЛ await-аас өмнө: iOS Safari нь даралтын дотор нээгдсэн элементэд л
+    // дараа нь програмаар тоглуулах эрх өгдөг (lib/audio.ts unlockAudio).
+    const el = unlockAudio();
     setSpeakingIdx(idx);
     try {
       const body = await postJSON<{ mime?: string; data?: string }>('/api/public/ai/tts', { text });
@@ -171,13 +179,11 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
       // чимээгүй өнгөрвөл «товч ажиллахгүй байна» мэт харагдана.
       const played =
         body.ok && body.data?.mime && body.data?.data
-          ? await playBase64Audio(body.data.mime, body.data.data)
+          ? await playBase64Audio(body.data.mime, body.data.data, el)
           : false;
-      if (!played) {
-        setMessages((m) => [...m, { role: 'model', text: copy.ttsError, degraded: true }]);
-      }
+      if (!played) noteError(copy.ttsError);
     } catch {
-      setMessages((m) => [...m, { role: 'model', text: copy.ttsError, degraded: true }]);
+      noteError(copy.ttsError);
     } finally {
       setSpeakingIdx(null);
     }

@@ -5,7 +5,7 @@ import { Bot, Mic, Send, Square, Volume2, Wrench } from 'lucide-react';
 import PageHead from '@/components/PageHead';
 import { useT } from '@/lib/lang';
 import { postJSON } from '@/lib/client';
-import { recordSegment, playBase64Audio, type RecordedAudio } from '@/lib/audio';
+import { recordSegment, playBase64Audio, unlockAudio, type RecordedAudio } from '@/lib/audio';
 import type { Lang } from '@/lib/i18n';
 
 interface ChatMsg {
@@ -131,6 +131,8 @@ export default function AiChatView() {
 
   async function speak(idx: number, text: string) {
     if (speakingIdx !== null) return;
+    // await-аас өмнө — iOS Safari-гийн аудио түгжээг даралтын дотор тайлна.
+    const el = unlockAudio();
     setSpeakingIdx(idx);
     setTtsError(false);
     try {
@@ -139,7 +141,7 @@ export default function AiChatView() {
       });
       const played =
         body.ok && body.data?.mime && body.data?.data
-          ? await playBase64Audio(body.data.mime, body.data.data)
+          ? await playBase64Audio(body.data.mime, body.data.data, el)
           : false;
       if (!played) setTtsError(true);
     } catch {
