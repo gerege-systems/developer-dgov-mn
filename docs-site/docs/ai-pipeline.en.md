@@ -101,12 +101,15 @@ aiTools := append(ai.DefaultTools(), ai.KnowledgeSearchTool(aiRepo), myTool)
     differently worded question still finds the right chunk. Embeddings are
     backfilled automatically on boot; Admin → Settings has a manual reindex button.
 
-- **`search_knowledge`** — searches the `ai_knowledge` table (title/content
-  `ILIKE` plus tag match, top 5). The base guardrails tell the model to call it
-  *before* answering platform questions, and to say "I don't know" rather than
-  guess when nothing is found. Grow the corpus by inserting rows; swap the
-  single query in `repositories/postgres/ai` for tsvector or pgvector once it
-  gets large.
+- **`search_knowledge`** — semantic search over `ai_knowledge`: the question is
+  embedded, the top 8 pgvector matches are fetched, then filtered **relative to
+  the best hit** (anything more than 0.06 below it is dropped; at most 4 kept).
+  A fixed threshold does not work here — even unrelated chunks in this corpus sit
+  at 0.64+ similarity. When vectors are unavailable it falls back to `ILIKE`,
+  splitting the question into words and searching the longest ones by stem. The
+  base guardrails tell the model to call it *before* answering platform
+  questions, and to say "I don't know" rather than guess when nothing is found.
+  Grow the corpus by inserting rows — new rows are embedded automatically.
 - **`get_server_time`** — a minimal demo (Ulaanbaatar time), zero dependencies.
 
 ## Voice

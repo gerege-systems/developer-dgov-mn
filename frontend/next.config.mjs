@@ -21,6 +21,10 @@ const CSP = [
   // шууд ачаалагддаг тул зөвшөөрнө.
   "img-src 'self' data: https://*.googleusercontent.com https://*.gstatic.com",
   "font-src 'self' data:",
+  // media-src: AI-ийн ярианы хариу (TTS) нь BFF-ээс base64-ээр ирээд
+  // `new Audio('data:audio/…')`-аар тоглодог (lib/audio.ts). default-src нь
+  // media-г ч хамардаг тул энэ мөр байхгүй бол дуу гарахгүй (CSP блоклоно).
+  "media-src 'self' data: blob:",
   "connect-src 'self'",
   // frame-src: Google Drive + Dropbox файлын урьдчилан харах (preview) iframe —
   // эдгээр нь провайдерын интерактив preview хуудас тул BFF-ээр дамжуулах
