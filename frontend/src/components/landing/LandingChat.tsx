@@ -5,7 +5,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Bot, Send, X, MessageCircle, Mic, Volume2 } from 'lucide-react';
 import { postJSON } from '@/lib/client';
-import { streamChat, takeSentence } from '@/lib/chatStream';
+import { streamChat, takeSentence, plainText } from '@/lib/chatStream';
 import { recordSegment, playBase64Audio, unlockAudio, type RecordedAudio } from '@/lib/audio';
 import type { Lang } from '@/lib/i18n';
 import type { LandingCopy } from './copy';
@@ -115,26 +115,31 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
       setBusy(true);
 
       // Урсгалын явцад хариултын бөмбөлгийг ҮГ ТУС БҮРЭЭР нь ургуулна.
+      // Бөмбөлөг үүссэн эсэхийг ТӨЛӨВӨӨС нь шалгана (гадаад тугаас биш) —
+      // React updater-ийг дахин дуудвал бөмбөлөг давхардахгүй.
       let reply = '';
-      let started = false;
       const appendDelta = (text: string) => {
         reply += text;
-        setMessages((m) => {
-          if (!started) {
-            started = true;
-            return [...m, { id: replyId, role: 'model', text: reply }];
-          }
-          return m.map((x) => (x.id === replyId ? { ...x, text: reply } : x));
-        });
+        const shown = plainText(reply);
+        setMessages((m) =>
+          m.some((x) => x.id === replyId)
+            ? m.map((x) => (x.id === replyId ? { ...x, text: shown } : x))
+            : [...m, { id: replyId, role: 'model', text: shown }],
+        );
       };
 
-      // Дуут асуултад дуут хариу: бүтэн хариулт хүлээхгүй, ӨГҮҮЛБЭР БҮРИЙГ
-      // бэлэн болмогц нь дуугаргана (дараалалд тавьж, ээлжлэн тоглуулна).
+      // Дуут асуултад дуут хариу. Дуудалтыг ХЭМНЭНЭ: эхний өгүүлбэрийг
+      // бэлэн болмогц (хурдан эхлэхийн тулд), үлдсэнийг урсгал дуусахад
+      // НЭГ дуудалтаар. Өгүүлбэр бүрд дуудвал rate limit-д мөргөж хариулт
+      // дунд нь тасардаг байсан.
       let sayBuf = '';
-      const enqueue = (sentence: string) => {
+      let firstSpoken = false;
+      const enqueue = (text: string) => {
+        const clean = plainText(text).slice(0, 800);
+        if (!clean) return;
         speakQueueRef.current = speakQueueRef.current
           .then(async () => {
-            const res = await postJSON<{ mime?: string; data?: string }>('/api/public/ai/tts', { text: sentence });
+            const res = await postJSON<{ mime?: string; data?: string }>('/api/public/ai/tts', { text: clean });
             if (res.ok && res.data?.mime && res.data?.data) {
               await playBase64Audio(res.data.mime, res.data.data, opts?.audioEl ?? null);
             }
@@ -153,15 +158,15 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
               reply = '';
               sayBuf = '';
               setMessages((m) => m.filter((x) => x.id !== replyId));
-              started = false;
             },
             onDelta: (text) => {
               appendDelta(text);
               if (!opts?.speak) return;
               sayBuf += text;
-              for (;;) {
-                const [sentence, rest] = takeSentence(sayBuf);
-                if (!sentence) break;
+              if (firstSpoken) return;
+              const [sentence, rest] = takeSentence(sayBuf);
+              if (sentence) {
+                firstSpoken = true;
                 sayBuf = rest;
                 enqueue(sentence);
               }
@@ -169,6 +174,8 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
           },
         );
 
+        // Үлдсэн хэсгийг нэг дуудалтаар (эхний өгүүлбэр аль хэдийн яригдаж
+        // байх зуур бэлдэгдэнэ — хэрэглэгч завсарлага мэдрэхгүй).
         if (opts?.speak && sayBuf.trim()) enqueue(sayBuf.trim());
 
         if (!out.ok && !reply) {
