@@ -42,6 +42,13 @@ OIDC 协议端点由 Hydra 提供；而 OAuth 的*登录/授权*页面
 一次性的 `migrate` 容器会在每次 `up` 时应用 SQL 迁移；`hydra-migrate`
 则把 Hydra 自身的结构应用到独立的 `hydra` 数据库后退出。
 
+!!! note
+    **`db` 服务现在是构建的，而不是直接拉取的。** 它是 `postgres:16-alpine`
+    加上编译好的 `pgvector` 扩展（`backend/deploy/db/Dockerfile`）—
+    AI 知识库会把 768 维向量存放在 `vector` 列中。此改动之后的第一次
+    `docker compose up -d --build` 会编译该扩展（约 1–2 分钟）并重建 `db` 容器；
+    数据卷不受影响，基础镜像仍是 alpine，因此文本索引的 collation 不会改变。
+
 ## 前置条件
 
 - 一台装有 Docker + compose 插件的 VPS（`docker compose version`）

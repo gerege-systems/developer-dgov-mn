@@ -45,6 +45,14 @@ the citizen with eID) live on `web` under `/oauth/*`. A one-off `migrate`
 container applies SQL migrations on every `up`; `hydra-migrate` applies Hydra's
 own schema into the separate `hydra` database and exits.
 
+!!! note
+    **The `db` service is now built, not pulled.** It is `postgres:16-alpine`
+    plus the compiled `pgvector` extension (`backend/deploy/db/Dockerfile`) —
+    the AI knowledge base stores 768-dim embeddings in a `vector` column. The
+    first `docker compose up -d --build` after this change compiles the extension
+    (~1–2 min) and recreates the `db` container; the data volume is untouched and
+    the base image stays alpine, so text-index collations do not change.
+
 ## Prerequisites
 
 - A VPS with Docker + the compose plugin (`docker compose version`)

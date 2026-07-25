@@ -88,6 +88,11 @@ aiTools := append(ai.DefaultTools(), ai.KnowledgeSearchTool(aiRepo), myTool)
 
 ### 随平台附带的工具
 
+!!! tip "语义检索（RAG）"
+    平台知识以约 58 个条目存放在 `ai_knowledge` 中。问题会用 Gemini 向量化，
+    并在 pgvector 中按余弦相似度匹配，因此换个说法提问也能找到正确条目。
+    向量在启动后自动回填；管理 → 设置 中提供手动重建索引的按钮。
+
 - **`search_knowledge`** — 检索 `ai_knowledge` 表（标题/内容 `ILIKE` 加标签匹配，取前 5 条）。
   基础防护规则要求模型在回答平台相关问题*之前*先调用它，并在检索不到内容时回答
   “我不知道”，而不是猜测。通过插入数据行来扩充语料库；当数据量增大时，把

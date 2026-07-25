@@ -33,7 +33,7 @@ PAdES 签名、第三方集成、审计、RBAC/超级管理员、站点外观 �
 - `pkg/gemini` — 免 SDK 的 REST 客户端（重试 + 退避）；function-calling 聊天（按用户语言兜底）
 - 语音：音频理解（语音消息）、STT、TTS（PCM→WAV）、实时翻译
 - 三层系统提示词：硬编码防护规则 + 数据库 scope/instructions；
-  `search_knowledge` 工具（`ai_knowledge`）
+  `search_knowledge` 工具（pgvector 语义检索，`ai_knowledge`）
 - 管理界面 + API（`/admin/ai/prompts`，`settings.manage`）
 
 ### 身份认证 — eID + Google + dgov SSO
@@ -117,7 +117,7 @@ PAdES 签名、第三方集成、审计、RBAC/超级管理员、站点外观 �
 
 ### AI 改进
 
-- [ ] 知识库检索改用 tsvector（全文）；大规模语料改用 pgvector（语义）
+- [x] 知识库检索已改为 pgvector（语义向量）；语料为依据代码/文档撰写的 58 个条目
 - [ ] 聊天的流式响应（SSE）；可选地在服务端保存聊天历史
 - [ ] 更多工具：用户资料（带 RLS）、系统统计（管理员）；提示词版本审计
 

@@ -95,6 +95,12 @@ aiTools := append(ai.DefaultTools(), ai.KnowledgeSearchTool(aiRepo), myTool)
 
 ### Shipped tools
 
+!!! tip "Semantic search (RAG)"
+    The platform's knowledge lives in `ai_knowledge` as ~58 chunks. Questions are
+    embedded with Gemini and matched by cosine similarity in pgvector, so a
+    differently worded question still finds the right chunk. Embeddings are
+    backfilled automatically on boot; Admin → Settings has a manual reindex button.
+
 - **`search_knowledge`** — searches the `ai_knowledge` table (title/content
   `ILIKE` plus tag match, top 5). The base guardrails tell the model to call it
   *before* answering platform questions, and to say "I don't know" rather than

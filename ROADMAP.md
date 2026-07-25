@@ -31,7 +31,7 @@
 ### AI pipeline (Gemini)
 - `pkg/gemini` — SDK-гүй REST client (retry + backoff); function-calling чат (хэрэглэгчийн хэл дээрх fallback)
 - Voice: audio ойлголт (дуут мессеж), STT, TTS (PCM→WAV), live орчуулга
-- 3 давхаргат system prompt: hardcoded guardrails + DB scope/instructions; `search_knowledge` tool (`ai_knowledge`)
+- 3 давхаргат system prompt: hardcoded guardrails + DB scope/instructions; `search_knowledge` tool (pgvector семантик хайлт, `ai_knowledge`)
 - Admin UI + API (`/admin/ai/prompts`, `settings.manage`)
 
 ### Танилт — eID + Google + dgov SSO
@@ -101,7 +101,7 @@
 - [ ] Rate-limit / quota-г consumer/API key түвшинд мөрдүүлэх; ашиглалтын тайлан
 
 ### AI сайжруулалт
-- [ ] Knowledge base хайлтыг tsvector (full-text); том санд pgvector (semantic)
+- [x] Knowledge base хайлт — pgvector (semantic embedding) дээр шилжсэн; корпус нь код/баримтаас 58 бүлэг
 - [ ] Чатын streaming хариу (SSE); чат түүхийг server талд хадгалах сонголт
 - [ ] Нэмэлт tools: хэрэглэгчийн профайл (RLS-тэй), системийн статистик (admin); prompt хувилбарын audit
 

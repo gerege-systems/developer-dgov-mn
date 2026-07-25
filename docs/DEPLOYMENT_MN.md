@@ -45,6 +45,15 @@ Browser нь app болон BFF-д `web`-ээр хүрнэ; OIDC протоко�
 `migrate` контейнер `up` бүр дээр SQL migration-уудыг түрхэнэ; `hydra-migrate` нь
 Hydra-гийн өөрийн schema-г тусдаа `hydra` database руу түрхээд гардаг.
 
+!!! note
+    **`db` сервис одоо build хийгддэг болсон** (татдаггүй). Энэ нь
+    `postgres:16-alpine` дээр `pgvector` extension-ыг эмхэтгэсэн image
+    (`backend/deploy/db/Dockerfile`) — AI-ийн мэдлэгийн сан 768 хэмжээст
+    векторыг `vector` баганад хадгална. Энэ өөрчлөлтийн дараах анхны
+    `docker compose up -d --build` extension-ыг эмхэтгэж (~1-2 мин), `db`
+    контейнерийг дахин үүсгэнэ; өгөгдлийн volume хөндөгдөхгүй бөгөөд суурь
+    image alpine хэвээр тул текст индексийн collation өөрчлөгдөхгүй.
+
 ## Шаардлага
 
 - Docker + compose plugin-тэй VPS (`docker compose version`)

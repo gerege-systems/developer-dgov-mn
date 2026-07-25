@@ -12,7 +12,14 @@ name: dan-dgov-mn
 
 services:
   db:
-    image: postgres:16-alpine
+    # postgres:16-alpine + pgvector (AI-ийн мэдлэгийн сангийн семантик хайлт).
+    # Extension-ыг суурь image дээрээ эмхэтгэдэг — өгөгдөл alpine (musl)
+    # collation дээр үүссэн тул Debian суурьтай pgvector/pgvector image рүү
+    # шилжихгүй (индексийн collation зөрөх эрсдэлгүй). Дэлгэрэнгүй:
+    # backend/deploy/db/Dockerfile.
+    build:
+      context: ./backend/deploy/db
+    image: gerege-postgres-pgvector:16-alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}

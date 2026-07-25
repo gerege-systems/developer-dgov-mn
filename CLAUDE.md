@@ -73,6 +73,13 @@ docker compose up -d --build   # db + redis + migrate (one-off) + api + web
   layer configurable.
 - Tools (`ai.ToolDef`) run server-side with the request context; register in
   `server.go`. Knowledge base lives in `ai_knowledge`.
+- Knowledge base = `ai_knowledge` (corpus in migration 48). Search is semantic:
+  Gemini embeddings + **pgvector** cosine (`SearchKnowledgeByVector`), falling
+  back to ILIKE. The `db` compose service is built from
+  `backend/deploy/db/Dockerfile` (alpine + pgvector) — don't switch it to the
+  Debian pgvector image (collation change on the existing volume). Editing the
+  corpus? Keep the `slug`; embeddings refresh on boot or via
+  `POST /admin/ai/knowledge/reindex`.
 - Chat degrades to a localized fallback reply (`degraded: true`) on transient
   Gemini failures — don't turn that into a 5xx.
 
