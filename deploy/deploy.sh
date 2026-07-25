@@ -23,6 +23,31 @@ if [ -n "${INTEGRATION_ENC_KEY:-}" ] && ! grep -q '^INTEGRATION_ENC_KEY=' backen
   echo "▶ INTEGRATION_ENC_KEY-г backend.env-д бичлээ (superadmin MFA идэвхжинэ)"
 fi
 
+# GEMINI_API_KEY — AI туслахын түлхүүр. INTEGRATION_ENC_KEY-ЭЭС ЯЛГААТАЙ нь
+# эргүүлж солихыг дэмжинэ: GitHub secret нь эх сурвалж тул тохируулсан үед
+# байгаа мөрийг СОЛИНО (шифрлэсэн өгөгдөл үүнээс хамаардаггүй тул солиход
+# аюулгүй). Secret хоосон/тохируулаагүй бол серверийн одоогийн утгыг ХӨНДӨХГҮЙ
+# — CD нь гараар тавьсан түлхүүрийг санамсаргүй устгах ёсгүй.
+if [ -n "${GEMINI_API_KEY:-}" ]; then
+  touch backend.env
+  # Түлхүүрийг argv-д тавихгүй (process listing) — python-д stdin/env-ээр өгнө.
+  if grep -q '^GEMINI_API_KEY=' backend.env 2>/dev/null; then
+    GEMINI_API_KEY="$GEMINI_API_KEY" python3 - <<'PY'
+import os, re
+key = os.environ['GEMINI_API_KEY']
+with open('backend.env', encoding='utf-8') as f:
+    lines = f.read().splitlines()
+lines = [f'GEMINI_API_KEY={key}' if re.match(r'^GEMINI_API_KEY=', l) else l for l in lines]
+with open('backend.env', 'w', encoding='utf-8') as f:
+    f.write('\n'.join(lines) + '\n')
+PY
+    echo "▶ GEMINI_API_KEY-г backend.env дотор шинэчиллээ"
+  else
+    printf 'GEMINI_API_KEY=%s\n' "$GEMINI_API_KEY" >> backend.env
+    echo "▶ GEMINI_API_KEY-г backend.env-д нэмлээ (AI туслах идэвхжинэ)"
+  fi
+fi
+
 echo "▶ Building images (api · web · migrate)…"
 docker compose build
 
