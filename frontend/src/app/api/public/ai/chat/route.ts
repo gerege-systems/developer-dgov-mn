@@ -1,6 +1,6 @@
 import { backendFetch } from '@/lib/api';
 import { readJson, proxyResult, checkOrigin } from '@/lib/bff';
-import { badRequest } from '@/lib/aiBff';
+import { badRequest, sanitizeAudio, MAX_PUBLIC_AUDIO_B64 } from '@/lib/aiBff';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,14 +22,17 @@ export async function POST(req: Request) {
   const bad = checkOrigin(req);
   if (bad) return bad;
 
-  const { message, history, lang } = await readJson<{
+  const { message, audio, history, lang } = await readJson<{
     message?: unknown;
+    audio?: unknown;
     history?: ChatTurn[];
     lang?: unknown;
   }>(req);
 
   const text = typeof message === 'string' ? message.trim() : '';
-  if (!text || text.length > MAX_TEXT) {
+  // push-to-talk — audio ганцаараа ирж болно (текст хоосон).
+  const safeAudio = sanitizeAudio(audio, MAX_PUBLIC_AUDIO_B64);
+  if ((!text && !safeAudio) || text.length > MAX_TEXT) {
     return badRequest('Мессеж хоосон эсвэл хэт урт байна.');
   }
 
@@ -45,6 +48,7 @@ export async function POST(req: Request) {
       method: 'POST',
       body: JSON.stringify({
         message: text,
+        ...(safeAudio ? { audio: safeAudio } : {}),
         ...(safeLang ? { lang: safeLang } : {}),
         history: safeHistory,
       }),

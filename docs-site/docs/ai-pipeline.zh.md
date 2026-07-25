@@ -105,8 +105,9 @@ aiTools := append(ai.DefaultTools(), ai.KnowledgeSearchTool(aiRepo), myTool)
 !!! info "首页的公开聊天（无需登录）"
     右下角的浮动挂件调用 `POST /public/ai/chat`，不带令牌。它运行在一个独立的
     usecase 实例上，只绑定知识库工具，因此触及不到用户数据。每个 IP 约 6 次/分钟、
-    不接受音频、消息 ≤ 1000 字符、历史 ≤ 6 轮；系统提示词还会加上一层
-    「匿名访客」防护。
+    消息 ≤ 1000 字符、历史 ≤ 6 轮；系统提示词还会加上一层「匿名访客」防护。
+    按住说话会把约 250 KB base64（≈ 15 秒）的录音放进同一个调用；每条消息的
+    「朗读」按钮通过 `POST /public/ai/tts` 朗读回复。
 
 ## 语音
 

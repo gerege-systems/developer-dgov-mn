@@ -2201,6 +2201,46 @@ html[lang="en"] .i18n-banner { display: block; }
 .lp-chat__chip:hover { border-color: var(--border-strong); }
 
 .lp-chat__form { display: flex; gap: 8px; padding: 10px 12px 6px; background: var(--surface); }
+
+/* Push-to-talk микрофон — дарж барих хугацаанд бичнэ. is-recording үед
+   товч улаавтар болж, зөөлөн цохилтоор бичиж байгааг илэрхийлнэ. */
+.lp-chat__mic {
+  flex: none; width: 38px; border-radius: var(--radius-input); display: grid; place-items: center;
+  border: 1px solid var(--border); background: var(--surface-2); color: var(--fg);
+  cursor: pointer; touch-action: none; user-select: none; -webkit-user-select: none;
+}
+.lp-chat__mic:hover:not(:disabled) { border-color: var(--border-strong); }
+.lp-chat__mic:disabled { opacity: 0.5; cursor: default; }
+.lp-chat__mic.is-recording {
+  background: var(--danger, oklch(58% 0.19 25)); color: oklch(99% 0 0); border-color: transparent;
+  animation: lp-chat-rec 1s ease-in-out infinite;
+}
+@keyframes lp-chat-rec {
+  0%, 100% { box-shadow: 0 0 0 0 oklch(58% 0.19 25 / 0.45); }
+  50%      { box-shadow: 0 0 0 6px oklch(58% 0.19 25 / 0); }
+}
+
+/* Дуут мессежийн бөмбөлөгт микрофоны жижиг тэмдэг. */
+.lp-chat__voiceico { display: inline-block; vertical-align: -1px; margin-right: 5px; opacity: 0.8; }
+
+/* Хариултыг сонсох товч — бөмбөлөгийн хажууд. */
+.lp-chat__listen {
+  align-self: flex-end; flex: none; width: 26px; height: 26px; margin-left: 4px;
+  border-radius: 8px; display: grid; place-items: center;
+  border: 1px solid var(--border); background: var(--surface); color: var(--fg);
+  cursor: pointer; opacity: 0.75;
+}
+.lp-chat__listen:hover:not(:disabled) { opacity: 1; border-color: var(--border-strong); }
+.lp-chat__listen:disabled { opacity: 0.35; cursor: default; }
+.lp-chat__speaking { animation: lp-chat-speak 0.9s ease-in-out infinite; }
+@keyframes lp-chat-speak {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.18); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-chat__mic.is-recording, .lp-chat__speaking { animation: none; }
+}
 .lp-chat__input {
   flex: 1; min-width: 0; padding: 9px 12px; font-size: 13.5px;
   border: 1px solid var(--border); border-radius: var(--radius-input);

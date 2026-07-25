@@ -75,6 +75,20 @@ export interface LandingCopy {
     privacy: string;
     /** Санал болгох эхний асуултууд. */
     suggestions: string[];
+    /** Push-to-talk: товчийг дарж барихыг заасан tooltip. */
+    hold: string;
+    /** Бичиж байх үеийн төлөв. */
+    recording: string;
+    /** Бичиж байх үед доод мөрөнд гарах заавар. */
+    recordingHint: string;
+    /** Дуут мессежийн бөмбөлөгт харагдах текст. */
+    voiceMsg: string;
+    /** Хариултыг сонсох товчны шошго. */
+    listen: string;
+    /** Микрофон боломжгүй үеийн алдаа. */
+    micError: string;
+    /** Дуут хувилбар бэлдэж чадаагүй үеийн алдаа. */
+    ttsError: string;
   };
 }
 
@@ -180,6 +194,13 @@ const mn: LandingCopy = {
     error: 'Хариу авахад алдаа гарлаа. Түр хүлээгээд дахин оролдоно уу.',
     privacy: 'Нээлттэй суваг — хувийн мэдээлэл (РД, утас, нууц үг) бүү бичнэ үү.',
     suggestions: ['Энэ платформ юу вэ?', 'eID-ээр яаж нэвтрэх вэ?', 'Ямар аюулгүй байдлын хамгаалалттай вэ?'],
+    hold: 'Дарж барьж ярина уу',
+    recording: 'Сонсож байна…',
+    recordingHint: 'Товчийг барьж ярина уу — тавихад илгээгдэнэ (дээд тал нь 15 секунд).',
+    voiceMsg: 'Дуут мессеж',
+    listen: 'Хариултыг сонсох',
+    micError: 'Микрофон ашиглах боломжгүй байна.',
+    ttsError: 'Дуут хувилбарыг бэлдэж чадсангүй. Дараа дахин оролдоно уу.',
   },
 };
 
@@ -285,6 +306,13 @@ const en: LandingCopy = {
     error: 'Could not get a reply. Please try again in a moment.',
     privacy: 'Public channel — please do not share personal data (ID number, phone, passwords).',
     suggestions: ['What is this platform?', 'How does eID login work?', 'What security does it provide?'],
+    hold: 'Hold to talk',
+    recording: 'Listening…',
+    recordingHint: 'Hold the button and speak — release to send (15 seconds max).',
+    voiceMsg: 'Voice message',
+    listen: 'Listen to the reply',
+    micError: 'Microphone is not available.',
+    ttsError: 'Could not generate the audio. Please try again.',
   },
 };
 
@@ -390,6 +418,13 @@ const zh: LandingCopy = {
     error: '获取回复失败，请稍后再试。',
     privacy: '公开渠道 — 请勿填写个人信息（身份证号、电话、密码）。',
     suggestions: ['这个平台是什么？', 'eID 登录如何工作？', '提供哪些安全保障？'],
+    hold: '按住说话',
+    recording: '正在聆听…',
+    recordingHint: '按住按钮说话 — 松开即发送（最长 15 秒）。',
+    voiceMsg: '语音消息',
+    listen: '朗读回复',
+    micError: '麦克风不可用。',
+    ttsError: '语音合成失败，请稍后再试。',
   },
 };
 
@@ -495,6 +530,13 @@ const ru: LandingCopy = {
     error: 'Не удалось получить ответ. Попробуйте ещё раз через минуту.',
     privacy: 'Открытый канал — не указывайте личные данные (ИНН, телефон, пароли).',
     suggestions: ['Что это за платформа?', 'Как работает вход по eID?', 'Какая обеспечена безопасность?'],
+    hold: 'Нажмите и говорите',
+    recording: 'Слушаю…',
+    recordingHint: 'Удерживайте кнопку и говорите — отпустите, чтобы отправить (до 15 секунд).',
+    voiceMsg: 'Голосовое сообщение',
+    listen: 'Прослушать ответ',
+    micError: 'Микрофон недоступен.',
+    ttsError: 'Не удалось озвучить ответ. Попробуйте ещё раз.',
   },
 };
 

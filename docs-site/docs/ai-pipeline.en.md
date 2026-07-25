@@ -116,8 +116,10 @@ aiTools := append(ai.DefaultTools(), ai.KnowledgeSearchTool(aiRepo), myTool)
     A floating widget in the bottom-right corner calls `POST /public/ai/chat`
     with no token. It runs on a separate usecase instance wired with the
     knowledge-base tool only, so it cannot reach user data. ~6 req/min per IP,
-    no audio, message ≤ 1000 chars, history ≤ 6 turns; the system prompt gains
-    an extra "anonymous visitor" guardrail.
+    message ≤ 1000 chars, history ≤ 6 turns; the system prompt gains an extra
+    "anonymous visitor" guardrail. Push-to-talk (hold the mic) sends a ~250 KB
+    base64 clip (≈ 15 s) through the same call, and a per-message "listen"
+    button speaks the reply via `POST /public/ai/tts`.
 
 ## Voice
 

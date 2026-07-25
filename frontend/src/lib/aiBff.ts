@@ -11,6 +11,8 @@ const AUDIO_MIMES = new Set([
 ]);
 
 const MAX_AUDIO_B64 = 716800; // ~700 KB base64 — backend DTO-той ижил
+/** Нээлттэй (нэвтрэлтгүй) чатын хязгаар — backend AIPublicAudio-той ижил. */
+export const MAX_PUBLIC_AUDIO_B64 = 256000; // ~250 KB base64 ≈ 15 сек opus
 
 export interface SafeAudio {
   mime: string;
@@ -21,14 +23,15 @@ export interface SafeAudio {
  * Клиентээс ирсэн audio объектыг шалгаж цэвэр хэлбэрт буулгана.
  * mime-ийн codec параметрийг хасна ("audio/webm;codecs=opus" → "audio/webm").
  * Буруу бол null (байхгүйтэй адил) — шаардлагатай эсэхийг дуудагч шийднэ.
+ * maxB64 нь base64 мөрийн дээд урт (нээлттэй гадаргуу богино хязгаартай).
  */
-export function sanitizeAudio(raw: unknown): SafeAudio | null {
+export function sanitizeAudio(raw: unknown, maxB64: number = MAX_AUDIO_B64): SafeAudio | null {
   if (!raw || typeof raw !== 'object') return null;
   const { mime, data } = raw as { mime?: unknown; data?: unknown };
   if (typeof mime !== 'string' || typeof data !== 'string') return null;
   const cleanMime = mime.split(';')[0].trim().toLowerCase();
   if (!AUDIO_MIMES.has(cleanMime)) return null;
-  if (!data || data.length > MAX_AUDIO_B64) return null;
+  if (!data || data.length > maxB64) return null;
   return { mime: cleanMime, data };
 }
 
