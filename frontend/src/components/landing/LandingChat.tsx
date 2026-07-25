@@ -46,6 +46,8 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
+  /** Хариултын эхний хэсэг ирсэн эсэх — «Бодож байна…»-г нуухад. */
+  const [streaming, setStreaming] = useState(false);
   const [recording, setRecording] = useState(false);
   const [speakingIdx, setSpeakingIdx] = useState<number | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
@@ -113,6 +115,7 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
       const replyId = nextIdRef.current++;
       setMessages((m) => [...m, { ...bubble, id: bubbleId }]);
       setBusy(true);
+      setStreaming(false);
 
       // Урсгалын явцад хариултын бөмбөлгийг ҮГ ТУС БҮРЭЭР нь ургуулна.
       // Бөмбөлөг үүссэн эсэхийг ТӨЛӨВӨӨС нь шалгана (гадаад тугаас биш) —
@@ -120,6 +123,7 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
       let reply = '';
       const appendDelta = (text: string) => {
         reply += text;
+        setStreaming(true);
         const shown = plainText(reply);
         setMessages((m) =>
           m.some((x) => x.id === replyId)
@@ -157,6 +161,7 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
             onReset: () => {
               reply = '';
               sayBuf = '';
+              setStreaming(false);
               setMessages((m) => m.filter((x) => x.id !== replyId));
             },
             onDelta: (text) => {
@@ -188,6 +193,7 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
         setMessages((m) => [...m, { id: nextIdRef.current++, role: 'model', text: copy.error, degraded: true }]);
       } finally {
         setBusy(false);
+        setStreaming(false);
       }
     },
     [messages, lang, copy.error, copy.noSpeech],
@@ -355,7 +361,9 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
                 )}
               </div>
             ))}
-            {busy && (
+            {/* «Бодож байна…» нь ЗӨВХӨН эхний үсэг ирэхээс өмнө — урсгал эхэлмэгц
+                хариулт өөрөө харагдана (эс тэгвээс хоёулаа зэрэг харагдана). */}
+            {busy && !streaming && (
               <div className="lp-chat__msg lp-chat__msg--model">
                 <div className="lp-chat__bubble lp-chat__bubble--pending">{copy.thinking}</div>
               </div>
