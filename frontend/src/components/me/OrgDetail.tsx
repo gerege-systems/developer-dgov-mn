@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader2, Plus, Save, X, Trash2, ArrowLeft, Building2 } from 'lucide-react';
 import { useT } from '@/lib/lang';
+import { LOCALES, prefersLatinName } from '@/lib/i18n';
 import type { DictKey } from '@/lib/i18n';
 import { getJSON, postJSON, sendJSON } from '@/lib/client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -69,7 +70,7 @@ export default function OrgDetail({ orgId, currentUserId }: Props) {
 
   const fmtDate = (iso: string) => {
     try {
-      return new Date(iso).toLocaleDateString(lang === 'en' ? 'en-US' : 'mn-MN', {
+      return new Date(iso).toLocaleDateString(LOCALES[lang], {
         year: 'numeric', month: 'short', day: 'numeric',
       });
     } catch {
@@ -130,7 +131,7 @@ export default function OrgDetail({ orgId, currentUserId }: Props) {
         <div className="card" style={{ padding: 16, marginBottom: 16, display: 'grid', gap: 8 }}>
           <h2 style={{ display: 'inline-flex', alignItems: 'center', gap: 8, margin: 0 }}>
             <Building2 size={18} strokeWidth={2} />
-            {lang === 'en' ? (org.name_latin?.trim() || org.name) : org.name}
+            {prefersLatinName(lang) ? (org.name_latin?.trim() || org.name) : org.name}
           </h2>
           <div className="muted mono" style={{ fontSize: 13 }}>{T('org.regNo')}: {org.reg_no}</div>
           <div className="muted mono" style={{ fontSize: 13 }}>{T('org.created')}: {fmtDate(org.created_at)}</div>

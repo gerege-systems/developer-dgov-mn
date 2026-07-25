@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Trash2, UserPlus, Unlink, User, Send } from 'lucide-react';
 import { useT } from '@/lib/lang';
+import { prefersLatinName } from '@/lib/i18n';
 import { getJSON, postJSON, sendJSON } from '@/lib/client';
 import Alert from '@/components/Alert';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -140,7 +141,7 @@ export default function OrgManagePanel({
               <div className="org-signer__avatar" aria-hidden="true"><User size={17} /></div>
               <div className="org-signer__body">
                 <div className="org-signer__name">
-                  <span className="org-signer__nm">{(lang === 'en' && s.name_en) ? s.name_en : (s.name || s.reg_no)}</span>
+                  <span className="org-signer__nm">{(prefersLatinName(lang) && s.name_en) ? s.name_en : (s.name || s.reg_no)}</span>
                   {s.self && <span className="chip chip--neutral">{T('me.orgs.signers.you')}</span>}
                   <span className={`chip ${s.right_type === 'ADMIN' ? 'chip--admin' : 'chip--neutral'}`}>{s.right_type}</span>
                   {s.status === 'PENDING' && <span className="chip chip--pending">{T('me.orgs.signers.pending')}</span>}

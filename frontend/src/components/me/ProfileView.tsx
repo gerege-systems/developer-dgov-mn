@@ -7,6 +7,7 @@ import React from 'react';
 import Link from 'next/link';
 import { User, Mail, ShieldCheck, Clock, Hash, RefreshCw } from 'lucide-react';
 import { useT } from '@/lib/lang';
+import { prefersLatinName } from '@/lib/i18n';
 import { roleLabel, displayName, type SessionUser } from '@/lib/types';
 import { formatTS, initialsOf } from '@/lib/format';
 import { DefRow } from './DefRow';
@@ -56,8 +57,8 @@ export default function ProfileView({ me }: { me: SessionUser }) {
 
         <div>
           <DefRow icon={Hash} label={T('me.field.id')} mono>{me.id}</DefRow>
-          <DefRow icon={User} label={T('me.field.lastName')}>{(lang === 'en' ? me.lastNameEn : me.lastName) || '—'}</DefRow>
-          <DefRow icon={User} label={T('me.field.firstName')}>{(lang === 'en' ? me.firstNameEn : me.firstName) || '—'}</DefRow>
+          <DefRow icon={User} label={T('me.field.lastName')}>{(prefersLatinName(lang) ? me.lastNameEn : me.lastName) || '—'}</DefRow>
+          <DefRow icon={User} label={T('me.field.firstName')}>{(prefersLatinName(lang) ? me.firstNameEn : me.firstName) || '—'}</DefRow>
           <DefRow icon={User} label={T('me.field.username')}>{me.username}</DefRow>
           <DefRow icon={Mail} label={T('me.field.email')} mono>{me.email || '—'}</DefRow>
           <DefRow icon={ShieldCheck} label={T('me.field.role')}>

@@ -8,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { PenLine, Upload, FileText, ShieldCheck, Download, RotateCcw, Clock, Smartphone, Building2 } from 'lucide-react';
 import { CSRF_HEADER, getJSON } from '@/lib/client';
 import { useT } from '@/lib/lang';
+import { prefersLatinName } from '@/lib/i18n';
 
 type Phase =
   | { kind: 'idle' }
@@ -41,7 +42,7 @@ export default function EidSignView() {
     queryFn: () => getJSON<OrgRep[]>('/api/me/eid/organizations'),
   });
   const orgs = orgsQ.data ?? [];
-  const orgLabel = (o: OrgRep) => (lang === 'en' && o.org_name_en ? o.org_name_en : o.org_name);
+  const orgLabel = (o: OrgRep) => (prefersLatinName(lang) && o.org_name_en ? o.org_name_en : o.org_name);
   const selectedOrg = orgs.find((o) => o.org_etsi === orgEtsi);
 
   // Poll /api/sign/[id] until completed.

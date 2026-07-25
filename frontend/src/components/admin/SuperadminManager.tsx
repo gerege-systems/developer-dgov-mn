@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Trash2, Loader2, ShieldPlus, Search, IdCard, Mail, Link2, Check } from 'lucide-react';
 import { useT } from '@/lib/lang';
+import { LOCALES, prefersLatinName } from '@/lib/i18n';
 import { getJSON, sendJSON } from '@/lib/client';
 import { ROLE_SUPERADMIN, roleLabel } from '@/lib/types';
 
@@ -160,7 +161,7 @@ export default function SuperadminManager({ currentUserId }: Props) {
 
   const fmtDate = (iso: string) => {
     try {
-      return new Date(iso).toLocaleDateString(lang === 'en' ? 'en-US' : 'mn-MN', {
+      return new Date(iso).toLocaleDateString(LOCALES[lang], {
         year: 'numeric', month: 'short', day: 'numeric',
       });
     } catch {
@@ -236,7 +237,7 @@ export default function SuperadminManager({ currentUserId }: Props) {
               {admins.map((u) => {
                 const isSelf = u.id === currentUserId;
                 const isSuper = u.role_id === ROLE_SUPERADMIN;
-                const name = (lang === 'en' ? (u.full_name_en?.trim() || u.full_name?.trim()) : u.full_name?.trim());
+                const name = (prefersLatinName(lang) ? (u.full_name_en?.trim() || u.full_name?.trim()) : u.full_name?.trim());
                 return (
                   <tr key={u.id}>
                     <td data-label={T('users.col.name')}>

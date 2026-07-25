@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, Building2 } from 'lucide-react';
 import { useT } from '@/lib/lang';
+import { prefersLatinName } from '@/lib/i18n';
 import { getJSON } from '@/lib/client';
 import OrgManagePanel from '@/components/me/OrgManagePanel';
 import ImageUploadCard from '@/components/me/ImageUploadCard';
@@ -57,7 +58,7 @@ export default function OrgManageView({ regNo }: { regNo: string }) {
               <div className="org-rep__icon" aria-hidden="true"><Building2 size={18} /></div>
               <div className="org-rep__body">
                 <div className="org-rep__name">
-                  {(lang === 'en' && rep.org_name_en) ? rep.org_name_en : rep.org_name}
+                  {(prefersLatinName(lang) && rep.org_name_en) ? rep.org_name_en : rep.org_name}
                   {rep.right_type && <span className="chip chip--neutral" style={{ marginLeft: 8 }}>{rep.right_type}</span>}
                 </div>
                 <div className="org-rep__meta mono">

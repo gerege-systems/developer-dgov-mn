@@ -16,8 +16,9 @@ import {
   type ThemeColors,
   type ThemeConfig,
 } from '@/lib/theme';
+import { pickLang, type Lang } from '@/lib/i18n';
 
-type Lang = 'mn' | 'en';
+
 
 interface Props {
   /** Засах theme; null бол шинэ. */
@@ -49,12 +50,12 @@ function setPath<T>(obj: T, path: (string | number)[], value: unknown): T {
 
 /**
  * ThemeEditor — нэг theme-ийн бүрэн засвар: харагдац (палетр · фонт · стиль ·
- * загвар) + landing-ийн бүх текст/цэс (mn/en, рекурсив) + шууд preview.
+ * загвар) + landing-ийн бүх текст/цэс (mn/en/zh, рекурсив) + шууд preview.
  */
 export default function ThemeEditor({ theme, onDone }: Props) {
   const { T } = useT();
   const { lang: uiLang } = useLang();
-  const L = (mn: string, en: string) => (uiLang === 'en' ? en : mn);
+  const L = (mn: string, en: string, zh?: string) => pickLang(uiLang, { mn, en, zh });
 
   const [name, setName] = useState(theme?.name ?? '');
   const [appearance, setAppearance] = useState<NonNullable<ThemeConfig['appearance']>>(
@@ -86,7 +87,7 @@ export default function ThemeEditor({ theme, onDone }: Props) {
   );
 
   const save = async () => {
-    if (!name.trim()) { setError(L('Нэр оруулна уу.', 'Enter a name.')); return; }
+    if (!name.trim()) { setError(L('Нэр оруулна уу.', 'Enter a name.', '请输入名称。')); return; }
     setBusy(true);
     setError('');
     const config: ThemeConfig = { appearance, landing };
@@ -96,7 +97,7 @@ export default function ThemeEditor({ theme, onDone }: Props) {
       : await sendJSON('/api/admin/themes', 'POST', { name, config });
     setBusy(false);
     if (res.ok) { onDone(); return; }
-    setError(res.message || L('Хадгалахад алдаа гарлаа.', 'Failed to save.'));
+    setError(res.message || L('Хадгалахад алдаа гарлаа.', 'Failed to save.', '保存失败。'));
   };
 
   // preview-ийн inline CSS хувьсагчид (base токенууд + цөөн derived).
@@ -124,7 +125,7 @@ export default function ThemeEditor({ theme, onDone }: Props) {
         <label className="field">
           <span className="field__label">{T('themes.name')}</span>
           <input className="input" value={name} maxLength={80}
-            onChange={(e) => setName(e.target.value)} placeholder={L('Жишээ: Шинэ жилийн', 'e.g. New Year')} />
+            onChange={(e) => setName(e.target.value)} placeholder={L('Жишээ: Шинэ жилийн', 'e.g. New Year', '例如：新年主题')} />
         </label>
       </div>
 
@@ -165,7 +166,7 @@ export default function ThemeEditor({ theme, onDone }: Props) {
             </div>
             <div className="color-grid">
               {THEME_COLOR_FIELDS.map((f) => (
-                <ColorField key={f.key} value={colorVal(f.key)} label={L(f.labelMn, f.labelEn)}
+                <ColorField key={f.key} value={colorVal(f.key)} label={L(f.labelMn, f.labelEn, f.labelZh)}
                   onChange={(v) => setColor(f.key, v)} />
               ))}
             </div>
@@ -176,7 +177,7 @@ export default function ThemeEditor({ theme, onDone }: Props) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
               <h3>{T('themes.content')}</h3>
               <SegmentedControl ariaLabel="lang" value={editLang} onChange={setEditLang}
-                options={[{ value: 'mn', label: 'МН' }, { value: 'en', label: 'EN' }]} />
+                options={[{ value: 'mn', label: 'МН' }, { value: 'en', label: 'EN' }, { value: 'zh', label: '中文' }]} />
             </div>
             <CopyFields def={landingCopy[editLang] as unknown as Json}
               override={(landing[editLang] ?? {}) as Json}
@@ -198,10 +199,10 @@ export default function ThemeEditor({ theme, onDone }: Props) {
                 borderBottom: '1px solid rgba(255,255,255,0.12)',
               }}>
                 <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--gold)' }} />
-                {L('Толгой (header)', 'Header')}
+                {L('Толгой (header)', 'Header', '页眉 (header)')}
               </div>
               <div style={{ background: 'var(--lp-navy)', color: '#dfe6f2', padding: '11px 11px 14px' }}>
-                {L('Үлдсэн (body)', 'Body')}
+                {L('Үлдсэн (body)', 'Body', '主体 (body)')}
               </div>
             </div>
             <div className="theme-preview__brand">{mergedCopy.brand || 'Gerege Template Platform V3.0'}</div>

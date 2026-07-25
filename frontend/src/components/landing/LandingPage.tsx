@@ -10,8 +10,14 @@ import {
   Menu, X,
 } from 'lucide-react';
 import { useLang } from '@/lib/lang';
+import { pickLang, type Lang } from '@/lib/i18n';
 import { landingCopy, type LandingCopy } from './copy';
 import { deepMerge } from '@/lib/theme';
+
+// Нүүрэн дээрх хэлний товч нь mn → en → zh → mn гэж эргэлдэнэ (дараагийн хэлийг
+// шошгонд харуулна).
+const NEXT_LANG: Record<Lang, Lang> = { mn: 'en', en: 'zh', zh: 'mn' };
+const LANG_SHORT: Record<Lang, string> = { mn: 'МН', en: 'EN', zh: '中文' };
 
 // Нээлттэй эх (Open Source) кодын GitHub репозитор.
 const GITHUB_URL = 'https://github.com/gerege-systems/template-gerege-mn';
@@ -36,8 +42,8 @@ interface Props {
   notice?: string;
   googleLink?: boolean;
   googleError?: boolean;
-  /** Идэвхтэй theme-ийн landing текст/цэс (mn/en) — copy.ts default дээр давхарлана. */
-  themeLanding?: { mn?: Partial<LandingCopy>; en?: Partial<LandingCopy> };
+  /** Идэвхтэй theme-ийн landing текст/цэс (mn/en/zh) — copy.ts default дээр давхарлана. */
+  themeLanding?: { mn?: Partial<LandingCopy>; en?: Partial<LandingCopy>; zh?: Partial<LandingCopy> };
 }
 
 /**
@@ -82,11 +88,11 @@ export default function LandingPage({ next, themeLanding }: Props) {
             <button
               type="button"
               className="lp-lang"
-              onClick={() => setLang(lang === 'mn' ? 'en' : 'mn')}
-              aria-label="Хэл солих"
+              onClick={() => setLang(NEXT_LANG[lang])}
+              aria-label={pickLang(lang, { mn: 'Хэл солих', en: 'Switch language', zh: '切换语言' })}
             >
               <Languages size={15} strokeWidth={2} />
-              <span>{lang === 'mn' ? 'EN' : 'МН'}</span>
+              <span>{LANG_SHORT[NEXT_LANG[lang]]}</span>
             </button>
             <a className="lp-btn lp-btn--gold lp-btn--sm" href={ssoHref}>
               <LogIn size={16} strokeWidth={2} />
@@ -95,7 +101,7 @@ export default function LandingPage({ next, themeLanding }: Props) {
             <button
               type="button"
               className="lp-nav__burger"
-              aria-label={lang === 'en' ? 'Menu' : 'Цэс'}
+              aria-label={pickLang(lang, { mn: 'Цэс', en: 'Menu', zh: '菜单' })}
               aria-expanded={menuOpen}
               onClick={() => setMenuOpen((o) => !o)}
             >

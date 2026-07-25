@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Building2, Plus, ChevronRight } from 'lucide-react';
 import { useT } from '@/lib/lang';
+import { prefersLatinName } from '@/lib/i18n';
 import { getJSON, postJSON } from '@/lib/client';
 import { formatTS } from '@/lib/format';
 import Alert from '@/components/Alert';
@@ -98,7 +99,7 @@ export default function OrgRepsCard({ show }: { show: boolean }) {
               <div className="org-rep__icon" aria-hidden="true"><Building2 size={18} /></div>
               <div className="org-rep__body">
                 <div className="org-rep__name">
-                  {(lang === 'en' && o.org_name_en) ? o.org_name_en : o.org_name}
+                  {(prefersLatinName(lang) && o.org_name_en) ? o.org_name_en : o.org_name}
                   {o.right_type && <span className="chip chip--neutral" style={{ marginLeft: 8 }}>{o.right_type}</span>}
                 </div>
                 <div className="org-rep__meta mono">

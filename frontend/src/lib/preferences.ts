@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 export type ThemePref = 'light' | 'dark' | 'system';
-export type LangPref = 'mn' | 'en';
+export type LangPref = 'mn' | 'en' | 'zh';
 // Харагдацын нэмэлт тохиргоо — токеноор дамжина (globals.css-д html[data-*]).
 export type AccentPref = 'cobalt' | 'teal' | 'violet' | 'emerald' | 'amber';
 export type FontPref = 'inter' | 'serif' | 'system';
@@ -28,7 +28,7 @@ export const DEFAULTS = {
 
 const VALID = {
   theme: new Set<ThemePref>(['light', 'dark', 'system']),
-  lang: new Set<LangPref>(['mn', 'en']),
+  lang: new Set<LangPref>(['mn', 'en', 'zh']),
   accent: new Set<AccentPref>(['cobalt', 'teal', 'violet', 'emerald', 'amber']),
   font: new Set<FontPref>(['inter', 'serif', 'system']),
   style: new Set<StylePref>(['comfortable', 'compact']),

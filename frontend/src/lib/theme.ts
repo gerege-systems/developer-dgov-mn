@@ -2,7 +2,7 @@
 // Gerege Systems Development Team & Claude AI, 2026.
 //
 // Landing theme-ийн хуваалцсан төрлүүд. Theme = харагдац (палетр · фонт · стиль ·
-// загвар) + landing-ийн бүх текст/цэс (mn/en). Backend-ийн domain_theme.go-той
+// загвар) + landing-ийн бүх текст/цэс (mn/en/zh). Backend-ийн domain_theme.go-той
 // нийцнэ; config нь уян хатан (frontend copy.ts/globals.css default дээр deep-merge).
 
 import type { LandingCopy } from '@/components/landing/copy';
@@ -54,7 +54,7 @@ export interface ThemeAppearance {
 
 export interface ThemeConfig {
   appearance?: ThemeAppearance;
-  landing?: { mn?: Partial<LandingCopy>; en?: Partial<LandingCopy> };
+  landing?: { mn?: Partial<LandingCopy>; en?: Partial<LandingCopy>; zh?: Partial<LandingCopy> };
 }
 
 /** Backend-ээс ирэх нэрлэсэн theme (жагсаалт/CRUD). */
@@ -87,21 +87,21 @@ export const DEFAULT_PALETTE: Required<ThemeColors> = {
   lpHeader: '#004eb6',
 };
 
-/** Өнгө сонгогчийн эрэмбэ + шошго (mn). */
-export const THEME_COLOR_FIELDS: { key: keyof ThemeColors; labelMn: string; labelEn: string }[] = [
-  { key: 'danBlue', labelMn: 'Гол өнгө (brand)', labelEn: 'Primary (brand)' },
-  { key: 'gold', labelMn: 'Алт (итгэл)', labelEn: 'Gold (trust)' },
-  { key: 'lpHeader', labelMn: 'Нүүр — толгой (header)', labelEn: 'Landing — header' },
-  { key: 'lpNavy', labelMn: 'Нүүр — үлдсэн (body)', labelEn: 'Landing — body' },
-  { key: 'bg', labelMn: 'Дэвсгэр', labelEn: 'Background' },
-  { key: 'surface', labelMn: 'Гадаргуу', labelEn: 'Surface' },
-  { key: 'surface2', labelMn: 'Гадаргуу-2', labelEn: 'Surface 2' },
-  { key: 'fg', labelMn: 'Текст', labelEn: 'Text' },
-  { key: 'muted', labelMn: 'Бүдэг текст', labelEn: 'Muted text' },
-  { key: 'border', labelMn: 'Зураас', labelEn: 'Border' },
-  { key: 'borderStrong', labelMn: 'Тод зураас', labelEn: 'Strong border' },
-  { key: 'success', labelMn: 'Амжилт', labelEn: 'Success' },
-  { key: 'danger', labelMn: 'Анхаар', labelEn: 'Danger' },
+/** Өнгө сонгогчийн эрэмбэ + шошго (mn/en/zh). */
+export const THEME_COLOR_FIELDS: { key: keyof ThemeColors; labelMn: string; labelEn: string; labelZh: string }[] = [
+  { key: 'danBlue', labelMn: 'Гол өнгө (brand)', labelEn: 'Primary (brand)', labelZh: '主色（品牌）' },
+  { key: 'gold', labelMn: 'Алт (итгэл)', labelEn: 'Gold (trust)', labelZh: '金色（信任）' },
+  { key: 'lpHeader', labelMn: 'Нүүр — толгой (header)', labelEn: 'Landing — header', labelZh: '首页 — 页眉' },
+  { key: 'lpNavy', labelMn: 'Нүүр — үлдсэн (body)', labelEn: 'Landing — body', labelZh: '首页 — 主体' },
+  { key: 'bg', labelMn: 'Дэвсгэр', labelEn: 'Background', labelZh: '背景' },
+  { key: 'surface', labelMn: 'Гадаргуу', labelEn: 'Surface', labelZh: '表面' },
+  { key: 'surface2', labelMn: 'Гадаргуу-2', labelEn: 'Surface 2', labelZh: '表面 2' },
+  { key: 'fg', labelMn: 'Текст', labelEn: 'Text', labelZh: '文字' },
+  { key: 'muted', labelMn: 'Бүдэг текст', labelEn: 'Muted text', labelZh: '次要文字' },
+  { key: 'border', labelMn: 'Зураас', labelEn: 'Border', labelZh: '边框' },
+  { key: 'borderStrong', labelMn: 'Тод зураас', labelEn: 'Strong border', labelZh: '强调边框' },
+  { key: 'success', labelMn: 'Амжилт', labelEn: 'Success', labelZh: '成功' },
+  { key: 'danger', labelMn: 'Анхаар', labelEn: 'Danger', labelZh: '危险' },
 ];
 
 /** Гүн merge (жижиг, JSON-safe) — override-ыг base дээр давхарлана. Массивыг

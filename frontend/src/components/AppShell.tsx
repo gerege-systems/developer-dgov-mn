@@ -206,7 +206,7 @@ const SYSTEMS: NavSystem[] = [
 /**
  * Хоёр түвшний бүрхүүл — icon rail дахь "систем" (Админ / Менежер / Хэрэглэгч)
  * тус бүр өөрийн дэд цэстэй. Хэрэглэгчийн эрхээр (/api/rbac/me) цэсийг шүүж,
- * хэлийг useT()-ээр (mn/en) орчуулна.
+ * хэлийг useT()-ээр (mn/en/zh) орчуулна.
  */
 export default function AppShell({ user, children }: Props) {
   const pathname = usePathname() ?? '/';
@@ -407,7 +407,7 @@ export default function AppShell({ user, children }: Props) {
             <Menu size={20} strokeWidth={2} />
           </button>
           <div className="topbar2__spacer" />
-          <NavSearch items={searchItems} placeholder={T('shell.search')} emptyText={lang === 'en' ? 'No results' : 'Илэрц алга'} />
+          <NavSearch items={searchItems} placeholder={T('shell.search')} emptyText={T('shell.noResults')} />
           <div className="topbar2__actions">
             <a className="topbar2__docs" href={DOCS_URL} target="_blank" rel="noreferrer" title={T('nav.docs')} aria-label={T('nav.docs')}>
               <BookOpen size={16} strokeWidth={2} />

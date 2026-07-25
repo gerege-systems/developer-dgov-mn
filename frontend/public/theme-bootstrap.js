@@ -8,7 +8,7 @@
    - Нийтийн хуудас (/, /login, …) → АДМИНы идэвхтэй LANDING THEME
      (window.__SITE_THEME__: mode/font/style + бүрэн палетр). localStorage-ыг
      эндэ үл хэрэгснэ.
-   Хэл (mn/en) хаана ч localStorage-аар. */
+   Хэл (mn/en/zh) хаана ч localStorage-аар. */
 (function () {
   try {
     var root = document.documentElement;
@@ -18,7 +18,7 @@
 
     // Хэл.
     var lang = localStorage.getItem('gerege.lang');
-    if (lang !== 'mn' && lang !== 'en') lang = 'mn';
+    if (lang !== 'mn' && lang !== 'en' && lang !== 'zh') lang = 'mn';
     root.setAttribute('lang', lang);
 
     var authed = /^\/(me|admin|manager|profile|settings)(\/|$)/.test(location.pathname);

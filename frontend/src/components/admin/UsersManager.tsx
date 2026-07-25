@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Trash2, Loader2, Check, Ban, ChevronLeft, ChevronRight, UserPlus, X, Search } from 'lucide-react';
 import { useT } from '@/lib/lang';
+import { LOCALES, prefersLatinName } from '@/lib/i18n';
 import { getJSON, sendJSON } from '@/lib/client';
 import { ROLE_SUPERADMIN, ROLE_ADMIN, ROLE_USER, isSuperAdmin } from '@/lib/types';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
@@ -140,7 +141,7 @@ export default function UsersManager({ currentUserId, currentUserRoleId, readOnl
 
   const fmtDate = (iso: string) => {
     try {
-      return new Date(iso).toLocaleDateString(lang === 'en' ? 'en-US' : 'mn-MN', {
+      return new Date(iso).toLocaleDateString(LOCALES[lang], {
         year: 'numeric', month: 'short', day: 'numeric',
       });
     } catch {
@@ -266,7 +267,7 @@ export default function UsersManager({ currentUserId, currentUserRoleId, readOnl
                   <tr key={u.id}>
                     <td data-label={T('users.col.name')}>
                       {(() => {
-                        const name = (lang === 'en' ? (u.full_name_en?.trim() || u.full_name?.trim()) : u.full_name?.trim());
+                        const name = (prefersLatinName(lang) ? (u.full_name_en?.trim() || u.full_name?.trim()) : u.full_name?.trim());
                         return (
                           <>
                             {name || u.username}

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader2, Plus, Save, X, Building2, ChevronRight } from 'lucide-react';
 import { useT } from '@/lib/lang';
+import { LOCALES, prefersLatinName } from '@/lib/i18n';
 import type { DictKey } from '@/lib/i18n';
 import { getJSON, postJSON } from '@/lib/client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -45,7 +46,7 @@ export default function OrgList() {
 
   const fmtDate = (iso: string) => {
     try {
-      return new Date(iso).toLocaleDateString(lang === 'en' ? 'en-US' : 'mn-MN', {
+      return new Date(iso).toLocaleDateString(LOCALES[lang], {
         year: 'numeric', month: 'short', day: 'numeric',
       });
     } catch {
@@ -143,7 +144,7 @@ export default function OrgList() {
                   <td data-label={T('org.name')}>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
                       <Building2 size={16} strokeWidth={2} />
-                      {lang === 'en' ? (o.name_latin?.trim() || o.name) : o.name}
+                      {prefersLatinName(lang) ? (o.name_latin?.trim() || o.name) : o.name}
                     </span>
                   </td>
                   <td className="mono" data-label={T('org.regNo')}>{o.reg_no}</td>
