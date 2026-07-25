@@ -55,7 +55,8 @@
   10–20 秒，放不进 30 秒的上限）。
 - **完整的服务器超时** — `ReadHeader` 10 秒、`Read` 30 秒、`Write` 70 秒、
   `Idle` 120 秒、`MaxHeaderBytes` 16 KiB（防 slowloris / 超大请求头）。
-- **限流** — `/auth` 约 5 次/分钟，`/ai/*` 约 20 次/分钟，按 IP 计。
+- **限流** — `/auth` 约 5 次/分钟，`/ai/*` 约 20 次/分钟，首页的匿名聊天
+  `/public/ai/chat` 约 6 次/分钟，均按 IP 计。
 
 ### 前端（BFF 模式）
 

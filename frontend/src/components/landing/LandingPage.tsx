@@ -12,6 +12,7 @@ import {
 import { useLang } from '@/lib/lang';
 import { pickLang, type Lang } from '@/lib/i18n';
 import { landingCopy, type LandingCopy } from './copy';
+import LandingChat from './LandingChat';
 import { deepMerge } from '@/lib/theme';
 
 // Нүүрэн дээрх хэлний товч нь mn → en → zh → ru → mn гэж эргэлдэнэ (дараагийн
@@ -329,6 +330,9 @@ export default function LandingPage({ next, themeLanding }: Props) {
           </div>
         </section>
       </main>
+
+      {/* ---------- Хөвөгч AI туслах (нэвтрэлтгүй) ---------- */}
+      <LandingChat copy={t.chat} lang={lang} />
 
       {/* ---------- Footer ---------- */}
       <footer className="lp-footer">

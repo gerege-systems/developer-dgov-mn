@@ -58,7 +58,8 @@
   `Idle` 120s, `MaxHeaderBytes` 16 KiB (slowloris / oversized-header defence).
 - **Per-request timeout** — 30s in general; `/ai/*` gets 50s (Gemini TTS/STT
   routinely takes 10–20s, which did not fit the 30s cap).
-- **Rate limiting** — `/auth` ~5/min, `/ai/*` ~20/min, per IP.
+- **Rate limiting** — `/auth` ~5/min, `/ai/*` ~20/min, and the anonymous
+  landing chat `/public/ai/chat` ~6/min — per IP.
 
 ### Frontend (BFF model)
 

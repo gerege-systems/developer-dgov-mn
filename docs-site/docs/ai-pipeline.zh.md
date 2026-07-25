@@ -102,6 +102,12 @@ aiTools := append(ai.DefaultTools(), ai.KnowledgeSearchTool(aiRepo), myTool)
   新行会自动完成向量化。
 - **`get_server_time`** — 一个最小演示（乌兰巴托时间），零依赖。
 
+!!! info "首页的公开聊天（无需登录）"
+    右下角的浮动挂件调用 `POST /public/ai/chat`，不带令牌。它运行在一个独立的
+    usecase 实例上，只绑定知识库工具，因此触及不到用户数据。每个 IP 约 6 次/分钟、
+    不接受音频、消息 ≤ 1000 字符、历史 ≤ 6 轮；系统提示词还会加上一层
+    「匿名访客」防护。
+
 ## 语音
 
 | 能力 | 端点 | 工作方式 |

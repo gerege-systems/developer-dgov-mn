@@ -112,6 +112,13 @@ aiTools := append(ai.DefaultTools(), ai.KnowledgeSearchTool(aiRepo), myTool)
   Grow the corpus by inserting rows — new rows are embedded automatically.
 - **`get_server_time`** — a minimal demo (Ulaanbaatar time), zero dependencies.
 
+!!! info "Public chat on the landing page (no login)"
+    A floating widget in the bottom-right corner calls `POST /public/ai/chat`
+    with no token. It runs on a separate usecase instance wired with the
+    knowledge-base tool only, so it cannot reach user data. ~6 req/min per IP,
+    no audio, message ≤ 1000 chars, history ≤ 6 turns; the system prompt gains
+    an extra "anonymous visitor" guardrail.
+
 ## Voice
 
 | Capability | Endpoint | How it works |

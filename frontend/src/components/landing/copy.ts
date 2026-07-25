@@ -57,6 +57,25 @@ export interface LandingCopy {
   everything: { heading: string; sub: string; items: { title: string; body: string }[] };
   cta: { title: string; sub: string; ctaLogin: string; ctaExplore: string; tagline: string };
   footer: { tagline: string; links: string[]; copyright: string };
+  /** Нүүрийн баруун доод буланд хөвөх AI туслахын виджет (нэвтрэлтгүй). */
+  chat: {
+    /** Хөвөгч товчны tooltip / aria-label. */
+    open: string;
+    close: string;
+    title: string;
+    /** Гарчгийн доорх тайлбар — нэвтрэлтгүй гэдгийг ойлгуулна. */
+    sub: string;
+    /** Чат хоосон үеийн урилга. */
+    greeting: string;
+    placeholder: string;
+    send: string;
+    thinking: string;
+    error: string;
+    /** Хувийн мэдээлэл бүү бич — нээлттэй суваг гэдгийн сануулга. */
+    privacy: string;
+    /** Санал болгох эхний асуултууд. */
+    suggestions: string[];
+  };
 }
 
 const mn: LandingCopy = {
@@ -148,6 +167,19 @@ const mn: LandingCopy = {
     tagline: 'Gerege Template Platform V3.0 — цахим үйлчилгээг бүтээх, үйлдвэрлэлд бэлэн суурь. Gerege Systems, 2026.',
     links: ['Үйлчилгээний нөхцөл', 'Нууцлалын бодлого', 'Холбоо барих'],
     copyright: '© 2026 Gerege Systems · Gerege Template Platform V3.0',
+  },
+  chat: {
+    open: 'AI туслахтай ярих',
+    close: 'Хаах',
+    title: 'AI туслах',
+    sub: 'Нэвтрэхгүйгээр асууж болно',
+    greeting: 'Сайн байна уу! Gerege платформын талаар юу ч асууж болно — нэвтрэх шаардлагагүй.',
+    placeholder: 'Асуултаа бичнэ үү…',
+    send: 'Илгээх',
+    thinking: 'Бодож байна…',
+    error: 'Хариу авахад алдаа гарлаа. Түр хүлээгээд дахин оролдоно уу.',
+    privacy: 'Нээлттэй суваг — хувийн мэдээлэл (РД, утас, нууц үг) бүү бичнэ үү.',
+    suggestions: ['Энэ платформ юу вэ?', 'eID-ээр яаж нэвтрэх вэ?', 'Ямар аюулгүй байдлын хамгаалалттай вэ?'],
   },
 };
 
@@ -241,6 +273,19 @@ const en: LandingCopy = {
     links: ['Terms of Service', 'Privacy Policy', 'Contact'],
     copyright: '© 2026 Gerege Systems · Gerege Template Platform V3.0',
   },
+  chat: {
+    open: 'Chat with the AI assistant',
+    close: 'Close',
+    title: 'AI assistant',
+    sub: 'Ask without signing in',
+    greeting: 'Hi! Ask anything about the Gerege platform — no sign-in required.',
+    placeholder: 'Type your question…',
+    send: 'Send',
+    thinking: 'Thinking…',
+    error: 'Could not get a reply. Please try again in a moment.',
+    privacy: 'Public channel — please do not share personal data (ID number, phone, passwords).',
+    suggestions: ['What is this platform?', 'How does eID login work?', 'What security does it provide?'],
+  },
 };
 
 const zh: LandingCopy = {
@@ -333,6 +378,19 @@ const zh: LandingCopy = {
     links: ['服务条款', '隐私政策', '联系我们'],
     copyright: '© 2026 Gerege Systems · Gerege Template Platform V3.0',
   },
+  chat: {
+    open: '与 AI 助手对话',
+    close: '关闭',
+    title: 'AI 助手',
+    sub: '无需登录即可提问',
+    greeting: '您好！关于 Gerege 平台的任何问题都可以问我 — 无需登录。',
+    placeholder: '请输入您的问题…',
+    send: '发送',
+    thinking: '正在思考…',
+    error: '获取回复失败，请稍后再试。',
+    privacy: '公开渠道 — 请勿填写个人信息（身份证号、电话、密码）。',
+    suggestions: ['这个平台是什么？', 'eID 登录如何工作？', '提供哪些安全保障？'],
+  },
 };
 
 const ru: LandingCopy = {
@@ -424,6 +482,19 @@ const ru: LandingCopy = {
     tagline: 'Gerege Template Platform V3.0 — готовая к продакшену основа для создания цифровых услуг. Gerege Systems, 2026.',
     links: ['Условия использования', 'Политика конфиденциальности', 'Контакты'],
     copyright: '© 2026 Gerege Systems · Gerege Template Platform V3.0',
+  },
+  chat: {
+    open: 'Чат с AI-помощником',
+    close: 'Закрыть',
+    title: 'AI-помощник',
+    sub: 'Спрашивайте без входа в систему',
+    greeting: 'Здравствуйте! Спросите что угодно о платформе Gerege — вход не требуется.',
+    placeholder: 'Введите вопрос…',
+    send: 'Отправить',
+    thinking: 'Думаю…',
+    error: 'Не удалось получить ответ. Попробуйте ещё раз через минуту.',
+    privacy: 'Открытый канал — не указывайте личные данные (ИНН, телефон, пароли).',
+    suggestions: ['Что это за платформа?', 'Как работает вход по eID?', 'Какая обеспечена безопасность?'],
   },
 };
 
