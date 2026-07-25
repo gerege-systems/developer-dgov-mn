@@ -1,6 +1,7 @@
 # Gerege Template — CI/CD pipeline
 #
-# Backend (Go): go vet + gofmt + go test -race + integration compile + build.
+# Backend (Go): go vet + gofmt + go test -race + integration compile + build,
+# мөн тусдаа job-д жинхэнэ Postgres/Redis дээр integration тест.
 # Frontend (Next.js): lint + build. Secrets scan (gitleaks binary, no license).
 # makefile-ийн `pre-push` target-уудтай ойролцоо.
 #
@@ -63,6 +64,30 @@ jobs:
           go build ./cmd/seed
           go build ./cmd/healthcheck
 
+  # Integration тестүүд жинхэнэ Postgres/Redis дээр (testcontainers, runner-ийн
+  # Docker-ыг ашиглана). Compile check нь эдгээрийг ЗӨВХӨН build хийдэг тул
+  # ажиллуулдаггүй байсан — үр дүнд нь role ID дахин зурагдахад эрхийн matrix
+  # тест чимээгүй утгаа алдаж, «user» persona админ болж хувирсныг хэн ч
+  # анзаараагүй. Тиймээс одоо бодитоор ажиллуулна.
+  integration:
+    name: Backend integration (Postgres · Redis)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+          cache-dependency-path: backend/go.sum
+
+      - name: Integration tests (testcontainers)
+        run: GOFLAGS=-mod=mod go test -tags=integration -timeout=20m ./...
+
   frontend:
     name: Frontend (lint · build)
     runs-on: ubuntu-latest
@@ -115,7 +140,7 @@ jobs:
   # /srv/template-gerege-mn) — мөн заавал биш DEPLOY_PORT.
   deploy:
     name: Deploy (ssh · docker compose)
-    needs: [backend, frontend, secrets-scan]
+    needs: [backend, integration, frontend, secrets-scan]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     # Deploy-ууд давхцахаас сэргийлнэ; ажиллаж буйг таслахгүй (build дундуур зогсоохгүй).

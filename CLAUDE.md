@@ -28,6 +28,9 @@ docker compose up -d --build   # db + redis + migrate (one-off) + api + web
 - **gofmt** — `gofmt -l .` must be empty; run `gofmt -w .` before committing Go code
 - **swag drift** — if you add/change swagger annotations, run `make swag` and commit `backend/docs/` output, or CI fails
 - go vet + `go test -race`, integration compile check, binary builds
+- **integration tests** run for real (own job: testcontainers Postgres + Redis).
+  They gate deploy — a stale fixture once turned the authorization-matrix test
+  into a no-op, so "compiles" is not enough
 - frontend `npm run lint` + `npm run build`
 - gitleaks secrets scan
 
