@@ -1,6 +1,6 @@
 # Deployment Guide
 
-> 🌐 **English** · [Монгол](DEPLOYMENT_MN.md)
+> 🌐 **English** · [Монгол](DEPLOYMENT_MN.md) · [中文](DEPLOYMENT_ZH.md)
 
 How to deploy the **Gerege Template Platform V3.0** (Төр, хувийн хэвшлийн
 үйлчилгээний суурь платформ) — a production-ready foundation for building

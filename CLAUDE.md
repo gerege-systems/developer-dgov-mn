@@ -37,9 +37,11 @@ docker compose up -d --build   # db + redis + migrate (one-off) + api + web
   UI strings in Mongolian. Every source file starts with the two-line
   `Gerege Template Platform V3.0` header (copy from any existing file).
 - **Commits:** conventional commits (`feat:`, `fix:`, `chore:`, `docs:`…).
-- **EN/MN doc pairs:** when you touch `backend/docs/X.md`, update `X_MN.md`
-  too (same for READMEs and `frontend/src/lib/i18n.ts` — every key exists in
-  both `mn` and `en`).
+- **EN/MN/ZH doc sets:** when you touch `backend/docs/X.md`, update `X_MN.md`
+  and `X_ZH.md` too (same for READMEs and `frontend/src/lib/i18n.ts` — every
+  key exists in `mn`, `en` and `zh`; `docs-site` pages are `X.md` (mn) +
+  `X.en.md` + `X.zh.md`). `frontend/src/lib/i18n.test.ts` enforces the
+  dictionary + landing-copy parity.
 
 ## Backend architecture rules
 

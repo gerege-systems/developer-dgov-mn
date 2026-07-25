@@ -1,5 +1,7 @@
 # Gerege Template Platform V3.0 — Frontend
 
+> 🌐 **Монгол** · [中文](README_ZH.md)
+
 > **Цахим үйлчилгээг бүтээх суурь** — _Нэг суурь — төр, хувийн хэвшлийн бүх үйлчилгээ._
 
 **Gerege Template Platform V3.0**-ийн Next.js 15 frontend — аль ч цахим төрийн

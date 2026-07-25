@@ -1,6 +1,6 @@
 # Deploy хийх заавар
 
-> 🌐 [English](DEPLOYMENT.md) · **Монгол**
+> 🌐 [English](DEPLOYMENT.md) · **Монгол** · [中文](DEPLOYMENT_ZH.md)
 
 **Gerege Template Platform V3.0** (Цахим үйлчилгээг бүтээх суурь) — цахим
 засаглалын аливаа үйлчилгээг дээр нь босгох production-ready суурь — г нэг VPS

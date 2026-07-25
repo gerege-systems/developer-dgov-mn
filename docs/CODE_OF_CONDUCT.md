@@ -1,5 +1,7 @@
 # Code of Conduct
 
+> 🌐 **English** · [中文](CODE_OF_CONDUCT_ZH.md)
+
 ## Our Pledge
 
 We as members, contributors, and leaders pledge to make participation in our

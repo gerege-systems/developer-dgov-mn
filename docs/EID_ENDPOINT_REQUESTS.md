@@ -1,5 +1,7 @@
 # eID Mongolia — RP-facing endpoint нэмэх хүсэлт
 
+> 🌐 **Монгол** · [中文](EID_ENDPOINT_REQUESTS_ZH.md)
+
 > ✅ **БИЕЛСЭН · ТҮҮХЭН БАРИМТ (2026-07-17).** Энэ баримтад хүссэн RP-facing
 > endpoint-ууд upstream eID платформд хэрэгжиж, RP тал дээр аль хэдийн
 > ашиглагдаж байна. Live client дуудлагууд `backend/pkg/eid/eid_pki.go`-д

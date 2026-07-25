@@ -17,7 +17,7 @@ Architecture Go backend + Next.js BFF frontend + Gemini AI pipeline-ийг хо�
 банк · даатгал · финтек · эрүүл мэнд · боловсролын хувийн хэвшлийн бүтээгдэхүүн
 ч ижил түвшний баталгаажуулалт, аюулгүй байдалтайгаар босдог.
 
-> 🌐 **Монгол** · [English](docs/README_EN.md)
+> 🌐 **Монгол** · [English](docs/README_EN.md) · [中文](docs/README_ZH.md)
 
 [![Go](https://img.shields.io/badge/Go-1.26-blue.svg)](https://golang.org/)
 [![chi](https://img.shields.io/badge/chi-v5-00ADD8.svg)](https://github.com/go-chi/chi)

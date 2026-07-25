@@ -1,5 +1,7 @@
 # Аюулгүй Web + Mobile + API систем бүтээх заавар
 
+> 🌐 **Монгол** · [中文](secure_system_guide_zh.md)
+
 **Stack:** Go (backend) · PostgreSQL (DB) · Next.js (web) · iOS/Android (mobile)
 **Stance:** Production-ready, multi-tenant SaaS-ийг зорьсон. Single-tenant эсвэл internal tool бол энэ зөвлөмжийн зарим хэсгийг хэт хэмжүүртэй гэж үзэж болно — зориудаар тэмдэглэсэн.
 

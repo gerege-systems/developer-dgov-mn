@@ -1,6 +1,7 @@
 # Contributing to Gerege Template Platform V3.0
 
-The full contribution guide lives in [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) —
+The full contribution guide lives in [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)
+（中文版：[docs/CONTRIBUTING_ZH.md](docs/CONTRIBUTING_ZH.md)）—
 local setup, branch/commit conventions, the `make pre-push` quality gate (lint +
 race tests + swag drift + build), and the PR checklist.
 
