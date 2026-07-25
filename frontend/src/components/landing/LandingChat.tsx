@@ -10,6 +10,8 @@ import type { Lang } from '@/lib/i18n';
 import type { LandingCopy } from './copy';
 
 interface Msg {
+  /** Бөмбөлгийг дараа нь (жишээ нь STT хуулбараар) шинэчлэхэд хэрэглэнэ. */
+  id: number;
   role: 'user' | 'model';
   text: string;
   /** Алдаа / fallback хариу — дараагийн хүсэлтийн түүхэнд орохгүй. */
@@ -21,6 +23,8 @@ interface Msg {
 interface ChatData {
   reply?: string;
   degraded?: boolean;
+  /** Дуут мессежийн текст хуулбар (backend STT) — хэрэглэгчийн бөмбөлөгт орно. */
+  transcript?: string;
 }
 
 /** Backend-ийн AIPublicChatRequest-тэй ижил хязгаарууд. */
@@ -60,6 +64,8 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
   const startedAtRef = useRef(0);
   /** Товчны доор гарах богино зөвлөмж (зөвшөөрөл өгсний дараа г.м.). */
   const [hint, setHint] = useState('');
+  /** Мессежийн дараалсан дугаар (React key + дараа шинэчлэхэд). */
+  const nextIdRef = useRef(0);
 
   useEffect(() => {
     if (open) endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -94,29 +100,40 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
   }, []);
 
   const dispatch = useCallback(
-    async (payload: { message?: string; audio?: RecordedAudio }, bubble: Msg) => {
+    async (payload: { message?: string; audio?: RecordedAudio }, bubble: Omit<Msg, 'id'>) => {
       // Түүхэнд зөвхөн бүтэн ээлжүүд — алдааны мессежийг дахин илгээхгүй.
       const history = messages
         .filter((m) => !m.degraded)
         .slice(-MAX_TURNS)
         .map((m) => ({ role: m.role, text: m.text.slice(0, MAX_TEXT) }));
 
-      setMessages((m) => [...m, bubble]);
+      const bubbleId = nextIdRef.current++;
+      setMessages((m) => [...m, { ...bubble, id: bubbleId }]);
       setBusy(true);
       try {
         const body = await postJSON<ChatData>('/api/public/ai/chat', { ...payload, history, lang });
-        if (body.ok && body.data?.reply) {
-          setMessages((m) => [...m, { role: 'model', text: body.data!.reply as string, degraded: body.data!.degraded }]);
+        const data = body.ok ? body.data : undefined;
+
+        // Дуут мессеж бол backend-ийн STT хуулбараар бөмбөлгийг солино —
+        // хэрэглэгч юу сонсогдсоныг харна (зөвхөн «Дуут мессеж» биш).
+        if (data?.transcript) {
+          setMessages((m) => m.map((x) => (x.id === bubbleId ? { ...x, text: data.transcript as string } : x)));
+        }
+
+        if (data?.reply) {
+          setMessages((m) => [...m, { id: nextIdRef.current++, role: 'model', text: data.reply as string, degraded: data.degraded }]);
         } else {
-          setMessages((m) => [...m, { role: 'model', text: copy.error, degraded: true }]);
+          // Дуут мессеж дээр хоосон хариу = яриа таниагүй (хоосон хуулбар).
+          const text = payload.audio && !data?.transcript ? copy.noSpeech : copy.error;
+          setMessages((m) => [...m, { id: nextIdRef.current++, role: 'model', text, degraded: true }]);
         }
       } catch {
-        setMessages((m) => [...m, { role: 'model', text: copy.error, degraded: true }]);
+        setMessages((m) => [...m, { id: nextIdRef.current++, role: 'model', text: copy.error, degraded: true }]);
       } finally {
         setBusy(false);
       }
     },
-    [messages, lang, copy.error],
+    [messages, lang, copy.error, copy.noSpeech],
   );
 
   async function sendText(raw: string) {
@@ -194,7 +211,9 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
 
   /** Алдааны мессежийг давхардуулахгүй нэмнэ (дараалсан ижил мөр утгагүй). */
   function noteError(text: string) {
-    setMessages((m) => (m[m.length - 1]?.text === text ? m : [...m, { role: 'model', text, degraded: true }]));
+    setMessages((m) =>
+      m[m.length - 1]?.text === text ? m : [...m, { id: nextIdRef.current++, role: 'model', text, degraded: true }],
+    );
   }
 
   async function speak(idx: number, text: string) {
@@ -252,7 +271,7 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
               <div className="lp-chat__bubble">{copy.greeting}</div>
             </div>
             {messages.map((m, i) => (
-              <div key={i} className={`lp-chat__msg lp-chat__msg--${m.role}${m.degraded ? ' is-degraded' : ''}`}>
+              <div key={m.id} className={`lp-chat__msg lp-chat__msg--${m.role}${m.degraded ? ' is-degraded' : ''}`}>
                 <div className="lp-chat__bubble">
                   {m.voice && <Mic size={12} strokeWidth={2} className="lp-chat__voiceico" />}
                   {m.text}

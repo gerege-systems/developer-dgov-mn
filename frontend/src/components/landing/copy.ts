@@ -93,6 +93,8 @@ export interface LandingCopy {
     micReady: string;
     /** Хэт богино даралт — санамсаргүй товшилт. */
     tooShort: string;
+    /** Яриа таниагүй (чимээгүй бичлэг). */
+    noSpeech: string;
     /** Дуут хувилбар бэлдэж чадаагүй үеийн алдаа. */
     ttsError: string;
   };
@@ -209,6 +211,7 @@ const mn: LandingCopy = {
     micDenied: 'Микрофоны зөвшөөрөл олгогдоогүй байна. Хөтчийн хаяг мөрний зүүн талын тэмдэглэгээнээс микрофоныг зөвшөөрөөд дахин оролдоно уу.',
     micReady: 'Микрофон бэлэн. Одоо товчийг дарж барин ярина уу.',
     tooShort: 'Хэт богино байна — товчийг барьж байгаад ярина уу.',
+    noSpeech: 'Яриа сонсогдсонгүй. Товчийг барьж байгаад тодорхой ярина уу.',
     ttsError: 'Дуут хувилбарыг бэлдэж чадсангүй. Дараа дахин оролдоно уу.',
   },
 };
@@ -324,6 +327,7 @@ const en: LandingCopy = {
     micDenied: 'Microphone permission was denied. Allow the microphone from the icon in your browser address bar and try again.',
     micReady: 'Microphone ready. Now press and hold the button to speak.',
     tooShort: 'That was too short — keep holding the button while you speak.',
+    noSpeech: 'I could not hear any speech. Hold the button and speak clearly.',
     ttsError: 'Could not generate the audio. Please try again.',
   },
 };
@@ -439,6 +443,7 @@ const zh: LandingCopy = {
     micDenied: '麦克风权限被拒绝。请在浏览器地址栏的图标中允许麦克风后重试。',
     micReady: '麦克风已就绪。现在按住按钮说话即可。',
     tooShort: '太短了 — 请按住按钮再说话。',
+    noSpeech: '没有听到语音。请按住按钮清晰地说话。',
     ttsError: '语音合成失败，请稍后再试。',
   },
 };
@@ -554,6 +559,7 @@ const ru: LandingCopy = {
     micDenied: 'Доступ к микрофону запрещён. Разрешите микрофон в значке адресной строки браузера и попробуйте снова.',
     micReady: 'Микрофон готов. Теперь нажмите и удерживайте кнопку.',
     tooShort: 'Слишком коротко — удерживайте кнопку, пока говорите.',
+    noSpeech: 'Речь не распознана. Удерживайте кнопку и говорите чётче.',
     ttsError: 'Не удалось озвучить ответ. Попробуйте ещё раз.',
   },
 };
