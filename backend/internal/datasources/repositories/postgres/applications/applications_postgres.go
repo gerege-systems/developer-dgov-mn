@@ -1,4 +1,3 @@
-// Government Developer Portal V3.0
 // Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 
 // Package applications нь нэгдсэн Applications overlay-ийн Postgres gateway —

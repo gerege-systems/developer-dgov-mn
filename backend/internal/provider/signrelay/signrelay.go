@@ -1,4 +1,3 @@
-// eID based AI enabled Government Developer Portal V3.0
 // Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 
 // Package signrelay нь 3 дагч RP (жишээ developer.dgov.mn) dan-аар ДАМЖИН eID

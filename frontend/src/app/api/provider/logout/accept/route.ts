@@ -1,4 +1,3 @@
-// eID based AI enabled Government Developer Portal V3.0
 import { authedFetch } from '@/lib/api';
 import { checkOrigin, proxyResult, readJson } from '@/lib/bff';
 
