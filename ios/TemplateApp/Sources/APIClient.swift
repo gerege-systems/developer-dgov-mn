@@ -3,7 +3,8 @@
 
 import Foundation
 
-// APIClient нь DAN-Gerege SSO-ийн BFF (https://sso.gerege.mn/api/*)-тай харьцана.
+// APIClient нь Gerege Template Platform-ийн BFF (https://template.gerege.mn/api/*)-тай
+// харьцана — backend-тэй шууд БИШ. SSO нэвтрэлт ч мөн энэ BFF-ээр (SSOWebView).
 // Нэвтрэлт нь httpOnly cookie (dgov_access/refresh)-д хадгалагдана; URLSession
 // нь HTTPCookieStorage.shared-д cookie-г автоматаар хадгалж, дараагийн хүсэлтэд
 // илгээдэг. BFF-ийн mutating route нь `x-dgov-csrf: 1` header шаарддаг (Origin
@@ -26,7 +27,7 @@ final class APIClient {
     static let shared = APIClient()
 
     // Production BFF. Локал туршилтад http://localhost:3000 болгож болно.
-    static let baseURL = URL(string: "https://sso.gerege.mn")!
+    static let baseURL = URL(string: "https://template.gerege.mn")!
 
     private let session: URLSession
 
@@ -90,53 +91,12 @@ final class APIClient {
         return try? decodeData(data, http)
     }
 
-    // App2App буцах URL — TemplateApp-ын өөрийн custom-scheme deeplink. eID платформ
-    // (NormalizeCallback) энэ callback-ийг RP-ийн callback_hosts allowlist-аар шалгаад
-    // (geregetemp:// бүртгэлтэй байх ёстой) ХЭВЭЭР дамжуулна; eIDMongolia апп approve-ийн
-    // дараа ШУУД энэ deeplink-ийг нээж TemplateApp-ыг идэвхжүүлнэ (Universal Links / AASA
-    // шаардахгүй). Ирэхэд onOpenURL нь .eidReturn илгээж, хүлээж буй eID poll шууд дуусна.
-    static let callbackURL = "geregetemp://eid/callback"
-
-    // eID device-link session эхлүүлэх. callbackUrl дамжуулбал (App2App) eID апп
-    // approve-ийн дараа тэр рүү буцна; хоосон бол QR-аар өөр төхөөрөмжөөс уншуулна.
-    func eidStartQR(callbackUrl: String = "") async throws -> EidStart {
-        let (data, http) = try await request("/api/auth/eid/start", method: "POST",
-                                             body: ["callbackUrl": callbackUrl])
-        return try decodeData(data, http)
-    }
-
-    // eID РД-аар нэвтрэлт (утас руу push). callbackUrl дамжуулбал approve-ийн
-    // дараа eID апп RP апп руу буцна.
-    func eidStartID(nationalID: String, callbackUrl: String = "") async throws -> EidStart {
-        let (data, http) = try await request("/api/auth/eid/start-id", method: "POST",
-                                             body: ["national_id": nationalID, "callbackUrl": callbackUrl])
-        return try decodeData(data, http)
-    }
-
-    // Session төлөв асуух. COMPLETE болоход BFF cookie суулгана.
-    func eidPoll(sessionID: String) async throws -> String {
-        let (data, http) = try await request("/api/auth/eid/poll", method: "POST", body: ["session_id": sessionID])
-        if http.statusCode >= 400 { return "RUNNING" } // түр зуурын — үргэлжлүүлж poll
-        let res: PollResult = try decodeData(data, http)
-        return res.state
-    }
-
-    // Native SSO (OIDC + PKCE) код солилцоо. App2App AS session-аас авсан
-    // authorization code + PKCE verifier-ийг BFF руу илгээж, cookie session авна.
-    func ssoNativeExchange(code: String, codeVerifier: String, redirectURI: String) async throws {
-        let (data, http) = try await request("/api/auth/sso/native", method: "POST",
-            body: ["code": code, "code_verifier": codeVerifier, "redirect_uri": redirectURI])
-        if http.statusCode >= 400 {
-            let msg = (try? JSONDecoder().decode(Envelope<EmptyPayload>.self, from: data))?.message ?? ""
-            throw APIError.http(http.statusCode, msg)
-        }
-    }
-
     func logout() async {
         _ = try? await request("/api/auth/logout", method: "POST", body: [:])
-        // Локал cookie-г цэвэрлэнэ.
-        if let cookies = HTTPCookieStorage.shared.cookies {
-            for c in cookies where c.domain.contains("dgov.mn") { HTTPCookieStorage.shared.deleteCookie(c) }
+        // Локал cookie-г цэвэрлэнэ (BFF-ийн домэйн).
+        guard let host = Self.baseURL.host, let cookies = HTTPCookieStorage.shared.cookies else { return }
+        for c in cookies where host.hasSuffix(c.domain) || c.domain.hasSuffix(host) {
+            HTTPCookieStorage.shared.deleteCookie(c)
         }
     }
 }

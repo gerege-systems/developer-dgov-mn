@@ -3,11 +3,11 @@
 
 import SwiftUI
 
-// Нэвтрэх эхлэл — eID эсвэл dgov SSO сонголт.
+// Нэвтрэх эхлэл — Gerege SSO. Нэвтрэлт бүхэлдээ template BFF-ээр дамжина
+// (апп нь SSO дээр өөрийн client бүртгүүлэхгүй, вэбийн урсгалыг ашиглана).
 struct LoginView: View {
     @EnvironmentObject var state: AppState
-    @StateObject private var sso = SSOAuth()
-    @State private var showEID = false
+    @State private var showSSO = false
 
     var body: some View {
         NavigationStack {
@@ -19,44 +19,40 @@ struct LoginView: View {
                         .foregroundStyle(.blue)
                     Text("Gerege Template Platform V3.0")
                         .font(.largeTitle.bold())
-                    Text("eID эсвэл dgov SSO-гоор нэвтэрнэ үү")
+                    Text("Gerege SSO-гоор нэвтэрнэ үү")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
 
                 Spacer()
 
-                VStack(spacing: 12) {
-                    Button {
-                        showEID = true
-                    } label: {
-                        Label("eID-ээр нэвтрэх", systemImage: "person.text.rectangle")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-
-                    Button {
-                        sso.start { Task { await state.onAuthenticated() } }
-                    } label: {
-                        HStack {
-                            if sso.busy { ProgressView().tint(.primary) }
-                            Label("dgov SSO-гоор нэвтрэх", systemImage: "globe")
-                        }
+                Button {
+                    showSSO = true
+                } label: {
+                    Label("Gerege SSO-гоор нэвтрэх", systemImage: "globe")
                         .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.bordered)
-                    .controlSize(.large)
-                    .disabled(sso.busy)
-
-                    if let e = sso.error {
-                        Text(e).font(.footnote).foregroundStyle(.red)
-                    }
                 }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
                 .padding(.horizontal, 24)
                 .padding(.bottom, 40)
             }
-            .navigationDestination(isPresented: $showEID) { EIDLoginView() }
+            .sheet(isPresented: $showSSO) {
+                NavigationStack {
+                    SSOWebView {
+                        showSSO = false
+                        Task { await state.onAuthenticated() }
+                    }
+                    .ignoresSafeArea(edges: .bottom)
+                    .navigationTitle("Gerege SSO")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Хаах") { showSSO = false }
+                        }
+                    }
+                }
+            }
         }
     }
 }

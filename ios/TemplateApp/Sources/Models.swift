@@ -73,25 +73,6 @@ struct GoogleBlock: Decodable {
     }
 }
 
-// POST /api/auth/eid/start(-id) → session_id + verification_code (+ QR device_link_url).
-struct EidStart: Decodable {
-    let sessionId: String
-    let deviceLinkUrl: String?
-    let verificationCode: String?
-    let expiresAt: String?
-    enum CodingKeys: String, CodingKey {
-        case sessionId = "session_id"
-        case deviceLinkUrl = "device_link_url"
-        case verificationCode = "verification_code"
-        case expiresAt = "expires_at"
-    }
-}
-
-// POST /api/auth/eid/poll → { state: RUNNING | COMPLETE | EXPIRED | REFUSED }.
-struct PollResult: Decodable {
-    let state: String
-}
-
 // GET /api/me/eid/summary → eID PKI нэгдсэн тоо.
 struct EidSummary: Decodable {
     let certificates: CertCounts
