@@ -51,6 +51,13 @@ done
 echo "▶ Pruning dangling images…"
 docker image prune -f >/dev/null
 
+# template.gerege.mn-ийн edge nginx vhost-ыг ЭНЭ РЕПО эзэмшинэ. Deploy бүрд
+# дахин суулгана — ингэснээр конфиг ямар нэг шалтгаанаар алдагдвал өөрөө
+# сэргэнэ. Дэлгэрэнгүй: deploy/edge/README.md. Алгасах: SKIP_EDGE=1
+if [ "${SKIP_EDGE:-0}" != "1" ]; then
+  bash "$REPO_DIR/deploy/edge/install.sh"
+fi
+
 echo "▶ Stack status:"
 docker compose ps
 echo "✅ Deploy complete."
