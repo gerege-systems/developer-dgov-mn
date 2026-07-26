@@ -1,0 +1,45 @@
+# Хостын docker-compose.override.yml — ЖИШЭЭ ХУВИЛБАР.
+#
+# Дундын edge хост дээр `web` үйлчилгээг edge сүлжээнд холбож, edge nginx түүн
+# рүү нэрээр нь прокси хийх боломжтой болгодог тохиргоо.
+#
+# ⚠️ ЭНЭ ФАЙЛ ӨӨРӨӨ АЖИЛЛАХГҮЙ. Ашиглахын тулд хост дээр хуулна:
+#
+#     cp deploy/host-override.example.yml docker-compose.override.yml
+#     docker compose up -d
+#
+# Яагаад tracked биш вэ: `docker-compose.override.yml`-ийг compose АВТОМАТААР
+# уншдаг. Репо-д tracked байвал хөгжүүлэгч бүрийн локал орчинд энэ прод
+# тохиргоо албадан хэрэгжинэ (гадаад сүлжээ шаардана, container_name мөргөлдөнө).
+# Тиймээс амьд файл нь хост дээр untracked үлдэж, .gitignore-оор `git clean`-ээс
+# хамгаалагдана; энэ жишээ нь түүнийг СЭРГЭЭХ боломжийг өгнө.
+#
+# Алдвал юу болох вэ: `template-gerege-web` нэр үүсэхгүй, контейнер edge
+# сүлжээнд орохгүй → edge vhost 502 өгнө. Дэлгэрэнгүй: deploy/edge/README.md
+
+services:
+  web:
+    # Edge nginx энэ нэрээр прокси хийдэг (deploy/edge/template.gerege.mn.conf).
+    container_name: template-gerege-web
+
+    environment:
+      # BACKEND_URL-ийг ЗААВАЛ өөрийн api контейнер рүү pin хийнэ.
+      # Учир: web нь дундын edge сүлжээнд ч холбогддог бөгөөд тэнд `api` гэсэн
+      # энгийн нэр ӨӨР stack-ийн api руу зохирч болзошгүй. Тэгвэл base
+      # compose-ийн `http://api:8080` буруу backend руу очиж бүх /api/v1/*
+      # 404 болно.
+      #
+      # Нэр нь <compose-project>-api-1 хэлбэртэй. Compose project нэрийг .env
+      # доторх COMPOSE_PROJECT_NAME дарж болдог тул repo дахь `name:`-тэй
+      # ЗӨРӨХ боломжтой — үргэлж `docker compose ps`-ээр бодит нэрийг шалга.
+      BACKEND_URL: http://temp-gerege-mn-api-1:8080
+
+    networks:
+      - default   # энэ stack-ийн дотоод сүлжээ (db, redis, api)
+      - edge      # дундын edge сүлжээ (nginx түүгээр хүрнэ)
+
+networks:
+  edge:
+    # Гаднаас үүсгэгдсэн дундын сүлжээ — энд зөвхөн заана, үүсгэхгүй.
+    name: gerege
+    external: true

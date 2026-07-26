@@ -21,3 +21,13 @@ backend.env
 # MkDocs build output + local venv (docs-site)
 docs-site/site/
 docs-site/.venv/
+
+# Хостын compose override — амьд файл нь хост дээр л амьдарна (untracked).
+#
+# `docker-compose.override.yml`-ийг compose АВТОМАТААР уншдаг тул репо-д
+# tracked байвал хөгжүүлэгч бүрийн локал орчинд прод тохиргоо албадан
+# хэрэгжинэ. Харин ignore хийхгүй орхивол `git clean -fd` түүнийг устгаж,
+# контейнер edge сүлжээнээс салж vhost 502 өгнө.
+#
+# Сэргээх жишээ: deploy/host-override.example.yml
+docker-compose.override.yml

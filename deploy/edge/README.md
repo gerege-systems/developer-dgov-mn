@@ -85,3 +85,12 @@ Vhost нь `template-gerege-web` контейнер руу проксилно. �
 **untracked** `docker-compose.override.yml`-аас ирдэг — тэр файл `web`
 үйлчилгээг хуваалцсан edge сүлжээнд холбож, `container_name`-ийг өгдөг.
 Override алга бол vhost 502 өгнө.
+
+Тэр файл нь `.gitignore`-д орсон тул `git clean -fd` устгахгүй. Алдагдсан
+тохиолдолд [`../host-override.example.yml`](../host-override.example.yml)-ээс
+сэргээнэ:
+
+```bash
+cp deploy/host-override.example.yml docker-compose.override.yml
+docker compose up -d
+```
