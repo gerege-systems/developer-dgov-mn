@@ -1,4 +1,3 @@
-// Government Developer Portal V3.0
 // Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 
 // Package oidc нь өөрийн OAuth2/OIDC provider-ийн НИЙТИЙН endpoint-уудыг

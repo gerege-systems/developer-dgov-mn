@@ -1,4 +1,3 @@
-// Government Developer Portal V3.0
 // Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 
 // Token service unit тест: хүчинтэй токен буцаах, хугацаа дуусахад refresh хийж

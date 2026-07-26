@@ -1,4 +1,3 @@
-// Government Developer Portal V3.0
 // Gerege Systems Development Team & Claude AI, 2026
 import React from 'react';
 import { LogIn } from 'lucide-react';

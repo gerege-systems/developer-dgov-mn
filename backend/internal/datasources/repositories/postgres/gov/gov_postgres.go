@@ -1,4 +1,3 @@
-// Government Developer Portal V3.0
 // Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 
 // Package gov нь иргэний "Төрийн үйлчилгээ" порталын Postgres gateway. gov_services
