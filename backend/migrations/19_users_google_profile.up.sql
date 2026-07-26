@@ -1,4 +1,3 @@
--- Government Developer Portal V3.0
 -- Google профайл: холбогдсон Google account-аас ирсэн бүх мэдээллийг хадгална
 -- (email, баталгаажсан эсэх, нэр, зураг, холбосон огноо). Dashboard дээр харуулна.
 
