@@ -1,6 +1,5 @@
 "use client";
 
-// Government Developer Portal V3.0
 // Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 
 import React, { useEffect, useRef, useState } from 'react';
