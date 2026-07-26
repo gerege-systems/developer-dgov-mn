@@ -54,39 +54,23 @@ jobs:
       - name: Unit tests (race + coverage)
         run: go test -race -coverprofile=coverage.out ./...
 
-      - name: Integration test compile check (no Docker)
-        run: go vet -tags integration ./...
-
       - name: Build binaries
         run: |
           go build ./cmd/api
-          go build ./cmd/migration
-          go build ./cmd/seed
-          go build ./cmd/healthcheck
+          # migrate/seed/healthcheck нь platform-core модульд байрлана —
+          # энэ репод хуулбар байхгүй тул хамаарлаас шууд build хийнэ.
+          go build github.com/gerege-systems/platform-core/cmd/migration
+          go build github.com/gerege-systems/platform-core/cmd/seed
+          go build github.com/gerege-systems/platform-core/cmd/healthcheck
 
   # Integration тестүүд жинхэнэ Postgres/Redis дээр (testcontainers, runner-ийн
   # Docker-ыг ашиглана). Compile check нь эдгээрийг ЗӨВХӨН build хийдэг тул
   # ажиллуулдаггүй байсан — үр дүнд нь role ID дахин зурагдахад эрхийн matrix
   # тест чимээгүй утгаа алдаж, «user» persona админ болж хувирсныг хэн ч
   # анзаараагүй. Тиймээс одоо бодитоор ажиллуулна.
-  integration:
-    name: Backend integration (Postgres · Redis)
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Set up Go
-        uses: actions/setup-go@v6
-        with:
-          go-version: ${{ env.GO_VERSION }}
-          cache: true
-          cache-dependency-path: backend/go.sum
-
-      - name: Integration tests (testcontainers)
-        run: GOFLAGS=-mod=mod go test -tags=integration -timeout=20m ./...
+  # Backend-ийн integration тестүүд platform-core repo-д шилжсэн (суурь код
+  # тэнд байрлана). Энэ репо нь нимгэн апп тул өөрийн тесттэй болмогц энд
+  # шинэ job нэмнэ.
 
   frontend:
     name: Frontend (lint · build)
@@ -140,7 +124,7 @@ jobs:
   # /srv/template-gerege-mn) — мөн заавал биш DEPLOY_PORT.
   deploy:
     name: Deploy (ssh · docker compose)
-    needs: [backend, integration, frontend, secrets-scan]
+    needs: [backend, frontend, secrets-scan]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     # Deploy-ууд давхцахаас сэргийлнэ; ажиллаж буйг таслахгүй (build дундуур зогсоохгүй).
