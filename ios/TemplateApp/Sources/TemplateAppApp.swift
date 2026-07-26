@@ -11,21 +11,6 @@ struct TemplateAppApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(state)
-                // Universal Link — eID апп /auth/eid/callback-ыг нээхэд iOS TemplateApp
-                // руу route хийнэ (browser-гүй). Хүлээж буй eID урсгалд мэдэгдэж,
-                // session-ыг шууд шалгуулна.
-                .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in
-                    if let url = activity.webpageURL, url.path.contains("/eid/callback") {
-                        NotificationCenter.default.post(name: .eidReturn, object: nil)
-                    }
-                }
-                // Custom scheme fallback (bridge хуудас → geregetemp://) болон
-                // universal link-ийг мөн энд хүлээж авна.
-                .onOpenURL { url in
-                    if url.scheme == "geregetemp" || url.path.contains("/eid/callback") {
-                        NotificationCenter.default.post(name: .eidReturn, object: nil)
-                    }
-                }
         }
     }
 }

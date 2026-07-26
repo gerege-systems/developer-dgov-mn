@@ -1,4 +1,3 @@
-// eID based AI enabled Gerege Template Platform V3.0
 // OIDC provider алдааны хуудас — Hydra URLS_ERROR энд чиглүүлнэ.
 import Link from 'next/link';
 

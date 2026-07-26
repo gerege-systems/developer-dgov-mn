@@ -13,19 +13,10 @@ targets:
     platform: iOS
     sources:
       - path: Sources
-    entitlements:
-      path: Sources/TemplateApp.entitlements
-      properties:
-        com.apple.developer.associated-domains:
-          - applinks:template.gerege.mn
-          - applinks:sso.gerege.mn
-    # Info.plist — xcodegen үүсгэнэ. Scheme-ууд:
-    #  • geregetemp    — SSO OAuth callback (ASWebAuthenticationSession) + eID App2App
-    #                    (geregetemp://eid/callback) шууд нэвтрэлт.
-    #  • geregetempeid — SSO-ийн eID SIBLING scheme: native SSO үед eID апп approve-ийн
-    #                    дараа энэ scheme-ийг нээж апп+AS session-ыг foreground болгож poll
-    #                    сэргээнэ (OAuth scheme-ийг дахин ашиглавал AS session эрт хаагдана).
-    # geregesmartid:// (eID Mongolia App)-ыг canOpenURL-д зөвшөөрнө.
+    # Нэвтрэлт нь зөвхөн Gerege SSO бөгөөд бүхэлдээ template BFF-ээр (WKWebView) явна:
+    # native OIDC client, App2App deeplink, Universal Links БАЙХГҮЙ тул
+    # associated-domains ч, custom URL scheme ч шаардлагагүй. Info.plist-ийг
+    # xcodegen үүсгэнэ.
     info:
       path: Sources/Info.plist
       properties:
@@ -36,10 +27,6 @@ targets:
         # full screen гэж зарлана (Xcode "All interface orientations..." warning-ыг арилгана).
         UIRequiresFullScreen: true
         ITSAppUsesNonExemptEncryption: false
-        CFBundleURLTypes:
-          - CFBundleURLName: mn.gerege.temp
-            CFBundleURLSchemes: [geregetemp, geregetempeid]
-        LSApplicationQueriesSchemes: [geregesmartid]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: mn.gerege.temp
