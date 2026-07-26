@@ -1,4 +1,3 @@
--- Government Developer Portal V3.0
 -- 19_users_google_profile-ийг буцаана.
 
 ALTER TABLE users

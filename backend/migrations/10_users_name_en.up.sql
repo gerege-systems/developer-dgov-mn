@@ -1,4 +1,3 @@
--- Government Developer Portal V3.0
 -- Хэрэглэгчийн англи (Латин) овог/нэр — хэл солиход нэрийг тухайн хэлээр
 -- үзүүлэхэд. Хоосон default тул backward compatible.
 
