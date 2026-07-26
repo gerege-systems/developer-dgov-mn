@@ -1,4 +1,3 @@
--- Government Developer Portal V3.0
 -- Сайтын нийтийн харагдацын default (accent · font · style · theme). Админ
 -- 'settings.manage' эрхээр өөрчилдөг, бүх зочин (landing + нэвтэрсэн) энэ
 -- default-оор эхэлнэ; хэрэглэгч өөрийн тохиргоогоор дарж болно (client-side).
