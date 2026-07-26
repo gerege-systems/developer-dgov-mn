@@ -1,4 +1,3 @@
--- Government Developer Portal V3.0
 -- Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 --
 -- 36_gateway_reconcile нь forward-only нэгтгэл (аль ч өмнөх төлвийг эцсийн
