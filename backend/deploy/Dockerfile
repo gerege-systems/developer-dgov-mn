@@ -28,19 +28,17 @@ RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
     go build -trimpath -ldflags="-s -w" -o /out/api ./cmd/api
 
-# migrate болон healthcheck нь platform-core модульд байрлана — энэ репод
-# хуулбар байхгүй. Хамаарлын main package-ийг шууд build хийнэ.
+# Migrations are copied separately at runtime; build the migration CLI
+# too so the same image can run `./migrate -up` in init containers.
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
-    go build -trimpath -ldflags="-s -w" -o /out/migrate \
-      github.com/gerege-systems/platform-core/cmd/migration
+    go build -trimpath -ldflags="-s -w" -o /out/migrate ./cmd/migration
 
 # Жижиг health-probe binary — distroless-д shell/wget байхгүй тул HEALTHCHECK
 # энэ binary-г ажиллуулна (/health → exit 0/1).
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
-    go build -trimpath -ldflags="-s -w" -o /out/healthcheck \
-      github.com/gerege-systems/platform-core/cmd/healthcheck
+    go build -trimpath -ldflags="-s -w" -o /out/healthcheck ./cmd/healthcheck
 
 # ---------- runtime ----------
 # Distroless static: no shell, no package manager, nonroot user baked in.
@@ -52,9 +50,9 @@ WORKDIR /app
 COPY --from=builder /out/api         /app/api
 COPY --from=builder /out/migrate     /app/migrate
 COPY --from=builder /out/healthcheck /app/healthcheck
-# Суурийн SQL migration-ууд platform-core-д embed хийгдсэн тул хуулах
-# зүйл байхгүй. Энэ апп өөрийн migration нэмбэл (дугаар 1000+) энд
-# backend/migrations/-ийг хуулж, migrate түүнийг embed дээр нэмж уншина.
+# migrate reads SQL from "migrations" relative to its CWD (/app); the files
+# live at the module root backend/migrations/.
+COPY --from=builder /app/migrations /app/migrations
 
 USER nonroot:nonroot
 
