@@ -24,3 +24,4 @@ coverage.html
 
 # Local Go build cache
 .cache/
+api
