@@ -12,7 +12,12 @@ name: developer-dgov-mn
 
 services:
   db:
-    image: postgres:16-alpine
+    # postgres:16-alpine + pgvector (AI-ийн мэдлэгийн сангийн семантик хайлт).
+    # Суурийн 47_ai_knowledge_vector migration нь vector extension шаарддаг.
+    # Суурь image өөрчлөгдөөгүй тул одоо байгаа өгөгдлийн collation эрсдэлгүй.
+    build:
+      context: ./backend/deploy/db
+    image: dgov-postgres-pgvector:16-alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
