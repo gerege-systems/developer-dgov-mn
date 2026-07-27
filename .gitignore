@@ -26,3 +26,4 @@ backend/tmp/
 # MkDocs built output
 docs-site/site/
 docs-site/.venv/
+.deployed-sha
