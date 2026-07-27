@@ -1,6 +1,6 @@
 # Government Template Platform V3.0
 # CI хаалгууд — push (main) болон бүх PR дээр ажиллана. Backend (gofmt · vet ·
-# golangci-lint · race test · swag drift · build · integration compile),
+# golangci-lint · race test · build · integration compile),
 # frontend (lint · build · test), нууц түлхүүрийн скан (gitleaks). Локал дээр
 # `make pre-push` (backend/) энэ багцыг тольдоно.
 name: CI
@@ -52,10 +52,8 @@ jobs:
       - name: Unit tests (race + coverage)
         run: make ci-test
 
-      # swag drift — handler annotation өөрчлөгдсөн бол docs/ дахин үүсгэж commit
-      # хийсэн эсэхийг шалгана.
-      - name: Swagger drift
-        run: make ci-swag-check
+      # swagger drift шалгалт platform-core repo руу шилжсэн — handler-ийн
+      # annotation-ууд тэнд байрлана. Энэ репо нимгэн апп тул docs/ байхгүй.
 
       - name: Build API binary
         run: make ci-build
