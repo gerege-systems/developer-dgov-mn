@@ -26,7 +26,18 @@ fi
 echo "▶ Building images (api · web · migrate)…"
 docker compose build
 
-echo "▶ Starting stack (migrate re-runs; applied migrations are skipped)…"
+# Migration нь ТУСДАА алхам — `up -d`-ийн нэг хэсэг БИШ.
+#
+# Яагаад: өмнө нь migrate нь compose-ийн өгөгдмөл хэсэг байсан бөгөөд api нь
+# түүнээс `service_completed_successfully`-ээр хамаардаг байв. Үүнээс болж
+# `up -d` нь migrate-ыг дахин ажиллуулж, улмаар api+web-ийг ҮРГЭЛЖ дахин
+# үүсгэдэг — код огт хөндөөгүй commit дээр ч секундын 502 үүсгэдэг байсан
+# (хэмжигдсэн, 2026-07-27). Одоо migration тусдаа ажиллаж, амжилтгүй бол
+# deploy ЭНД зогсоно (`set -e`), api-д хүрэхгүй.
+echo "▶ Running migrations…"
+docker compose --profile migrate run --rm migrate
+
+echo "▶ Starting stack (өөрчлөгдсөн container-ууд Л дахин үүснэ)…"
 docker compose up -d --remove-orphans
 
 # Wait until api + web report healthy (compose healthchecks). ~120s budget.
