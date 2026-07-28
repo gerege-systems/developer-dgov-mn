@@ -1,10 +1,11 @@
+import { pageTitle } from '@/brand.config';
 import React from 'react';
 import { redirect } from 'next/navigation';
-import AiChatView from '@/components/me/AiChatView';
-import { fetchMe } from '@/lib/api';
+import AiChatView from '@gerege/ui-core/components/me/AiChatView';
+import { fetchMe } from '@gerege/ui-core/lib/api';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'AI туслах — Government Template Platform V3.0' };
+export const metadata = { title: pageTitle('AI туслах') };
 
 export default async function MeAiPage() {
   const me = await fetchMe();

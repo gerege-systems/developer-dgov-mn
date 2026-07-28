@@ -1,10 +1,11 @@
+import { pageTitle } from '@/brand.config';
 import React from 'react';
-import PageHead from '@/components/PageHead';
-import RegistryEvidencesView from '@/components/registry/RegistryEvidencesView';
+import PageHead from '@gerege/ui-core/components/PageHead';
+import RegistryEvidencesView from '@gerege/ui-core/components/registry/RegistryEvidencesView';
 import { requireRegistryAccess } from '../guard';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Нотолгооны каталог — Ring System' };
+export const metadata = { title: pageTitle('Нотолгооны каталог') };
 
 export default async function Page() {
   await requireRegistryAccess();

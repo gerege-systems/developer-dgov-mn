@@ -8,22 +8,30 @@ import {
   LogIn, Languages, KeyRound, ScrollText, Globe, Gauge, ShieldAlert,
   Menu, X,
 } from 'lucide-react';
-import { useLang } from '@/lib/lang';
-import { pickLang, type Lang } from '@/lib/i18n';
-import { landingCopy, type LandingCopy } from './copy';
+import { useLang } from '@gerege/ui-core/lib/lang';
+import { pickLang, type Lang, type LangCode } from '@gerege/ui-core/lib/i18n';
+import { landingCopyFor, type LandingCopy } from './copy';
 import LandingChat from './LandingChat';
-import { deepMerge } from '@/lib/theme';
+import { deepMerge } from '@gerege/ui-core/lib/theme';
+import { brand as brandConfig } from '@/brand.config';
 
 // Нүүрэн дээрх хэлний товч нь mn → en → zh → ru → mn гэж эргэлдэнэ (дараагийн
 // хэлийг шошгонд харуулна).
 const NEXT_LANG: Record<Lang, Lang> = { mn: 'en', en: 'zh', zh: 'ru', ru: 'mn' };
 const LANG_SHORT: Record<Lang, string> = { mn: 'МН', en: 'EN', zh: '中文', ru: 'RU' };
 
+// Дараагийн хэл рүү шилжих (нүүрний хоёр товчлуурт сонгогч). Landing нь зөвхөн
+// багцлагдсан хэлээр тексттэй тул DB-ээс нэмэгдсэн хэл дээр байхад англиас
+// эргэлт эхэлнэ.
+function nextLang(current: LangCode): Lang {
+  return NEXT_LANG[current as Lang] ?? 'en';
+}
+
 // Нээлттэй эх (Open Source) кодын GitHub репозитор.
 const GITHUB_URL = 'https://github.com/gerege-systems/template-dgov-mn';
 
-// Баримтжуулалт — MkDocs Material сайт, апп-ын өөрийн домэйн дор (/docs/).
-// Эх код нь docs-site/; docs-site/deploy-docs.sh нь build хийж сервер рүү тавина.
+// Баримтжуулалт — MkDocs Material сайт, GitHub Pages дээр (docs-site/ эх код;
+// .github/workflows/docs.yml нь push бүрд build+deploy хийнэ).
 const DOCS_URL = '/docs/';
 
 // GitHub-ийн лого (lucide-react нь brand icon-уудыг гаргадаггүй тул inline SVG).
@@ -52,10 +60,10 @@ interface Props {
 }
 
 /**
- * Government Template Platform V3.0 — «Цахим засаглалыг бүтээх суурь» нүүр
+ * Платформын нүүр — «Цахим үйлчилгээг бүтээх суурь»
  * (landing). Нэвтрээгүй зочдод харагдах маркетингийн нүүр. Платформын бүх
- * чадварыг харуулж, hero-ийн баруун талд Government SSO (sso.dgov.mn)-оор
- * нэвтрэх картыг шигтгэв. Нэвтрэх товч дарахад sso.dgov.mn руу шилжиж, тэндээ
+ * чадварыг харуулж, hero-ийн баруун талд Gerege SSO (sso.gerege.mn)-оор
+ * нэвтрэх картыг шигтгэв. Нэвтрэх товч дарахад sso.gerege.mn руу шилжиж, тэндээ
  * нэвтэрч, буцаж ирнэ (OIDC RP урсгал). Брэнд токен (blue + gold) дээр найруулав.
  */
 export default function LandingPage({ next, themeLanding }: Props) {
@@ -64,11 +72,14 @@ export default function LandingPage({ next, themeLanding }: Props) {
   // dropdown цэс.
   const [menuOpen, setMenuOpen] = React.useState(false);
   // Идэвхтэй theme-ийн текст байвал copy.ts default дээр гүн merge хийнэ.
-  const override = themeLanding?.[lang];
-  const t = override ? deepMerge(landingCopy[lang], override) : landingCopy[lang];
-  const brand = t.brand || 'Government Template Platform V3.0';
-  // Government SSO (sso.dgov.mn) руу нэвтрэлт эхлүүлэх — backend /sso/start руу
-  // прокси хийж, browser-ийг sso.dgov.mn-ий authorize URL руу шилжүүлнэ.
+  // Landing copy нь багцлагдсан дөрвөн хэлтэй; DB-ээс нэмэгдсэн хэлэнд англи
+  // руу уналт хийнэ (landingCopyFor). Theme-ийн текст override мөн адил.
+  const override = themeLanding?.[lang as Lang];
+  const base = landingCopyFor(lang);
+  const t = override ? deepMerge(base, override) : base;
+  const brand = t.brand || brandConfig.name;
+  // Gerege SSO (sso.gerege.mn) руу нэвтрэлт эхлүүлэх — backend /sso/start руу
+  // прокси хийж, browser-ийг sso.gerege.mn-ий authorize URL руу шилжүүлнэ.
   const ssoHref = `/api/auth/sso/start${next ? `?next=${encodeURIComponent(next)}` : ''}`;
 
   return (
@@ -86,18 +97,18 @@ export default function LandingPage({ next, themeLanding }: Props) {
             <a href="#features">{t.nav.features}</a>
             <a href="#security">{t.nav.security}</a>
             <a href="#tech">{t.nav.tech}</a>
-            <a href={DOCS_URL}>{t.nav.docs}</a>
+            <a href={DOCS_URL} target="_blank" rel="noreferrer">{t.nav.docs}</a>
           </nav>
 
           <div className="lp-nav__actions">
             <button
               type="button"
               className="lp-lang"
-              onClick={() => setLang(NEXT_LANG[lang])}
+              onClick={() => setLang(nextLang(lang))}
               aria-label={pickLang(lang, { mn: 'Хэл солих', en: 'Switch language', zh: '切换语言', ru: 'Сменить язык' })}
             >
               <Languages size={15} strokeWidth={2} />
-              <span>{LANG_SHORT[NEXT_LANG[lang]]}</span>
+              <span>{LANG_SHORT[nextLang(lang)]}</span>
             </button>
             <a className="lp-btn lp-btn--gold lp-btn--sm" href={ssoHref}>
               <LogIn size={16} strokeWidth={2} />
@@ -120,7 +131,7 @@ export default function LandingPage({ next, themeLanding }: Props) {
             <a href="#features" onClick={() => setMenuOpen(false)}>{t.nav.features}</a>
             <a href="#security" onClick={() => setMenuOpen(false)}>{t.nav.security}</a>
             <a href="#tech" onClick={() => setMenuOpen(false)}>{t.nav.tech}</a>
-            <a href={DOCS_URL} onClick={() => setMenuOpen(false)}>{t.nav.docs}</a>
+            <a href={DOCS_URL} target="_blank" rel="noreferrer" onClick={() => setMenuOpen(false)}>{t.nav.docs}</a>
           </nav>
         )}
       </header>

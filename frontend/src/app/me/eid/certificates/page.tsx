@@ -1,11 +1,12 @@
+import { pageTitle } from '@/brand.config';
 import React from 'react';
 import { redirect } from 'next/navigation';
-import PageHead from '@/components/PageHead';
-import EidCertificatesView from '@/components/me/eid/EidCertificatesView';
-import { fetchMe } from '@/lib/api';
+import PageHead from '@gerege/ui-core/components/PageHead';
+import EidCertificatesView from '@gerege/ui-core/components/me/eid/EidCertificatesView';
+import { fetchMe } from '@gerege/ui-core/lib/api';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Гэрчилгээ — Government Template Platform V3.0' };
+export const metadata = { title: pageTitle('Гэрчилгээ') };
 
 export default async function EidCertificatesPage() {
   const me = await fetchMe();

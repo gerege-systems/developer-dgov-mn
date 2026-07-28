@@ -1,10 +1,11 @@
+import { pageTitle } from '@/brand.config';
 import React from 'react';
-import SigninShell from '@/components/SigninShell';
-import OnboardWizard from '@/components/superadmin/OnboardWizard';
+import SigninShell from '@gerege/ui-core/components/SigninShell';
+import OnboardWizard from '@gerege/ui-core/components/superadmin/OnboardWizard';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Супер админ бүртгэл — Government Template Platform V3.0' };
+export const metadata = { title: pageTitle('Супер админ бүртгэл') };
 
 // Нийтийн (auth-гүй) invite-gated superadmin онбординг wizard. Google callback
 // нь энэ хуудсанд ?code= (амжилт) эсвэл ?gerror= (алдаа) буцаана.

@@ -3,9 +3,10 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Bot, Send, X, MessageCircle, Mic, Volume2 } from 'lucide-react';
-import { postJSON } from '@/lib/client';
-import { recordSegment, playBase64Audio, unlockAudio, type RecordedAudio } from '@/lib/audio';
-import type { Lang } from '@/lib/i18n';
+import { postJSON } from '@gerege/ui-core/lib/client';
+import { streamChat, takeSentence, plainText } from '@gerege/ui-core/lib/chatStream';
+import { recordSegment, playBase64Audio, unlockAudio, type RecordedAudio } from '@gerege/ui-core/lib/audio';
+import type { LangCode } from '@gerege/ui-core/lib/i18n';
 import type { LandingCopy } from './copy';
 
 interface Msg {
@@ -17,13 +18,6 @@ interface Msg {
   degraded?: boolean;
   /** Дуут мессеж байсан эсэх (бөмбөлөгт микрофоны тэмдэг). */
   voice?: boolean;
-}
-
-interface ChatData {
-  reply?: string;
-  degraded?: boolean;
-  /** Дуут мессежийн текст хуулбар (backend STT) — хэрэглэгчийн бөмбөлөгт орно. */
-  transcript?: string;
 }
 
 /** Backend-ийн AIPublicChatRequest-тэй ижил хязгаарууд. */
@@ -46,11 +40,13 @@ const MIN_VOICE_MS = 400;
  * илгээнэ — model нь audio-г шууд ойлгодог тул тусдаа STT алхам хэрэггүй.
  * Хариултыг чанга яригчийн товчоор сонсож болно (`/api/public/ai/tts`).
  */
-export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat']; lang: Lang }) {
+export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat']; lang: LangCode }) {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
+  /** Хариултын эхний хэсэг ирсэн эсэх — «Бодож байна…»-г нуухад. */
+  const [streaming, setStreaming] = useState(false);
   const [recording, setRecording] = useState(false);
   const [speakingIdx, setSpeakingIdx] = useState<number | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
@@ -65,6 +61,10 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
   const [hint, setHint] = useState('');
   /** Мессежийн дараалсан дугаар (React key + дараа шинэчлэхэд). */
   const nextIdRef = useRef(0);
+  /** Дуут хариултын дараалал — өгүүлбэрүүд давхцахгүй, ээлжлэн тоглоно. */
+  const speakQueueRef = useRef<Promise<void>>(Promise.resolve());
+  /** Товч тавих мөчид нээсэн аудио элемент (iOS-ийн автомат тоглуулалтын хориг). */
+  const audioElRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (open) endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -99,7 +99,11 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
   }, []);
 
   const dispatch = useCallback(
-    async (payload: { message?: string; audio?: RecordedAudio }, bubble: Omit<Msg, 'id'>) => {
+    async (
+      payload: { message?: string; audio?: RecordedAudio },
+      bubble: Omit<Msg, 'id'>,
+      opts?: { speak?: boolean; audioEl?: HTMLAudioElement | null },
+    ) => {
       // Түүхэнд зөвхөн бүтэн ээлжүүд — алдааны мессежийг дахин илгээхгүй.
       const history = messages
         .filter((m) => !m.degraded)
@@ -107,29 +111,88 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
         .map((m) => ({ role: m.role, text: m.text.slice(0, MAX_TEXT) }));
 
       const bubbleId = nextIdRef.current++;
+      const replyId = nextIdRef.current++;
       setMessages((m) => [...m, { ...bubble, id: bubbleId }]);
       setBusy(true);
+      setStreaming(false);
+
+      // Урсгалын явцад хариултын бөмбөлгийг ҮГ ТУС БҮРЭЭР нь ургуулна.
+      // Бөмбөлөг үүссэн эсэхийг ТӨЛӨВӨӨС нь шалгана (гадаад тугаас биш) —
+      // React updater-ийг дахин дуудвал бөмбөлөг давхардахгүй.
+      let reply = '';
+      const appendDelta = (text: string) => {
+        reply += text;
+        setStreaming(true);
+        const shown = plainText(reply);
+        setMessages((m) =>
+          m.some((x) => x.id === replyId)
+            ? m.map((x) => (x.id === replyId ? { ...x, text: shown } : x))
+            : [...m, { id: replyId, role: 'model', text: shown }],
+        );
+      };
+
+      // Дуут асуултад дуут хариу. Дуудалтыг ХЭМНЭНЭ: эхний өгүүлбэрийг
+      // бэлэн болмогц (хурдан эхлэхийн тулд), үлдсэнийг урсгал дуусахад
+      // НЭГ дуудалтаар. Өгүүлбэр бүрд дуудвал rate limit-д мөргөж хариулт
+      // дунд нь тасардаг байсан.
+      let sayBuf = '';
+      let firstSpoken = false;
+      const enqueue = (text: string) => {
+        const clean = plainText(text).slice(0, 800);
+        if (!clean) return;
+        speakQueueRef.current = speakQueueRef.current
+          .then(async () => {
+            const res = await postJSON<{ mime?: string; data?: string }>('/api/public/ai/tts', { text: clean });
+            if (res.ok && res.data?.mime && res.data?.data) {
+              await playBase64Audio(res.data.mime, res.data.data, opts?.audioEl ?? null);
+            }
+          })
+          .catch(() => {});
+      };
+
       try {
-        const body = await postJSON<ChatData>('/api/public/ai/chat', { ...payload, history, lang });
-        const data = body.ok ? body.data : undefined;
+        const out = await streamChat(
+          '/api/public/ai/chat/stream',
+          { ...payload, history, lang },
+          {
+            onTranscript: (text) =>
+              setMessages((m) => m.map((x) => (x.id === bubbleId ? { ...x, text } : x))),
+            onReset: () => {
+              reply = '';
+              sayBuf = '';
+              setStreaming(false);
+              setMessages((m) => m.filter((x) => x.id !== replyId));
+            },
+            onDelta: (text) => {
+              appendDelta(text);
+              if (!opts?.speak) return;
+              sayBuf += text;
+              if (firstSpoken) return;
+              const [sentence, rest] = takeSentence(sayBuf);
+              if (sentence) {
+                firstSpoken = true;
+                sayBuf = rest;
+                enqueue(sentence);
+              }
+            },
+          },
+        );
 
-        // Дуут мессеж бол backend-ийн STT хуулбараар бөмбөлгийг солино —
-        // хэрэглэгч юу сонсогдсоныг харна (зөвхөн «Дуут мессеж» биш).
-        if (data?.transcript) {
-          setMessages((m) => m.map((x) => (x.id === bubbleId ? { ...x, text: data.transcript as string } : x)));
-        }
+        // Үлдсэн хэсгийг нэг дуудалтаар (эхний өгүүлбэр аль хэдийн яригдаж
+        // байх зуур бэлдэгдэнэ — хэрэглэгч завсарлага мэдрэхгүй).
+        if (opts?.speak && sayBuf.trim()) enqueue(sayBuf.trim());
 
-        if (data?.reply) {
-          setMessages((m) => [...m, { id: nextIdRef.current++, role: 'model', text: data.reply as string, degraded: data.degraded }]);
-        } else {
-          // Дуут мессеж дээр хоосон хариу = яриа таниагүй (хоосон хуулбар).
-          const text = payload.audio && !data?.transcript ? copy.noSpeech : copy.error;
+        if (!out.ok && !reply) {
+          const text = payload.audio ? copy.noSpeech : copy.error;
           setMessages((m) => [...m, { id: nextIdRef.current++, role: 'model', text, degraded: true }]);
+        } else if (out.degraded) {
+          setMessages((m) => m.map((x) => (x.id === replyId ? { ...x, degraded: true } : x)));
         }
       } catch {
         setMessages((m) => [...m, { id: nextIdRef.current++, role: 'model', text: copy.error, degraded: true }]);
       } finally {
         setBusy(false);
+        setStreaming(false);
       }
     },
     [messages, lang, copy.error, copy.noSpeech],
@@ -198,11 +261,19 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
       setHint(copy.tooShort);
       return;
     }
-    await dispatch({ audio }, { role: 'user', text: copy.voiceMsg, voice: true });
+    // Дуугаар асуувал хариуг ч дуугаар — walkie-talkie урсгал бүрэн болно.
+    // audioEl нь товч тавихад (хэрэглэгчийн үйлдэл) нээгдсэн элемент.
+    await dispatch({ audio }, { role: 'user', text: copy.voiceMsg, voice: true }, {
+      speak: true,
+      audioEl: audioElRef.current,
+    });
   }
 
   function endHold() {
     holdingRef.current = false;
+    // Товч тавих нь хэрэглэгчийн үйлдэл — iOS-ийн аудио түгжээг ЯГ ЭНД тайлна
+    // (хариу ирэх үед үйлдлийн эрх дууссан байдаг).
+    audioElRef.current = unlockAudio();
     segmentRef.current?.stop();
   }
 
@@ -289,7 +360,9 @@ export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat'];
                 )}
               </div>
             ))}
-            {busy && (
+            {/* «Бодож байна…» нь ЗӨВХӨН эхний үсэг ирэхээс өмнө — урсгал эхэлмэгц
+                хариулт өөрөө харагдана (эс тэгвээс хоёулаа зэрэг харагдана). */}
+            {busy && !streaming && (
               <div className="lp-chat__msg lp-chat__msg--model">
                 <div className="lp-chat__bubble lp-chat__bubble--pending">{copy.thinking}</div>
               </div>

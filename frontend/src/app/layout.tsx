@@ -1,9 +1,11 @@
 import React from 'react';
 import { Inter, JetBrains_Mono, Source_Serif_4 } from 'next/font/google';
 import './globals.css';
-import { LangProvider } from '@/lib/lang';
-import Providers from '@/components/Providers';
-import { fetchActiveTheme } from '@/lib/api';
+import { brand } from '@/brand.config';
+import { UiCoreProvider } from '@gerege/ui-core';
+import { LangProvider } from '@gerege/ui-core/lib/lang';
+import Providers from '@gerege/ui-core/components/Providers';
+import { fetchActiveTheme } from '@gerege/ui-core/lib/api';
 
 // Фонтыг build үед татаж next/font өөрөө host хийдэг тул CSP-г чанд 'self'-ээр
 // үлдээж болно (гадны фонт host хэрэггүй).
@@ -38,9 +40,8 @@ const sourceSerif = Source_Serif_4({
 });
 
 export const metadata = {
-  title: 'Government Template Platform V3.0',
-  description:
-    'eID based, AI enabled. Government Template Platform V3.0 — chi (net/http) + pgx дээр суурилсан, төрийн аливаа цахим үйлчилгээг дээр нь босгох, үйлдвэрлэлд бэлэн суурь: eID нэвтрэлт, SSO/OIDC, Gemini AI, аюулгүй байдлын хатуужуулалт нэг дороос.',
+  title: brand.name,
+  description: `eID based, AI enabled. ${brand.name} — ${brand.description}.`,
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -75,7 +76,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
         <script src="/theme-bootstrap.js" />
       </head>
-      <body><Providers><LangProvider>{children}</LangProvider></Providers></body>
+      <body><UiCoreProvider brandName={brand.name} docsUrl={brand.docsUrl} docsLangs={brand.docsLangs}><Providers><LangProvider>{children}</LangProvider></Providers></UiCoreProvider></body>
     </html>
   );
 }

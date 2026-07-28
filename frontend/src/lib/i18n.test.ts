@@ -4,7 +4,7 @@
 // гурван хэлэнд ЗААВАЛ байх ёстой — энэ тест дутуу орчуулгыг CI-д барина.
 // Landing-ийн copy.ts мөн ижил зарчмаар шалгагдана.
 import { describe, it, expect } from 'vitest';
-import { dict, LANGS } from './i18n';
+import { dict, LANGS } from '@gerege/ui-core/lib/i18n';
 import { landingCopy } from '@/components/landing/copy';
 
 /** Үүрлэсэн объектын бүх навчны замыг (a.b.0.c) хавтгайруулна. */
