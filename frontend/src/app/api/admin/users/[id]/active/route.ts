@@ -1,13 +1,1 @@
-import { authedFetch } from '@gerege/ui-core/lib/api';
-import { proxyResult, readJson, checkOrigin, checkUUID } from '@gerege/ui-core/lib/bff';
-
-export const dynamic = 'force-dynamic';
-
-// PUT /api/admin/users/{id}/active — хэрэглэгчийг идэвхжүүлэх/хаах.
-export async function PUT(req: Request, props: { params: Promise<{ id: string }> }) {
-  const params = await props.params;
-  const bad = checkOrigin(req) ?? checkUUID(params.id);
-  if (bad) return bad;
-  const body = await readJson(req);
-  return proxyResult(await authedFetch(`/admin/users/${params.id}/active`, { method: 'PUT', body: JSON.stringify(body) }));
-}
+export { PUT, dynamic } from '@gerege/ui-core/api/admin/users/[id]/active';

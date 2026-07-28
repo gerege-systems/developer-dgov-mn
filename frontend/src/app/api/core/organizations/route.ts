@@ -1,10 +1,1 @@
-import { authedFetch } from '@gerege/ui-core/lib/api';
-import { proxyResult } from '@gerege/ui-core/lib/bff';
-
-export const dynamic = 'force-dynamic';
-
-// GET /api/core/organizations?search_text= — Gerege Core байгууллага хайх.
-export async function GET(req: Request) {
-  const s = new URL(req.url).searchParams.get('search_text') ?? '';
-  return proxyResult(await authedFetch(`/core/organizations?search_text=${encodeURIComponent(s)}`, { method: 'GET' }));
-}
+export { GET, dynamic } from '@gerege/ui-core/api/core/organizations';

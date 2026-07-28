@@ -1,17 +1,1 @@
-// OIDC provider (dan = SSO) — login challenge-ыг backend руу прокси (session-тэй).
-import { authedFetch } from '@gerege/ui-core/lib/api';
-import { checkOrigin, proxyResult, readJson } from '@gerege/ui-core/lib/bff';
-
-export const dynamic = 'force-dynamic';
-
-export async function POST(req: Request) {
-  const bad = checkOrigin(req);
-  if (bad) return bad;
-  const body = await readJson<{ login_challenge?: string }>(req);
-  return proxyResult(
-    await authedFetch('/provider/login/accept', {
-      method: 'POST',
-      body: JSON.stringify(body),
-    }),
-  );
-}
+export { POST, dynamic } from '@gerege/ui-core/api/provider/login/accept';

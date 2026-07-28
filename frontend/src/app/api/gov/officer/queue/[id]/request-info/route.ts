@@ -1,17 +1,1 @@
-import { authedFetch } from '@gerege/ui-core/lib/api';
-import { proxyResult, readJson, checkOrigin, checkUUID } from '@gerege/ui-core/lib/bff';
-
-export const dynamic = 'force-dynamic';
-
-export async function POST(req: Request, props: { params: Promise<{ id: string }> }) {
-  const params = await props.params;
-  const bad = checkOrigin(req) ?? checkUUID(params.id);
-  if (bad) return bad;
-  const body = await readJson(req);
-  return proxyResult(
-    await authedFetch(`/gov/officer/queue/${params.id}/request-info`, {
-      method: 'POST',
-      body: JSON.stringify(body),
-    }),
-  );
-}
+export { POST, dynamic } from '@gerege/ui-core/api/gov/officer/queue/[id]/request-info';

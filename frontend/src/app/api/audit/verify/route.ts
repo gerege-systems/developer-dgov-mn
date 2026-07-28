@@ -1,10 +1,1 @@
-import { authedFetch } from '@gerege/ui-core/lib/api';
-import { proxyResult } from '@gerege/ui-core/lib/bff';
-
-export const dynamic = 'force-dynamic';
-
-// GET /api/audit/verify — audit hash гинжийн бүрэн бүтэн байдлыг шалгана.
-// Backend дээр admin-only хамгаалагдсан.
-export async function GET() {
-  return proxyResult(await authedFetch('/audit/verify', { method: 'GET' }));
-}
+export { GET, dynamic } from '@gerege/ui-core/api/audit/verify';

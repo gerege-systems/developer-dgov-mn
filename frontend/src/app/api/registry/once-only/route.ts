@@ -1,12 +1,1 @@
-import { authedFetch } from '@gerege/ui-core/lib/api';
-import { proxyResult } from '@gerege/ui-core/lib/bff';
-
-export const dynamic = 'force-dynamic';
-
-// GET /api/registry/once-only — ХУР-д байгааг иргэнээс дахин шаардаж буй бүх
-// тохиолдол. registry.view. Query-г whitelist хийж дамжуулна.
-export async function GET(req: Request) {
-  const authority = new URL(req.url).searchParams.get('authority');
-  const suffix = authority ? `?authority=${encodeURIComponent(authority)}` : '';
-  return proxyResult(await authedFetch(`/registry/once-only${suffix}`, { method: 'GET' }));
-}
+export { GET, dynamic } from '@gerege/ui-core/api/registry/once-only';
