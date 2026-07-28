@@ -1,8 +1,8 @@
-module github.com/gerege-systems/template-gerege-mn/backend
+module github.com/gerege-systems/public-gerege-template/backend
 
 go 1.26
 
-require github.com/gerege-systems/platform-core v0.5.0
+require github.com/gerege-systems/public-gerege-core v1.0.0
 
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect

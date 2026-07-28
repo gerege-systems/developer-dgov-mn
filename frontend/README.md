@@ -387,8 +387,8 @@ curl -s localhost:3000/manifest.webmanifest
 илгээж, дутуу түлхүүрийг Gemini-ээр бөглүүлнэ. Гараар засагдсан утга хэзээ ч
 дарагдахгүй; байрлуулагч (`{name}`) алдагдсан орчуулга суухгүй.
 
-> Backend: platform-core **v0.5.0**+ (migration 49). Дэлгэрэнгүйг
-> [platform-core README](https://github.com/gerege-systems/platform-core#интерфейсийн-хэл-v050-оос)-аас.
+> Backend: public-gerege-core **v0.5.0**+ (migration 49). Дэлгэрэнгүйг
+> [public-gerege-core README](https://github.com/gerege-systems/public-gerege-core#интерфейсийн-хэл-v050-оос)-аас.
 
 ---
 

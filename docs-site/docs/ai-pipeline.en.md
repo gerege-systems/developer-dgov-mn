@@ -148,4 +148,4 @@ capped at ~700 KB base64 (~30s of opus) in both the BFF and the backend DTO.
 `/ai/*` is limited to roughly **20 requests per minute per IP**. Live
 translation streams about 8 chunks a minute, so lower that limit with care.
 
-Full detail lives in the repository: [`backend/docs/AI_PIPELINE.md`](https://github.com/gerege-systems/template-gerege-mn/blob/main/backend/docs/AI_PIPELINE.md).
+Full detail lives in the repository: [`backend/docs/AI_PIPELINE.md`](https://github.com/gerege-systems/public-gerege-template/blob/main/backend/docs/AI_PIPELINE.md).

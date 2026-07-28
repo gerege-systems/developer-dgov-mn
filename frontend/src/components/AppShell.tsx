@@ -65,7 +65,7 @@ interface NavSystem {
 
 // BPMN, translator, AI зэрэг хэсгүүдийг хассан — зөвхөн generic admin цөм.
 // Баримтжуулалт — MkDocs Material сайт, GitHub Pages дээр (docs-site/ эх код).
-const DOCS_URL = 'https://gerege-systems.github.io/template-gerege-mn/';
+const DOCS_URL = 'https://gerege-systems.github.io/public-gerege-template/';
 
 const SYSTEMS: NavSystem[] = [
   {

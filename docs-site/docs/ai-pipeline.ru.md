@@ -152,4 +152,4 @@ aiTools := append(ai.DefaultTools(), ai.KnowledgeSearchTool(aiRepo), myTool)
 отправляет около 8 фрагментов в минуту, поэтому снижайте лимит осторожно.
 
 Полные подробности — в репозитории:
-[`backend/docs/AI_PIPELINE.md`](https://github.com/gerege-systems/template-gerege-mn/blob/main/backend/docs/AI_PIPELINE.md).
+[`backend/docs/AI_PIPELINE.md`](https://github.com/gerege-systems/public-gerege-template/blob/main/backend/docs/AI_PIPELINE.md).

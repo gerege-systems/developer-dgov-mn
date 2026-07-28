@@ -92,7 +92,7 @@ gerege-template-platform/
   TanStack Query 数据层。
 - **动态语言** — 超级管理员可在运行时增删界面语言，并用 Gemini 补充翻译
   （`/admin/languages`）；内置词典仍是键的来源，也是数据库不可用时的兜底。
-  需要 platform-core v0.5.0+。
+  需要 public-gerege-core v0.5.0+。
 - **可安装的 PWA** — manifest + 图标 + 基于 Serwist 的 service worker；
   只缓存静态资源 — 所有 `/api/*` 与认证/eID 路径均为 NetworkOnly，HTML 完全不缓存。
   配置见 [frontend/README_ZH.md](../frontend/README_ZH.md#pwa--安装为应用)。

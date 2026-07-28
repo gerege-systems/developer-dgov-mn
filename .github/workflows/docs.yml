@@ -1,7 +1,7 @@
 # Gerege Template Platform V3.0 — documentation site (MkDocs Material)
 #
 # docs-site/ өөрчлөгдөх бүрд GitHub Pages руу build + deploy хийнэ.
-# Нийтлэгдэх хаяг: https://gerege-systems.github.io/template-gerege-mn/
+# Нийтлэгдэх хаяг: https://gerege-systems.github.io/public-gerege-template/
 #
 # PR дээр зөвхөн build (--strict) хийж шалгана — deploy хийхгүй. `--strict` нь
 # эвдэрсэн дотоод линк, дутуу nav бичлэгийг алдаа болгон барьдаг.

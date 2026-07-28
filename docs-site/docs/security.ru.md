@@ -109,8 +109,8 @@ chain_hash = SHA-256(prev_hash ‖ canonical-json(entry))
 - **Интерактивный Swagger UI** — отдаётся только сырая спецификация по адресу
   `/swagger/doc.json` (загрузите её в Swagger Editor или Postman).
 - Полная матрица мер — в
-  [`backend/docs/SECURITY.md`](https://github.com/gerege-systems/template-gerege-mn/blob/main/backend/docs/SECURITY.md).
+  [`backend/docs/SECURITY.md`](https://github.com/gerege-systems/public-gerege-template/blob/main/backend/docs/SECURITY.md).
 
 !!! tip "Сообщение об уязвимости"
     Пожалуйста, не открывайте публичный issue. Следуйте процессу из
-    [SECURITY.md](https://github.com/gerege-systems/template-gerege-mn/blob/main/SECURITY.md).
+    [SECURITY.md](https://github.com/gerege-systems/public-gerege-template/blob/main/SECURITY.md).

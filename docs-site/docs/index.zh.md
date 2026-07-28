@@ -8,7 +8,7 @@
 
 !!! tip "开源项目"
     本平台是**开源**项目 — 您可以完整阅读源码、fork 它，并为自己的机构部署运行。
-    :material-github: [在 GitHub 上查看](https://github.com/gerege-systems/template-gerege-mn)
+    :material-github: [在 GitHub 上查看](https://github.com/gerege-systems/public-gerege-template)
 
 <div class="grid cards" markdown>
 

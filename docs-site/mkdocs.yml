@@ -1,8 +1,8 @@
 site_name: Gerege Template Platform V3.0
 site_description: Цахим үйлчилгээг бүтээх суурь — Gerege Template Platform V3.0 documentation
-site_url: https://gerege-systems.github.io/template-gerege-mn/
-repo_url: https://github.com/gerege-systems/template-gerege-mn
-repo_name: gerege-systems/template-gerege-mn
+site_url: https://gerege-systems.github.io/public-gerege-template/
+repo_url: https://github.com/gerege-systems/public-gerege-template
+repo_name: gerege-systems/public-gerege-template
 edit_uri: edit/main/docs-site/docs/
 copyright: © 2026 Gerege Systems · Gerege Template Platform V3.0
 docs_dir: docs

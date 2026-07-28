@@ -1,7 +1,7 @@
 # 配置（环境变量）
 
 > 所有配置都通过环境变量完成。权威示例见
-> [`backend/.env.example`](https://github.com/gerege-systems/template-gerege-mn/blob/main/backend/.env.example)。
+> [`backend/.env.example`](https://github.com/gerege-systems/public-gerege-template/blob/main/backend/.env.example)。
 
 !!! danger "切勿提交密钥"
     `backend/internal/config/.env*`、根目录的 `.env` 和 `backend.env` 全部已

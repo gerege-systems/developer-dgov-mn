@@ -27,11 +27,11 @@ function nextLang(current: LangCode): Lang {
 }
 
 // Нээлттэй эх (Open Source) кодын GitHub репозитор.
-const GITHUB_URL = 'https://github.com/gerege-systems/template-gerege-mn';
+const GITHUB_URL = 'https://github.com/gerege-systems/public-gerege-template';
 
 // Баримтжуулалт — MkDocs Material сайт, GitHub Pages дээр (docs-site/ эх код;
 // .github/workflows/docs.yml нь push бүрд build+deploy хийнэ).
-const DOCS_URL = 'https://gerege-systems.github.io/template-gerege-mn/';
+const DOCS_URL = 'https://gerege-systems.github.io/public-gerege-template/';
 
 // GitHub-ийн лого (lucide-react нь brand icon-уудыг гаргадаггүй тул inline SVG).
 const GitHubMark = ({ size = 18 }: { size?: number }) => (

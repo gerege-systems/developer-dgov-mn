@@ -134,4 +134,4 @@ aiTools := append(ai.DefaultTools(), ai.KnowledgeSearchTool(aiRepo), myTool)
 因此调低该限额时请务必谨慎。
 
 完整细节见仓库中的
-[`backend/docs/AI_PIPELINE.md`](https://github.com/gerege-systems/template-gerege-mn/blob/main/backend/docs/AI_PIPELINE.md)。
+[`backend/docs/AI_PIPELINE.md`](https://github.com/gerege-systems/public-gerege-template/blob/main/backend/docs/AI_PIPELINE.md)。

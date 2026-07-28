@@ -148,4 +148,4 @@ BFF болон backend DTO хоёуланд ~700 KB base64 (~30 сек opus)-а�
 `/ai/*` нь IP тус бүрд **~20 хүсэлт/минут**. Шууд орчуулга минутад ~8 хэсэг
 дамжуулдаг тул энэ хязгаарыг багасгахдаа болгоомжтой.
 
-Дэлгэрэнгүй: репозиторын [`backend/docs/AI_PIPELINE_MN.md`](https://github.com/gerege-systems/template-gerege-mn/blob/main/backend/docs/AI_PIPELINE_MN.md).
+Дэлгэрэнгүй: репозиторын [`backend/docs/AI_PIPELINE_MN.md`](https://github.com/gerege-systems/public-gerege-template/blob/main/backend/docs/AI_PIPELINE_MN.md).

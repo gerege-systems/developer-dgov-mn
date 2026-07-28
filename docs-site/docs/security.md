@@ -106,9 +106,9 @@ request-id-тай — нууц утга хэзээ ч логдохгүй.
 
 - **Интерактив Swagger UI** — одоогоор зөвхөн түүхий spec-ийг `/swagger/doc.json`
   дээр өгнө (Swagger Editor / Postman-д ачаална).
-- Дэлгэрэнгүй жагсаалт: [`backend/docs/SECURITY.md`](https://github.com/gerege-systems/template-gerege-mn/blob/main/backend/docs/SECURITY.md).
+- Дэлгэрэнгүй жагсаалт: [`backend/docs/SECURITY.md`](https://github.com/gerege-systems/public-gerege-template/blob/main/backend/docs/SECURITY.md).
 
 !!! tip "Эмзэг байдал мэдээлэх"
     Аюулгүй байдлын алдаа олбол нийтийн issue үүсгэхийн оронд
-    [SECURITY.md](https://github.com/gerege-systems/template-gerege-mn/blob/main/SECURITY.md)-д
+    [SECURITY.md](https://github.com/gerege-systems/public-gerege-template/blob/main/SECURITY.md)-д
     заасан журмаар мэдэгдэнэ үү.

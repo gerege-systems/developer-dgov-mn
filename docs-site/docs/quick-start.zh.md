@@ -14,8 +14,8 @@
 ## 1. 最快路径 — Docker Compose
 
 ```bash
-git clone https://github.com/gerege-systems/template-gerege-mn.git
-cd template-gerege-mn
+git clone https://github.com/gerege-systems/public-gerege-template.git
+cd public-gerege-template
 docker compose up -d --build
 ```
 

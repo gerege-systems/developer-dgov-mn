@@ -57,18 +57,18 @@ jobs:
       - name: Build binaries
         run: |
           go build ./cmd/api
-          # migrate/seed/healthcheck нь platform-core модульд байрлана —
+          # migrate/seed/healthcheck нь public-gerege-core модульд байрлана —
           # энэ репод хуулбар байхгүй тул хамаарлаас шууд build хийнэ.
-          go build github.com/gerege-systems/platform-core/cmd/migration
-          go build github.com/gerege-systems/platform-core/cmd/seed
-          go build github.com/gerege-systems/platform-core/cmd/healthcheck
+          go build github.com/gerege-systems/public-gerege-core/cmd/migration
+          go build github.com/gerege-systems/public-gerege-core/cmd/seed
+          go build github.com/gerege-systems/public-gerege-core/cmd/healthcheck
 
   # Integration тестүүд жинхэнэ Postgres/Redis дээр (testcontainers, runner-ийн
   # Docker-ыг ашиглана). Compile check нь эдгээрийг ЗӨВХӨН build хийдэг тул
   # ажиллуулдаггүй байсан — үр дүнд нь role ID дахин зурагдахад эрхийн matrix
   # тест чимээгүй утгаа алдаж, «user» persona админ болж хувирсныг хэн ч
   # анзаараагүй. Тиймээс одоо бодитоор ажиллуулна.
-  # Backend-ийн integration тестүүд platform-core repo-д шилжсэн (суурь код
+  # Backend-ийн integration тестүүд public-gerege-core repo-д шилжсэн (суурь код
   # тэнд байрлана). Энэ репо нь нимгэн апп тул өөрийн тесттэй болмогц энд
   # шинэ job нэмнэ.
 
@@ -121,7 +121,7 @@ jobs:
   # дахин build/restart хийгээд эрүүл болтол хүлээнэ (deploy/deploy.sh). Runbook:
   # docs/DEPLOYMENT.md. Шаардлагатай repo secrets: DEPLOY_HOST, DEPLOY_USER,
   # DEPLOY_SSH_KEY, DEPLOY_PATH (host дээрх checkout зам; хоосон бол
-  # /srv/template-gerege-mn) — мөн заавал биш DEPLOY_PORT.
+  # /srv/public-gerege-template) — мөн заавал биш DEPLOY_PORT.
   deploy:
     name: Deploy (ssh · docker compose)
     needs: [backend, frontend, secrets-scan]
@@ -142,7 +142,7 @@ jobs:
           command_timeout: 20m
           script: |
             set -euo pipefail
-            cd "${{ secrets.DEPLOY_PATH || '/srv/template-gerege-mn' }}"
+            cd "${{ secrets.DEPLOY_PATH || '/srv/public-gerege-template' }}"
             git fetch --prune origin
             git reset --hard ${{ github.sha }}
             bash deploy/deploy.sh

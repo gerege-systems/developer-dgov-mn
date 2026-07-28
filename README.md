@@ -3,6 +3,12 @@
 > **Цахим үйлчилгээг бүтээх суурь** — **eID-д суурилсан · AI-аар хүчирхэгжсэн** —
 > төр, хувийн хэвшлийн аливаа цахим үйлчилгээг дээр нь босгох, үйлдвэрлэлд бэлэн суурь.
 
+> **Энэ репогийн тухай.** `template-gerege-mn`-ий нээлттэй залгамжлагч —
+> бүх түүх (245 commit) хадгалагдсан. Суурь нь
+> [`public-gerege-core`](https://github.com/gerege-systems/public-gerege-core)
+> модуль. macOS Electron клиент (`desktop/`) энэ хувилбарт **ороогүй** — вэб,
+> PWA, iOS л багтана.
+
 **Gerege Template Platform V3.0** нь *цахим үйлчилгээг бүтээх суурь*: Clean-
 Architecture Go backend + Next.js BFF frontend + Gemini AI pipeline-ийг хооронд нь
 холбож, аюулгүй байдлыг хатууруулж, ямар ч систем рүү өргөтгөхөд бэлэн болгосон.
@@ -50,13 +56,11 @@ gerege-template-platform/
 ├── backend/           # Go · chi (net/http) · pgx (pgxpool) · PostgreSQL · Redis · eID/Google/SSO танилт
 │   └── docs/          # ARCHITECTURE · DEVELOPMENT · API_CONTRACT · SECURITY (EN/MN)
 ├── frontend/          # Next.js BFF (backend руу server талаас прокси; cookie session)
-├── desktop/           # macOS desktop клиент (Electron бүрхүүл — web-ийг 1:1 ачаална)
 └── ios/               # iOS клиент (native SwiftUI, платформын BFF-ээр)
 ```
 
 - **[backend/README_MN.md](backend/README_MN.md)** — Clean Architecture Go API.
 - **[frontend/README.md](frontend/README.md)** — Next.js Backend-for-Frontend.
-- **[desktop/TemplateDesktop/README.md](desktop/TemplateDesktop/README.md)** — macOS desktop апп.
 - **[ios/TemplateApp/README.md](ios/TemplateApp/README.md)** — iOS апп.
 
 ## Онцлог
@@ -77,7 +81,7 @@ gerege-template-platform/
 - **Аюулгүй хатууруулсан** — security headers (CSP, HSTS, COOP/COEP/CORP), CORS allow-list, rate limiting, серверийн бүрэн timeout-ууд, parameterized query, Postgres Row-Level Security + boot-үеийн мөрдөлтийн guard. [SECURITY.md](SECURITY.md)-г үз.
 - **Observability** — OpenTelemetry trace + Prometheus metrics + Zap structured log; production-д `/metrics` ба `/swagger` bearer token-оор хаагдана.
 - **Frontend BFF** — браузер зөвхөн ижил-origin Next.js route рүү залгаж, тэр нь server талаас backend руу проксиолдог (токен client JS-д хүрэхгүй); давхар CSRF хамгаалалт (custom header + origin), TanStack Query өгөгдлийн давхарга.
-- **Динамик хэл** — super admin нь интерфейсийн хэлийг ажиллаж байхад нэмж/хасч, орчуулгыг Gemini-ээр бөглөнө (`/admin/languages`); багцлагдсан dictionary нь түлхүүрийн эх сурвалж ба DB унасан үеийн суурь. platform-core v0.5.0+.
+- **Динамик хэл** — super admin нь интерфейсийн хэлийг ажиллаж байхад нэмж/хасч, орчуулгыг Gemini-ээр бөглөнө (`/admin/languages`); багцлагдсан dictionary нь түлхүүрийн эх сурвалж ба DB унасан үеийн суурь. public-gerege-core v0.5.0+.
 - **PWA (суулгаж болно)** — manifest + дүрс + Serwist service worker; кэш нь ЗӨВХӨН статик хөрөнгөд, `/api/*` ба нэвтрэлт/eID-ийн бүх зам NetworkOnly, HTML огт кэшлэгдэхгүй. Тохиргоо: [frontend/README.md](frontend/README.md#pwa--апп-болгож-суулгах).
 - **Тесттэй** — unit + testcontainers integration тест.
 

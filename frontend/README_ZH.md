@@ -377,7 +377,7 @@ curl -s localhost:3000/manifest.webmanifest
 **「用 AI 安装」**会把本应用内置的蒙古语 dictionary 发送到后端，由 Gemini
 补齐缺失的键。人工修改过的值永远不会被覆盖；占位符（`{name}`）丢失的翻译不会写入。
 
-> 后端需 platform-core **v0.5.0**+（migration 49）。
+> 后端需 public-gerege-core **v0.5.0**+（migration 49）。
 
 ---
 

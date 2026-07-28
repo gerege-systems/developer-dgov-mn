@@ -1,7 +1,7 @@
 # Тохиргоо (env)
 
 > Бүх тохиргоо орчны хувьсагчаар дамжина. Эх жишээ:
-> [`backend/.env.example`](https://github.com/gerege-systems/template-gerege-mn/blob/main/backend/.env.example).
+> [`backend/.env.example`](https://github.com/gerege-systems/public-gerege-template/blob/main/backend/.env.example).
 
 !!! danger "Secret-ийг хэзээ ч commit хийж болохгүй"
     `backend/internal/config/.env*`, root `.env` болон `backend.env` нь

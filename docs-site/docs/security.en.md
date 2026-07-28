@@ -109,8 +109,8 @@ request id, and secrets are never logged.
 - **Interactive Swagger UI** — only the raw spec is served at
   `/swagger/doc.json` (load it into Swagger Editor or Postman).
 - The full control matrix lives in
-  [`backend/docs/SECURITY.md`](https://github.com/gerege-systems/template-gerege-mn/blob/main/backend/docs/SECURITY.md).
+  [`backend/docs/SECURITY.md`](https://github.com/gerege-systems/public-gerege-template/blob/main/backend/docs/SECURITY.md).
 
 !!! tip "Reporting a vulnerability"
     Please do not open a public issue. Follow the process in
-    [SECURITY.md](https://github.com/gerege-systems/template-gerege-mn/blob/main/SECURITY.md).
+    [SECURITY.md](https://github.com/gerege-systems/public-gerege-template/blob/main/SECURITY.md).

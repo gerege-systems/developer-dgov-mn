@@ -103,9 +103,9 @@ chain_hash = SHA-256(prev_hash ‖ canonical-json(entry))
 - **交互式 Swagger UI** — 仅在 `/swagger/doc.json` 提供原始规范
   （可载入 Swagger Editor 或 Postman 查看）。
 - 完整的控制矩阵见
-  [`backend/docs/SECURITY.md`](https://github.com/gerege-systems/template-gerege-mn/blob/main/backend/docs/SECURITY.md)。
+  [`backend/docs/SECURITY.md`](https://github.com/gerege-systems/public-gerege-template/blob/main/backend/docs/SECURITY.md)。
 
 !!! tip "报告安全漏洞"
     请不要公开提交 issue。请遵循
-    [SECURITY.md](https://github.com/gerege-systems/template-gerege-mn/blob/main/SECURITY.md)
+    [SECURITY.md](https://github.com/gerege-systems/public-gerege-template/blob/main/SECURITY.md)
     中的流程。

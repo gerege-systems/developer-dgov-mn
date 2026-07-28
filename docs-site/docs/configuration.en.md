@@ -1,7 +1,7 @@
 # Configuration (env)
 
 > Everything is configured through environment variables. The canonical example
-> is [`backend/.env.example`](https://github.com/gerege-systems/template-gerege-mn/blob/main/backend/.env.example).
+> is [`backend/.env.example`](https://github.com/gerege-systems/public-gerege-template/blob/main/backend/.env.example).
 
 !!! danger "Never commit secrets"
     `backend/internal/config/.env*`, the root `.env` and `backend.env` are all

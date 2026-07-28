@@ -1,7 +1,7 @@
 # Конфигурация (env)
 
 > Всё настраивается через переменные окружения. Эталонный пример —
-> [`backend/.env.example`](https://github.com/gerege-systems/template-gerege-mn/blob/main/backend/.env.example).
+> [`backend/.env.example`](https://github.com/gerege-systems/public-gerege-template/blob/main/backend/.env.example).
 
 !!! danger "Никогда не коммитьте секреты"
     `backend/internal/config/.env*`, корневой `.env` и `backend.env` — все в
