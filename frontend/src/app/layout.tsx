@@ -104,7 +104,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
         <script src="/theme-bootstrap.js" />
       </head>
-      <body><UiCoreProvider brandName={brand.name} docsUrl={brand.docsUrl}><Providers><LangProvider>{children}</LangProvider></Providers></UiCoreProvider></body>
+      <body><UiCoreProvider brandName={brand.name} docsUrl={brand.docsUrl} docsLangs={brand.docsLangs}><Providers><LangProvider>{children}</LangProvider></Providers></UiCoreProvider></body>
     </html>
   );
 }
