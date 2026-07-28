@@ -1,5 +1,5 @@
-import { authedFetch } from '@/lib/api';
-import { toClientResponse, checkOrigin, checkUUID } from '@/lib/bff';
+import { authedFetch } from '@gerege/ui-core/lib/api';
+import { toClientResponse, checkOrigin, checkUUID } from '@gerege/ui-core/lib/bff';
 
 export const dynamic = 'force-dynamic';
 

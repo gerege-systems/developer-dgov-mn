@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { cookieOptions } from '@/lib/cookies';
+import { cookieOptions } from '@gerege/ui-core/lib/cookies';
 
 export const dynamic = 'force-dynamic';
 

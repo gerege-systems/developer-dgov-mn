@@ -1,9 +1,9 @@
 // Gerege Systems Development Team & Claude AI, 2026
 import React from 'react';
 import { redirect } from 'next/navigation';
-import { hasSession } from '@/lib/session';
-import { safeNext } from '@/lib/navigation';
-import { fetchActiveTheme } from '@/lib/api';
+import { hasSession } from '@gerege/ui-core/lib/session';
+import { safeNext } from '@gerege/ui-core/lib/navigation';
+import { fetchActiveTheme } from '@gerege/ui-core/lib/api';
 import LandingPage from '@/components/landing/LandingPage';
 
 export const dynamic = 'force-dynamic';

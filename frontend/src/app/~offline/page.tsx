@@ -5,7 +5,7 @@
 // үзүүлнэ. Энэ бол цорын ганц офлайнд хадгалагддаг HTML — аппын бодит агуулга
 // хэзээ ч кэшлэгддэггүй.
 
-import SigninShell from '@/components/SigninShell';
+import SigninShell from '@gerege/ui-core/components/SigninShell';
 import OfflineCard from './OfflineCard';
 import { pageTitle } from '@/brand.config';
 

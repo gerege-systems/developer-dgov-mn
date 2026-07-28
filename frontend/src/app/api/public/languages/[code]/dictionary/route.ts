@@ -1,5 +1,5 @@
-import { backendFetch } from '@/lib/api';
-import { proxyResult, checkLangCode } from '@/lib/bff';
+import { backendFetch } from '@gerege/ui-core/lib/api';
+import { proxyResult, checkLangCode } from '@gerege/ui-core/lib/bff';
 
 export const dynamic = 'force-dynamic';
 

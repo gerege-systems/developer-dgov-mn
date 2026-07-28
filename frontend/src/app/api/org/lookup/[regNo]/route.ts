@@ -1,5 +1,5 @@
-import { authedFetch } from '@/lib/api';
-import { proxyResult } from '@/lib/bff';
+import { authedFetch } from '@gerege/ui-core/lib/api';
+import { proxyResult } from '@gerege/ui-core/lib/bff';
 import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';

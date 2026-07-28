@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { checkOrigin } from '@/lib/bff';
-import { authedFetch } from '@/lib/api';
+import { checkOrigin } from '@gerege/ui-core/lib/bff';
+import { authedFetch } from '@gerege/ui-core/lib/api';
 
 export const dynamic = 'force-dynamic';
 

@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { getAccessToken } from '@/lib/session';
-import { checkOrigin } from '@/lib/bff';
+import { getAccessToken } from '@gerege/ui-core/lib/session';
+import { checkOrigin } from '@gerege/ui-core/lib/bff';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;

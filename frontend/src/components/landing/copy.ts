@@ -6,7 +6,7 @@
 // төвлөрүүлэв. Бүх түлхүүр дөрвөн хэлэнд адил байх ёстой (i18n.ts-тэй нэг
 // зарчим).
 
-import type { Lang, LangCode } from '@/lib/i18n';
+import type { Lang, LangCode } from '@gerege/ui-core/lib/i18n';
 
 export interface LandingCopy {
   /** Брэнд нэр (nav + footer). Хоосон бол 'Gerege Template Platform V3.0'. Theme-ээр солино. */

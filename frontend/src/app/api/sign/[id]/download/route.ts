@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAccessToken } from '@/lib/session';
+import { getAccessToken } from '@gerege/ui-core/lib/session';
 
 export const dynamic = 'force-dynamic';
 

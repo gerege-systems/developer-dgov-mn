@@ -1,6 +1,6 @@
 import React from 'react';
-import PageHead from '@/components/PageHead';
-import RelayConfigView from '@/components/relay/RelayConfigView';
+import PageHead from '@gerege/ui-core/components/PageHead';
+import RelayConfigView from '@gerege/ui-core/components/relay/RelayConfigView';
 import { requireRelayAccess } from '../guard';
 
 export const dynamic = 'force-dynamic';

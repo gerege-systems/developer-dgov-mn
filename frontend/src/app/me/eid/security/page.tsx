@@ -1,8 +1,8 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
-import PageHead from '@/components/PageHead';
-import EidSecurityView from '@/components/me/eid/EidSecurityView';
-import { fetchMe } from '@/lib/api';
+import PageHead from '@gerege/ui-core/components/PageHead';
+import EidSecurityView from '@gerege/ui-core/components/me/eid/EidSecurityView';
+import { fetchMe } from '@gerege/ui-core/lib/api';
 import { pageTitle } from '@/brand.config';
 
 export const dynamic = 'force-dynamic';

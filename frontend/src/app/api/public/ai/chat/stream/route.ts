@@ -1,6 +1,6 @@
-import { BACKEND_BASE, clientIPHeaders } from '@/lib/api';
-import { readJson, checkOrigin } from '@/lib/bff';
-import { badRequest, sanitizeAudio, MAX_PUBLIC_AUDIO_B64 } from '@/lib/aiBff';
+import { BACKEND_BASE, clientIPHeaders } from '@gerege/ui-core/lib/api';
+import { readJson, checkOrigin } from '@gerege/ui-core/lib/bff';
+import { badRequest, sanitizeAudio, MAX_PUBLIC_AUDIO_B64 } from '@gerege/ui-core/lib/aiBff';
 
 export const dynamic = 'force-dynamic';
 

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getProviderAccessToken } from '@/lib/driveClient';
+import { getProviderAccessToken } from '@gerege/ui-core/lib/driveClient';
 
 export const dynamic = 'force-dynamic';
 

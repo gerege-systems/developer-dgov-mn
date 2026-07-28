@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { backendFetch } from '@/lib/api';
-import { setSession } from '@/lib/session';
-import { cookieOptions } from '@/lib/cookies';
+import { backendFetch } from '@gerege/ui-core/lib/api';
+import { setSession } from '@gerege/ui-core/lib/session';
+import { cookieOptions } from '@gerege/ui-core/lib/cookies';
 
 export const dynamic = 'force-dynamic';
 

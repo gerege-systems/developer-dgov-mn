@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { authedRaw } from '@/lib/api';
+import { authedRaw } from '@gerege/ui-core/lib/api';
 
 export const dynamic = 'force-dynamic';
 

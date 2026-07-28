@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { getIntegration, exchangeCodeForToken, appOrigin } from '@/lib/integrations';
-import { authedFetch } from '@/lib/api';
+import { getIntegration, exchangeCodeForToken, appOrigin } from '@gerege/ui-core/lib/integrations';
+import { authedFetch } from '@gerege/ui-core/lib/api';
 
 export const dynamic = 'force-dynamic';
 

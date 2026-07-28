@@ -1,6 +1,6 @@
 import React from 'react';
-import PageHead from '@/components/PageHead';
-import RegistryServiceDetailView from '@/components/registry/RegistryServiceDetailView';
+import PageHead from '@gerege/ui-core/components/PageHead';
+import RegistryServiceDetailView from '@gerege/ui-core/components/registry/RegistryServiceDetailView';
 import { requireRegistryAccess } from '../../guard';
 import { pageTitle } from '@/brand.config';
 

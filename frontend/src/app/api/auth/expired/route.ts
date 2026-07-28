@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { safeNext } from '@/lib/navigation';
-import { ACCESS_COOKIE, REFRESH_COOKIE, SSO_LOGOUT_COOKIE } from '@/lib/cookies';
+import { safeNext } from '@gerege/ui-core/lib/navigation';
+import { ACCESS_COOKIE, REFRESH_COOKIE, SSO_LOGOUT_COOKIE } from '@gerege/ui-core/lib/cookies';
 
 export const dynamic = 'force-dynamic';
 

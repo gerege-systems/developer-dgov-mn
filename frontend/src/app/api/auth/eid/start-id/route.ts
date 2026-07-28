@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { backendFetch } from '@/lib/api';
-import { checkOrigin, proxyResult, readJson } from '@/lib/bff';
+import { backendFetch } from '@gerege/ui-core/lib/api';
+import { checkOrigin, proxyResult, readJson } from '@gerege/ui-core/lib/bff';
 
 export const dynamic = 'force-dynamic';
 

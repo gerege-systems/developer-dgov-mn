@@ -14,6 +14,7 @@
     "check:brand": "node scripts/check-brand.mjs"
   },
   "dependencies": {
+    "@gerege/ui-core": "https://github.com/gerege-systems/ui-core/archive/refs/tags/v0.1.0.tar.gz",
     "@serwist/next": "^9.5.12",
     "@tanstack/react-query": "^5.101.0",
     "lucide-react": "^1.23.0",

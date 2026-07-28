@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { backendFetch } from '@/lib/api';
+import { backendFetch } from '@gerege/ui-core/lib/api';
 
 export const dynamic = 'force-dynamic';
 

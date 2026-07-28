@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { backendFetch } from '@/lib/api';
-import { getRefreshToken, getAccessToken } from '@/lib/session';
-import { checkOrigin } from '@/lib/bff';
-import { ACCESS_COOKIE, REFRESH_COOKIE, SSO_LOGOUT_COOKIE } from '@/lib/cookies';
+import { backendFetch } from '@gerege/ui-core/lib/api';
+import { getRefreshToken, getAccessToken } from '@gerege/ui-core/lib/session';
+import { checkOrigin } from '@gerege/ui-core/lib/bff';
+import { ACCESS_COOKIE, REFRESH_COOKIE, SSO_LOGOUT_COOKIE } from '@gerege/ui-core/lib/cookies';
 
 export const dynamic = 'force-dynamic';
 

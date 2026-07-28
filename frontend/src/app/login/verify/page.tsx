@@ -1,7 +1,7 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
-import SigninShell from '@/components/SigninShell';
-import { safeNext } from '@/lib/navigation';
+import SigninShell from '@gerege/ui-core/components/SigninShell';
+import { safeNext } from '@gerege/ui-core/lib/navigation';
 import EidVerify from './EidVerify';
 import { pageTitle } from '@/brand.config';
 

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { authedFetch } from '@/lib/api';
-import { proxyResult, readJson, checkOrigin } from '@/lib/bff';
-import { getProviderAccessToken, uploadImageToDrive } from '@/lib/driveClient';
+import { authedFetch } from '@gerege/ui-core/lib/api';
+import { proxyResult, readJson, checkOrigin } from '@gerege/ui-core/lib/bff';
+import { getProviderAccessToken, uploadImageToDrive } from '@gerege/ui-core/lib/driveClient';
 
 export const dynamic = 'force-dynamic';
 

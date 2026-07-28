@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getProviderAccessToken } from '@/lib/driveClient';
-import { ensureDropboxGeregeFolder, DROPBOX_FOLDER } from '@/lib/dropboxClient';
+import { getProviderAccessToken } from '@gerege/ui-core/lib/driveClient';
+import { ensureDropboxGeregeFolder, DROPBOX_FOLDER } from '@gerege/ui-core/lib/dropboxClient';
 
 export const dynamic = 'force-dynamic';
 

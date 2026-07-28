@@ -8,11 +8,11 @@ import {
   LogIn, Languages, KeyRound, ScrollText, Globe, Gauge, ShieldAlert,
   Menu, X,
 } from 'lucide-react';
-import { useLang } from '@/lib/lang';
-import { pickLang, type Lang, type LangCode } from '@/lib/i18n';
+import { useLang } from '@gerege/ui-core/lib/lang';
+import { pickLang, type Lang, type LangCode } from '@gerege/ui-core/lib/i18n';
 import { landingCopyFor, type LandingCopy } from './copy';
 import LandingChat from './LandingChat';
-import { deepMerge } from '@/lib/theme';
+import { deepMerge } from '@gerege/ui-core/lib/theme';
 import { brand as brandConfig } from '@/brand.config';
 
 // Нүүрэн дээрх хэлний товч нь mn → en → zh → ru → mn гэж эргэлдэнэ (дараагийн

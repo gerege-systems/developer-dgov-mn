@@ -1,9 +1,9 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
-import PageHead from '@/components/PageHead';
-import IntegrationsView from '@/components/me/IntegrationsView';
-import { fetchMe, authedFetch } from '@/lib/api';
-import { integrationStatuses } from '@/lib/integrations';
+import PageHead from '@gerege/ui-core/components/PageHead';
+import IntegrationsView from '@gerege/ui-core/components/me/IntegrationsView';
+import { fetchMe, authedFetch } from '@gerege/ui-core/lib/api';
+import { integrationStatuses } from '@gerege/ui-core/lib/integrations';
 import { pageTitle } from '@/brand.config';
 
 export const dynamic = 'force-dynamic';
