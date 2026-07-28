@@ -49,11 +49,15 @@ SQL-тэй [jackc/pgx](https://github.com/jackc/pgx) драйвертэй хос
 gerege-template-platform/
 ├── backend/           # Go · chi (net/http) · pgx (pgxpool) · PostgreSQL · Redis · eID/Google/SSO танилт
 │   └── docs/          # ARCHITECTURE · DEVELOPMENT · API_CONTRACT · SECURITY (EN/MN)
-└── frontend/          # Next.js BFF (backend руу server талаас прокси; cookie session)
+├── frontend/          # Next.js BFF (backend руу server талаас прокси; cookie session)
+├── desktop/           # macOS desktop клиент (Electron бүрхүүл — web-ийг 1:1 ачаална)
+└── ios/               # iOS клиент (native SwiftUI, платформын BFF-ээр)
 ```
 
 - **[backend/README_MN.md](backend/README_MN.md)** — Clean Architecture Go API.
 - **[frontend/README.md](frontend/README.md)** — Next.js Backend-for-Frontend.
+- **[desktop/TemplateDesktop/README.md](desktop/TemplateDesktop/README.md)** — macOS desktop апп.
+- **[ios/TemplateApp/README.md](ios/TemplateApp/README.md)** — iOS апп.
 
 ## Онцлог
 

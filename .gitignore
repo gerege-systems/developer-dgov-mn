@@ -17,6 +17,9 @@ backend.env
 /frontend/node_modules/
 /frontend/.next/
 /frontend/out/
+/desktop/TemplateDesktop/node_modules/
+/desktop/TemplateDesktop/dist/
+/desktop/TemplateDesktop/release/
 
 # MkDocs build output + local venv (docs-site)
 docs-site/site/

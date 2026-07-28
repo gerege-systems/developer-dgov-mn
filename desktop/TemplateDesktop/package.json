@@ -1,0 +1,24 @@
+{
+  "name": "gerege-template-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Gerege Template Platform V3.0 — desktop бүрхүүл (Electron). Web аппыг 1:1-ээр ачаална.",
+  "license": "MIT",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "start": "npm run build && electron .",
+    "dev": "GEREGE_APP_URL=http://localhost:3000 GEREGE_DEVTOOLS=1 npm run start",
+    "test": "npm run build && node --test dist/*.test.js",
+    "icon": "bash scripts/make-icon.sh",
+    "dist:mac": "npm run build && CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --mac",
+    "dist:mac:signed": "npm run build && electron-builder --mac"
+  },
+  "devDependencies": {
+    "@types/node": "20.11.30",
+    "electron": "^43.2.0",
+    "electron-builder": "^26.15.3",
+    "typescript": "5.4.3"
+  }
+}
