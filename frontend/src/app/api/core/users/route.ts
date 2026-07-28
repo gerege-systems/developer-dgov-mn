@@ -1,10 +1,1 @@
-import { authedFetch } from '@gerege/ui-core/lib/api';
-import { proxyResult } from '@gerege/ui-core/lib/bff';
-
-export const dynamic = 'force-dynamic';
-
-// GET /api/core/users?search_text= — Gerege Core хэрэглэгч хайх (backend proxy).
-export async function GET(req: Request) {
-  const s = new URL(req.url).searchParams.get('search_text') ?? '';
-  return proxyResult(await authedFetch(`/core/users?search_text=${encodeURIComponent(s)}`, { method: 'GET' }));
-}
+export { GET, dynamic } from '@gerege/ui-core/api/core/users';

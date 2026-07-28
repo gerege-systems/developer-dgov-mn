@@ -1,8 +1,1 @@
-import { authedFetch } from '@gerege/ui-core/lib/api';
-import { proxyResult } from '@gerege/ui-core/lib/bff';
-
-export const dynamic = 'force-dynamic';
-
-export async function GET() {
-  return proxyResult(await authedFetch('/gov/services', { method: 'GET' }));
-}
+export { GET, dynamic } from '@gerege/ui-core/api/gov/services';
