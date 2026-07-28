@@ -131,8 +131,13 @@ jobs:
     concurrency:
       group: deploy-production
       cancel-in-progress: false
+    # Template репод deploy хост тохируулагдаагүй — тэр үед алхам алгасна
+    # (CI улаан болгохгүй). Бодит платформууд DEPLOY_HOST-той тул ажиллана.
+    env:
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
     steps:
       - name: Deploy over SSH
+        if: env.DEPLOY_HOST != ''
         uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ secrets.DEPLOY_HOST }}
