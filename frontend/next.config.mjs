@@ -37,6 +37,8 @@ const CSP = [
 ].join('; ');
 
 const nextConfig = {
+  // @gerege/ui-core нь TypeScript эх кодоор тардаг тул апп өөрөө хөрвүүлнэ.
+  transpilePackages: ['@gerege/ui-core'],
   reactStrictMode: true,
   // Standalone output → slim production Docker image (server.js + minimal
   // node_modules) instead of shipping the whole tree. See frontend/Dockerfile.

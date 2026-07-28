@@ -1,11 +1,12 @@
+import { pageTitle } from '@/brand.config';
 import React from 'react';
 import { redirect } from 'next/navigation';
-import PageHead from '@/components/PageHead';
-import OrgDetail from '@/components/me/OrgDetail';
-import { fetchMe } from '@/lib/api';
+import PageHead from '@gerege/ui-core/components/PageHead';
+import OrgDetail from '@gerege/ui-core/components/me/OrgDetail';
+import { fetchMe } from '@gerege/ui-core/lib/api';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Байгууллага — Government Template Platform V3.0' };
+export const metadata = { title: pageTitle('Байгууллага') };
 
 export default async function MeOrganizationDetailPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;

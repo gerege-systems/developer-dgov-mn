@@ -1,10 +1,11 @@
+import { pageTitle } from '@/brand.config';
 import React from 'react';
 import { redirect } from 'next/navigation';
-import HomeView from '@/components/me/HomeView';
-import { fetchMe } from '@/lib/api';
+import HomeView from '@gerege/ui-core/components/me/HomeView';
+import { fetchMe } from '@gerege/ui-core/lib/api';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Хяналтын самбар — Government Template Platform V3.0' };
+export const metadata = { title: pageTitle('Хяналтын самбар') };
 
 export default async function MeDashboardPage() {
   const me = await fetchMe();

@@ -1,6 +1,6 @@
 import 'server-only';
 import { redirect } from 'next/navigation';
-import { fetchMe, fetchMyPermissions } from '@/lib/api';
+import { fetchMe, fetchMyPermissions } from '@gerege/ui-core/lib/api';
 
 // requireRegistryAccess нь /admin/registry/* хуудас бүрийн серверийн талын
 // хамгаалалт — нэвтрээгүй эсвэл 'registry.view' эрхгүй бол нүүр рүү буцаана.
