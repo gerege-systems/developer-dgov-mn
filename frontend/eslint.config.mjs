@@ -29,7 +29,9 @@ const stripReactPlugin = (cfg) => {
   return out;
 };
 
-export default [
+// Массивыг шууд default болгож экспортлохгүй — eslint нь тохиргоог статикаар
+// уншихын тулд нэрлэсэн хувьсагчийг илүүд үздэг (config-array дүрэм).
+const config = [
   // Багцын өөрийн ignores нь .next/**, out/**, build/**, next-env.d.ts-ыг хамардаг.
   ...nextCoreWebVitals.map(stripReactPlugin),
   { ignores: ['node_modules/**', 'coverage/**', 'public/**'] },
@@ -50,3 +52,5 @@ export default [
     },
   },
 ];
+
+export default config;
