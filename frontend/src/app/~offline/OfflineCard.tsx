@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { WifiOff } from 'lucide-react';
-import { useT } from '@/lib/lang';
+import { useT } from '@gerege/ui-core/lib/lang';
 
 /** Офлайн мэдэгдэл + дахин оролдох товч. Хэлийг useT-ээс авна. */
 export default function OfflineCard() {

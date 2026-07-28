@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getProviderAccessToken } from '@/lib/driveClient';
-import { checkOrigin, readJson } from '@/lib/bff';
+import { getProviderAccessToken } from '@gerege/ui-core/lib/driveClient';
+import { checkOrigin, readJson } from '@gerege/ui-core/lib/bff';
 
 export const dynamic = 'force-dynamic';
 

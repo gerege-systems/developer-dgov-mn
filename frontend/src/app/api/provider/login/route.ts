@@ -1,6 +1,6 @@
 // OIDC provider — login request-ийн товч (RP нэр гэх мэт)-ыг backend-ээс авна.
-import { authedFetch } from '@/lib/api';
-import { proxyResult } from '@/lib/bff';
+import { authedFetch } from '@gerege/ui-core/lib/api';
+import { proxyResult } from '@gerege/ui-core/lib/bff';
 
 export const dynamic = 'force-dynamic';
 

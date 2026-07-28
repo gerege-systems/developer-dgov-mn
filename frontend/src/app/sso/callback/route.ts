@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { backendFetch } from '@/lib/api';
-import { ACCESS_COOKIE, REFRESH_COOKIE, SSO_LOGOUT_COOKIE, ACCESS_MAX_AGE, REFRESH_MAX_AGE, cookieOptions } from '@/lib/cookies';
+import { backendFetch } from '@gerege/ui-core/lib/api';
+import { ACCESS_COOKIE, REFRESH_COOKIE, SSO_LOGOUT_COOKIE, ACCESS_MAX_AGE, REFRESH_MAX_AGE, cookieOptions } from '@gerege/ui-core/lib/cookies';
 
 export const dynamic = 'force-dynamic';
 

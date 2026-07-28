@@ -3,10 +3,10 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Bot, Send, X, MessageCircle, Mic, Volume2 } from 'lucide-react';
-import { postJSON } from '@/lib/client';
-import { streamChat, takeSentence, plainText } from '@/lib/chatStream';
-import { recordSegment, playBase64Audio, unlockAudio, type RecordedAudio } from '@/lib/audio';
-import type { LangCode } from '@/lib/i18n';
+import { postJSON } from '@gerege/ui-core/lib/client';
+import { streamChat, takeSentence, plainText } from '@gerege/ui-core/lib/chatStream';
+import { recordSegment, playBase64Audio, unlockAudio, type RecordedAudio } from '@gerege/ui-core/lib/audio';
+import type { LangCode } from '@gerege/ui-core/lib/i18n';
 import type { LandingCopy } from './copy';
 
 interface Msg {

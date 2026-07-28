@@ -1,6 +1,6 @@
-import { backendFetch } from '@/lib/api';
-import { readJson, proxyResult, checkOrigin } from '@/lib/bff';
-import { badRequest, sanitizeAudio, MAX_PUBLIC_AUDIO_B64 } from '@/lib/aiBff';
+import { backendFetch } from '@gerege/ui-core/lib/api';
+import { readJson, proxyResult, checkOrigin } from '@gerege/ui-core/lib/bff';
+import { badRequest, sanitizeAudio, MAX_PUBLIC_AUDIO_B64 } from '@gerege/ui-core/lib/aiBff';
 
 export const dynamic = 'force-dynamic';
 

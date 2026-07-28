@@ -1,6 +1,6 @@
 import React from 'react';
-import SigninShell from '@/components/SigninShell';
-import OnboardWizard from '@/components/superadmin/OnboardWizard';
+import SigninShell from '@gerege/ui-core/components/SigninShell';
+import OnboardWizard from '@gerege/ui-core/components/superadmin/OnboardWizard';
 import { pageTitle } from '@/brand.config';
 
 export const dynamic = 'force-dynamic';

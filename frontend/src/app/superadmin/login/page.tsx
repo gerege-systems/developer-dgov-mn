@@ -1,6 +1,6 @@
 import React from 'react';
-import SigninShell from '@/components/SigninShell';
-import { safeNext } from '@/lib/navigation';
+import SigninShell from '@gerege/ui-core/components/SigninShell';
+import { safeNext } from '@gerege/ui-core/lib/navigation';
 import LoginForm from '@/app/login/LoginForm';
 import { pageTitle } from '@/brand.config';
 

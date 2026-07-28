@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { getIntegration } from '@/lib/integrations';
-import { checkOrigin } from '@/lib/bff';
-import { authedFetch } from '@/lib/api';
+import { getIntegration } from '@gerege/ui-core/lib/integrations';
+import { checkOrigin } from '@gerege/ui-core/lib/bff';
+import { authedFetch } from '@gerege/ui-core/lib/api';
 
 export const dynamic = 'force-dynamic';
 

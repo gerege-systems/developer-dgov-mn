@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { getProviderAccessToken } from '@/lib/driveClient';
-import { ensureDropboxGeregeFolder, dropboxApiArg, DROPBOX_FOLDER } from '@/lib/dropboxClient';
-import { checkOrigin } from '@/lib/bff';
+import { getProviderAccessToken } from '@gerege/ui-core/lib/driveClient';
+import { ensureDropboxGeregeFolder, dropboxApiArg, DROPBOX_FOLDER } from '@gerege/ui-core/lib/dropboxClient';
+import { checkOrigin } from '@gerege/ui-core/lib/bff';
 
 export const dynamic = 'force-dynamic';
 

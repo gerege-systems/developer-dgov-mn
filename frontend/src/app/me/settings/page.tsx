@@ -1,7 +1,7 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
-import SettingsView from '@/components/me/SettingsView';
-import { fetchMe } from '@/lib/api';
+import SettingsView from '@gerege/ui-core/components/me/SettingsView';
+import { fetchMe } from '@gerege/ui-core/lib/api';
 import { pageTitle } from '@/brand.config';
 
 export const dynamic = 'force-dynamic';

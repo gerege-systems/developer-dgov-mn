@@ -3,8 +3,8 @@
 // Google) нэвтрүүлж, буцаж ирэхэд challenge-ыг accept хийнэ. Дээр талд аль RP-ээс
 // нэвтэрч буйг (client_name) харуулна.
 import { redirect } from 'next/navigation';
-import { getAccessToken } from '@/lib/session';
-import { backendFetch } from '@/lib/api';
+import { getAccessToken } from '@gerege/ui-core/lib/session';
+import { backendFetch } from '@gerege/ui-core/lib/api';
 import LoginForm from '@/app/login/LoginForm';
 import AcceptClient from './AcceptClient';
 
