@@ -9,8 +9,8 @@ import {
   Menu, X,
 } from 'lucide-react';
 import { useLang } from '@/lib/lang';
-import { pickLang, type Lang } from '@/lib/i18n';
-import { landingCopy, type LandingCopy } from './copy';
+import { pickLang, type Lang, type LangCode } from '@/lib/i18n';
+import { landingCopyFor, type LandingCopy } from './copy';
 import LandingChat from './LandingChat';
 import { deepMerge } from '@/lib/theme';
 
@@ -18,6 +18,13 @@ import { deepMerge } from '@/lib/theme';
 // хэлийг шошгонд харуулна).
 const NEXT_LANG: Record<Lang, Lang> = { mn: 'en', en: 'zh', zh: 'ru', ru: 'mn' };
 const LANG_SHORT: Record<Lang, string> = { mn: 'МН', en: 'EN', zh: '中文', ru: 'RU' };
+
+// Дараагийн хэл рүү шилжих (нүүрний хоёр товчлуурт сонгогч). Landing нь зөвхөн
+// багцлагдсан хэлээр тексттэй тул DB-ээс нэмэгдсэн хэл дээр байхад англиас
+// эргэлт эхэлнэ.
+function nextLang(current: LangCode): Lang {
+  return NEXT_LANG[current as Lang] ?? 'en';
+}
 
 // Нээлттэй эх (Open Source) кодын GitHub репозитор.
 const GITHUB_URL = 'https://github.com/gerege-systems/template-gerege-mn';
@@ -64,8 +71,11 @@ export default function LandingPage({ next, themeLanding }: Props) {
   // dropdown цэс.
   const [menuOpen, setMenuOpen] = React.useState(false);
   // Идэвхтэй theme-ийн текст байвал copy.ts default дээр гүн merge хийнэ.
-  const override = themeLanding?.[lang];
-  const t = override ? deepMerge(landingCopy[lang], override) : landingCopy[lang];
+  // Landing copy нь багцлагдсан дөрвөн хэлтэй; DB-ээс нэмэгдсэн хэлэнд англи
+  // руу уналт хийнэ (landingCopyFor). Theme-ийн текст override мөн адил.
+  const override = themeLanding?.[lang as Lang];
+  const base = landingCopyFor(lang);
+  const t = override ? deepMerge(base, override) : base;
   const brand = t.brand || 'Gerege Template Platform V3.0';
   // Gerege SSO (sso.gerege.mn) руу нэвтрэлт эхлүүлэх — backend /sso/start руу
   // прокси хийж, browser-ийг sso.gerege.mn-ий authorize URL руу шилжүүлнэ.
@@ -93,11 +103,11 @@ export default function LandingPage({ next, themeLanding }: Props) {
             <button
               type="button"
               className="lp-lang"
-              onClick={() => setLang(NEXT_LANG[lang])}
+              onClick={() => setLang(nextLang(lang))}
               aria-label={pickLang(lang, { mn: 'Хэл солих', en: 'Switch language', zh: '切换语言', ru: 'Сменить язык' })}
             >
               <Languages size={15} strokeWidth={2} />
-              <span>{LANG_SHORT[NEXT_LANG[lang]]}</span>
+              <span>{LANG_SHORT[nextLang(lang)]}</span>
             </button>
             <a className="lp-btn lp-btn--gold lp-btn--sm" href={ssoHref}>
               <LogIn size={16} strokeWidth={2} />

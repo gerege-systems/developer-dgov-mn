@@ -352,6 +352,35 @@ curl -s localhost:3000/manifest.webmanifest
 
 ---
 
+## 界面语言（动态）
+
+语言列表**不是编译期固定的**。超级管理员可在 `/admin/languages` 添加语言、
+启用语言，并用 Gemini 补充翻译 —— 无需重新部署。
+
+系统会合并两层：
+
+| 层 | 来源 | 作用 |
+|---|---|---|
+| 内置 | `src/lib/i18n.ts` 中的 `dict`（mn·en·zh·ru） | **键的来源** + 断网/数据库故障时的可靠兜底 |
+| 覆盖层 | `GET /api/public/languages/{code}/dictionary` | 超级管理员维护的值，会覆盖内置值 |
+
+`t()` 的优先级：**覆盖层 → 内置语言 → 蒙古语 → 键名**。
+因此即使新语言的翻译不完整，界面也不会出现空白。
+
+- `LangProvider`（`src/lib/lang.tsx`）加载启用的语言与覆盖层；
+  `useT()` 返回 `T`、`locale`、`languages`。
+- 语言选择器（`UserMenu`）从 API 获取列表；非内置语言以代码缩写显示（`JA`）。
+- 落地页文案（`components/landing/copy.ts`）仍为内置 —— 新语言回退到英文
+  （`landingCopyFor`）。
+- `i18n.test.ts` 仍然强制内置四种语言的键一致性。
+
+**「用 AI 安装」**会把本应用内置的蒙古语 dictionary 发送到后端，由 Gemini
+补齐缺失的键。人工修改过的值永远不会被覆盖；占位符（`{name}`）丢失的翻译不会写入。
+
+> 后端需 platform-core **v0.5.0**+（migration 49）。
+
+---
+
 ## gerege 主题
 
 设计系统位于 `src/app/globals.css` — OKLCH 令牌（DAN blue `#1767E7`）、

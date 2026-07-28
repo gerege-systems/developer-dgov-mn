@@ -73,6 +73,7 @@ gerege-template-platform/
 - **Security-hardened** — strict security headers (CSP, HSTS, COOP/COEP/CORP), CORS allow-list, rate limiting, full HTTP server timeouts, parameterized queries, Postgres Row-Level Security with a boot-time enforceability guard. See [SECURITY.md](../SECURITY.md).
 - **Observability** — OpenTelemetry tracing + Prometheus metrics + structured Zap logs; `/metrics` and `/swagger` are gated behind a bearer token in production.
 - **Frontend BFF** — the browser talks only to same-origin Next.js routes, which proxy to the backend server-side (tokens never reach client JS); double CSRF defense (custom header + origin check), TanStack Query data layer.
+- **Dynamic languages** — a super admin adds/removes interface languages at runtime and fills translations with Gemini (`/admin/languages`); the bundled dictionary stays the source of keys and the fallback when the DB is unreachable. Requires platform-core v0.5.0+.
 - **Installable PWA** — manifest + icons + a Serwist service worker; caching covers static assets ONLY — every `/api/*` and auth/eID path is NetworkOnly and HTML is never cached. Setup: [frontend/README.md](../frontend/README.md#pwa--апп-болгож-суулгах).
 - **Tested** — unit tests + testcontainers integration tests.
 

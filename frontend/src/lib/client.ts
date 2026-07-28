@@ -19,10 +19,10 @@ export interface ClientResult<T = unknown> {
   data?: T;
 }
 
-/** JSON body-тэй state-changing хүсэлт (POST/PUT/DELETE) илгээнэ. */
+/** JSON body-тэй state-changing хүсэлт (POST/PUT/PATCH/DELETE) илгээнэ. */
 export async function sendJSON<T = unknown>(
   path: string,
-  method: 'POST' | 'PUT' | 'DELETE',
+  method: 'POST' | 'PUT' | 'PATCH' | 'DELETE',
   body?: unknown,
 ): Promise<ClientResult<T>> {
   try {

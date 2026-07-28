@@ -6,7 +6,7 @@
 // төвлөрүүлэв. Бүх түлхүүр дөрвөн хэлэнд адил байх ёстой (i18n.ts-тэй нэг
 // зарчим).
 
-import type { Lang } from '@/lib/i18n';
+import type { Lang, LangCode } from '@/lib/i18n';
 
 export interface LandingCopy {
   /** Брэнд нэр (nav + footer). Хоосон бол 'Gerege Template Platform V3.0'. Theme-ээр солино. */
@@ -564,3 +564,12 @@ const ru: LandingCopy = {
 };
 
 export const landingCopy: Record<Lang, LandingCopy> = { mn, en, zh, ru };
+
+/**
+ * Landing-ийн текстийг хэлээр авна. Landing copy нь кодод БАГЦЛАГДСАН (dictionary
+ * шиг DB-ээс удирдагддаггүй) тул super admin-ий нэмсэн шинэ хэлэнд англи руу
+ * уналт хийнэ — нүүр хуудас хэзээ ч хоосон болохгүй.
+ */
+export function landingCopyFor(lang: LangCode): LandingCopy {
+  return landingCopy[lang as Lang] ?? landingCopy.en;
+}

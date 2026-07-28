@@ -2,10 +2,26 @@
 // болон цэсийг дөрвөн хэлээр үзүүлнэ. Түлхүүрийг кодод ашиглаж, мөрийг энд
 // төвлөрүүлсэн.
 
+/**
+ * Кодод БАГЦЛАГДСАН хэлнүүд. Эдгээрийн бүрэн орчуулга доорх `dict`-д байдаг тул
+ * backend хүрэхгүй байсан ч апп ажилласаар байна.
+ */
 export type Lang = 'mn' | 'en' | 'zh' | 'ru';
+
+/**
+ * Ажиллах үеийн хэлний код. Super admin нь backend дээр шинэ хэл (жишээ нь 'ja')
+ * нэмж болдог тул сонгогдсон хэл нь багцлагдсан дөрвөөс гадуур байж БОЛНО —
+ * тэр тохиолдолд утга нь DB-ээс ирсэн overlay-гаас олдоно.
+ */
+export type LangCode = string;
 
 /** Дэмжигдэх хэлнүүд — сонголтын UI болон валидацид хамтдаа ашиглана. */
 export const LANGS = ['mn', 'en', 'zh', 'ru'] as const;
+
+/** Код нь багцлагдсан хэл мөн үү (dict дотор бүрэн орчуулгатай). */
+export function isBundledLang(code: LangCode): code is Lang {
+  return (LANGS as readonly string[]).includes(code);
+}
 
 /** Хэлний эх нэр (сонгогчид харагдана). */
 export const LANG_LABELS: Record<Lang, string> = {
@@ -15,8 +31,12 @@ export const LANG_LABELS: Record<Lang, string> = {
   ru: 'Русский',
 };
 
-/** Intl (огноо/тоо) форматлах locale. */
-export const LOCALES: Record<Lang, string> = {
+/**
+ * Intl (огноо/тоо) форматлах locale. Түлхүүр нь чөлөөт мөр — DB-ээс нэмэгдсэн
+ * хэлний код энд байхгүй байж болно (тэр үед `localeOf` backend-ийн locale-г
+ * хэрэглэнэ; шууд индексэлбэл undefined → хөтчийн өгөгдмөл formatting).
+ */
+export const LOCALES: Record<string, string> = {
   mn: 'mn-MN',
   en: 'en-US',
   zh: 'zh-CN',
@@ -25,19 +45,29 @@ export const LOCALES: Record<Lang, string> = {
 
 /** Кирилл бус хэл дээр латин (англи) нэрийг илүүд үзнэ. Орос нь кирилл тул
  *  монгол бичгийн нэрийг хэвээр нь харуулна. */
-export function prefersLatinName(lang: Lang): boolean {
+export function prefersLatinName(lang: LangCode): boolean {
   return lang !== 'mn' && lang !== 'ru';
+}
+
+/**
+ * Intl-д өгөх locale. Багцлагдсан хэлэнд LOCALES-ээс; DB-ээс нэмэгдсэн хэлэнд
+ * backend-ийн өгсөн locale-г (`fallback`) хэрэглэнэ, эс бөгөөс кодыг өөрийг нь.
+ */
+export function localeOf(lang: LangCode, fallback?: string): string {
+  if (isBundledLang(lang)) return LOCALES[lang];
+  return fallback || lang;
 }
 
 /**
  * Dictionary түлхүүр үүсгэхээргүй жижиг мөрийг байрлал дээр нь сонгоно.
  * zh/ru өгөгдөөгүй бол en рүү уналт хийнэ.
  */
-export function pickLang<T>(lang: Lang, v: { mn: T; en: T; zh?: T; ru?: T }): T {
+export function pickLang<T>(lang: LangCode, v: { mn: T; en: T; zh?: T; ru?: T }): T {
   if (lang === 'zh') return v.zh ?? v.en;
   if (lang === 'ru') return v.ru ?? v.en;
-  if (lang === 'en') return v.en;
-  return v.mn;
+  if (lang === 'mn') return v.mn;
+  // Багцлагдаагүй хэл (DB-ээс нэмэгдсэн) — англи нь хамгийн өргөн ойлгогдоно.
+  return v.en;
 }
 
 export const dict = {
@@ -892,6 +922,27 @@ export const dict = {
     'offline.body':
       'Интернэт холболт олдсонгүй. Энэ апп аюулгүй байдлын үүднээс хуудас, өгөгдлийг офлайнд хадгалдаггүй — холболт сэргэмэгц үргэлжлүүлнэ үү.',
     'offline.retry': 'Дахин оролдох',
+
+    // Хэлний удирдлага (зөвхөн super admin)
+    'langs.title': 'Хэл',
+    'langs.sub': 'Интерфейсийн хэлийг нэмэх, идэвхжүүлэх, орчуулгыг AI-аар бөглөх.',
+    'langs.add': 'Хэл нэмэх',
+    'langs.list': 'Хэлнүүд',
+    'langs.code': 'Код',
+    'langs.label': 'Нэр',
+    'langs.locale': 'Locale',
+    'langs.status': 'Төлөв',
+    'langs.actions': 'Үйлдэл',
+    'langs.enabled': 'Идэвхтэй',
+    'langs.disabled': 'Унтраалттай',
+    'langs.enable': 'Идэвхжүүлэх',
+    'langs.disable': 'Унтраах',
+    'langs.builtin': 'Багцлагдсан',
+    'langs.install': 'AI-аар суулгах',
+    'langs.installing': 'Орчуулж байна…',
+    'langs.loading': 'Ачаалж байна…',
+    'langs.loadError': 'Хэлнүүдийг уншиж чадсангүй.',
+    'langs.empty': 'Хэл алга.',
   },
   en: {
     'sys.superadmin': 'Super Admin system',
@@ -1730,6 +1781,27 @@ export const dict = {
     'offline.body':
       'No internet connection. For security reasons this app does not store pages or data offline — please continue once the connection is back.',
     'offline.retry': 'Try again',
+
+    // Language management (super admin only)
+    'langs.title': 'Languages',
+    'langs.sub': 'Add interface languages, enable them, and fill translations with AI.',
+    'langs.add': 'Add language',
+    'langs.list': 'Languages',
+    'langs.code': 'Code',
+    'langs.label': 'Name',
+    'langs.locale': 'Locale',
+    'langs.status': 'Status',
+    'langs.actions': 'Actions',
+    'langs.enabled': 'Enabled',
+    'langs.disabled': 'Disabled',
+    'langs.enable': 'Enable',
+    'langs.disable': 'Disable',
+    'langs.builtin': 'Built-in',
+    'langs.install': 'Install with AI',
+    'langs.installing': 'Translating…',
+    'langs.loading': 'Loading…',
+    'langs.loadError': 'Could not load languages.',
+    'langs.empty': 'No languages yet.',
   },
   zh: {
     'sys.superadmin': '超级管理员系统',
@@ -2567,6 +2639,27 @@ export const dict = {
     'offline.title': '当前处于离线状态',
     'offline.body': '未检测到网络连接。出于安全考虑，本应用不会离线保存页面或数据——请在网络恢复后继续。',
     'offline.retry': '重试',
+
+    // 语言管理（仅超级管理员）
+    'langs.title': '语言',
+    'langs.sub': '添加界面语言、启用语言，并用 AI 补充翻译。',
+    'langs.add': '添加语言',
+    'langs.list': '语言列表',
+    'langs.code': '代码',
+    'langs.label': '名称',
+    'langs.locale': 'Locale',
+    'langs.status': '状态',
+    'langs.actions': '操作',
+    'langs.enabled': '已启用',
+    'langs.disabled': '已停用',
+    'langs.enable': '启用',
+    'langs.disable': '停用',
+    'langs.builtin': '内置',
+    'langs.install': '用 AI 安装',
+    'langs.installing': '翻译中…',
+    'langs.loading': '加载中…',
+    'langs.loadError': '无法加载语言。',
+    'langs.empty': '暂无语言。',
   },
   ru: {
     'sys.superadmin': 'Система суперадмина',
@@ -3405,29 +3498,62 @@ export const dict = {
     'offline.body':
       'Интернет-соединение не найдено. Из соображений безопасности приложение не хранит страницы и данные офлайн — продолжите, когда связь восстановится.',
     'offline.retry': 'Повторить',
+
+    // Управление языками (только суперадмин)
+    'langs.title': 'Языки',
+    'langs.sub': 'Добавляйте языки интерфейса, включайте их и заполняйте переводы через AI.',
+    'langs.add': 'Добавить язык',
+    'langs.list': 'Языки',
+    'langs.code': 'Код',
+    'langs.label': 'Название',
+    'langs.locale': 'Locale',
+    'langs.status': 'Статус',
+    'langs.actions': 'Действия',
+    'langs.enabled': 'Включён',
+    'langs.disabled': 'Отключён',
+    'langs.enable': 'Включить',
+    'langs.disable': 'Отключить',
+    'langs.builtin': 'Встроенный',
+    'langs.install': 'Установить через AI',
+    'langs.installing': 'Перевод…',
+    'langs.loading': 'Загрузка…',
+    'langs.loadError': 'Не удалось загрузить языки.',
+    'langs.empty': 'Языков пока нет.',
   },
 } as const;
 
 export type DictKey = keyof (typeof dict)['mn'];
 
-export function t(lang: Lang, key: DictKey): string {
-  return dict[lang]?.[key] ?? dict.mn[key] ?? key;
+/**
+ * Түлхүүрийг орчуулна. Эрэмбэ: DB-ийн overlay → багцлагдсан хэл → монгол → түлхүүр.
+ *
+ * Overlay нь super admin-ий удирдсан орчуулга (LangProvider татна). Түүнд утга
+ * байхгүй бол багцлагдсан утга ажиллана — иймд backend унасан ч, шинэ хэлний
+ * орчуулга дутуу ч интерфейс хэзээ ч хоосон болохгүй.
+ */
+export function t(lang: LangCode, key: DictKey, overlay?: Record<string, string>): string {
+  const fromOverlay = overlay?.[key];
+  if (fromOverlay) return fromOverlay;
+  const bundled = isBundledLang(lang) ? dict[lang][key] : undefined;
+  return bundled ?? dict.mn[key] ?? key;
 }
 
 // Backend-ийн динамик нэрсийг key-ээр орчуулна. Каталогт байхгүй бол (custom
 // role, шинэ permission) DB-ийн fallback нэрийг хэвээр буцаана.
-function lookup(lang: Lang, dk: string, fallback: string): string {
-  const table = dict[lang] as Record<string, string>;
+function lookup(lang: LangCode, dk: string, fallback: string, overlay?: Record<string, string>): string {
+  const fromOverlay = overlay?.[dk];
+  if (fromOverlay) return fromOverlay;
+  const table = (isBundledLang(lang) ? dict[lang] : dict.mn) as Record<string, string>;
   const mn = dict.mn as Record<string, string>;
   return table[dk] ?? mn[dk] ?? fallback;
 }
 
 /** Role нэрийг backend key-ээр орчуулна (admin/user/manager); custom бол fallback. */
-export function roleName(lang: Lang, roleKey: string, fallback: string): string {
-  return lookup(lang, `role.${roleKey}`, fallback);
+export function roleName(lang: LangCode, roleKey: string, fallback: string, overlay?: Record<string, string>): string {
+  return lookup(lang, `role.${roleKey}`, fallback, overlay);
 }
 
 /** Permission label-г backend key-ээр орчуулна; каталогт байхгүй бол fallback. */
-export function permLabel(lang: Lang, permKey: string, fallback: string): string {
-  return lookup(lang, `perm.${permKey}`, fallback);
+export function permLabel(lang: LangCode, permKey: string, fallback: string, overlay?: Record<string, string>): string {
+  return lookup(lang, `perm.${permKey}`, fallback, overlay);
 }

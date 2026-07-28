@@ -1,7 +1,7 @@
 // Backend-ийн REST API-тай нийцсэн хуваалцсан типүүд.
 // Эх сурвалж: docs/API_CONTRACT_MN.md болон responses.users.go.
 
-import { pickLang, prefersLatinName, type Lang } from './i18n';
+import { pickLang, prefersLatinName, type LangCode } from './i18n';
 
 /** Бүх backend хариу ороодог дугтуй (envelope). */
 export interface Envelope<T = unknown> {
@@ -118,7 +118,7 @@ export function fullNameOf(u: { firstName?: string; lastName?: string; full_name
 
 /** Одоогийн хэлээр харуулах нэр: кирилл бус (en/zh) үед латин нэр (байхгүй бол
  *  монгол/username). */
-export function displayName(u: { fullName: string; fullNameEn?: string; username: string }, lang: Lang): string {
+export function displayName(u: { fullName: string; fullNameEn?: string; username: string }, lang: LangCode): string {
   if (prefersLatinName(lang)) return u.fullNameEn?.trim() || u.fullName || u.username;
   return u.fullName || u.username;
 }
@@ -197,7 +197,7 @@ export function isAdminLevel(roleId: number): boolean {
 }
 
 /** role_id → хүний унших нэр (mn/en/zh/ru). */
-export function roleLabel(roleId: number, lang: Lang = 'mn'): string {
+export function roleLabel(roleId: number, lang: LangCode = 'mn'): string {
   const mn: Record<number, string> = { 1: 'Супер админ', 2: 'Админ', 3: 'Менежер', 4: 'Хэрэглэгч' };
   const en: Record<number, string> = { 1: 'Superadmin', 2: 'Admin', 3: 'Manager', 4: 'User' };
   const zh: Record<number, string> = { 1: '超级管理员', 2: '管理员', 3: '经理', 4: '用户' };

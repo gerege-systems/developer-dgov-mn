@@ -50,6 +50,8 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 const INT_ID_RE = /^\d{1,10}$/;
 // Hydra OAuth2 client_id — UUID биш (жишээ нь "template-dgov-mn", "app-1a2b3c4d").
 const CLIENT_ID_RE = /^[A-Za-z0-9._~-]{1,128}$/;
+// Интерфейсийн хэлний код (BCP-47-ийн дэд олонлог): 'mn', 'en-US', 'zh-Hans'.
+const LANG_CODE_RE = /^[a-z]{2,3}(-[A-Za-z0-9]{2,8}){0,2}$/;
 
 function invalidID(): NextResponse {
   return NextResponse.json({ ok: false, status: 400, message: 'ID буруу байна.' }, { status: 400 });
@@ -72,6 +74,15 @@ export function checkClientID(id: string): NextResponse | null {
 /** Dynamic route-ийн бүхэл тоон id-г шалгана (role id г.м.). Буруу бол 400. */
 export function checkIntID(id: string): NextResponse | null {
   return INT_ID_RE.test(id) ? null : invalidID();
+}
+
+/**
+ * Dynamic route-ийн хэлний кодыг шалгана (BCP-47-ийн нарийсгасан дэд олонлог:
+ * 'mn', 'en-US', 'zh-Hans'). Код нь backend-ийн URL зам руу шууд ордог тул
+ * энд ч давхар шалгана — backend-ийн domain.ValidateLanguageCode-той ижил дүрэм.
+ */
+export function checkLangCode(code: string): NextResponse | null {
+  return LANG_CODE_RE.test(code) ? null : invalidID();
 }
 
 /**

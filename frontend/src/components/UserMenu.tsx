@@ -6,8 +6,12 @@ import { ChevronDown, User, Settings, Globe, Moon, Sun, Monitor, HelpCircle, Log
 import SegmentedControl from './SegmentedControl';
 import { usePreferences, showToast } from '@/lib/preferences';
 import { useLang, useT } from '@/lib/lang';
-import { t as translate, LANG_LABELS, type Lang } from '@/lib/i18n';
+import { t as translate, type LangCode } from '@/lib/i18n';
 import { signOut } from '@/lib/signout';
+
+// Сонгогчид харагдах богино шошго. Super admin-ий нэмсэн хэлэнд кодыг томоор
+// (жишээ нь 'ja' → 'JA') үзүүлнэ — хэлний эх нэр нь aria-label дээр байна.
+const LANG_SHORT: Record<string, string> = { mn: 'МН', en: 'EN', zh: '中文', ru: 'RU' };
 
 interface Props {
   username: string;
@@ -22,7 +26,7 @@ export default function UserMenu({ username, email, initials, picture }: Props) 
   const triggerRef = useRef<HTMLButtonElement>(null);
   const { theme, setTheme } = usePreferences();
   const { setLang } = useLang();
-  const { lang, T } = useT();
+  const { lang, T, languages } = useT();
 
   // Гадна дарах + Escape хаах
   useEffect(() => {
@@ -50,7 +54,7 @@ export default function UserMenu({ username, email, initials, picture }: Props) 
   };
 
   // Шинэ хэл дээрээ мэдэгдэнэ (сонгосон хэлээр нь толь бичгээс шууд).
-  const handleLangChange = (value: Lang) => {
+  const handleLangChange = (value: LangCode) => {
     setLang(value);
     showToast(translate(value, 'menu.langSwitched'));
   };
@@ -109,12 +113,11 @@ export default function UserMenu({ username, email, initials, picture }: Props) 
               ariaLabel={T('menu.language')}
               value={lang}
               onChange={handleLangChange}
-              options={[
-                { value: 'mn', label: 'МН',   ariaLabel: LANG_LABELS.mn },
-                { value: 'en', label: 'EN',   ariaLabel: LANG_LABELS.en },
-                { value: 'zh', label: '中文', ariaLabel: LANG_LABELS.zh },
-                { value: 'ru', label: 'RU',   ariaLabel: LANG_LABELS.ru },
-              ]}
+              options={languages.map((l) => ({
+                value: l.code,
+                label: LANG_SHORT[l.code] ?? l.code.toUpperCase(),
+                ariaLabel: l.label,
+              }))}
             />
           </div>
 

@@ -6,7 +6,7 @@ import PageHead from '@/components/PageHead';
 import { useT } from '@/lib/lang';
 import { postJSON } from '@/lib/client';
 import { recordSegment, playBase64Audio, unlockAudio, type RecordedAudio } from '@/lib/audio';
-import type { Lang } from '@/lib/i18n';
+import type { LangCode } from '@/lib/i18n';
 
 interface ChatMsg {
   role: 'user' | 'model';
@@ -19,7 +19,7 @@ interface ChatMsg {
   voice?: boolean;
   /** Аль хэл дээр үүссэн ээлж бэ — хэл солиход өөр хэлний түүхийг
    *  дараагийн хүсэлтэд илгээхгүйн тулд. */
-  lang?: Lang;
+  lang?: LangCode;
 }
 
 interface ChatData {

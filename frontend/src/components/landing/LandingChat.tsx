@@ -6,7 +6,7 @@ import { Bot, Send, X, MessageCircle, Mic, Volume2 } from 'lucide-react';
 import { postJSON } from '@/lib/client';
 import { streamChat, takeSentence, plainText } from '@/lib/chatStream';
 import { recordSegment, playBase64Audio, unlockAudio, type RecordedAudio } from '@/lib/audio';
-import type { Lang } from '@/lib/i18n';
+import type { LangCode } from '@/lib/i18n';
 import type { LandingCopy } from './copy';
 
 interface Msg {
@@ -40,7 +40,7 @@ const MIN_VOICE_MS = 400;
  * илгээнэ — model нь audio-г шууд ойлгодог тул тусдаа STT алхам хэрэггүй.
  * Хариултыг чанга яригчийн товчоор сонсож болно (`/api/public/ai/tts`).
  */
-export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat']; lang: Lang }) {
+export default function LandingChat({ copy, lang }: { copy: LandingCopy['chat']; lang: LangCode }) {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState('');

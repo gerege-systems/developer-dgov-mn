@@ -90,6 +90,9 @@ gerege-template-platform/
 - **前端 BFF** — 浏览器只与同源的 Next.js 路由通信，由其在服务端代理到后端
   （令牌绝不进入客户端 JS）；双重 CSRF 防护（自定义请求头 + 来源校验），
   TanStack Query 数据层。
+- **动态语言** — 超级管理员可在运行时增删界面语言，并用 Gemini 补充翻译
+  （`/admin/languages`）；内置词典仍是键的来源，也是数据库不可用时的兜底。
+  需要 platform-core v0.5.0+。
 - **可安装的 PWA** — manifest + 图标 + 基于 Serwist 的 service worker；
   只缓存静态资源 — 所有 `/api/*` 与认证/eID 路径均为 NetworkOnly，HTML 完全不缓存。
   配置见 [frontend/README_ZH.md](../frontend/README_ZH.md#pwa--安装为应用)。

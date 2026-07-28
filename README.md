@@ -77,6 +77,7 @@ gerege-template-platform/
 - **Аюулгүй хатууруулсан** — security headers (CSP, HSTS, COOP/COEP/CORP), CORS allow-list, rate limiting, серверийн бүрэн timeout-ууд, parameterized query, Postgres Row-Level Security + boot-үеийн мөрдөлтийн guard. [SECURITY.md](SECURITY.md)-г үз.
 - **Observability** — OpenTelemetry trace + Prometheus metrics + Zap structured log; production-д `/metrics` ба `/swagger` bearer token-оор хаагдана.
 - **Frontend BFF** — браузер зөвхөн ижил-origin Next.js route рүү залгаж, тэр нь server талаас backend руу проксиолдог (токен client JS-д хүрэхгүй); давхар CSRF хамгаалалт (custom header + origin), TanStack Query өгөгдлийн давхарга.
+- **Динамик хэл** — super admin нь интерфейсийн хэлийг ажиллаж байхад нэмж/хасч, орчуулгыг Gemini-ээр бөглөнө (`/admin/languages`); багцлагдсан dictionary нь түлхүүрийн эх сурвалж ба DB унасан үеийн суурь. platform-core v0.5.0+.
 - **PWA (суулгаж болно)** — manifest + дүрс + Serwist service worker; кэш нь ЗӨВХӨН статик хөрөнгөд, `/api/*` ба нэвтрэлт/eID-ийн бүх зам NetworkOnly, HTML огт кэшлэгдэхгүй. Тохиргоо: [frontend/README.md](frontend/README.md#pwa--апп-болгож-суулгах).
 - **Тесттэй** — unit + testcontainers integration тест.
 

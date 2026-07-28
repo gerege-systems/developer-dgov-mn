@@ -82,6 +82,7 @@ const SYSTEMS: NavSystem[] = [
         items: [
           { href: '/admin/superadmin', labelKey: 'nav.superadminAdmins', icon: Crown, superAdminOnly: true },
           { href: '/admin/themes', labelKey: 'themes.title', icon: Palette, superAdminOnly: true },
+          { href: '/admin/languages', labelKey: 'langs.title', icon: Languages, superAdminOnly: true },
         ],
       },
     ],
