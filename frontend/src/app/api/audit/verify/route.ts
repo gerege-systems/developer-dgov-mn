@@ -1,1 +1,2 @@
-export { GET, dynamic } from '@gerege/ui-core/api/audit/verify';
+export { GET } from '@gerege/ui-core/api/audit/verify';
+export const dynamic = 'force-dynamic';

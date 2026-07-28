@@ -1,1 +1,2 @@
-export { GET, DELETE, dynamic } from '@gerege/ui-core/api/gspace';
+export { GET, DELETE } from '@gerege/ui-core/api/gspace';
+export const dynamic = 'force-dynamic';

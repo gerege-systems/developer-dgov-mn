@@ -1,1 +1,2 @@
-export { GET, POST, dynamic } from '@gerege/ui-core/api/superadmin/invites';
+export { GET, POST } from '@gerege/ui-core/api/superadmin/invites';
+export const dynamic = 'force-dynamic';

@@ -1,1 +1,2 @@
-export { PUT, dynamic } from '@gerege/ui-core/api/admin/ai/prompts/[key]';
+export { PUT } from '@gerege/ui-core/api/admin/ai/prompts/[key]';
+export const dynamic = 'force-dynamic';

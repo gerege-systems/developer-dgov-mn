@@ -1,1 +1,2 @@
-export { GET, POST, DELETE, dynamic } from '@gerege/ui-core/api/me/signature';
+export { GET, POST, DELETE } from '@gerege/ui-core/api/me/signature';
+export const dynamic = 'force-dynamic';

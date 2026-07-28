@@ -1,1 +1,2 @@
-export { GET, POST, DELETE, dynamic } from '@gerege/ui-core/api/me/eid/organizations/[regNo]/stamp';
+export { GET, POST, DELETE } from '@gerege/ui-core/api/me/eid/organizations/[regNo]/stamp';
+export const dynamic = 'force-dynamic';

@@ -1,1 +1,2 @@
-export { GET, dynamic } from '@gerege/ui-core/api/auth/google/start';
+export { GET } from '@gerege/ui-core/api/auth/google/start';
+export const dynamic = 'force-dynamic';

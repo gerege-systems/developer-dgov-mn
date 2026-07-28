@@ -1,1 +1,2 @@
-export { GET, dynamic } from '@gerege/ui-core/api/gov/applications/[id]/timeline';
+export { GET } from '@gerege/ui-core/api/gov/applications/[id]/timeline';
+export const dynamic = 'force-dynamic';

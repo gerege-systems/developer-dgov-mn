@@ -1,1 +1,3 @@
-export { POST, dynamic, maxDuration } from '@gerege/ui-core/api/sign/init';
+export { POST } from '@gerege/ui-core/api/sign/init';
+export const dynamic = 'force-dynamic';
+export const maxDuration = 60;
