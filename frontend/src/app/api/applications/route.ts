@@ -1,1 +1,2 @@
-export { GET, POST, dynamic } from '@gerege/ui-core/api/applications';
+export { GET, POST } from '@gerege/ui-core/api/applications';
+export const dynamic = 'force-dynamic';

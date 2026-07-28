@@ -1,1 +1,2 @@
-export { POST, dynamic } from '@gerege/ui-core/api/public/ai/tts';
+export { POST } from '@gerege/ui-core/api/public/ai/tts';
+export const dynamic = 'force-dynamic';

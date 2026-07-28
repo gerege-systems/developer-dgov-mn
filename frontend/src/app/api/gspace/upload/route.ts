@@ -1,1 +1,2 @@
-export { POST, dynamic } from '@gerege/ui-core/api/gspace/upload';
+export { POST } from '@gerege/ui-core/api/gspace/upload';
+export const dynamic = 'force-dynamic';

@@ -1,1 +1,2 @@
-export { GET, POST, dynamic } from '@gerege/ui-core/api/relay/routes';
+export { GET, POST } from '@gerege/ui-core/api/relay/routes';
+export const dynamic = 'force-dynamic';

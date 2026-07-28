@@ -1,1 +1,2 @@
-export { POST, dynamic } from '@gerege/ui-core/api/auth/eid/start';
+export { POST } from '@gerege/ui-core/api/auth/eid/start';
+export const dynamic = 'force-dynamic';

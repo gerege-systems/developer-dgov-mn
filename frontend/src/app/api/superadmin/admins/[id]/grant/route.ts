@@ -1,1 +1,2 @@
-export { PUT, dynamic } from '@gerege/ui-core/api/superadmin/admins/[id]/grant';
+export { PUT } from '@gerege/ui-core/api/superadmin/admins/[id]/grant';
+export const dynamic = 'force-dynamic';

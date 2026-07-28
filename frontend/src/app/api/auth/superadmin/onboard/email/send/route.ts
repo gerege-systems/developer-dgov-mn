@@ -1,1 +1,2 @@
-export { POST, dynamic } from '@gerege/ui-core/api/auth/superadmin/onboard/email/send';
+export { POST } from '@gerege/ui-core/api/auth/superadmin/onboard/email/send';
+export const dynamic = 'force-dynamic';

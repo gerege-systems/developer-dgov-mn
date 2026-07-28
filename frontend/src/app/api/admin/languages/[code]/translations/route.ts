@@ -1,1 +1,2 @@
-export { PUT, dynamic } from '@gerege/ui-core/api/admin/languages/[code]/translations';
+export { PUT } from '@gerege/ui-core/api/admin/languages/[code]/translations';
+export const dynamic = 'force-dynamic';

@@ -47,8 +47,12 @@ const fat = walk(APP)
   .filter((r) => !LOCAL.includes(r.replace(/\/route$/, '')))
   .map((r) => join(APP, `${r}.ts`))
   .filter((p) => {
+    // Хүлээгдэх хэлбэр: нэг дахин экспорт + route-ын тохиргооны литерал мөрүүд.
+    // Тохиргоог ЛИТЕРАЛААР бичнэ — Turbopack нь дахин экспортолсон
+    // `export const dynamic`-ыг статикаар уншиж чаддаггүй.
     const body = readFileSync(p, 'utf8').split('\n').filter((l) => l.trim());
-    return body.length > 1 || !body[0]?.startsWith('export {');
+    if (!body[0]?.startsWith('export {')) return true;
+    return body.slice(1).some((l) => !/^export const \w+ = .+;$/.test(l.trim()));
   });
 
 if (missing.length) {
