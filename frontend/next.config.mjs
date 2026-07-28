@@ -1,3 +1,13 @@
+// ⚠️ next 16 — Turbopack анхдагч болсон ч энэ апп WEBPACK-ээр build хийнэ.
+//
+// Шалтгаан: PWA-гийн service worker-ыг `@serwist/next` үүсгэдэг бөгөөд тэр нь
+// webpack тохиргоо тарьдаг. Serwist-ийн Turbopack дэмжлэг туршилтын шатанд
+// (serwist#54). Turbopack-аар build хийвэл webpack тохиргоо үл тоомсорлогдож
+// service worker үүсэхгүй — PWA чимээгүй эвдэрнэ.
+//
+// Тиймээс package.json-ы `dev`/`build` дээр `--webpack` тугийг ЗААВАЛ өгнө.
+// Serwist Turbopack-ыг тогтвортой дэмжмэгц энэ тугийг хасаж болно.
+
 /** @type {import('next').NextConfig} */
 import { spawnSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';

@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2021",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -11,16 +15,32 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
-    "plugins": [{ "name": "next" }],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
   // sw.ts нь WebWorker орчинд ажилладаг тул DOM lib-тэй энэ төслийн тохиргоогоор
   // шалгагдахгүй — түүнийг tsconfig.sw.json тусад нь шалгана (npm run build).
   // public/sw.js нь build-ийн гаралт.
-  "exclude": ["node_modules", "src/app/sw.ts", "public/sw.js"]
+  "exclude": [
+    "node_modules",
+    "src/app/sw.ts",
+    "public/sw.js"
+  ]
 }
