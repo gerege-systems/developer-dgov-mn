@@ -14,6 +14,10 @@ import { join, relative } from 'node:path';
 // Энэ платформ дээр зориудаар нээхгүй route-ууд (ж: kiosk-д gov/** хэрэггүй).
 const EXCLUDE = [];
 
+// Зориудаар АППАД хэрэгжүүлсэн route-ууд — бүрхүүл биш, бүтэн код. Платформ
+// тусгайлсан утга агуулдаг тохиолдолд (ж: `aasa` доторх iOS bundle ID).
+const LOCAL = [];
+
 const PKG = 'node_modules/@gerege/ui-core/src/api';
 const APP = 'src/app/api';
 
@@ -33,13 +37,14 @@ if (!existsSync(PKG)) {
 
 const pkgRoutes = walk(PKG);
 const missing = pkgRoutes.filter(
-  (r) => !EXCLUDE.includes(r) && !existsSync(join(APP, r, 'route.ts')),
+  (r) => !EXCLUDE.includes(r) && !LOCAL.includes(r) && !existsSync(join(APP, r, 'route.ts')),
 );
 
 // Бүрхүүл нь дахин экспортоос өөр юм агуулж эхэлбэл логик апп руу буцаж
 // хуулагдаж эхэлсэн гэсэн үг — багцын утга алдагдана.
 const fat = walk(APP)
   .filter((r) => r.endsWith('/route'))
+  .filter((r) => !LOCAL.includes(r.replace(/\/route$/, '')))
   .map((r) => join(APP, `${r}.ts`))
   .filter((p) => {
     const body = readFileSync(p, 'utf8').split('\n').filter((l) => l.trim());
@@ -57,4 +62,5 @@ if (fat.length) {
 }
 if (missing.length || fat.length) process.exit(1);
 
-console.log(`✓ ${pkgRoutes.length} BFF route бүрхүүлтэй, бүгд нэг мөр.`);
+const localNote = LOCAL.length ? `, ${LOCAL.length} нь аппад зориудаар` : '';
+console.log(`✓ ${pkgRoutes.length} BFF route бүрхүүлтэй${localNote}.`);
