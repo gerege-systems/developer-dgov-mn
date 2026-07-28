@@ -3,9 +3,10 @@ import { redirect } from 'next/navigation';
 import PageHead from '@/components/PageHead';
 import GovPaymentsView from '@/components/gov/GovPaymentsView';
 import { fetchMe } from '@/lib/api';
+import { pageTitle } from '@/brand.config';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Төлбөр — Gerege Template Platform V3.0' };
+export const metadata = { title: pageTitle('Төлбөр') };
 
 export default async function MePaymentsPage() {
   const me = await fetchMe();

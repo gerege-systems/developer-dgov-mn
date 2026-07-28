@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { brand } from '@/brand.config';
 
 interface Props {
   /** topbar баруун талын нэмэлт навигаци (сонголттой). Нийтийн хуудасны
@@ -19,9 +20,9 @@ export default function SigninShell({ rightNav, hideFooter, children }: Props) {
       <header className="signin-shell__nav">
         <Link className="topbar__brand" href="/">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="topbar__brand-mark" src="/brand.webp" alt="Gerege Template Platform V3.0" />
+          <img className="topbar__brand-mark" src="/brand.webp" alt={brand.name} />
           <div className="topbar__brand-text">
-            <span className="topbar__brand-name">Gerege Template Platform V3.0</span>
+            <span className="topbar__brand-name">{brand.name}</span>
           </div>
         </Link>
         {rightNav}
@@ -31,7 +32,7 @@ export default function SigninShell({ rightNav, hideFooter, children }: Props) {
 
       {!hideFooter && (
         <footer className="signin-footer" style={{ justifyContent: 'center', textAlign: 'center' }}>
-          <span>© 2026 Gerege Systems · <span className="mono">Gerege Template Platform V3.0</span></span>
+          <span>© 2026 Gerege Systems · <span className="mono">{brand.name}</span></span>
         </footer>
       )}
     </div>

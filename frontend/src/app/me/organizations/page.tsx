@@ -4,9 +4,10 @@ import PageHead from '@/components/PageHead';
 import OrgRepsCard from '@/components/me/OrgRepsCard';
 import ImageUploadCard from '@/components/me/ImageUploadCard';
 import { fetchMe } from '@/lib/api';
+import { pageTitle } from '@/brand.config';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Байгууллага — Gerege Template Platform V3.0' };
+export const metadata = { title: pageTitle('Байгууллага') };
 
 export default async function MeOrganizationsPage() {
   const me = await fetchMe();

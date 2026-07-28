@@ -3,9 +3,10 @@ import { redirect } from 'next/navigation';
 import PageHead from '@/components/PageHead';
 import GovNotificationsView from '@/components/gov/GovNotificationsView';
 import { fetchMe } from '@/lib/api';
+import { pageTitle } from '@/brand.config';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Мэдэгдэл — Gerege Template Platform V3.0' };
+export const metadata = { title: pageTitle('Мэдэгдэл') };
 
 export default async function MeNotificationsPage() {
   const me = await fetchMe();

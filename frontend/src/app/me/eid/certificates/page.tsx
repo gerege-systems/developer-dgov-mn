@@ -3,9 +3,10 @@ import { redirect } from 'next/navigation';
 import PageHead from '@/components/PageHead';
 import EidCertificatesView from '@/components/me/eid/EidCertificatesView';
 import { fetchMe } from '@/lib/api';
+import { pageTitle } from '@/brand.config';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Гэрчилгээ — Gerege Template Platform V3.0' };
+export const metadata = { title: pageTitle('Гэрчилгээ') };
 
 export default async function EidCertificatesPage() {
   const me = await fetchMe();

@@ -3,9 +3,10 @@ import { redirect } from 'next/navigation';
 import PageHead from '@/components/PageHead';
 import GovAppointmentsView from '@/components/gov/GovAppointmentsView';
 import { fetchMe } from '@/lib/api';
+import { pageTitle } from '@/brand.config';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Цаг захиалга — Gerege Template Platform V3.0' };
+export const metadata = { title: pageTitle('Цаг захиалга') };
 
 export default async function MeAppointmentsPage() {
   const me = await fetchMe();

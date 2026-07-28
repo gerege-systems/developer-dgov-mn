@@ -3,9 +3,10 @@ import { redirect } from 'next/navigation';
 import PageHead from '@/components/PageHead';
 import EidSecurityView from '@/components/me/eid/EidSecurityView';
 import { fetchMe } from '@/lib/api';
+import { pageTitle } from '@/brand.config';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'eID аюулгүй байдал — Gerege Template Platform V3.0' };
+export const metadata = { title: pageTitle('eID аюулгүй байдал') };
 
 export default async function EidSecurityPage() {
   const me = await fetchMe();

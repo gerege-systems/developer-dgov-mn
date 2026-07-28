@@ -1,4 +1,3 @@
-// Gerege Template Platform V3.0
 // Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 
 // Офлайн fallback хуудас. Service worker үүнийг precache хийж (next.config.mjs
@@ -8,9 +7,10 @@
 
 import SigninShell from '@/components/SigninShell';
 import OfflineCard from './OfflineCard';
+import { pageTitle } from '@/brand.config';
 
 export const metadata = {
-  title: 'Офлайн — Gerege Template Platform V3.0',
+  title: pageTitle('Офлайн'),
 };
 
 export default function OfflinePage() {

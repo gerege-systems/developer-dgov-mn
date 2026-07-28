@@ -13,6 +13,7 @@ import { pickLang, type Lang, type LangCode } from '@/lib/i18n';
 import { landingCopyFor, type LandingCopy } from './copy';
 import LandingChat from './LandingChat';
 import { deepMerge } from '@/lib/theme';
+import { brand as brandConfig } from '@/brand.config';
 
 // Нүүрэн дээрх хэлний товч нь mn → en → zh → ru → mn гэж эргэлдэнэ (дараагийн
 // хэлийг шошгонд харуулна).
@@ -59,7 +60,7 @@ interface Props {
 }
 
 /**
- * Gerege Template Platform V3.0 — «Цахим үйлчилгээг бүтээх суурь» нүүр
+ * Платформын нүүр — «Цахим үйлчилгээг бүтээх суурь»
  * (landing). Нэвтрээгүй зочдод харагдах маркетингийн нүүр. Платформын бүх
  * чадварыг харуулж, hero-ийн баруун талд Gerege SSO (sso.gerege.mn)-оор
  * нэвтрэх картыг шигтгэв. Нэвтрэх товч дарахад sso.gerege.mn руу шилжиж, тэндээ
@@ -76,7 +77,7 @@ export default function LandingPage({ next, themeLanding }: Props) {
   const override = themeLanding?.[lang as Lang];
   const base = landingCopyFor(lang);
   const t = override ? deepMerge(base, override) : base;
-  const brand = t.brand || 'Gerege Template Platform V3.0';
+  const brand = t.brand || brandConfig.name;
   // Gerege SSO (sso.gerege.mn) руу нэвтрэлт эхлүүлэх — backend /sso/start руу
   // прокси хийж, browser-ийг sso.gerege.mn-ий authorize URL руу шилжүүлнэ.
   const ssoHref = `/api/auth/sso/start${next ? `?next=${encodeURIComponent(next)}` : ''}`;

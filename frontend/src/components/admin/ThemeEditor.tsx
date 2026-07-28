@@ -17,6 +17,7 @@ import {
   type ThemeConfig,
 } from '@/lib/theme';
 import { pickLang, type Lang } from '@/lib/i18n';
+import { brand } from '@/brand.config';
 
 
 
@@ -206,7 +207,7 @@ export default function ThemeEditor({ theme, onDone }: Props) {
                 {L('Үлдсэн (body)', 'Body', '主体 (body)', 'Тело (body)')}
               </div>
             </div>
-            <div className="theme-preview__brand">{mergedCopy.brand || 'Gerege Template Platform V3.0'}</div>
+            <div className="theme-preview__brand">{mergedCopy.brand || brand.name}</div>
             <div className="theme-preview__hero">
               {mergedCopy.hero.titleLead} <span style={{ color: 'var(--gold)' }}>{mergedCopy.hero.titleAccent}</span> {mergedCopy.hero.titleTail}
             </div>

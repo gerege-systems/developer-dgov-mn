@@ -1,7 +1,8 @@
-// Gerege Template Platform V3.0
 // Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 
 import type { MetadataRoute } from 'next';
+
+import { brand } from '@/brand.config';
 
 // Web App Manifest — /manifest.webmanifest хаягаар өгөгдөнө. Next.js энэ файлын
 // конвенцийг таньж <link rel="manifest"> толгойг өөрөө нэмнэ.
@@ -11,14 +12,14 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Ring System',
-    short_name: 'Ring',
-    description: 'Төрийн үйлчилгээний процессын дахин инженерчлэлийн платформ',
+    name: brand.name,
+    short_name: brand.short,
+    description: brand.description,
     lang: 'mn',
     start_url: '/',
     scope: '/',
     display: 'standalone',
-    theme_color: '#0064E1',
+    theme_color: brand.themeColor,
     background_color: '#ffffff',
     icons: [
       {

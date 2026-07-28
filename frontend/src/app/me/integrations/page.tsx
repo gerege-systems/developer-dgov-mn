@@ -4,9 +4,10 @@ import PageHead from '@/components/PageHead';
 import IntegrationsView from '@/components/me/IntegrationsView';
 import { fetchMe, authedFetch } from '@/lib/api';
 import { integrationStatuses } from '@/lib/integrations';
+import { pageTitle } from '@/brand.config';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Интеграци — Gerege Template Platform V3.0' };
+export const metadata = { title: pageTitle('Интеграци') };
 
 export default async function IntegrationsPage() {
   const me = await fetchMe();

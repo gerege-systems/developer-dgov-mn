@@ -3,10 +3,11 @@ import { redirect } from 'next/navigation';
 import SigninShell from '@/components/SigninShell';
 import { safeNext } from '@/lib/navigation';
 import EidVerify from './EidVerify';
+import { pageTitle } from '@/brand.config';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'eID баталгаажуулалт — Gerege Template Platform V3.0' };
+export const metadata = { title: pageTitle('eID баталгаажуулалт') };
 
 // eID апп-аас App2App буцалтын callback (IdP-д бүртгэгдсэн
 // https://sso.gerege.mn/login/verify). eID апп буцахдаа session id-г

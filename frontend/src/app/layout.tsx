@@ -5,6 +5,7 @@ import './globals.css';
 import { LangProvider } from '@/lib/lang';
 import Providers from '@/components/Providers';
 import { fetchActiveTheme } from '@/lib/api';
+import { brand } from '@/brand.config';
 
 // Фонтыг build үед татаж next/font өөрөө host хийдэг тул CSP-г чанд 'self'-ээр
 // үлдээж болно (гадны фонт host хэрэггүй).
@@ -39,16 +40,15 @@ const sourceSerif = Source_Serif_4({
 });
 
 export const metadata: Metadata = {
-  title: 'Gerege Template Platform V3.0',
-  description:
-    'eID based, AI enabled. Gerege Template Platform V3.0 — chi (net/http) + pgx дээр суурилсан, төр, хувийн хэвшлийн аливаа цахим үйлчилгээг дээр нь босгох, үйлдвэрлэлд бэлэн суурь: eID нэвтрэлт, SSO/OIDC, Gemini AI, аюулгүй байдлын хатуужуулалт нэг дороос.',
+  title: brand.name,
+  description: `eID based, AI enabled. ${brand.name} — ${brand.description}.`,
   // PWA — manifest.ts дахь name/short_name-тэй тааруулав.
-  applicationName: 'Ring System',
+  applicationName: brand.name,
   // iOS Safari-д "Нүүр дэлгэцэд нэмэх" үед standalone горимоор нээгдэнэ
   // (apple-mobile-web-app-capable + status bar + дүрсний доорх нэр).
   appleWebApp: {
     capable: true,
-    title: 'Ring',
+    title: brand.short,
     statusBarStyle: 'default',
   },
   other: {
@@ -68,7 +68,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#0064E1',
+  themeColor: brand.themeColor,
   colorScheme: 'light dark',
 };
 

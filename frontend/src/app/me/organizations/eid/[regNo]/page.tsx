@@ -3,9 +3,10 @@ import { redirect } from 'next/navigation';
 import PageHead from '@/components/PageHead';
 import OrgManageView from '@/components/me/OrgManageView';
 import { fetchMe } from '@/lib/api';
+import { pageTitle } from '@/brand.config';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Байгууллага — Gerege Template Platform V3.0' };
+export const metadata = { title: pageTitle('Байгууллага') };
 
 // eID-д бүртгэлтэй, төлөөлдөг байгууллагын удирдах дэлгэц (гарын үсэг зурагч + салгах).
 export default async function MeEidOrgManagePage(props: { params: Promise<{ regNo: string }> }) {

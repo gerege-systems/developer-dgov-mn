@@ -3,9 +3,10 @@ import { redirect } from 'next/navigation';
 import PageHead from '@/components/PageHead';
 import OrgDetail from '@/components/me/OrgDetail';
 import { fetchMe } from '@/lib/api';
+import { pageTitle } from '@/brand.config';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Байгууллага — Gerege Template Platform V3.0' };
+export const metadata = { title: pageTitle('Байгууллага') };
 
 export default async function MeOrganizationDetailPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;

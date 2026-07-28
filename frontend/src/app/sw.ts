@@ -1,4 +1,3 @@
-// Gerege Template Platform V3.0
 // Gerege Systems Development Team болон Claude AI хамтран бүтээв, 2026.
 
 // Service worker-ийн эх файл. @serwist/next үүнийг build үед хөрвүүлж

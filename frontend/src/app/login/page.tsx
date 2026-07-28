@@ -3,10 +3,11 @@ import React from 'react';
 import { LogIn } from 'lucide-react';
 import SigninShell from '@/components/SigninShell';
 import { safeNext } from '@/lib/navigation';
+import { pageTitle } from '@/brand.config';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Нэвтрэх — Gerege Template Platform V3.0' };
+export const metadata = { title: pageTitle('Нэвтрэх') };
 
 // Нэвтрэлт нь Gerege SSO (sso.gerege.mn)-оор дамжина. Товч дарахад sso.gerege.mn
 // руу шилжиж, тэндээ нэвтэрч, буцаж ирнэ (OIDC RP урсгал). SSO callback амжилтгүй
