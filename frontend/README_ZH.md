@@ -286,6 +286,72 @@ npm run test                     # vitest（bff/i18n/navigation 单元测试）
 
 ---
 
+## PWA — 安装为应用
+
+前端是可安装的 **PWA**，满足浏览器（Chrome/Edge/Android）的安装提示条件：
+HTTPS + manifest + 192/512 图标 + service worker。在 iOS Safari 中通过
+"添加到主屏幕"会以 standalone 模式打开。
+
+| 文件 | 作用 |
+|---|---|
+| `src/app/manifest.ts` | `/manifest.webmanifest` — Next.js metadata route |
+| `src/app/sw.ts` | Service worker 源码（Serwist） |
+| `src/app/~offline/` | 断网时的回退页面（`useT()` i18n） |
+| `public/icons/` | 192 · 512 · 512-maskable · apple-touch-icon |
+| `tsconfig.sw.json` | SW 的独立类型检查（WebWorker lib） |
+| `scripts/make-pwa-icons.py` | 从品牌标识重新生成图标 |
+
+Manifest：`name` **Ring System**，`short_name` **Ring**，`display` `standalone`，
+`start_url` `/`，`theme_color` `#0064E1`（品牌令牌 `--dan-blue`），
+`background_color` `#ffffff`。
+
+### 缓存策略 — 仅静态资源
+
+核心安全原则：**会话、CSRF、eID 绝不从缓存返回。**
+`src/app/sw.ts` 中的规则按顺序匹配，先匹配者生效：
+
+| # | 范围 | 策略 |
+|---|---|---|
+| 1 | `/api`、`/auth`、`/oauth`、`/provider`、`/sso`、`/login`、`/logout` 以及路径中含 `eid` 段的一切 | **NetworkOnly** |
+| 2 | `/_next/static/*`（带哈希的构建产物、next/font 字体） | CacheFirst |
+| 3 | 同源图片 | CacheFirst |
+| 4 | 同源字体 | CacheFirst |
+| 5 | 其他同源页面（document） | **NetworkOnly**（仅用于离线回退） |
+
+- **完全不缓存 HTML。** 离线时唯一可用的页面是 `/~offline`。
+- **SW 不拦截跨域请求。** 若拦截，SW 内的 `fetch()` 将受应用的
+  `connect-src 'self'` CSP 限制，Google 头像等资源会被阻止。不拦截则由浏览器直接获取。
+- `/_next/static/*` 在规则 1 **之前**被排除：Next.js 按路由路径命名 chunk，
+  文件名可能包含 `api`/`eid`，但它们是公开且不可变的 JS 文件。
+- 开发模式下**完全不生成** service worker（`next.config.mjs` → `disable`）。
+
+### CSP
+
+**无需修改。** 未指定 `worker-src` 时，CSP 会回退到 `child-src` → `default-src`，
+而 `default-src 'self'` 允许同源的 `/sw.js`。SW 的所有 matcher 仅拦截同源请求，
+因此与 `connect-src 'self'` 也不冲突。
+
+### 运行 / 验证
+
+```bash
+npm run build            # typecheck:sw + next build → 生成 public/sw.js
+npm run icons:pwa        # 重新生成图标（需要 Pillow）
+
+npm start                # 生产模式 — SW 仅在此启用
+curl -s localhost:3000/manifest.webmanifest
+```
+
+浏览器 DevTools → Application：*Manifest*（无错误）、*Service Workers*
+（activated）、*Cache Storage* → `serwist-precache-v2-*` 中应包含 `/~offline` 与
+`/_next/static/*`，且**不应**出现任何 `/api/*` 响应。
+
+> 注意：manifest 中的 `Ring System` / `Ring` 与站点标题
+> （`Gerege Template Platform V3.0`）有意不同 — 已安装应用单独品牌化。
+> 如需统一，请同时修改 `src/app/manifest.ts` 与 `layout.tsx` 中的
+> `applicationName` / `appleWebApp.title`。
+
+---
+
 ## gerege 主题
 
 设计系统位于 `src/app/globals.css` — OKLCH 令牌（DAN blue `#1767E7`）、

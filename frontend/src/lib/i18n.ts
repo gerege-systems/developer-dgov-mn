@@ -886,6 +886,12 @@ export const dict = {
     'themes.save': 'Хадгалах',
     'themes.cancel': 'Болих',
     'themes.editorTitle': 'Загвар засварлагч',
+
+    // PWA — офлайн fallback хуудас (service worker сүлжээ унасан үед үзүүлнэ)
+    'offline.title': 'Сүлжээ салсан байна',
+    'offline.body':
+      'Интернэт холболт олдсонгүй. Энэ апп аюулгүй байдлын үүднээс хуудас, өгөгдлийг офлайнд хадгалдаггүй — холболт сэргэмэгц үргэлжлүүлнэ үү.',
+    'offline.retry': 'Дахин оролдох',
   },
   en: {
     'sys.superadmin': 'Super Admin system',
@@ -1718,6 +1724,12 @@ export const dict = {
     'themes.save': 'Save',
     'themes.cancel': 'Cancel',
     'themes.editorTitle': 'Theme editor',
+
+    // PWA — offline fallback page
+    'offline.title': 'You are offline',
+    'offline.body':
+      'No internet connection. For security reasons this app does not store pages or data offline — please continue once the connection is back.',
+    'offline.retry': 'Try again',
   },
   zh: {
     'sys.superadmin': '超级管理员系统',
@@ -2550,6 +2562,11 @@ export const dict = {
     'themes.save': '保存',
     'themes.cancel': '取消',
     'themes.editorTitle': '主题编辑器',
+
+    // PWA — 离线回退页面
+    'offline.title': '当前处于离线状态',
+    'offline.body': '未检测到网络连接。出于安全考虑，本应用不会离线保存页面或数据——请在网络恢复后继续。',
+    'offline.retry': '重试',
   },
   ru: {
     'sys.superadmin': 'Система суперадмина',
@@ -3382,6 +3399,12 @@ export const dict = {
     'themes.save': 'Сохранить',
     'themes.cancel': 'Отмена',
     'themes.editorTitle': 'Редактор тем',
+
+    // PWA — офлайн-страница
+    'offline.title': 'Нет подключения',
+    'offline.body':
+      'Интернет-соединение не найдено. Из соображений безопасности приложение не хранит страницы и данные офлайн — продолжите, когда связь восстановится.',
+    'offline.retry': 'Повторить',
   },
 } as const;
 

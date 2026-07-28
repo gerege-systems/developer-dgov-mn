@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Metadata, Viewport } from 'next';
 import { Inter, JetBrains_Mono, Source_Serif_4 } from 'next/font/google';
 import './globals.css';
 import { LangProvider } from '@/lib/lang';
@@ -37,10 +38,38 @@ const sourceSerif = Source_Serif_4({
   display: 'swap',
 });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Gerege Template Platform V3.0',
   description:
     'eID based, AI enabled. Gerege Template Platform V3.0 — chi (net/http) + pgx дээр суурилсан, төр, хувийн хэвшлийн аливаа цахим үйлчилгээг дээр нь босгох, үйлдвэрлэлд бэлэн суурь: eID нэвтрэлт, SSO/OIDC, Gemini AI, аюулгүй байдлын хатуужуулалт нэг дороос.',
+  // PWA — manifest.ts дахь name/short_name-тэй тааруулав.
+  applicationName: 'Ring System',
+  // iOS Safari-д "Нүүр дэлгэцэд нэмэх" үед standalone горимоор нээгдэнэ
+  // (apple-mobile-web-app-capable + status bar + дүрсний доорх нэр).
+  appleWebApp: {
+    capable: true,
+    title: 'Ring',
+    statusBarStyle: 'default',
+  },
+  other: {
+    // Next 15 нь appleWebApp.capable-аас зөвхөн стандарт `mobile-web-app-capable`-г
+    // гаргадаг. iOS 16.4-өөс өмнөх Safari нь apple- угтвартайг л ойлгодог тул
+    // standalone горим тэнд ажиллахын тулд гараар нэмнэ.
+    'apple-mobile-web-app-capable': 'yes',
+  },
+  icons: {
+    icon: [{ url: '/brand.webp', type: 'image/webp' }],
+    apple: [{ url: '/icons/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+  },
+};
+
+// viewport / theme-color нь Next-ийн viewport export-оор гарна (<head>-д гараар
+// бичихгүй — давхардана). theme_color нь manifest.ts-тэй ижил брэнд токен.
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#0064E1',
+  colorScheme: 'light dark',
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -63,9 +92,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       suppressHydrationWarning
     >
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="color-scheme" content="light dark" />
-        <link rel="icon" type="image/webp" href="/brand.webp" />
+        {/* viewport / color-scheme / icon / manifest толгойг Next.js
+            metadata + viewport export болон app/manifest.ts үүсгэнэ. */}
         {/* Идэвхтэй landing theme-ийн харагдац (зөвхөн нийтийн хуудсанд bootstrap хэрэглэнэ). */}
         <script dangerouslySetInnerHTML={{ __html: `window.__SITE_THEME__=${siteJson};` }} />
         {/* FOUC-аас сэргийлэх — гадаад блоклогч script (public/theme-bootstrap.js).

@@ -302,6 +302,77 @@ npm run test                     # vitest (юнит-тесты bff/i18n/navigati
 
 ---
 
+## PWA — установка как приложение
+
+Frontend — устанавливаемое **PWA**. Выполняются условия для предложения
+установки в браузере (Chrome/Edge/Android): HTTPS + manifest + иконки 192/512 +
+service worker. В iOS Safari «На экран «Домой»» открывает приложение в режиме
+standalone.
+
+| Файл | Назначение |
+|---|---|
+| `src/app/manifest.ts` | `/manifest.webmanifest` — Next.js metadata route |
+| `src/app/sw.ts` | Исходник service worker (Serwist) |
+| `src/app/~offline/` | Страница-заглушка при отсутствии сети (`useT()` i18n) |
+| `public/icons/` | 192 · 512 · 512-maskable · apple-touch-icon |
+| `tsconfig.sw.json` | Отдельная проверка типов SW (WebWorker lib) |
+| `scripts/make-pwa-icons.py` | Перегенерация иконок из фирменного знака |
+
+Manifest: `name` **Ring System**, `short_name` **Ring**, `display` `standalone`,
+`start_url` `/`, `theme_color` `#0064E1` (брендовый токен `--dan-blue`),
+`background_color` `#ffffff`.
+
+### Политика кеширования — только статика
+
+Ключевой принцип безопасности: **сессия, CSRF и eID никогда не отдаются из кеша.**
+Правила в `src/app/sw.ts` проверяются по порядку, побеждает первое совпадение:
+
+| # | Область | Стратегия |
+|---|---|---|
+| 1 | `/api`, `/auth`, `/oauth`, `/provider`, `/sso`, `/login`, `/logout` и всё, где в пути есть сегмент `eid` | **NetworkOnly** |
+| 2 | `/_next/static/*` (сборка с хешем, шрифты next/font) | CacheFirst |
+| 3 | Изображения того же origin | CacheFirst |
+| 4 | Шрифты того же origin | CacheFirst |
+| 5 | Прочие страницы того же origin (document) | **NetworkOnly** (только ради офлайн-заглушки) |
+
+- **HTML не кешируется вообще.** Единственная доступная офлайн страница — `/~offline`.
+- **SW не перехватывает кросс-доменные запросы.** Иначе `fetch()` внутри SW
+  подчинялся бы CSP приложения (`connect-src 'self'`), и, например, аватары
+  Google были бы заблокированы. Без перехвата их грузит сам браузер.
+- `/_next/static/*` исключается **до** правила 1: Next.js называет чанки по путям
+  маршрутов, поэтому в имени файла может встречаться `api`/`eid`, но это
+  публичные неизменяемые JS-файлы.
+- В режиме разработки service worker **не создаётся вовсе**
+  (`next.config.mjs` → `disable`).
+
+### CSP
+
+**Изменения не потребовались.** Без директивы `worker-src` CSP откатывается к
+`child-src` → `default-src`, а `default-src 'self'` разрешает `/sw.js` того же
+origin. Все matcher-ы SW перехватывают только запросы того же origin, поэтому
+конфликта с `connect-src 'self'` нет.
+
+### Запуск / проверка
+
+```bash
+npm run build            # typecheck:sw + next build → создаётся public/sw.js
+npm run icons:pwa        # перегенерация иконок (нужен Pillow)
+
+npm start                # прод-режим — SW активен только здесь
+curl -s localhost:3000/manifest.webmanifest
+```
+
+DevTools браузера → Application: *Manifest* (без ошибок), *Service Workers*
+(activated), *Cache Storage* → в `serwist-precache-v2-*` должны быть `/~offline`
+и `/_next/static/*`, и **не должно** быть ни одного ответа `/api/*`.
+
+> Примечание: имена `Ring System` / `Ring` в manifest намеренно отличаются от
+> заголовка сайта (`Gerege Template Platform V3.0`) — установленное приложение
+> брендировано отдельно. Чтобы унифицировать, измените одновременно
+> `src/app/manifest.ts` и `applicationName` / `appleWebApp.title` в `layout.tsx`.
+
+---
+
 ## Тема gerege
 
 Дизайн-система находится в `src/app/globals.css` — токены OKLCH (DAN blue

@@ -1,8 +1,16 @@
 /** @type {import('next').NextConfig} */
+import { spawnSync } from 'node:child_process';
+import { randomUUID } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import withSerwistInit from '@serwist/next';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// /~offline-ийн precache хувилбар. Commit SHA байвал түүнийг (deploy бүрд
+// шинэчлэгдэнэ); Docker builder-т .git байдаггүй тул тэнд build бүрд шинэ UUID.
+const gitSHA = spawnSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf-8' }).stdout?.trim();
+const swRevision = gitSHA || randomUUID();
 
 // Content-Security-Policy: бодит, ажиллах боломжтой бодлого.
 // - script-src: 'self' нь /theme-bootstrap.js (same-origin) болон Next.js-ийн
@@ -85,4 +93,21 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+// Serwist — PWA-ийн service worker. Эх файл нь src/app/sw.ts, гаралт нь
+// public/sw.js (git-д ordoггүй, build бүрд дахин үүснэ).
+//
+// CSP тэмдэглэл: SW-ийн бүртгэл нэмэлт CSP өөрчлөлт ШААРДААГҮЙ. `worker-src`
+// заагаагүй үед CSP нь child-src → default-src руу уналт хийдэг бөгөөд
+// `default-src 'self'` нь ижил-origin /sw.js-ийг зөвшөөрнө. SW дотор гадаад
+// origin руу fetch хийвэл `connect-src 'self'` таслах байсан тул sw.ts дэх бүх
+// matcher зөвхөн ижил-origin хүсэлт барьдаг (гадаадыг хөтөч өөрөө татна).
+const withSerwist = withSerwistInit({
+  swSrc: 'src/app/sw.ts',
+  swDest: 'public/sw.js',
+  additionalPrecacheEntries: [{ url: '/~offline', revision: swRevision }],
+  // Хөгжүүлэлтэд SW огт үүсэхгүй — hot reload, хуучин кэшийн зөрчлөөс сэргийлнэ.
+  disable: process.env.NODE_ENV === 'development',
+  reloadOnOnline: true,
+});
+
+export default withSerwist(nextConfig);

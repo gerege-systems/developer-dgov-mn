@@ -25,3 +25,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts.bak
+
+# serwist (service worker) — build бүрд public/ дотор дахин үүсдэг гаралт
+/public/sw*
+/public/swe-worker*

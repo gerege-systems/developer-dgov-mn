@@ -291,6 +291,75 @@ Docker дээр `web` сервис нь `output: 'standalone'` build-ээр ни
 
 ---
 
+## PWA — апп болгож суулгах
+
+Frontend нь суулгаж болох **PWA**. Хөтөч (Chrome/Edge/Android) "Суулгах"
+санал болгох шалгуурыг хангана: HTTPS + manifest + 192/512 дүрс + service worker.
+iOS Safari дээр "Нүүр дэлгэцэд нэмэх" үед standalone горимоор нээгдэнэ.
+
+| Файл | Үүрэг |
+|---|---|
+| `src/app/manifest.ts` | `/manifest.webmanifest` — Next.js metadata route |
+| `src/app/sw.ts` | Service worker-ийн эх код (Serwist) |
+| `src/app/~offline/` | Сүлжээгүй үеийн fallback хуудас (`useT()` i18n) |
+| `public/icons/` | 192 · 512 · 512-maskable · apple-touch-icon |
+| `tsconfig.sw.json` | SW-ийн тусдаа typecheck (WebWorker lib) |
+| `scripts/make-pwa-icons.py` | Дүрсийг брэнд маркаас дахин үүсгэнэ |
+
+Manifest: `name` **Ring System**, `short_name` **Ring**, `display` `standalone`,
+`start_url` `/`, `theme_color` `#0064E1` (брэнд токен `--dan-blue`),
+`background_color` `#ffffff`.
+
+### Кэшийн бодлого — зөвхөн статик
+
+Аюулгүй байдлын гол зарчим: **session, CSRF, eID нь хэзээ ч кэшнээс өгөгдөхгүй.**
+`src/app/sw.ts` дахь дүрмүүд эрэмбээрээ, эхний таарсан нь ялна:
+
+| # | Хамрах хүрээ | Стратеги |
+|---|---|---|
+| 1 | `/api`, `/auth`, `/oauth`, `/provider`, `/sso`, `/login`, `/logout` ба замд `eid` сегмент агуулсан бүхэн | **NetworkOnly** |
+| 2 | `/_next/static/*` (build-ийн hash-тай гаралт, next/font-ийн фонт) | CacheFirst |
+| 3 | Ижил-origin зураг | CacheFirst |
+| 4 | Ижил-origin фонт | CacheFirst |
+| 5 | Бусад ижил-origin хуудас (document) | **NetworkOnly** (зөвхөн офлайн fallback-д) |
+
+- **HTML огт кэшлэгддэггүй.** Офлайнд байдаг цорын ганц хуудас нь `/~offline`.
+- **Cross-origin хүсэлтийг SW огт барихгүй.** Барьсан бол SW доторх `fetch()` нь
+  аппын `connect-src 'self'` CSP-д захирагдаж, Google профайл зураг зэрэг
+  блоклогдох байсан. Барихгүй тул хөтөч шууд өөрөө татна.
+- `/_next/static/*` нь 1-р дүрмээс **өмнө** хасагддаг: Next.js chunk-ийг route-ийн
+  замаар нэрлэдэг тул нэрэндээ `api`/`eid` агуулж болох ч эдгээр нь нийтийн,
+  өөрчлөгдөшгүй JS файлууд.
+- Хөгжүүлэлтэд service worker **огт үүсэхгүй** (`next.config.mjs` → `disable`).
+
+### CSP
+
+**Өөрчлөлт шаардаагүй.** `worker-src` заагаагүй үед CSP нь `child-src` →
+`default-src` руу уналт хийдэг бөгөөд `default-src 'self'` нь ижил-origin
+`/sw.js`-ийг зөвшөөрнө. SW-ийн бүх matcher ижил-origin хүсэлт л бардаг тул
+`connect-src 'self'`-тэй ч зөрчилдөхгүй.
+
+### Ажиллуулах / шалгах
+
+```bash
+npm run build            # typecheck:sw + next build → public/sw.js үүснэ
+npm run icons:pwa        # дүрсийг дахин үүсгэх (Pillow шаардана)
+
+npm start                # prod горим — SW зөвхөн энд идэвхтэй
+curl -s localhost:3000/manifest.webmanifest
+```
+
+Хөтчийн DevTools → Application: *Manifest* (алдаагүй), *Service Workers*
+(activated), *Cache Storage* → `serwist-precache-v2-*` дотор `/~offline` +
+`/_next/static/*` байх ба `/api/*` хариу **байхгүй** байх ёстой.
+
+> Тэмдэглэл: manifest дахь `Ring System` / `Ring` нэр нь сайтын гарчиг
+> (`Gerege Template Platform V3.0`)-аас зориуд ялгаатай — суулгасан аппын нэрийг
+> тусад нь брэндлэсэн. Нэгтгэхийг хүсвэл `src/app/manifest.ts` ба
+> `layout.tsx` дахь `applicationName` / `appleWebApp.title`-ыг хамт өөрчил.
+
+---
+
 ## gerege theme
 
 Дизайн систем `src/app/globals.css` дотор — OKLCH токен (DAN blue `#1767E7`),

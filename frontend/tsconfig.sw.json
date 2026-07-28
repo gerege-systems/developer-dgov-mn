@@ -1,0 +1,15 @@
+{
+  // Service worker-ийн тусдаа typecheck. Аппын tsconfig нь DOM lib-тэй бөгөөд
+  // WebWorker lib-тэй хамт байвал глобал тодорхойлолтууд зөрчилддөг тул
+  // src/app/sw.ts-ийг тэндээс хассан. `npm run build` энэ тохиргоог эхлээд
+  // ажиллуулна.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ESNext", "WebWorker"],
+    "types": ["@serwist/next/typings"],
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": ["src/app/sw.ts"],
+  "exclude": []
+}
