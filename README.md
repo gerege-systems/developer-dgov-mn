@@ -3,7 +3,7 @@
 > **Аппдаа үндэсний eID нэвтрэлт нэм** — **eID-д суурилсан · AI-аар хүчирхэгжсэн** —
 > OAuth2 / OpenID Connect-ээр хөгжүүлэгчдэд identity үйлчилгээ хүргэх портал.
 
-**Government Developer Portal** нь аппликейшндээ үндэсний цахим үнэмлэг (eID)-ийн
+**Government Developer Portal** нь аппликейшндээ үндэсний цахим үнэмлэх (eID)-ийн
 нэвтрэлтийг OAuth2 / OpenID Connect-ээр нэмэх хөгжүүлэгчийн портал: аппаа бүртгэж,
 client_id / нууц түлхүүрээ аваад баталгаажсан хэрэглэгчийн мэдээллийг стандарт
 claim-ээр хүлээн авна. Суурь нь Clean-Architecture Go backend + Next.js BFF

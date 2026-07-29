@@ -40,7 +40,7 @@ const sourceSerif = Source_Serif_4({
 export const metadata = {
   title: 'Government Developer Portal',
   description:
-    'eID based, AI enabled. Government Developer Portal — аппликейшндээ үндэсний цахим үнэмлэг (eID)-ийн нэвтрэлтийг OAuth2 / OpenID Connect-ээр нэмэх хөгжүүлэгчийн портал: апп бүртгэх, client_id/secret, баталгаажсан claim, гарын үсгийн API.',
+    'eID based, AI enabled. Government Developer Portal — аппликейшндээ үндэсний цахим үнэмлэх (eID)-ийн нэвтрэлтийг OAuth2 / OpenID Connect-ээр нэмэх хөгжүүлэгчийн портал: апп бүртгэх, client_id/secret, баталгаажсан claim, гарын үсгийн API.',
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
