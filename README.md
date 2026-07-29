@@ -28,6 +28,30 @@ Go (**chi · net/http + pgx (pgxpool) + PostgreSQL + Redis**) backend болон
 SQL-тэй [jackc/pgx](https://github.com/jackc/pgx) драйвертэй хослуулдаг — ORM
 ашиглахгүй.
 
+## 🧬 Удамшлын гинж
+
+Энэ репо флотын удамшлын мод дотор дараах байрлалтай:
+
+```
+public-gerege-template
+   └─► template-dgov-mn
+          └─► developer-dgov-mn   ← ЭНЭ РЕПО
+```
+
+| Юу удамшдаг | Хаанаас | Механизм |
+|---|---|---|
+| Template код (frontend · backend · deploy) | `template-dgov-mn` | `git merge` → **PR** — өдөр бүр [`template-autosync`](.github/workflows/template-autosync.yml) |
+| Go цөм | `public-gerege-core v1.0.0` | `backend/go.mod` |
+
+**Энэ репогийн өөрийнх — удамшдаггүй:**
+брэнд (`frontend/src/brand.config.ts`, `components/landing/copy.ts`), байршуулалт (`deploy/**`, `docker-compose.yml`), CI/CD (`.github/**`), баримт (`README.md`, `docs/**`), iOS/Android таних тэмдэг. Эдгээр нь [`.gitattributes`](.gitattributes)-д `merge=ours` тэмдэгтэй тул upstream-ээс merge хийхэд дарагдахгүй.
+
+**Байршилт:** <https://developer.dgov.mn>
+
+> ⚠️ Upstream-ээс ирсэн PR-ыг **merge commit-оор** нэгтгэнэ — squash нь удамшлын холбоосыг тасалж, дараагийн синк бүх түүхийг зөрчилтэйгээр авчирна.
+
+---
+
 ## 📌 Эх сурвалж ба нээлттэй эх
 
 **Backend** нь нээлттэй эх
