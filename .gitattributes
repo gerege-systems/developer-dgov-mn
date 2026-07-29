@@ -1,0 +1,40 @@
+# upstream (`public-gerege-template`) -ээс merge хийхэд ЭНЭ репогийн хувилбарыг
+# үргэлж хадгална. Эдгээр нь төрийн урсгалын зориудын зөрүү — брэнд, домэйн,
+# байршуулалт, өөрийн CI/CD.
+#
+# `merge=ours` драйвер ажиллахын тулд репод дараах тохиргоо ЗААВАЛ хэрэгтэй:
+#     git config merge.ours.driver true
+# (autosync workflow үүнийг өөрөө хийнэ; локал дээр нэг удаа гараар.)
+#
+# Бусад БҮХ файл — ялангуяа `frontend/src`-ийн код, `backend/`-ийн логик,
+# `scripts/` — upstream-тэй ижил байлгаж, ердийн 3-talt merge-ээр цэвэр
+# урсгана. Иймд удамшил бодитоор автомат ажиллана.
+
+# — өөрийн модуль ба цөмийн холбоос
+backend/go.mod              merge=ours
+backend/go.sum              merge=ours
+backend/cmd/api/main.go     merge=ours
+
+# — байршуулалт: хост, домэйн, контейнер, DB
+deploy/**                   merge=ours
+docker-compose.yml          merge=ours
+backend/deploy/Dockerfile   merge=ours
+
+# — CI/CD: deploy target, secret, autosync-ийн өөрийн горим
+.github/**                  merge=ours
+
+# — брэндийн баримт
+README.md                   merge=ours
+docs/**                     merge=ours
+docs-site/**                merge=ours
+CLAUDE.md                   merge=ours
+AGENTS.md                   merge=ours
+ROADMAP.md                  merge=ours
+
+# — брэндийн текст, дүрс ба iOS таних тэмдэг
+frontend/src/brand.config.ts              merge=ours
+frontend/src/components/landing/copy.ts   merge=ours
+frontend/public/**          merge=ours
+ios/**                      merge=ours
+
+.gitattributes              merge=ours

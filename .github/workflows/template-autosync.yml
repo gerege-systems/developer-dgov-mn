@@ -1,0 +1,132 @@
+# public-gerege-template → template-dgov-mn автомат удамшил.
+#
+# Нээлттэй суурь template-д өөрчлөлт орох бүрд энэ ажил түүнийг татаж `main`
+# руу merge хийнэ. Зөрүүтэй файлууд (`.gitattributes` дахь `merge=ours`)
+# автоматаар манайх хэвээр үлдэнэ, иймд ердийн тохиолдолд conflict гарахгүй.
+#
+# Энэ бол ТЕМПLATE давхарга — gov урсгалын бүх апп эндээс удамшдаг тул
+# хоцрохгүй байх нь чухал. Иймд `private-gerege-template`-тэй адилаар merge-ийг
+# `main` руу ШУУД оруулна (апп-ууд дээр PR болж хүний хяналтад очно).
+#
+# Conflict гарвал: merge-ийг цуцалж, issue үүсгэн хүнийг дуудна — чимээгүй
+# хоцрохоос сэргийлнэ.
+name: template-autosync
+
+on:
+  schedule:
+    # Өдөрт нэг удаа (UTC 03:23) — upstream-ийн ажлаас 20 минутын дараа.
+    - cron: '43 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  # ci.yml / deploy.yml-ийг өөрөө дуудахад шаардлагатай.
+  actions: write
+
+concurrency:
+  group: template-autosync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Тохиргоо
+        run: |
+          git config user.name  'gerege-template-autosync[bot]'
+          git config user.email 'gerege-template-autosync@users.noreply.github.com'
+          # .gitattributes дахь `merge=ours`-ийг ажиллуулна.
+          git config merge.ours.driver true
+          git remote add upstream https://github.com/gerege-systems/public-gerege-template.git
+          git fetch upstream main
+
+      - name: Шинэ commit байгаа эсэх
+        id: check
+        run: |
+          n=$(git rev-list --count HEAD..upstream/main)
+          echo "n=$n" >> "$GITHUB_OUTPUT"
+          echo "upstream-аас $n commit хоцорсон."
+
+      - name: Merge
+        id: merge
+        if: steps.check.outputs.n != '0'
+        run: |
+          if git merge --no-edit upstream/main; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            git diff --name-only --diff-filter=U > /tmp/conflicts.txt
+            git merge --abort
+          fi
+
+      - name: Push
+        if: steps.merge.outputs.ok == 'true'
+        run: git push origin HEAD:main
+
+      # `GITHUB_TOKEN`-оор хийсэн push нь дараагийн workflow-г өдөөдөггүй
+      # (GitHub-ийн рекурс хамгаалалт). Иймд CI-г гараар дуудна — эс бөгөөс
+      # удамшсан код build ч хийгдэхгүй, байршихгүй.
+      #
+      # `--repo` ЗААВАЛ: энэ репод `upstream` remote нэмэгддэг тул `gh` нь
+      # түүнийг сонгоод буруу (upstream) репод dispatch хийхийг оролддог.
+      - name: CI дуудаж, амжилттай бол deploy хийх
+        if: steps.merge.outputs.ok == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          sha=$(git rev-parse HEAD)
+          gh workflow run ci.yml --repo "$REPO" --ref main
+
+          # Дуудсан ажлыг SHA-гаар нь олно (нэр/дараалалаар биш — өөр commit-ийн
+          # ажлыг андуурч хүлээхээс сэргийлнэ).
+          id=""
+          for _ in $(seq 1 24); do
+            id=$(gh api "repos/$REPO/actions/workflows/ci.yml/runs?per_page=20" \
+                  --jq "[.workflow_runs[] | select(.head_sha==\"$sha\")] | first | .id // empty")
+            [ -n "$id" ] && break
+            sleep 5
+          done
+          if [ -z "$id" ]; then
+            echo "::warning::CI ажил олдсонгүй — deploy-г гараар шалгана уу."
+            exit 0
+          fi
+
+          gh run watch "$id" --repo "$REPO" --exit-status --interval 20
+
+          # deploy.yml нь `workflow_run`-аар өөрөө асах ЁСТОЙ, гэхдээ
+          # `GITHUB_TOKEN`-оор эхлүүлсэн ажлаас энэ гинж тасрах тохиолдол бий.
+          # Тиймээс тухайн SHA дээр deploy аль хэдийн ажилласан эсэхийг шалгаж,
+          # ажиллаагүй бол л гараар дуудна (давхар deploy үүсгэхгүй).
+          n=$(gh api "repos/$REPO/actions/workflows/deploy.yml/runs?per_page=20" \
+                --jq "[.workflow_runs[] | select(.head_sha==\"$sha\")] | length")
+          if [ "$n" = "0" ]; then
+            echo "deploy.yml нь өөрөө асаагүй — гараар дуудна."
+            gh workflow run deploy.yml --repo "$REPO" --ref main
+          else
+            echo "deploy.yml аль хэдийн ажиллаж байна ($n ажил)."
+          fi
+
+      - name: Conflict — issue үүсгэх
+        if: steps.merge.outputs.ok == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          body=$'`public-gerege-template`-аас автомат merge хийх үед conflict гарлаа.\n\n**Зөрчилтэй файлууд:**\n```\n'
+          body+="$(cat /tmp/conflicts.txt)"
+          body+=$'\n```\n\nГараар шийдэх:\n```bash\ngit remote add upstream https://github.com/gerege-systems/public-gerege-template.git\ngit fetch upstream main\ngit config merge.ours.driver true\ngit merge upstream/main\n```\n\nХэрэв зөрүү нь зориудынх бол `.gitattributes`-д `merge=ours` нэмнэ.'
+          gh issue create --repo "$GITHUB_REPOSITORY" --title "template-autosync: upstream merge conflict" --body "$body" --label autosync 2>/dev/null \
+            || gh issue create --repo "$GITHUB_REPOSITORY" --title "template-autosync: upstream merge conflict" --body "$body"
+
+      - name: Дүн
+        if: always()
+        run: |
+          echo "### template-autosync" >> "$GITHUB_STEP_SUMMARY"
+          echo "- upstream: \`public-gerege-template\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- хоцорсон commit: ${{ steps.check.outputs.n }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- merge: ${{ steps.merge.outputs.ok || 'хийх зүйлгүй' }}" >> "$GITHUB_STEP_SUMMARY"
