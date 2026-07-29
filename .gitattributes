@@ -38,3 +38,7 @@ frontend/public/**          merge=ours
 ios/**                      merge=ours
 
 .gitattributes              merge=ours
+
+# — нууц сканнерын allowlist (репо бүрд өөр)
+.gitleaks.toml              merge=ours
+.gitleaksignore             merge=ours
