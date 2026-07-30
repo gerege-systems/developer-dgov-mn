@@ -1,6 +1,6 @@
 import 'server-only';
 import { redirect } from 'next/navigation';
-import { fetchMe, fetchMyPermissions } from '@/lib/api';
+import { fetchMe, fetchMyPermissions } from '@gerege/ui-core/lib/api';
 
 // requireRelayAccess нь /admin/relay/* хуудас бүрийн серверийн талын хамгаалалт —
 // нэвтрээгүй эсвэл 'relay.view' эрхгүй бол нүүр рүү буцаана. (Backend route мөн

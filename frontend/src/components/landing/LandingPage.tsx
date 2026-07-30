@@ -8,9 +8,9 @@ import {
   LogIn, Languages, KeyRound, ScrollText, Globe, Gauge, ShieldAlert,
   Menu, X,
 } from 'lucide-react';
-import { useLang } from '@/lib/lang';
-import { landingCopy, type LandingCopy } from './copy';
-import { deepMerge } from '@/lib/theme';
+import { useLang } from '@gerege/ui-core/lib/lang';
+import { landingCopy, landingCopyFor, type LandingCopy } from './copy';
+import { deepMerge } from '@gerege/ui-core/lib/theme';
 
 // Нээлттэй эх (Open Source) кодын GitHub репозитор.
 const GITHUB_URL = 'https://github.com/gerege-systems/developer-dgov-mn';
@@ -32,7 +32,7 @@ interface Props {
   googleLink?: boolean;
   googleError?: boolean;
   /** Идэвхтэй theme-ийн landing текст/цэс (mn/en) — copy.ts default дээр давхарлана. */
-  themeLanding?: { mn?: Partial<LandingCopy>; en?: Partial<LandingCopy> };
+  themeLanding?: Partial<Record<LandingLang, Partial<LandingCopy>>>;
 }
 
 /**
@@ -42,14 +42,22 @@ interface Props {
  * нэвтрэх картыг шигтгэв. Нэвтрэх товч дарахад sso.dgov.mn руу шилжиж, тэндээ
  * нэвтэрч, буцаж ирнэ (OIDC RP урсгал). Брэнд токен (blue + gold) дээр найруулав.
  */
+// Landing-ийн МАРКЕТИНГИЙН текст ямар хэлтэй вэ (`copy.ts`-тэй нэг эх).
+// Интерфэйс нь долоон хэлтэй ч энэ текст хоёрхон хэлтэй.
+const LANDING_LANGS = ['mn', 'en'] as const;
+type LandingLang = (typeof LANDING_LANGS)[number];
+
 export default function LandingPage({ next, themeLanding }: Props) {
   const { lang, setLang } = useLang();
   // Mobile (<900px)-д хэсгүүдийн цэс inline харагдахгүй тул hamburger-ээр нээгдэх
   // dropdown цэс.
   const [menuOpen, setMenuOpen] = React.useState(false);
   // Идэвхтэй theme-ийн текст байвал copy.ts default дээр гүн merge хийнэ.
-  const override = themeLanding?.[lang];
-  const t = override ? deepMerge(landingCopy[lang], override) : landingCopy[lang];
+  // Landing нь mn/en-тэй; бусад интерфэйсийн хэлэнд англи руу уналт хийнэ.
+  const ll: LandingLang = lang === 'mn' ? 'mn' : 'en';
+  const override = themeLanding?.[ll];
+  const base = landingCopyFor(ll);
+  const t = override ? deepMerge(base, override) : base;
   const brand = t.brand || 'Government Developer Portal';
   // Government SSO (sso.dgov.mn) руу нэвтрэлт эхлүүлэх — backend /sso/start руу
   // прокси хийж, browser-ийг sso.dgov.mn-ий authorize URL руу шилжүүлнэ.

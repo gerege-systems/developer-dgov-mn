@@ -33,6 +33,9 @@ const CSP = [
 ].join('; ');
 
 const nextConfig = {
+  // @gerege/ui-core нь эх код (.ts/.tsx) хэлбэрээр тараагдана — dist БИШ.
+  // Next-д node_modules доторх TS-ийг хөрвүүлэхийг ил зөвшөөрөх ёстой.
+  transpilePackages: ['@gerege/ui-core'],
   reactStrictMode: true,
   // Standalone output → slim production Docker image (server.js + minimal
   // node_modules) instead of shipping the whole tree. See frontend/Dockerfile.

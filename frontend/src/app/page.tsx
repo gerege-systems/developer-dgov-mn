@@ -1,14 +1,14 @@
 // Gerege Systems Development Team & Claude AI, 2026
 import React from 'react';
 import { redirect } from 'next/navigation';
-import { hasSession } from '@/lib/session';
-import { safeNext } from '@/lib/navigation';
-import { fetchActiveTheme } from '@/lib/api';
+import { hasSession } from '@gerege/ui-core/lib/session';
+import { safeNext } from '@gerege/ui-core/lib/navigation';
+import { fetchActiveTheme } from '@gerege/ui-core/lib/api';
 import LandingPage from '@/components/landing/LandingPage';
 
 export const dynamic = 'force-dynamic';
 
-// developer.dgov.mn — Government Developer Portal-ын нүүр хуудас. Аппликейшндээ
+// developer.dgov.mn — порталын нүүр хуудас. Аппликейшндээ
 // үндэсний eID нэвтрэлтийг OAuth2 / OpenID Connect-ээр нэмэх хөгжүүлэгчийн
 // порталын landing бөгөөд нэвтрэх картыг (LoginForm) hero дотроо шигтгэсэн.
 // Нэвтэрсэн хэрэглэгчийг /me домэйн руу шилжүүлнэ.
