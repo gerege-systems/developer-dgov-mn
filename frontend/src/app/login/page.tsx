@@ -1,12 +1,13 @@
 // Gerege Systems Development Team & Claude AI, 2026
 import React from 'react';
 import { LogIn } from 'lucide-react';
-import SigninShell from '@/components/SigninShell';
-import { safeNext } from '@/lib/navigation';
+import SigninShell from '@gerege/ui-core/components/SigninShell';
+import { safeNext } from '@gerege/ui-core/lib/navigation';
+import { pageTitle } from '@/brand.config';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Нэвтрэх — Government Developer Portal V3.0' };
+export const metadata = { title: pageTitle('Нэвтрэх') };
 
 // Нэвтрэлт нь Government SSO (sso.dgov.mn)-оор дамжина. Товч дарахад sso.dgov.mn
 // руу шилжиж, тэндээ нэвтэрч, буцаж ирнэ (OIDC RP урсгал). SSO callback амжилтгүй

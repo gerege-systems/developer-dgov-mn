@@ -1,3 +1,4 @@
+import type { Lang } from '@gerege/ui-core/lib/i18n';
 // Gerege Systems Development Team & Claude AI, 2026
 //
 // Government Developer Portal нүүр (landing) хуудасны маркетингийн текст — mn / en
@@ -239,4 +240,15 @@ const en: LandingCopy = {
   },
 };
 
-export const landingCopy: Record<'mn' | 'en', LandingCopy> = { mn, en };
+/**
+ * Landing-ийн МАРКЕТИНГИЙН текст.
+ *
+ * ХЭСЭГЧЛЭН: интерфэйс нь Монгол + НҮБ-ийн 6 хэлтэй ч энэ текстийг хүн бичдэг
+ * тул хоёр хэлтэй. `landingCopyFor` бусад хэлэнд англи руу уналт хийнэ.
+ */
+export const landingCopy: Partial<Record<Lang, LandingCopy>> = { mn, en };
+
+/** Тухайн хэлний текст; орчуулаагүй хэлэнд англи. */
+export function landingCopyFor(lang: string): LandingCopy {
+  return landingCopy[lang as Lang] ?? en;
+}

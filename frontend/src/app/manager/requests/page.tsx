@@ -1,8 +1,8 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
-import PageHead from '@/components/PageHead';
-import GovQueueView from '@/components/gov/GovQueueView';
-import { fetchMe, fetchMyPermissions } from '@/lib/api';
+import PageHead from '@gerege/ui-core/components/PageHead';
+import GovQueueView from '@gerege/ui-core/components/gov/GovQueueView';
+import { fetchMe, fetchMyPermissions } from '@gerege/ui-core/lib/api';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Менежер — Иргэний хүсэлт' };

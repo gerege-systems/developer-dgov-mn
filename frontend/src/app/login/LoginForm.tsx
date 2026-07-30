@@ -3,11 +3,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { ShieldCheck, RefreshCw, HelpCircle } from 'lucide-react';
-import Alert from '@/components/Alert';
-import MFAChallenge from '@/components/superadmin/MFAChallenge';
-import { postJSON } from '@/lib/client';
-import { safeNext } from '@/lib/navigation';
-import { useT } from '@/lib/lang';
+import Alert from '@gerege/ui-core/components/Alert';
+import MFAChallenge from '@gerege/ui-core/components/superadmin/MFAChallenge';
+import { postJSON } from '@gerege/ui-core/lib/client';
+import { safeNext } from '@gerege/ui-core/lib/navigation';
+import { useT } from '@gerege/ui-core/lib/lang';
 
 // Нэвтрэх арга: (A) РД-ээр — иргэний апп руу push, зөвшөөрөхөд browser нэвтэрнэ (CROSS-DEVICE).
 // (B) device-link — DESKTOP дээр QR (CROSS-DEVICE, тусдаа утсаар уншуулна, browser poll хийнэ);
