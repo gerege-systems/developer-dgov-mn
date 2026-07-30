@@ -2,7 +2,7 @@ module github.com/gerege-systems/developer-dgov-mn/backend
 
 go 1.26
 
-require github.com/gerege-systems/public-gerege-core v1.0.0
+require github.com/gerege-systems/public-gerege-core v1.4.0
 
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
